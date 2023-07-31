@@ -1,0 +1,23 @@
+.title {
+  color: Lavender;
+  font-size: 5vw;
+  text-shadow: 0 0 10px Indigo, 0 0 5px Orchid;
+  position: absolute;
+  opacity: 0;
+}
+#title1 {
+  animation: fade-down 2.5s ease-out;
+}
+#title2 {
+  animation: fade-down 2.5s ease-out 1.5s;
+}
+@keyframes fade-down {
+  from {
+    top: -10vw;
+    opacity: 100%;
+  }
+  to {
+    top: calc(100vh/2);
+    opacity: 0%;
+  }
+}
