@@ -1,0 +1,58 @@
+$logo-diameter: min(15vh, 15vw);
+.logo {
+  height: $logo-diameter;
+  width: $logo-diameter;
+  border-radius: 50%;
+}
+.dbs-logo {
+  background-image: url("../../../assets/dbs-logo.jpg");
+  background-size: cover;
+}
+.history-item {
+  width: 100%;
+  height: fit-content;
+  align-items: center;
+  margin: 2% 0 10vh 0;
+}
+$history-text-font-size: max(min(2.25vh, 3vw), 16px);
+$line-ball-dist: min(2vh, 2vw);
+$text-border-colour: black;
+.history-text {
+  font-size: $history-text-font-size;
+  line-height: calc($history-text-font-size * 1.2);
+  text-align: justify;
+  width: calc(100% - $logo-diameter - 4px - (2*$line-ball-dist));
+  padding: $line-ball-dist $line-ball-dist $line-ball-dist 0;
+  margin-right: $line-ball-dist;
+  border-right: calc($line-ball-dist/5) solid $text-border-colour;
+}
+.history-text-alt {
+  font-size: $history-text-font-size;
+  line-height: calc($history-text-font-size * 1.2);
+  text-align: justify;
+  width: calc(100% - $logo-diameter - 4px - (2*$line-ball-dist));
+  padding: $line-ball-dist 0 $line-ball-dist $line-ball-dist;
+  margin-left: $line-ball-dist;
+  border-left: calc($line-ball-dist/5) solid $text-border-colour;
+}
+.history-container {
+  overflow-y: scroll;
+  height: 100%;
+  --mask: linear-gradient(to bottom, 
+      rgba(0,0,0, 0) 0,
+      rgba(0,0,0, 1) 2%,
+      rgba(0,0,0, 1) 85%, 
+      rgba(0,0,0, 0) 100%
+  ) 100% 50% / 100% 100% repeat-x;
+  -webkit-mask: var(--mask); 
+  mask: var(--mask);
+}
+.history-container::-webkit-scrollbar {
+  width: min(1vw, 10px);
+  display: none;
+}
+.history-container::-webkit-scrollbar-thumb {
+  background: rgb(178, 34, 34, 0.9);
+  border-radius: 5px;
+  display: none;
+}

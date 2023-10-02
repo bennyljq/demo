@@ -1,0 +1,105 @@
+$kenobi-height: 100vh;
+#kenobi {
+  background-image: url("../../../assets/ben_kenobi.png");
+  height: $kenobi-height;
+  width: calc($kenobi-height * 1141 / 724);
+  background-size: cover;
+  animation: kenobi 5s ease-out;
+  transform: translateX(-66vh);
+  opacity: 0%;
+  margin-bottom: -100vh;
+}
+.content {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  overflow: hidden;
+}
+$hes-me-font-size: min(4vw, calc(1000px * 0.04));
+#hes-me {
+  margin: 10vh 10vw 5vh 10vw;
+  animation: fade-down 1s ease-out 0.5s;
+  font-size: $hes-me-font-size;
+  line-height: $hes-me-font-size;
+  height: calc($hes-me-font-size * 3);
+}
+$home-font-size: max(2vw, 2vh, 18px);
+#home {
+  font-size: $home-font-size;
+  line-height: $home-font-size;
+  width: calc($home-font-size * 2);
+  height: calc($home-font-size * 2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  opacity: 50%;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  position: absolute;
+  top: $home-font-size;
+  left: $home-font-size;
+  animation: fade-down-home 1s ease-out;
+  border: 2px solid black;
+}
+#home:hover {
+  transform: scale(1.2);
+  opacity: 100%;
+}
+#left-arrow {
+  font-weight: bolder;
+}
+$history-width: min(80vw, 1000px);
+.history {
+  width: $history-width;
+  height: calc(100vh - 10vh - ($hes-me-font-size * 3) - 5vh - 5vh);
+  margin: 0 calc(90vw - $history-width) 0 10vw;
+  animation: fade-down 1s ease-out 1s;
+  z-index: 2;
+}
+.blur-image {
+  filter: blur(20px);
+  animation: blur-image 1s ease-out;
+}
+.unblur-image {
+  animation: unblur-image 0.666s ease-out;
+}
+@keyframes kenobi {
+  0% {
+    opacity: 0%;
+    transform: translateX(-100vh);
+  }
+  33% {
+    opacity: 33%;
+    transform: translateX(-66vh);
+  }
+  100% {
+    opacity: 0%;
+  }
+}
+@keyframes fade-down-home {
+  from {
+    opacity: 0%;
+    transform: translateY(-5vh);
+  }
+  to {
+    opacity: 50%;
+    transform: translateY(0);
+  }
+}
+@keyframes blur-image {
+  from {
+    filter: blur(0);
+  }
+  to {
+    filter: blur(20px);
+  }
+}
+@keyframes unblur-image {
+  from {
+    filter: blur(20px);
+  }
+  to {
+    filter: blur(0);
+  }
+}

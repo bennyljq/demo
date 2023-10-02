@@ -1,0 +1,44 @@
+<div class="container">
+  <div class="content" [ngClass]="contentClass">
+    <div class="intro f-poppins f-normal" id="hello-there">
+      Hello there!
+    </div>
+    <div class="intro f-poppins f-bold" id="my-name">
+      My name is <span class="f-xbold">{{name}}</span>
+    </div>
+    <span class="flex-row desc-row">
+      <div class="desc f-poppins f-normal" id="i-am">
+        I am a <span class="f-xbold">{{descLine1[0]}}</span>
+      </div>
+      <div class="desc f-poppins f-normal" id="desc1">
+        ,&nbsp;&nbsp;&nbsp; {{descLine1[1]}},
+      </div>
+    </span>
+    <span class="flex-row desc-row">
+      <div *ngFor="let item of descLine2; let i = index" [id]="'desc' + (i+2)"
+      class="desc f-poppins">
+        {{item}},
+      </div>
+    </span>
+    <span class="flex-row desc-row">
+      <div *ngFor="let item of descLine3; let i = index" [id]="'desc' + (i+5)"
+      class="desc f-poppins">
+        {{item}}<ng-container *ngIf="i!=5">,</ng-container>
+      </div>
+    </span>
+    <div class="links-container flex-col f-hino">
+      <div class="link" id="about" (click)="goToRoute('about')">About</div>
+      <div class="link" id="projects">Projects</div>
+      <div class="link" id="contact">Contact</div>
+      <div class="link" id="experimental" (click)="goToRoute('experimental')">Experimental</div>
+    </div>
+  </div>
+  <!-- <a class="f-poppins background-credit" target="_blank"
+  href="https://wallpaper.mob.org/pc/image/earth-beach-sand-910039.html">
+    background credit
+  </a> -->
+  <div class="circle"></div>
+</div>
+
+<!-- preload image -->
+<img src="../../assets/ben_kenobi.png" style="display: none;">
