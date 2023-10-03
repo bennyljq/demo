@@ -26,11 +26,18 @@
         {{item}}<ng-container *ngIf="i!=5">,</ng-container>
       </div>
     </span>
-    <div class="links-container flex-col f-hino">
-      <div class="link" id="about" (click)="goToRoute('about')">About</div>
-      <div class="link" id="projects">Projects</div>
-      <div class="link" id="contact">Contact</div>
-      <div class="link" id="experimental" (click)="goToRoute('experimental')">Experimental</div>
+    <div style="display: flex;">
+      <div class="links-container flex-col f-hino" [ngClass]="linksClass">
+        <div class="link" id="about" (click)="goToRoute('about')">About</div>
+        <div class="link" id="projects" (click)="showProjects()">Projects</div>
+        <div class="link" id="contact">Contact</div>
+      </div>
+      <div class="links-container flex-col f-hino" [ngClass]="projectsClass" style="position: absolute;">
+        <div class="link" (click)="goToRoute('experimental')">Experimental</div>
+        <div class="link" (click)="goToRoute('enterprise')">Enterprise</div>
+        <div class="link">test</div>
+        <div class="link" (click)="resetProjects()">Back</div>
+      </div>
     </div>
   </div>
   <!-- <a class="f-poppins background-credit" target="_blank"

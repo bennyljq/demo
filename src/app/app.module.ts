@@ -11,6 +11,7 @@ import { HistoryComponent } from './components-wip/history/history.component';
 import { ExperimentalComponent } from './components-active/experimental/experimental.component';
 import { About2Component } from './components-active/about2/about2.component';
 import { History2Component } from './components-active/history2/history2.component';
+import { EnterpriseComponent } from './components-active/enterprise/enterprise.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { History2Component } from './components-active/history2/history2.compone
     HistoryComponent,
     ExperimentalComponent,
     About2Component,
-    History2Component
+    History2Component,
+    EnterpriseComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
 
@@ -31,6 +31,8 @@ export class HomepageV2Component implements OnInit {
   ]
   contentClass: any;
   circleStyle: any;
+  linksClass: any;
+  projectsClass = "hidden"
 
   async ngOnInit(): Promise<any> {
     this.hideElem("hello-there", 0.5)
@@ -43,7 +45,6 @@ export class HomepageV2Component implements OnInit {
     this.hideElem("about", 1.75)
     this.hideElem("projects", 2)
     this.hideElem("contact", 2.25)
-    this.hideElem("experimental", 2.5)
   }
 
   async hideElem(id: string, delay: number) { // delay in seconds
@@ -62,6 +63,18 @@ export class HomepageV2Component implements OnInit {
     this.contentClass = "fade-out-left"
     await lastValueFrom(timer(666))
     this.router.navigate([`/${route}`]);
+  }
+
+  async showProjects() {
+    this.linksClass = "fade-out-left"
+    this.projectsClass = 'fade-in-left'
+  }
+
+  async resetProjects() {
+    this.linksClass = "fade-in-left"
+    this.projectsClass = 'fade-out-left'
+    await lastValueFrom(timer(666))
+    this.projectsClass = 'hidden'
   }
 
 }

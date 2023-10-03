@@ -99,9 +99,6 @@ $desc: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;
 #contact {
   animation: fade-down 0.5s ease-out 2s;
 }
-#experimental {
-  animation: fade-down 0.5s ease-out 2.25s;
-}
 .links-container {
   align-items: start;
   margin: 7vh 0 0 10vw;
@@ -146,6 +143,10 @@ $circle-radius: max(100vw*1.5, 100vh*1.5);
   animation: fade-out-left 0.666s ease-out;
   opacity: 0;
 }
+.fade-in-left {
+  animation: fade-in-left 0.666s ease-out;
+  opacity: 1;
+}
 .fade-out-right {
   animation: fade-out-right 0.666s ease-out;
   opacity: 0;
@@ -157,6 +158,9 @@ $circle-radius: max(100vw*1.5, 100vh*1.5);
 .history-exit {
   animation: fade-out-down-right 0.666s ease-out;
   opacity: 0;
+}
+.hidden {
+  display: none;
 }
 // Animations //
 @keyframes fade-down {
@@ -225,5 +229,15 @@ $circle-radius: max(100vw*1.5, 100vh*1.5);
   to {
     opacity: 0%;
     transform: translate(20vw, 20vh);
+  }
+}
+@keyframes fade-in-left {
+  from {
+    opacity: 0%;
+    transform: translateX(-20vw);
+  }
+  to {
+    opacity: 100%;
+    transform: translateX(0);
   }
 }

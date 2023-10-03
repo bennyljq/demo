@@ -38,6 +38,7 @@ $text-border-colour: black;
 .history-container {
   overflow-y: scroll;
   height: 100%;
+  // padding-right: $line-ball-dist;
   --mask: linear-gradient(to bottom, 
       rgba(0,0,0, 0) 0,
       rgba(0,0,0, 1) 2%,
@@ -46,13 +47,14 @@ $text-border-colour: black;
   ) 100% 50% / 100% 100% repeat-x;
   -webkit-mask: var(--mask); 
   mask: var(--mask);
-}
-.history-container::-webkit-scrollbar {
-  width: min(1vw, 10px);
-  display: none;
-}
-.history-container::-webkit-scrollbar-thumb {
-  background: rgb(178, 34, 34, 0.9);
-  border-radius: 5px;
-  display: none;
+
+  &::-webkit-scrollbar {
+    width: calc($line-ball-dist/5);
+    display: none;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: black;
+    border-radius: 5px;
+  }
 }
