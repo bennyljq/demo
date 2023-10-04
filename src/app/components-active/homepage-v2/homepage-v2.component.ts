@@ -14,15 +14,15 @@ export class HomepageV2Component implements OnInit {
   name = "Benny"
   descLine1 = [
     "UX Engineer",
-    "UI Developer",
+    "Mathematician",
   ]
   descLine2 = [
     "Physicist",
-    "Mathematician",
-    "Data Scientist",
+    "UI Developer",
+    "Software Engineer",
   ]
   descLine3 = [
-    "Software Engineer",
+    "Data Scientist",
     "Pianist",
     "Godfather",
     "Swiftie",

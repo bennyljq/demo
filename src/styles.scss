@@ -5,6 +5,9 @@
 .f-hino {
   font-family: 'Hina Mincho', serif;
 }
+.f-merri {
+  font-family: 'Merriweather', serif;
+}
 .f-light {
   font-weight: 300;
 }
@@ -72,7 +75,7 @@ $desc-font-size: min(4.5vw, calc(1200px * 0.045), 4.5vh);
 .desc-row {
   margin-left: 10vw;
   width: min(calc(920/1200*100vw), calc(920/1200*100vh), 920px);
-  justify-content: space-between;
+  // justify-content: space-between;
   white-space: nowrap;
 }
 #i-am {
@@ -105,16 +108,17 @@ $desc: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;
   text-shadow: 0 0 5px white;
 }
 // $link-font-size: min(8vw, calc(1470px * 0.08));
-$link-font-size: 5vh;
+$link-font-size: 4vh;
 .link {
   font-size: $link-font-size;
   cursor: pointer;
   transition-duration: 0.2s;
-  line-height: calc(1.3*$link-font-size);
+  line-height: calc(1.5*$link-font-size);
+  user-select: none;
 }
 .link:hover {
   font-size: calc(1.2*$link-font-size);
-  text-shadow: 0 0 5px LightSalmon;
+  // text-shadow: 0 0 5px gold;
 }
 .background-credit {
   color: white;
@@ -161,6 +165,32 @@ $circle-radius: max(100vw*1.5, 100vh*1.5);
 }
 .hidden {
   display: none;
+}
+$home-font-size: max(2vw, 2vh, 18px);
+#home {
+  font-size: $home-font-size;
+  line-height: $home-font-size;
+  width: calc($home-font-size * 2);
+  height: calc($home-font-size * 2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  opacity: 50%;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  position: absolute;
+  top: $home-font-size;
+  left: $home-font-size;
+  animation: fade-down-home 1s ease-out;
+  border: 2px solid black;
+}
+#home:hover {
+  transform: scale(1.2);
+  opacity: 100%;
+}
+#left-arrow {
+  font-weight: bolder;
 }
 // Animations //
 @keyframes fade-down {
@@ -241,3 +271,15 @@ $circle-radius: max(100vw*1.5, 100vh*1.5);
     transform: translateX(0);
   }
 }
+@keyframes fade-down-home {
+  from {
+    opacity: 0%;
+    transform: translateY(-5vh);
+  }
+  to {
+    opacity: 50%;
+    transform: translateY(0);
+  }
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

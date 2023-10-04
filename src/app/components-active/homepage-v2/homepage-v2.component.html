@@ -11,28 +11,28 @@
         I am a <span class="f-xbold">{{descLine1[0]}}</span>
       </div>
       <div class="desc f-poppins f-normal" id="desc1">
-        ,&nbsp;&nbsp;&nbsp; {{descLine1[1]}},
+        ,&nbsp;{{descLine1[1]}},
       </div>
     </span>
     <span class="flex-row desc-row">
       <div *ngFor="let item of descLine2; let i = index" [id]="'desc' + (i+2)"
       class="desc f-poppins">
-        {{item}},
+        {{item}},&nbsp;
       </div>
     </span>
     <span class="flex-row desc-row">
       <div *ngFor="let item of descLine3; let i = index" [id]="'desc' + (i+5)"
       class="desc f-poppins">
-        {{item}}<ng-container *ngIf="i!=5">,</ng-container>
+        {{item}}<ng-container *ngIf="i!=5">,&nbsp;</ng-container>
       </div>
     </span>
     <div style="display: flex;">
-      <div class="links-container flex-col f-hino" [ngClass]="linksClass">
+      <div class="links-container flex-col f-merri" [ngClass]="linksClass">
         <div class="link" id="about" (click)="goToRoute('about')">About</div>
         <div class="link" id="projects" (click)="showProjects()">Projects</div>
         <div class="link" id="contact">Contact</div>
       </div>
-      <div class="links-container flex-col f-hino" [ngClass]="projectsClass" style="position: absolute;">
+      <div class="links-container flex-col f-merri" [ngClass]="projectsClass" style="position: absolute;">
         <div class="link" (click)="goToRoute('experimental')">Experimental</div>
         <div class="link" (click)="goToRoute('enterprise')">Enterprise</div>
         <div class="link">test</div>
@@ -48,4 +48,4 @@
 </div>
 
 <!-- preload image -->
-<img src="../../assets/ben_kenobi.png" style="display: none;">
+<img src="../../assets/ben_kenobi.png" style="width: 0; height: 0;">

@@ -12,6 +12,7 @@ import { ExperimentalComponent } from './components-active/experimental/experime
 import { About2Component } from './components-active/about2/about2.component';
 import { History2Component } from './components-active/history2/history2.component';
 import { EnterpriseComponent } from './components-active/enterprise/enterprise.component';
+import {MatToolbarModule} from '@angular/material/toolbar';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { EnterpriseComponent } from './components-active/enterprise/enterprise.c
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatToolbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
