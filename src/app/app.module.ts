@@ -13,6 +13,9 @@ import { About2Component } from './components-active/about2/about2.component';
 import { History2Component } from './components-active/history2/history2.component';
 import { EnterpriseComponent } from './components-active/enterprise/enterprise.component';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatButtonModule} from '@angular/material/button';
+import { ButtonComponent } from './components-active/button/button.component';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 @NgModule({
   declarations: [
@@ -24,13 +27,16 @@ import {MatToolbarModule} from '@angular/material/toolbar';
     ExperimentalComponent,
     About2Component,
     History2Component,
-    EnterpriseComponent
+    EnterpriseComponent,
+    ButtonComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatButtonModule,
+    MatGridListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

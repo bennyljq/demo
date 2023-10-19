@@ -6,8 +6,65 @@
   <div id="ent-container">
     <mat-toolbar id="ent-toolbar">
       <div id="stick"></div>
-      <div id="ent-toolbar-title" class="f-poppins">Enterprise Components</div>
-      test
+      <div id="ent-toolbar-title" class="f-poppins">Enterprise Component Library</div>
     </mat-toolbar>
+    <div id="ent-content">
+      <div id="ent-content-title">Getting Started</div>
+      <div id="ent-content-text">
+        Welcome to Benny's Enterprise Component Library!<br><br>
+        The following content is a heavily augmented version of the internal component library 
+        that I have founded and maintained in DBS Bank. 
+        Although none of the components below are published, I promise that they work just as advertised where
+        they're being used in the bank.
+      </div>
+      <div id="ent-content-title">Buttons</div>
+      <div id="ent-content-text">
+        While building applications in the bank, buttons come in different colours and sizes to convey
+        different functions. This component condenses all the styling and functional requirements to a 
+        one-line, plug-and-play solution.
+      </div>
+      <div id="ent-content-subtitle">Button Sizes</div>
+      <div id="ent-content-text">
+        Click/tap the buttons below to view their documentation in HTML.
+      </div>
+      <div id="demo-row" [ngStyle]="{
+        'flex-direction': innerWidth < 600 ? 'column' : 'row',
+        'height': innerWidth < 600 ? '150px' : '66px',
+      }">
+        <app-button text="Hello There" size="small" (click)="buttonSizeHtml=buttonSizes[0]"></app-button>
+        <app-button text="Hello There" size="medium" (click)="buttonSizeHtml=buttonSizes[1]"></app-button>
+        <app-button text="Hello There" size="large" (click)="buttonSizeHtml=buttonSizes[2]"></app-button>
+      </div>
+      <div class="html-text">
+        {{buttonSizeHtml}}
+      </div>
+      <div id="ent-content-subtitle">Button Types</div>
+      <div id="ent-content-text">
+        Click/tap the buttons below to view their documentation in HTML.
+      </div>
+      <mat-grid-list id="ent-button-grid" [cols]="numCols" rowHeight="66px">
+        <mat-grid-tile>
+          <app-button text="Hello There" type="primary" (click)="buttonTypeHtml=buttonTypes[0]"></app-button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <app-button text="Hello There" type="secondary" (click)="buttonTypeHtml=buttonTypes[1]"></app-button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <app-button text="Hello There" type="tertiary" (click)="buttonTypeHtml=buttonTypes[2]"></app-button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <app-button text="Hello There" type="minimal" (click)="buttonTypeHtml=buttonTypes[3]"></app-button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <app-button text="Hello There" type="important" (click)="buttonTypeHtml=buttonTypes[4]"></app-button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <app-button text="Hello There" type="importantAlt" (click)="buttonTypeHtml=buttonTypes[5]"></app-button>
+        </mat-grid-tile>
+      </mat-grid-list>
+      <div class="html-text">
+        {{buttonTypeHtml}}
+      </div>
+    </div>
   </div>
 </div>

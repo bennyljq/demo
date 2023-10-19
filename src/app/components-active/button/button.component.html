@@ -1,0 +1,8 @@
+<button mat-flat-button *ngIf="flat"
+[ngStyle]="buttonStyle" class="f-poppins" id="button">
+  {{text}}
+</button>
+<button mat-stroked-button *ngIf="!flat"
+[ngStyle]="buttonStyle" class="f-poppins" id="button">
+  {{text}}
+</button>

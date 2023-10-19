@@ -6,6 +6,7 @@ import { AboutComponent } from './components-wip/about/about.component';
 import { ExperimentalComponent } from './components-active/experimental/experimental.component';
 import { About2Component } from './components-active/about2/about2.component';
 import { EnterpriseComponent } from './components-active/enterprise/enterprise.component';
+import { ButtonComponent } from './components-active/button/button.component';
 
 const routes: Routes = [
   { path: 'main', component: HomepageV2Component },

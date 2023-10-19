@@ -1,8 +1,31 @@
 @import "../../../styles.scss";
+$home-font-size: max(1.5vw, 2vh, 18px);
+#home {
+  font-size: $home-font-size;
+  line-height: $home-font-size;
+  width: calc($home-font-size * 2);
+  height: calc($home-font-size * 2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  opacity: 50%;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  position: absolute;
+  top: $home-font-size;
+  left: $home-font-size;
+  animation: fade-down-home 1s ease-out;
+  border: 2px solid black;
+}
+#home:hover {
+  transform: scale(1.2);
+  opacity: 100%;
+}
 #body {
   width: 100vw;
   height: 100vh;
-  background-color: lightgrey;
+  background-color: azure;
   padding: calc($home-font-size * 4) 2vw;
 }
 #sand-background {
@@ -18,28 +41,85 @@
   opacity: 0%;
 }
 #ent-container {
-  height: calc(100vh - calc($home-font-size * 4) - 3vh);
+  height: calc(100vh - calc($home-font-size * 8));
   width: calc(96vw - 4px);
   border-radius: 8px;
-  border: 2px solid grey;
+  border: 2px solid Silver;
   background-color: white;
   animation: fade-down 1s ease-out 0.5s;
 }
 #ent-toolbar {
   background-color: white;
   border-radius: 6px 6px 0 0;
-  border-bottom: 2px solid grey;
+  border-bottom: 2px solid Silver;
   height: 64px;
 }
 #ent-toolbar-title {
   margin-left: 8px;
-  font-size: 24px;
+  font-size: 20px;
 }
 #stick {
-  height: 28px;
+  height: 24px;
   width: 4px;
   background-color: DodgerBlue;
   border-radius: 2px;
+}
+#ent-content {
+  padding: 20px;
+  height: calc(100% - 104px);
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    opacity: 0;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: lightgrey;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: grey;
+  }
+}
+#ent-content-title {
+  font-family: 'Merriweather', serif;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+#ent-content-subtitle {
+  font-family: 'Merriweather', serif;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+#ent-content-text {
+  font-size: 16px;
+  width: min(660px, 100%);
+  margin-bottom: 24px;
+}
+#ent-button-grid {
+  width: min(800px, 100%);
+  margin-bottom: 24px;
+}
+#demo-row {
+  width: min(400px, 100%);
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.html-text {
+  height: fit-content;
+  font-size: 16px;
+  font-family: monospace;
+  background-color: azure;
+  padding: 12px 24px;
+  border: 1px solid lightgrey;
+  border-radius: 8px;
+  width: fit-content;
+  margin-bottom: 24px;
 }
 @keyframes fade-out {
   0% {
