@@ -1,8 +1,16 @@
 $logo-diameter: min(15vh, 15vw);
+$history-text-font-size: max(min(2.25vh, 3vw), 16px);
 .logo {
   height: $logo-diameter;
   width: $logo-diameter;
   border-radius: 50%;
+  font-size: calc($history-text-font-size * 1.2);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  display: flex;
+  font-weight: 500;
+  line-height: calc($history-text-font-size * 1.2);
 }
 // .dbs-logo {
 //   background-image: url("../../../assets/dbs-logo.jpg");
@@ -14,7 +22,6 @@ $logo-diameter: min(15vh, 15vw);
   align-items: center;
   margin: 2% 0 10vh 0;
 }
-$history-text-font-size: max(min(2.25vh, 3vw), 16px);
 $line-ball-dist: min(2vh, 2vw);
 $text-border-colour: black;
 .history-text {

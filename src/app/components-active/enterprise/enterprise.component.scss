@@ -1,27 +1,4 @@
 @import "../../../styles.scss";
-$home-font-size: max(1.5vw, 2vh, 18px);
-#home {
-  font-size: $home-font-size;
-  line-height: $home-font-size;
-  width: calc($home-font-size * 2);
-  height: calc($home-font-size * 2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  opacity: 50%;
-  cursor: pointer;
-  transition-duration: 0.2s;
-  position: absolute;
-  top: $home-font-size;
-  left: $home-font-size;
-  animation: fade-down-home 1s ease-out;
-  border: 2px solid black;
-}
-#home:hover {
-  transform: scale(1.2);
-  opacity: 100%;
-}
 #body {
   width: 100vw;
   height: 100vh;
@@ -66,7 +43,7 @@ $home-font-size: max(1.5vw, 2vh, 18px);
 }
 #ent-content {
   padding: 20px;
-  height: calc(100% - 104px);
+  height: calc(100% - 64px);
   overflow: auto;
 
   &::-webkit-scrollbar {

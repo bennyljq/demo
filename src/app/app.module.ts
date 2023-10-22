@@ -16,6 +16,11 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
 import { ButtonComponent } from './components-active/button/button.component';
 import {MatGridListModule} from '@angular/material/grid-list';
+import { TableComponent } from './components-active/table/table.component';
+import { TableModule } from 'primeng/table';
+import {MatIconModule} from '@angular/material/icon';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -28,7 +33,8 @@ import {MatGridListModule} from '@angular/material/grid-list';
     About2Component,
     History2Component,
     EnterpriseComponent,
-    ButtonComponent
+    ButtonComponent,
+    TableComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +42,11 @@ import {MatGridListModule} from '@angular/material/grid-list';
     BrowserAnimationsModule,
     MatToolbarModule,
     MatButtonModule,
-    MatGridListModule
+    MatGridListModule,
+    TableModule,
+    MatIconModule,
+    InputTextModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

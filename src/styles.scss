@@ -1,3 +1,5 @@
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
 // Font //
 .f-poppins {
   font-family: 'Poppins', sans-serif;
@@ -166,7 +168,7 @@ $circle-radius: max(100vw*1.5, 100vh*1.5);
 .hidden {
   display: none;
 }
-$home-font-size: max(2vw, 2vh, 18px);
+$home-font-size: max(1vw, 2vh, 18px);
 #home {
   font-size: $home-font-size;
   line-height: $home-font-size;

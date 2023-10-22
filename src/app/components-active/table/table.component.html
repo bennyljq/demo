@@ -1,0 +1,43 @@
+<p-table [value]="tableData" *ngIf="tableData.length > 0">
+  <ng-template pTemplate="header">
+    <tr>
+      <th *ngFor="let col of columns">{{col}}</th>
+      <th class="actions-col" style="height: unset;">Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-row>
+    <tr [ngStyle]="{
+      'background-color': row.colour
+    }">
+      <td *ngFor="let col of columns" 
+      [ngStyle]="{'min-width': col != 'ID' ? '120px' : 'unset'}">
+        <span *ngIf="!row.edit || col=='ID'">{{row[col]}}</span>
+        <input *ngIf="row.edit && col!='ID'" type="text" pInputText [(ngModel)]="row[col]"
+        style="width: 100%; margin-left: -16px; padding: 12px 16px;"/>
+      </td>
+      <td class="actions-col" style="background-color: white; 
+      display: flex; flex-direction: row; align-items: center; justify-content: center;"
+      [ngStyle]="{
+        'flex-direction': innerWidth < 800 ? 'column' : 'row',
+        'height': innerWidth < 800 ? '120px' : '80px'
+      }">
+        <button *ngIf="!editing" mat-mini-fab color="primary" title="Edit Row"
+        [ngStyle]="{'margin': innerWidth < 800 ? '0 0 8px 0' : '0 8px 0 0'}" (click)="edit(row)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button *ngIf="!editing" mat-mini-fab color="accent" title="Delete Row"
+        (click)="delete(row)">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button *ngIf="row.edit" mat-mini-fab color="primary" title="Save Row"
+        [ngStyle]="{'margin': innerWidth < 800 ? '0 0 8px 0' : '0 8px 0 0'}" (click)="save()">
+          <mat-icon>save</mat-icon>
+        </button>
+        <button *ngIf="row.edit" mat-mini-fab color="accent" title="Cancel Editing"
+        (click)="cancel()">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
