@@ -7,12 +7,14 @@ import { ExperimentalComponent } from './components-active/experimental/experime
 import { About2Component } from './components-active/about2/about2.component';
 import { EnterpriseComponent } from './components-active/enterprise/enterprise.component';
 import { ButtonComponent } from './components-active/button/button.component';
+import { ContactComponent } from './components-active/contact/contact.component';
 
 const routes: Routes = [
   { path: 'main', component: HomepageV2Component },
   { path: 'about', component: About2Component },
   { path: 'experimental', component: ExperimentalComponent },
   { path: 'enterprise', component: EnterpriseComponent },
+  { path: 'contact', component: ContactComponent },
   { path: '', redirectTo: '/main', pathMatch: 'full' }, // redirect to `homepage`
   // { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page
 ];

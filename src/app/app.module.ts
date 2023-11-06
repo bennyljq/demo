@@ -21,6 +21,9 @@ import { TableModule } from 'primeng/table';
 import {MatIconModule} from '@angular/material/icon';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
+import { ContactComponent } from './components-active/contact/contact.component';
+import { ContactContentsComponent } from './components-active/contact-contents/contact-contents.component';
+import { PhysicsHomeComponent } from './physics/physics-home/physics-home.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +37,10 @@ import { FormsModule } from '@angular/forms';
     History2Component,
     EnterpriseComponent,
     ButtonComponent,
-    TableComponent
+    TableComponent,
+    ContactComponent,
+    ContactContentsComponent,
+    PhysicsHomeComponent
   ],
   imports: [
     BrowserModule,
