@@ -15,28 +15,13 @@ export class EnterpriseComponent implements OnInit {
   numCols: any;
 
   ngOnInit(): void {
-    this.hideElem("ent-container", 1)
+    hideElem("ent-container", 1)
     this.innerWidth = window.innerWidth;
     this.setNumCols()
   }
   
   async goHome() {
     this.router.navigate(['/main']);
-  }
-
-  async hideElem(id: string, delay: number, endOpacity?: string) { // delay in seconds
-    try {
-      let elem = document.getElementById(id) as HTMLElement
-      elem.style.opacity = "0"
-      await lastValueFrom(timer(delay*1000))
-      elem.style.opacity = "100%"
-      if (endOpacity) {
-        elem.style.opacity = endOpacity
-      }
-    } catch(error) {
-      console.log("hideElem error:", error)
-      console.log("ID", id)
-    }
   }
 
   @HostListener('window:resize', ['$event'])
@@ -72,8 +57,19 @@ export class EnterpriseComponent implements OnInit {
     `<app-button text="Hello There" type="importantAlt"></app-button>`
   ]
   buttonTypeHtml = this.buttonTypes[0]
+}
 
-
-
-
+export async function hideElem(id: string, delay: number, endOpacity?: string) { // delay in seconds
+  try {
+    let elem = document.getElementById(id) as HTMLElement
+    elem.style.opacity = "0"
+    await lastValueFrom(timer(delay*1000))
+    elem.style.opacity = "100%"
+    if (endOpacity) {
+      elem.style.opacity = endOpacity
+    }
+  } catch(error) {
+    console.log("hideElem error:", error)
+    console.log("ID", id)
+  }
 }

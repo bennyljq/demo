@@ -1,0 +1,36 @@
+@import "../physics-styles.scss";
+.phy-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.phy-toolbar {
+  background-color: var(--bg-color) !important;
+  height: 64px;
+}
+.phy-menu-button {
+  color: var(--text-color);
+}
+.phy-dark-mode {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: var(--switch-bg-color);
+}
+.phy-chapter {
+  font-size: 24px;
+  line-height: 24px;
+  color: var(--text-color);
+}
+.phy-menu-radio {
+  margin: 0 !important;
+  font-weight: bold;
+}
+.phy-menu-exit {
+  margin: 0 !important;
+  transform: rotate(180deg);
+  color: Firebrick !important;
+}

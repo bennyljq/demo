@@ -1,0 +1,43 @@
+@import "../physics-styles.scss";
+.switch-touch-target {
+  padding: 12px 32px 12px 36px;
+  cursor: pointer;
+  width: fit-content;
+  z-index: 2;
+  position: relative;
+}
+.switch-container {
+  width: 36px;
+  height: 20px;
+  padding: 3px;
+  border-radius: 10px;
+  background-color: var(--switch-bg-color);
+}
+.switch-ball {
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background-color: var(--bg-color);
+}
+.switch-ball-active {
+  transform: translateX(16px);
+  animation: toggle .5s;
+}
+.switch-ball-inactive {
+  transform: translateX(0);
+  animation: toggle2 .5s;
+}
+@keyframes toggle {
+  from {
+    transform: translateX(0);
+  } to {
+    transform: translateX(16px);
+  }
+}
+@keyframes toggle2 {
+  from {
+    transform: translateX(16px);
+  } to {
+    transform: translateX(0);
+  }
+}

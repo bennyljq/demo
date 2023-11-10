@@ -1,0 +1,15 @@
+$phy-content-size: min(calc(100vw - 32px), calc(100vh - 32px - 64px), 800px);
+* {
+  --bg-color: Lavender; 
+  --text-color: black;
+  --switch-bg-color: MidnightBlue;
+  --content-bg: white;
+  --dot-color: darkgrey;
+}
+.dark-theme {
+  --bg-color: rgb(7, 0, 28); 
+  --text-color: Gainsboro; 
+  --switch-bg-color: white;
+  --content-bg: black;
+  --dot-color: grey;
+}

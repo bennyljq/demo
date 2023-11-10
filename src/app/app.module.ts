@@ -24,6 +24,9 @@ import { FormsModule } from '@angular/forms';
 import { ContactComponent } from './components-active/contact/contact.component';
 import { ContactContentsComponent } from './components-active/contact-contents/contact-contents.component';
 import { PhysicsHomeComponent } from './physics/physics-home/physics-home.component';
+import { SwitchComponent } from './physics/switch/switch.component';
+import {MatMenuModule} from '@angular/material/menu';
+import { PhysicsIntroComponent } from './physics/physics-intro/physics-intro.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +43,9 @@ import { PhysicsHomeComponent } from './physics/physics-home/physics-home.compon
     TableComponent,
     ContactComponent,
     ContactContentsComponent,
-    PhysicsHomeComponent
+    PhysicsHomeComponent,
+    SwitchComponent,
+    PhysicsIntroComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +57,8 @@ import { PhysicsHomeComponent } from './physics/physics-home/physics-home.compon
     TableModule,
     MatIconModule,
     InputTextModule,
-    FormsModule
+    FormsModule,
+    MatMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]

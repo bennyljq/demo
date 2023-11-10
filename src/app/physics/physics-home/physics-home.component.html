@@ -1,1 +1,33 @@
-<p>physics-home works!</p>
+<div class="phy-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+  <mat-toolbar class="phy-toolbar" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <button class="phy-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}" mat-icon-button [matMenuTriggerFor]="phyMenu">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <div class="spacer"></div>
+    <div class="phy-dark-mode" [ngClass]="{'dark-theme': themeService.isDarkTheme}" [title]="themeService.isDarkTheme ? 'Toggle Light Mode' : 'Toggle Dark Mode' ">
+      <mat-icon style="margin-right: -28px;">wb_sunny</mat-icon>
+      <app-switch (switchEmitter)="themeService.isDarkTheme = $event"></app-switch>
+      <mat-icon style="margin-left: -28px; transform: rotate(135deg) translateY(-2px);">brightness_3</mat-icon>
+    </div>
+  </mat-toolbar>
+  <div class="phy-chapter f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    {{selectedChapter}}
+  </div>
+    <app-physics-intro *ngIf="selectedChapter=='Introduction'"></app-physics-intro>
+</div>
+<mat-menu #phyMenu="matMenu">
+  <button *ngFor="let chapter of chapters" mat-menu-item (click)="selectedChapter=chapter">
+    <div style="display: flex; width: 170px;" [ngStyle]="{'font-weight': chapter==selectedChapter ? '500' : '400'}" class="f-poppins">
+      {{chapter}}
+      <div class="spacer"></div>
+      <mat-icon class="phy-menu-radio" *ngIf="chapter==selectedChapter">chevron_left</mat-icon>
+    </div>
+  </button>
+  <button mat-menu-item routerLink="/main">
+    <div style="display: flex; width: 170px; color: Firebrick;" class="f-poppins">
+      Exit Course
+      <div class="spacer"></div>
+      <mat-icon class="phy-menu-exit">exit_to_app</mat-icon>
+    </div>
+  </button>
+</mat-menu>

@@ -1,0 +1,67 @@
+<div class="phy-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+  <ng-container [ngTemplateOutlet]="page1" *ngIf="selectedPageIndex == 0"></ng-container>
+  <ng-container [ngTemplateOutlet]="page2" *ngIf="selectedPageIndex == 1"></ng-container>
+  <ng-container [ngTemplateOutlet]="page3" *ngIf="selectedPageIndex == 2"></ng-container>
+  <div class="phy-dot-container">
+    <div class="phy-dot" *ngFor="let page of pagesArray; let i = index"
+    (click)="selectedPageIndex = i"
+    [ngClass]="{
+      'dark-theme': themeService.isDarkTheme,
+      'phy-dot-active': i == selectedPageIndex
+    }"></div>
+  </div>
+</div>
+<div class="phy-button-container">
+  <button mat-stroked-button class="phy-button f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="prevPage()">
+    Back
+  </button>
+  <div class="spacer"></div>
+  <button mat-stroked-button class="phy-button f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="nextPage()">
+    Next
+  </button>
+</div>
+
+<ng-template #page1>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-title f-merri">
+      A Primer in Kinematics
+    </div>
+    <div class="phy-intro-desc">
+      Kinematics is a branch of physics that studies the motion of bodies.
+      <br><br>
+      An apple falling from a tree, a satellite orbiting the Earth, an Olympic sprinter running the 100m dash - these are all bodies in motion whose geometries can be described and predicted with kinematics. Thus, kinematics is often referred to as the "geometry of motion".
+      <br><br>
+      In this lesson, selected fundamental topics in kinematics will be taught.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page2>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-title f-merri">
+      Did you ever hear the tragedy of Darth Plagueis The Wise?
+    </div>
+    <div class="phy-intro-desc">
+      I thought not. It's not a story the Jedi would tell you. It's a Sith legend. 
+      <br><br>
+      Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life… He had such a knowledge of the dark side that he could even keep the ones he cared about from dying. The dark side of the Force is a pathway to many abilities some consider to be unnatural.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page3>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-title f-merri">
+      He became so powerful… 
+    </div>
+    <div class="phy-intro-desc">
+      The only thing he was afraid of was losing his power, which eventually, of course, he did. 
+      <br><br>
+      Unfortunately, he taught his apprentice everything he knew, then his apprentice killed him in his sleep. Ironic. He could save others from death, but not himself.
+    </div>
+  </div>
+</ng-template>

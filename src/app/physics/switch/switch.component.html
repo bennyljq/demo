@@ -1,0 +1,10 @@
+<div class="switch-touch-target" (click)="toggle()">
+  <div class="switch-container" [ngClass]="{
+    'dark-theme': themeService.isDarkTheme}">
+    <div class="switch-ball" [ngClass]="{
+      'dark-theme': themeService.isDarkTheme,
+      'switch-ball-active': active && firstClick,
+      'switch-ball-inactive': !active && firstClick
+    }"></div>
+  </div>
+</div>
