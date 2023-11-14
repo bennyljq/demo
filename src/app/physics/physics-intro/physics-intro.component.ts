@@ -12,9 +12,9 @@ export class PhysicsIntroComponent {
     public themeService: ThemeService
   ) {}
 
-  numPages = 3;
+  numPages = 4;
   pagesArray = new Array(this.numPages)
-  selectedPageIndex = 0
+  selectedPageIndex = 3
 
   prevPage() {
     this.selectedPageIndex = (this.selectedPageIndex + this.numPages - 1) % this.numPages

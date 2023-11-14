@@ -2,6 +2,7 @@
   <ng-container [ngTemplateOutlet]="page1" *ngIf="selectedPageIndex == 0"></ng-container>
   <ng-container [ngTemplateOutlet]="page2" *ngIf="selectedPageIndex == 1"></ng-container>
   <ng-container [ngTemplateOutlet]="page3" *ngIf="selectedPageIndex == 2"></ng-container>
+  <ng-container [ngTemplateOutlet]="page4" *ngIf="selectedPageIndex == 3"></ng-container>
   <div class="phy-dot-container">
     <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
     (click)="selectedPageIndex = i"
@@ -43,6 +44,53 @@
 <ng-template #page2>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-title f-merri">
+      Everyday Electricity
+    </div>
+    <div class="phy-intro-desc">
+      Electricity is quite literally coursing through your hands right now (if you're reading this on a mobile device). 
+      <br><br>
+      Electricity powers our modern world, yet is usually taken for granted. It is often only in its absence that we truly appreciate its necessity and the creature comforts it provides.
+      <br><br>
+      Given the pervasiveness of electricity, being knowledgeable with how electricity is quantified and applied in our everyday lives is greatly beneficial to everyone.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page3>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-title f-merri">
+      Everyday Electricity
+    </div>
+    <div class="phy-intro-desc">
+      In this lesson, you will learn:
+      <ul>
+        <li>The definitions and applications of energy and power quantifiers such as Watt (W) and Kilowatt-Hour (kWh)</li>
+        <li>How electrical energy is consumed (and sometimes stored) by your devices and appliances</li>
+        <li>How electrical energy is delivered from the grid to your home</li>
+        <li>How to read and understand your power utility bills</li>
+      </ul>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page4>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-title f-merri">
+      Everyday Electricity
+    </div>
+    <div class="phy-intro-desc">
+      Fret not, this lesson on "Everyday Electricity" assumes no prior knowledge, other than daily interaction with electricity such as charging and using mobile devices, or using electrical appliances in the home.
+      <br><br>
+      To guide us through this lesson, we will be following Dionne as she gets ready for work in the morning.
+    </div>
+    <img class="phy-kettle" *ngIf="!themeService.isDarkTheme" src="../../../assets/kettle.jpg">
+    <img class="phy-kettle" *ngIf="themeService.isDarkTheme" src="../../../assets/kettle_dark.jpg">
+  </div>
+</ng-template>
+
+<ng-template #test>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-title f-merri">
       Did you ever hear the tragedy of Darth Plagueis The Wise?
     </div>
     <div class="phy-intro-desc">
@@ -53,7 +101,7 @@
   </div>
 </ng-template>
 
-<ng-template #page3>
+<ng-template #test>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-title f-merri">
       He became so powerful… 
