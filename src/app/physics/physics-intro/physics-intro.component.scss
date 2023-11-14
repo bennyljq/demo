@@ -101,6 +101,13 @@ li:not(:last-child) {
   margin-top: calc($phy-content-width * 0.03);
   width: calc($phy-content-width * 0.2);
   height: calc($phy-content-width * 0.2);
+  background-size: cover;
+}
+.phy-kettle-light {
+  background-image: url("../../../assets/kettle.jpg");
+}
+.phy-kettle-dark {
+  background-image: url("../../../assets/kettle_dark.jpg");
 }
 .phy-button-container .mat-icon {
   font-size: $phy-button-font-size !important;

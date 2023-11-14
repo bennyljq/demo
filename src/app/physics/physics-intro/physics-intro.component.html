@@ -76,8 +76,8 @@
       <br><br>
       In the first chapter "Watt is Love", we will be following Dionne's electrifying journey as she prepares for school in the morning.
     </div>
-    <img class="phy-kettle" *ngIf="!themeService.isDarkTheme" src="../../../assets/kettle.jpg">
-    <img class="phy-kettle" *ngIf="themeService.isDarkTheme" src="../../../assets/kettle_dark.jpg">
+    <div class="phy-kettle phy-kettle-light" *ngIf="!themeService.isDarkTheme"></div>
+    <div class="phy-kettle phy-kettle-dark" *ngIf="themeService.isDarkTheme"></div>
   </div>
 </ng-template>
 
