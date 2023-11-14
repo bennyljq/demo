@@ -61,8 +61,17 @@ $phy-dot-height: max(12px, $phy-content-size*0.02);
   font-size: calc($phy-content-size * 0.07);
   line-height: 1.2
 }
+$phy-intro-desc-font-size: max(14px, calc($phy-content-size * 0.04));
 .phy-intro-desc {
-  font-size: max(14px, calc($phy-content-size * 0.03));
+  font-size: $phy-intro-desc-font-size;
   line-height: 1.2;
   margin-top: 24px;
+}
+li:not(:last-child) {
+  margin-bottom: calc($phy-intro-desc-font-size * 0.5);
+}
+.phy-kettle {
+  margin-top: calc($phy-content-size * 0.03);
+  width: calc($phy-content-size * 0.2);
+  height: calc($phy-content-size * 0.2);
 }
