@@ -1,13 +1,13 @@
 @import "../physics-styles.scss";
 .phy-content-container {
   background-color: var(--content-bg);
-  height: $phy-content-size;
-  width: $phy-content-size;
+  height: $phy-content-height;
+  width: $phy-content-width;
   margin: 16px;
-  border-radius: calc($phy-content-size * 0.02);
+  border-radius: calc($phy-content-width * 0.02);
   border: 3px solid var(--text-color);
 }
-$phy-dot-height: max(12px, $phy-content-size*0.02);
+$phy-dot-height: max(12px, $phy-content-width*0.02);
 .phy-dot-container {
   height: calc($phy-dot-height*2);
   display: flex;
@@ -15,20 +15,27 @@ $phy-dot-height: max(12px, $phy-content-size*0.02);
   align-items: center;
   justify-content: center;
 }
+.phy-dot-touch-target {
+  height: calc($phy-dot-height*2);
+  width: calc($phy-dot-height*2);
+  padding: calc($phy-dot-height*0.5);
+  cursor: pointer;
+}
+.phy-dot-touch-target:hover {
+  transform: scale(1.2);
+}
+.phy-dot-touch-target-active {
+  transform: scale(1.2);
+  cursor: context-menu;
+}
 .phy-dot {
   height: $phy-dot-height;
   width: $phy-dot-height;
   border-radius: 50%;
   background-color: var(--dot-color);
-  margin: calc($phy-dot-height/2);
-  cursor: pointer;
   transition-duration: 0.2s;
 }
-.phy-dot:hover {
-  transform: scale(1.2);
-}
 .phy-dot-active {
-  transform: scale(1.2);
   background-color: var(--text-color);
   cursor: context-menu;
 }
@@ -39,30 +46,30 @@ $phy-dot-height: max(12px, $phy-content-size*0.02);
   align-items: center;
 }
 .phy-button {
-  font-size: max(16px, calc($phy-content-size * 0.04));
-  padding: 4% 5%;
+  font-size: max(16px, calc($phy-content-width * 0.04));
+  padding: 5%;
   letter-spacing: 0;
-  background-color: var(--content-bg) !important;
-  color: var(--text-color) !important; 
-  border: 3px solid var(--text-color) !important;
-  border-radius: calc($phy-content-size * 0.02);
+  background-color: var(--text-color) !important;
+  color: var(--content-bg) !important; 
+  // border: 3px solid var(--text-color) !important;
+  border-radius: calc($phy-content-width * 0.02);
 }
 .phy-content {
-  height: calc($phy-content-size - $phy-dot-height*2 - 6px);
-  width: calc($phy-content-size - 6px);
+  height: calc($phy-content-height - $phy-dot-height*2 - 6px);
+  width: calc($phy-content-width - 6px);
   color: var(--text-color);
-  padding: calc($phy-content-size * 0.05);
+  padding: calc($phy-content-width * 0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .phy-intro-title {
   font-weight: 500;
-  font-size: calc($phy-content-size * 0.07);
+  font-size: calc($phy-content-width * 0.07);
   line-height: 1.2
 }
 .phy-intro-desc {
-  font-size: max(14px, calc($phy-content-size * 0.03));
+  font-size: max(14px, calc($phy-content-width * 0.03));
   line-height: 1.2;
   margin-top: 24px;
 }

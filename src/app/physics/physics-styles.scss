@@ -1,4 +1,5 @@
-$phy-content-size: min(calc(100vw - 32px), calc(100vh - 32px - 64px), 800px);
+$phy-content-width: min(calc(100vw - 32px), calc((100vh - 240px)/1.1), 800px);
+$phy-content-height: calc($phy-content-width*1.1);
 * {
   --bg-color: Lavender; 
   --text-color: black;

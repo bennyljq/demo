@@ -3,22 +3,22 @@
   <ng-container [ngTemplateOutlet]="page2" *ngIf="selectedPageIndex == 1"></ng-container>
   <ng-container [ngTemplateOutlet]="page3" *ngIf="selectedPageIndex == 2"></ng-container>
   <div class="phy-dot-container">
-    <div class="phy-dot" *ngFor="let page of pagesArray; let i = index"
+    <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
     (click)="selectedPageIndex = i"
-    [ngClass]="{
-      'dark-theme': themeService.isDarkTheme,
-      'phy-dot-active': i == selectedPageIndex
-    }"></div>
+    [ngClass]="{'phy-dot-touch-target-active': i == selectedPageIndex}">
+      <div class="phy-dot"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme, 'phy-dot-active': i == selectedPageIndex}"></div>
+    </div>
   </div>
 </div>
 <div class="phy-button-container">
-  <button mat-stroked-button class="phy-button f-poppins" 
+  <button mat-flat-button class="phy-button f-poppins" 
   [ngClass]="{'dark-theme': themeService.isDarkTheme}"
   (click)="prevPage()">
     Back
   </button>
   <div class="spacer"></div>
-  <button mat-stroked-button class="phy-button f-poppins" 
+  <button mat-flat-button class="phy-button f-poppins" 
   [ngClass]="{'dark-theme': themeService.isDarkTheme}"
   (click)="nextPage()">
     Next
