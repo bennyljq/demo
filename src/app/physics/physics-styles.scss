@@ -1,5 +1,10 @@
-$phy-content-width: min(calc(100vw - 32px), calc((100vh - 240px)/1.1), 800px);
-$phy-content-height: calc($phy-content-width*1.1);
+$height-width-ratio: 1.1;
+$phy-content-width: min(
+  calc(100vw - 32px), 
+  calc((100vh - 240px)/$height-width-ratio), 
+  800px
+);
+$phy-content-height: calc($phy-content-width*$height-width-ratio);
 * {
   --bg-color: Lavender; 
   --text-color: black;

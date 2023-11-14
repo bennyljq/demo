@@ -1,11 +1,17 @@
 <div class="phy-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-  <ng-container [ngTemplateOutlet]="page1" *ngIf="selectedPageIndex == 0"></ng-container>
-  <ng-container [ngTemplateOutlet]="page2" *ngIf="selectedPageIndex == 1"></ng-container>
-  <ng-container [ngTemplateOutlet]="page3" *ngIf="selectedPageIndex == 2"></ng-container>
-  <ng-container [ngTemplateOutlet]="page4" *ngIf="selectedPageIndex == 3"></ng-container>
+  <div class="phy-intro-title f-merri" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    Everyday Electricity
+  </div>
+  <div class="phy-content-subcontainer" [ngStyle]="{
+    'transform': 'translateX(calc(-33.3333%*' + selectedPageIndex + '))'
+    }">
+    <ng-container [ngTemplateOutlet]="page1"></ng-container>
+    <ng-container [ngTemplateOutlet]="page2"></ng-container>
+    <ng-container [ngTemplateOutlet]="page3"></ng-container>
+  </div>
   <div class="phy-dot-container">
     <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
-    (click)="selectedPageIndex = i"
+    (click)="selectedPageIndex = i; setButtons()"
     [ngClass]="{'phy-dot-touch-target-active': i == selectedPageIndex}">
       <div class="phy-dot"
       [ngClass]="{'dark-theme': themeService.isDarkTheme, 'phy-dot-active': i == selectedPageIndex}"></div>
@@ -13,20 +19,69 @@
   </div>
 </div>
 <div class="phy-button-container">
-  <button mat-flat-button class="phy-button f-poppins" 
+  <button mat-stroked-button *ngIf="!hideBack"
+  class="phy-button phy-button-stroked f-poppins" 
   [ngClass]="{'dark-theme': themeService.isDarkTheme}"
   (click)="prevPage()">
     Back
   </button>
   <div class="spacer"></div>
-  <button mat-flat-button class="phy-button f-poppins" 
+  <button mat-flat-button *ngIf="!hideNext"
+  class="phy-button phy-button-flat f-poppins" 
   [ngClass]="{'dark-theme': themeService.isDarkTheme}"
   (click)="nextPage()">
     Next
   </button>
+  <button mat-flat-button *ngIf="selectedPageIndex == this.numPages-1"
+  class="phy-button phy-button-flat f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="nextChapter()">
+    <div style="display: flex; align-items: center;">
+      Watt is Love &nbsp;
+      <mat-icon>arrow_forward</mat-icon>
+    </div>
+  </button>
 </div>
 
 <ng-template #page1>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      If you're reading this on a mobile device, electricity is quite literally coursing through your hands right now. 
+      <br><br>
+      Electricity is so integral in powering our modern world, yet it is usually taken for granted. Only in its absence do we truly appreciate its necessity and the creature comforts it provides.
+      <br><br>
+      Given the pervasiveness of electricity, being knowledgeable with how electricity is quantified and applied in our everyday lives is deeply beneficial.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page2>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      In this lesson, you will learn:
+      <ul>
+        <li>The definitions and applications of energy and power quantifiers such as <strong>Watt (W)</strong> and <strong>Kilowatt-Hour (kWh)</strong></li>
+        <li>How electrical energy is consumed (and sometimes stored) by your devices and appliances</li>
+        <li>How electrical energy is delivered from the grid to your home</li>
+        <li>How to read and understand your power utility bills</li>
+      </ul>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page3>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Fret not, for this lesson on "Everyday Electricity" assumes no prior knowledge, other than basic familiarity with electricity such as charging and using mobile devices, or using electrical appliances in the home.
+      <br><br>
+      In the first chapter "Watt is Love", we will be following Dionne's electrifying journey as she prepares for school in the morning.
+    </div>
+    <img class="phy-kettle" *ngIf="!themeService.isDarkTheme" src="../../../assets/kettle.jpg">
+    <img class="phy-kettle" *ngIf="themeService.isDarkTheme" src="../../../assets/kettle_dark.jpg">
+  </div>
+</ng-template>
+
+<ng-template #archive>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-title f-merri">
       A Primer in Kinematics
@@ -41,54 +96,7 @@
   </div>
 </ng-template>
 
-<ng-template #page2>
-  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-    <div class="phy-intro-title f-merri">
-      Everyday Electricity
-    </div>
-    <div class="phy-intro-desc">
-      Electricity is quite literally coursing through your hands right now (if you're reading this on a mobile device). 
-      <br><br>
-      Electricity powers our modern world, yet is usually taken for granted. It is often only in its absence that we truly appreciate its necessity and the creature comforts it provides.
-      <br><br>
-      Given the pervasiveness of electricity, being knowledgeable with how electricity is quantified and applied in our everyday lives is greatly beneficial to everyone.
-    </div>
-  </div>
-</ng-template>
-
-<ng-template #page3>
-  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-    <div class="phy-intro-title f-merri">
-      Everyday Electricity
-    </div>
-    <div class="phy-intro-desc">
-      In this lesson, you will learn:
-      <ul>
-        <li>The definitions and applications of energy and power quantifiers such as Watt (W) and Kilowatt-Hour (kWh)</li>
-        <li>How electrical energy is consumed (and sometimes stored) by your devices and appliances</li>
-        <li>How electrical energy is delivered from the grid to your home</li>
-        <li>How to read and understand your power utility bills</li>
-      </ul>
-    </div>
-  </div>
-</ng-template>
-
-<ng-template #page4>
-  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-    <div class="phy-intro-title f-merri">
-      Everyday Electricity
-    </div>
-    <div class="phy-intro-desc">
-      Fret not, this lesson on "Everyday Electricity" assumes no prior knowledge, other than daily interaction with electricity such as charging and using mobile devices, or using electrical appliances in the home.
-      <br><br>
-      To guide us through this lesson, we will be following Dionne as she gets ready for work in the morning.
-    </div>
-    <img class="phy-kettle" *ngIf="!themeService.isDarkTheme" src="../../../assets/kettle.jpg">
-    <img class="phy-kettle" *ngIf="themeService.isDarkTheme" src="../../../assets/kettle_dark.jpg">
-  </div>
-</ng-template>
-
-<ng-template #test>
+<ng-template #archive>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-title f-merri">
       Did you ever hear the tragedy of Darth Plagueis The Wise?
@@ -101,7 +109,7 @@
   </div>
 </ng-template>
 
-<ng-template #test>
+<ng-template #archive>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-title f-merri">
       He became so powerful… 

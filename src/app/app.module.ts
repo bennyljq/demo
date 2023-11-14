@@ -27,6 +27,7 @@ import { PhysicsHomeComponent } from './physics/physics-home/physics-home.compon
 import { SwitchComponent } from './physics/switch/switch.component';
 import {MatMenuModule} from '@angular/material/menu';
 import { PhysicsIntroComponent } from './physics/physics-intro/physics-intro.component';
+import { PhysicsWattComponent } from './physics/physics-watt/physics-watt.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { PhysicsIntroComponent } from './physics/physics-intro/physics-intro.com
     ContactContentsComponent,
     PhysicsHomeComponent,
     SwitchComponent,
-    PhysicsIntroComponent
+    PhysicsIntroComponent,
+    PhysicsWattComponent
   ],
   imports: [
     BrowserModule,

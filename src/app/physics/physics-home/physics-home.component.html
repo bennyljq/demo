@@ -10,21 +10,23 @@
       <mat-icon style="margin-left: -28px; transform: rotate(135deg) translateY(-2px);">brightness_3</mat-icon>
     </div>
   </mat-toolbar>
-  <div class="phy-chapter f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-    {{selectedChapter}}
-  </div>
-    <app-physics-intro *ngIf="selectedChapter=='Introduction'"></app-physics-intro>
+  <!-- <div class="phy-chapter f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    {{chapters[selectedIndex]}}
+  </div> -->
+    <app-physics-intro *ngIf="selectedIndex==0" (selectChapter)="onChapterSelect($event)" [selectedPageIndex]="childPageIndex"></app-physics-intro>
+    <app-physics-watt *ngIf="selectedIndex==1" (selectChapter)="onChapterSelect($event)" [selectedPageIndex]="childPageIndex"></app-physics-watt>
 </div>
 <mat-menu #phyMenu="matMenu">
-  <button *ngFor="let chapter of chapters" mat-menu-item (click)="selectedChapter=chapter">
-    <div style="display: flex; width: 170px;" [ngStyle]="{'font-weight': chapter==selectedChapter ? '500' : '400'}" class="f-poppins">
+  <button *ngFor="let chapter of chapters; let i = index" mat-menu-item (click)="selectedIndex=i">
+    <div style="display: flex; width: 200px;" [ngStyle]="{'font-weight': i==selectedIndex ? '500' : '400'}" class="f-poppins">
       {{chapter}}
       <div class="spacer"></div>
-      <mat-icon class="phy-menu-radio" *ngIf="chapter==selectedChapter">chevron_left</mat-icon>
+      <!-- <mat-icon class="phy-menu-radio" *ngIf="i==selectedIndex">chevron_left</mat-icon> -->
+      <mat-icon class="phy-menu-radio" *ngIf="i==selectedIndex">lightbulb</mat-icon>
     </div>
   </button>
   <button mat-menu-item routerLink="/main">
-    <div style="display: flex; width: 170px; color: Firebrick;" class="f-poppins">
+    <div style="display: flex; width: 200px; color: Firebrick;" class="f-poppins">
       Exit Course
       <div class="spacer"></div>
       <mat-icon class="phy-menu-exit">exit_to_app</mat-icon>

@@ -14,16 +14,28 @@ export class PhysicsHomeComponent implements OnInit {
 
   chapters = [
     "Introduction",
-    "Displacement"
+    "Watt is Love",
+    "Baby don't Hertz me"
   ]
-  selectedChapter = this.chapters[0]
+  selectedIndex = 0
+  childPageIndex = 0
 
   ngOnInit(): void {
   }
 
   ngAfterViewInit() {
-    let x = document.getElementsByClassName("switch-touch-target")[0] as HTMLElement
-    x.click()
+    // let x = document.getElementsByClassName("switch-touch-target")[0] as HTMLElement
+    // x.click()
+  }
+
+  onChapterSelect(event: any) {
+    if (event == 'next') {
+      this.childPageIndex = 0
+      this.selectedIndex += 1
+    } else if (event == 'previous') {
+      this.childPageIndex = -1
+      this.selectedIndex -= 1
+    }
   }
 
 }

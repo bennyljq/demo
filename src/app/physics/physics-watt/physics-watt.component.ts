@@ -2,11 +2,11 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ThemeService } from '../theme.service';
 
 @Component({
-  selector: 'app-physics-intro',
-  templateUrl: './physics-intro.component.html',
-  styleUrls: ['./physics-intro.component.scss']
+  selector: 'app-physics-watt',
+  templateUrl: './physics-watt.component.html',
+  styleUrls: ['./physics-watt.component.scss', '../physics-intro/physics-intro.component.scss']
 })
-export class PhysicsIntroComponent {
+export class PhysicsWattComponent {
 
   constructor (
     public themeService: ThemeService
@@ -14,7 +14,7 @@ export class PhysicsIntroComponent {
 
   @Output() selectChapter = new EventEmitter;
   @Input() selectedPageIndex = 0
-  numPages = 3;
+  numPages = 2;
   pagesArray = new Array(this.numPages)
   hideBack = true
   hideNext = false
@@ -32,6 +32,9 @@ export class PhysicsIntroComponent {
   nextPage() {
     this.selectedPageIndex = (this.selectedPageIndex + 1) % this.numPages
     this.setButtons()
+  }
+  prevChapter() {
+    this.selectChapter.emit('previous')
   }
   nextChapter() {
     this.selectChapter.emit('next')
@@ -52,5 +55,4 @@ export class PhysicsIntroComponent {
         break
     }
   }
-  
 }

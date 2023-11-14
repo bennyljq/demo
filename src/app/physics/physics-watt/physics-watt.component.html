@@ -1,0 +1,71 @@
+<div class="phy-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+  <div class="phy-intro-title f-merri" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    Watt is Love
+  </div>
+  <div class="phy-content-subcontainer" [ngStyle]="{
+    'transform': 'translateX(calc(-50%*' + selectedPageIndex + '))'
+    }">
+    <ng-container [ngTemplateOutlet]="page1"></ng-container>
+    <ng-container [ngTemplateOutlet]="page2"></ng-container>
+  </div>
+  <div class="phy-dot-container">
+    <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
+    (click)="selectedPageIndex = i; setButtons()"
+    [ngClass]="{'phy-dot-touch-target-active': i == selectedPageIndex}">
+      <div class="phy-dot"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme, 'phy-dot-active': i == selectedPageIndex}"></div>
+    </div>
+  </div>
+</div>
+<div class="phy-button-container">
+  <button mat-stroked-button *ngIf="selectedPageIndex == 0"
+  class="phy-button phy-button-stroked f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="prevChapter()">
+    <mat-icon>arrow_back</mat-icon>
+    &nbsp; Introduction
+  </button>
+  <button mat-stroked-button *ngIf="!hideBack"
+  class="phy-button phy-button-stroked f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="prevPage()">
+    Back
+  </button>
+  <div class="spacer"></div>
+  <button mat-flat-button *ngIf="!hideNext"
+  class="phy-button phy-button-flat f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="nextPage()">
+    Next
+  </button>
+  <button mat-flat-button *ngIf="selectedPageIndex == this.numPages-1"
+  class="phy-button phy-button-flat f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div style="display: flex; align-items: center;">
+      Baby don't Hertz me &nbsp;
+      <mat-icon>arrow_forward</mat-icon>
+    </div>
+  </button>
+</div>
+
+<ng-template #page1>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Did you ever hear the tragedy of Darth Plagueis The Wise?
+      <br><br>
+      I thought not. It's not a story the Jedi would tell you. It's a Sith legend. 
+      <br><br>
+      Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life… He had such a knowledge of the dark side that he could even keep the ones he cared about from dying. The dark side of the Force is a pathway to many abilities some consider to be unnatural.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page2>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      He became so powerful… the only thing he was afraid of was losing his power, which eventually, of course, he did. 
+      <br><br>
+      Unfortunately, he taught his apprentice everything he knew, then his apprentice killed him in his sleep. Ironic. He could save others from death, but not himself.
+    </div>
+  </div>
+</ng-template>

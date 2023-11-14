@@ -5,7 +5,14 @@
   width: $phy-content-width;
   margin: 16px;
   border-radius: calc($phy-content-width * 0.02);
-  border: 3px solid var(--text-color);
+  border: 2px solid var(--text-color);
+  overflow: hidden;
+}
+.phy-content-subcontainer {
+    display: flex;
+    flex-direction: row;
+    width: max-content;
+    transition-duration: 0.5s;
 }
 $phy-dot-height: max(12px, $phy-content-width*0.02);
 .phy-dot-container {
@@ -45,40 +52,77 @@ $phy-dot-height: max(12px, $phy-content-width*0.02);
   flex-direction: row;
   align-items: center;
 }
+$phy-button-font-size: max(16px, calc($phy-content-width * 0.04));
 .phy-button {
-  font-size: max(16px, calc($phy-content-width * 0.04));
+  font-size: $phy-button-font-size;
   padding: 5%;
   letter-spacing: 0;
-  background-color: var(--text-color) !important;
-  color: var(--content-bg) !important; 
-  // border: 3px solid var(--text-color) !important;
   border-radius: calc($phy-content-width * 0.02);
 }
+.phy-button-flat {
+  background-color: var(--text-color) !important;
+  color: var(--content-bg) !important; 
+}
+.phy-button-stroked {
+  border: 2px solid var(--text-color) !important;
+  background-color: var(--content-bg) !important;
+  color: var(--text-color) !important;
+  padding: calc(5% - 2px);
+}
 .phy-content {
-  height: calc($phy-content-height - $phy-dot-height*2 - 6px);
+  height: calc($phy-content-height * 0.85 - $phy-dot-height*2);
   width: calc($phy-content-width - 6px);
   color: var(--text-color);
-  padding: calc($phy-content-width * 0.05);
+  padding: 0 calc($phy-content-width * 0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
+  // animation: phy-content-enter-right 0.5s ease-out;
 }
 .phy-intro-title {
   font-weight: 500;
   font-size: calc($phy-content-width * 0.07);
-  line-height: 1.2
+  line-height: 1.2;
+  height: calc($phy-content-width * 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
 }
-$phy-intro-desc-font-size: max(14px, calc($phy-content-size * 0.04));
+$phy-intro-desc-font-size: max(15px, calc($phy-content-width * 0.04));
 .phy-intro-desc {
   font-size: $phy-intro-desc-font-size;
   line-height: 1.2;
-  margin-top: 24px;
 }
 li:not(:last-child) {
   margin-bottom: calc($phy-intro-desc-font-size * 0.5);
 }
 .phy-kettle {
-  margin-top: calc($phy-content-size * 0.03);
-  width: calc($phy-content-size * 0.2);
-  height: calc($phy-content-size * 0.2);
+  margin-top: calc($phy-content-width * 0.03);
+  width: calc($phy-content-width * 0.2);
+  height: calc($phy-content-width * 0.2);
+}
+.phy-button-container .mat-icon {
+  font-size: $phy-button-font-size !important;
+  height: $phy-button-font-size !important;
+  width: $phy-button-font-size !important;
+  margin: 0 !important;
+}
+@keyframes phy-content-enter-left {
+  from {
+    transform: translateX(calc($phy-content-width*-1));
+    opacity: 0;
+  } to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes phy-content-enter-right {
+  from {
+    transform: translateX($phy-content-width);
+    opacity: 0;
+  } to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
