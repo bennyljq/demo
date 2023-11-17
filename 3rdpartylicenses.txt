@@ -66,6 +66,9 @@ MIT
 @angular/router
 MIT
 
+mathjax-angular
+MIT
+
 primeng
 MIT
 
