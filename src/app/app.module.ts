@@ -28,6 +28,8 @@ import { SwitchComponent } from './physics/switch/switch.component';
 import {MatMenuModule} from '@angular/material/menu';
 import { PhysicsIntroComponent } from './physics/physics-intro/physics-intro.component';
 import { PhysicsWattComponent } from './physics/physics-watt/physics-watt.component';
+import { MathjaxModule } from "mathjax-angular";
+import { HammerModule } from '@angular/platform-browser';
 
 @NgModule({
   declarations: [
@@ -60,7 +62,9 @@ import { PhysicsWattComponent } from './physics/physics-watt/physics-watt.compon
     MatIconModule,
     InputTextModule,
     FormsModule,
-    MatMenuModule
+    MatMenuModule,
+    [MathjaxModule.forRoot()],
+    HammerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

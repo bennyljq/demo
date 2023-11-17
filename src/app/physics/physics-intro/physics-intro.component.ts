@@ -26,10 +26,16 @@ export class PhysicsIntroComponent {
     this.setButtons()
   }
   prevPage() {
+    if (this.selectedPageIndex == 0) {
+      return
+    }
     this.selectedPageIndex = (this.selectedPageIndex + this.numPages - 1) % this.numPages
     this.setButtons()
   }
   nextPage() {
+    if (this.selectedPageIndex == this.numPages - 1) {
+      this.nextChapter()
+    }
     this.selectedPageIndex = (this.selectedPageIndex + 1) % this.numPages
     this.setButtons()
   }

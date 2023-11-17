@@ -1,9 +1,9 @@
-<div class="phy-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+<div class="phy-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}" (swipeleft)="nextPage()" (swiperight)="prevPage()">
   <div class="phy-intro-title f-merri" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     Everyday Electricity
   </div>
   <div class="phy-content-subcontainer" [ngStyle]="{
-    'transform': 'translateX(calc(-33.3333%*' + selectedPageIndex + '))'
+    'transform': 'translateX(calc(-' + 100/numPages + '%*' + selectedPageIndex + '))'
     }">
     <ng-container [ngTemplateOutlet]="page1"></ng-container>
     <ng-container [ngTemplateOutlet]="page2"></ng-container>
@@ -60,8 +60,9 @@
     <div class="phy-intro-desc">
       In this lesson, you will learn:
       <ul>
-        <li>The definitions and applications of energy and power quantifiers such as <strong>Watt (W)</strong> and <strong>Kilowatt-Hour (kWh)</strong></li>
-        <li>How electrical energy is consumed (and sometimes stored) by your devices and appliances</li>
+        <li>The definitions and applications of energy and power quantifiers such as <strong>watt (W)</strong> and <strong>kilowatt-hour (kWh)</strong></li>
+        <li>How to interpret battery capacity stored in <strong>milliampere-hour (mAh)</strong></li>
+        <li>How electrical energy is consumed by your devices and appliances</li>
         <li>How electrical energy is delivered from the grid to your home</li>
         <li>How to read and understand your power utility bills</li>
       </ul>
@@ -74,7 +75,7 @@
     <div class="phy-intro-desc">
       Fret not, for this lesson on "Everyday Electricity" assumes no prior knowledge, other than basic familiarity with electricity such as charging and using mobile devices, or using electrical appliances in the home.
       <br><br>
-      In the first chapter "Watt is Love", we will be following Dionne's electrifying journey as she prepares for school in the morning.
+      In the first chapter "Watt is Love", we will be following Dionne's electrifying journey as she gets ready for school.
     </div>
     <div class="phy-kettle phy-kettle-light" *ngIf="!themeService.isDarkTheme"></div>
     <div class="phy-kettle phy-kettle-dark" *ngIf="themeService.isDarkTheme"></div>

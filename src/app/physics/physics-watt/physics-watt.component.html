@@ -1,12 +1,13 @@
-<div class="phy-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+<div class="phy-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}" (swipeleft)="nextPage()" (swiperight)="prevPage()">
   <div class="phy-intro-title f-merri" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     Watt is Love
   </div>
   <div class="phy-content-subcontainer" [ngStyle]="{
-    'transform': 'translateX(calc(-50%*' + selectedPageIndex + '))'
+    'transform': 'translateX(calc(-' + 100/numPages + '%*' + selectedPageIndex + '))'
     }">
     <ng-container [ngTemplateOutlet]="page1"></ng-container>
     <ng-container [ngTemplateOutlet]="page2"></ng-container>
+    <ng-container [ngTemplateOutlet]="page3"></ng-container>
   </div>
   <div class="phy-dot-container">
     <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
@@ -51,11 +52,18 @@
 <ng-template #page1>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
-      Did you ever hear the tragedy of Darth Plagueis The Wise?
+      <!-- <div [mathjax]="content"></div>
+      <div [mathjax]="einstein"></div> -->
+      Like most college students, Dionne charges her mobile phone overnight after a long day of use. 
       <br><br>
-      I thought not. It's not a story the Jedi would tell you. It's a Sith legend. 
+      While doing so, she notices that the charging brick is rated for 25W, and the battery capacity is 3000mAh. 
       <br><br>
-      Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life… He had such a knowledge of the dark side that he could even keep the ones he cared about from dying. The dark side of the Force is a pathway to many abilities some consider to be unnatural.
+      Dionne recalls learning in high school that <strong>watt(W)</strong> is a unit for power, where power is the rate of change of energy measured in <strong>joules(J)</strong>. 
+      <br><br>
+      In all, 1 watt is equivalent to 1 joule per second.
+      <div class="phy-equation">
+        <div [mathjax]="watt"></div>
+      </div>
     </div>
   </div>
 </ng-template>
@@ -63,9 +71,23 @@
 <ng-template #page2>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
-      He became so powerful… the only thing he was afraid of was losing his power, which eventually, of course, he did. 
+      But how does 25 joules per second even relate to the battery capacity of 3000mAh? 
       <br><br>
-      Unfortunately, he taught his apprentice everything he knew, then his apprentice killed him in his sleep. Ironic. He could save others from death, but not himself.
+      It would certainly make more sense if the battery capacity was measured in joules instead, Dionne thought. If so, the total charging time would simply be capacity divided by wattage.
+      <br><br>
+      As we will uncover in the later pages, there turns out to be a rather convoluted way to indirectly convert <strong>mAh</strong> to <strong>J</strong>. 
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page3>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Before attempting to convert mAh to J, Dionne wanted to first estimate the battery capacity in joules.
+      <br><br>
+      Starting with a battery percentage of 25%, Dionne records that it takes approximately 90 minutes to fully charge.
+      <br><br>
+      Can you estimate the battery capacity in joules?
     </div>
   </div>
 </ng-template>
