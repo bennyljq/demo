@@ -14,7 +14,7 @@ export class PhysicsWattComponent {
 
   @Output() selectChapter = new EventEmitter;
   @Input() selectedPageIndex = 0
-  numPages = 3;
+  numPages = 5;
   pagesArray = new Array(this.numPages)
   hideBack = true
   hideNext = false
@@ -61,7 +61,32 @@ export class PhysicsWattComponent {
         break
     }
   }
+
+  // variables & equations
+  current_watt = 1
+  anim_duration = 1
+  anim_delay = 0
+
   content = "$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$";
   einstein = "$E = mc^2$";
-  watt = "$W = Js^{-1}$";
+  watt = "$1\\ W = 1\\ Js^{-1}$";
+  joule_eq = "$= 1\\ J$";
+
+  // charging animation
+  set_watt(action: 'minus' | 'add') {
+    if (action == 'minus' && this.current_watt > 1) {
+      this.current_watt -= 1
+    } else if (action == 'add' && this.current_watt < 10) {
+      this.current_watt += 1
+    }
+
+    if (this.current_watt <= 5) {
+      this.anim_duration = 1
+      this.anim_delay = 1/this.current_watt
+    } else if (this.current_watt <= 10) {
+      this.anim_duration = 5/this.current_watt
+      this.anim_delay = this.anim_duration/5
+    }
+  }
+
 }

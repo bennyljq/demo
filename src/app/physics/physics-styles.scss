@@ -1,6 +1,6 @@
 $height-width-ratio: 1.1;
 $phy-content-width: min(
-  calc(100vw - 32px), 
+  calc(100vw - 16px), 
   calc((100vh - 240px)/$height-width-ratio), 
   800px
 );
@@ -13,7 +13,7 @@ $phy-content-height: calc($phy-content-width*$height-width-ratio);
   --dot-color: darkgrey;
 }
 .dark-theme {
-  --bg-color: rgb(7, 0, 28); 
+  --bg-color: rgb(16, 12, 32); 
   --text-color: Gainsboro; 
   --switch-bg-color: white;
   --content-bg: black;

@@ -3,10 +3,11 @@
   background-color: var(--content-bg);
   height: $phy-content-height;
   width: $phy-content-width;
-  margin: 16px;
+  margin: 16px 8px;
   border-radius: calc($phy-content-width * 0.02);
   border: 2px solid var(--text-color);
   overflow: hidden;
+  transition-duration: 0.2s;
 }
 .phy-content-subcontainer {
   display: flex;
@@ -48,7 +49,7 @@ $phy-dot-height: max(12px, $phy-content-width*0.02);
   cursor: context-menu;
 }
 .phy-button-container {
-  padding: 0 16px;
+  padding: 0 8px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -91,7 +92,8 @@ $phy-button-font-size: max(16px, calc($phy-content-width * 0.04));
   color: var(--text-color);
   animation: phy-content-enter 0.5s ease-in-out;
 }
-$phy-intro-desc-font-size: max(15px, calc($phy-content-width * 0.04));
+// $phy-intro-desc-font-size: max(15px, calc($phy-content-width * 0.04));
+$phy-intro-desc-font-size: calc($phy-content-width * 0.042);
 .phy-intro-desc {
   font-size: $phy-intro-desc-font-size;
   line-height: 1.2;
@@ -122,7 +124,33 @@ li:not(:last-child) {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: calc($phy-intro-desc-font-size * 0.5) 0;
+  margin: calc($phy-intro-desc-font-size * 1) 0;
+}
+.phy-joule-container {
+  border-radius: 50%;
+  background-color: gold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $phy-intro-desc-font-size;
+  height: $phy-intro-desc-font-size;
+}
+.phy-joule-icon {
+  font-size: calc($phy-intro-desc-font-size*0.8);
+  color: black;
+}
+.phy-joule-moving {
+  opacity: 0;
+  animation: joule-moving 1s infinite linear;
+}
+$charging-width: 0.2;
+.phy-charger {
+  font-size: calc($phy-intro-desc-font-size*2);
+  transform: translateX(calc(-1*$charging-width*$phy-content-width));
+}
+.phy-battery {
+  font-size: calc($phy-intro-desc-font-size*2);
+  transform: translateX(calc($charging-width*$phy-content-width));
 }
 @keyframes phy-content-enter {
   from {
@@ -131,5 +159,24 @@ li:not(:last-child) {
   } to {
     margin-top: 0;
     opacity: 1;
+  }
+}
+@keyframes joule-moving {
+  0% {
+    opacity: 0;
+    transform: translateX(calc(-1*$charging-width*$phy-content-width));
+  }
+  20% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(0);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(calc($charging-width*$phy-content-width));
   }
 }
