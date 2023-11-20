@@ -11,6 +11,9 @@ $phy-content-height: calc($phy-content-width*$height-width-ratio);
   --switch-bg-color: MidnightBlue;
   --content-bg: white;
   --dot-color: darkgrey;
+  --correct-color: MediumSpringGreen;
+  --wrong-color: Tomato;
+  --great-job-color: black;
 }
 .dark-theme {
   --bg-color: rgb(16, 12, 32); 
@@ -18,4 +21,7 @@ $phy-content-height: calc($phy-content-width*$height-width-ratio);
   --switch-bg-color: white;
   --content-bg: black;
   --dot-color: grey;
+  --correct-color: MediumSpringGreen;
+  --wrong-color: Tomato;
+  --great-job-color: MediumSpringGreen;
 }

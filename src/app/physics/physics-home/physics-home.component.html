@@ -18,7 +18,8 @@
     <app-physics-battery *ngIf="selectedIndex==2" (selectChapter)="onChapterSelect($event)" [selectedPageIndex]="childPageIndex"></app-physics-battery>
 </div>
 <mat-menu #phyMenu="matMenu">
-  <button *ngFor="let chapter of chapters; let i = index" mat-menu-item (click)="selectedIndex=i">
+  <button *ngFor="let chapter of chapters; let i = index" mat-menu-item 
+  (click)="selectedIndex=i; childPageIndex=0">
     <div style="display: flex; width: 220px;" [ngStyle]="{'font-weight': i==selectedIndex ? '500' : '400'}" class="f-poppins">
       {{chapter}}
       <div class="spacer"></div>

@@ -23,6 +23,8 @@ $phy-dot-height: max(12px, $phy-content-width*0.02);
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  z-index: 666;
+  position: relative;
 }
 .phy-dot-touch-target {
   height: calc($phy-dot-height*2);
@@ -57,7 +59,7 @@ $phy-dot-height: max(12px, $phy-content-width*0.02);
 $phy-button-font-size: max(16px, calc($phy-content-width * 0.04));
 .phy-button {
   font-size: $phy-button-font-size;
-  padding: 5%;
+  padding: calc($phy-button-font-size*1.2);
   letter-spacing: 0;
   border-radius: calc($phy-content-width * 0.02);
   min-width: 0;
@@ -70,7 +72,7 @@ $phy-button-font-size: max(16px, calc($phy-content-width * 0.04));
   border: 2px solid var(--text-color) !important;
   background-color: var(--content-bg) !important;
   color: var(--text-color) !important;
-  padding: calc(5% - 2px);
+  padding: calc($phy-button-font-size*1.2 - 2px);
 }
 .phy-content {
   height: calc($phy-content-height * 0.85 - $phy-dot-height*2);
@@ -195,6 +197,20 @@ $charging-width: 0.2;
   calc($phy-intro-desc-font-size*0.5 - 2px) 
   calc($phy-intro-desc-font-size*0.5 - 2px);
   background-color: gold;
+  animation: cup-filling 4s infinite linear;
+}
+.phy-correct-ans {
+  background-color: var(--correct-color) !important;
+  color: black !important;
+}
+.phy-wrong-ans {
+  background-color: var(--wrong-color) !important;
+  color: black !important;
+}
+.phy-great-job {
+  margin-top: calc($phy-intro-desc-font-size*0.5);
+  color: var(--great-job-color) !important;
+  animation: great-job 0.5s ease-in-out;
 }
 @keyframes phy-content-enter {
   from {
@@ -241,5 +257,21 @@ $charging-width: 0.2;
   100% {
     opacity: 0;
     transform: translateY(calc(3*$phy-intro-desc-font-size));
+  }
+}
+@keyframes cup-filling {
+  from {
+    height: 10%;
+  } to {
+    height: 100%;
+  }
+}
+@keyframes great-job {
+  from {
+    opacity: 0;
+    transform: translateY(calc($phy-intro-desc-font-size));
+  } to {
+    opacity: 1;
+    transform: translateY();
   }
 }

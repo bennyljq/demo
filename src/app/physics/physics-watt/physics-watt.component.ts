@@ -20,9 +20,6 @@ export class PhysicsWattComponent {
   hideBack = true
   hideNext = false
 
-  ngOnInit() {
-    this.set_cup_height()
-  }
   ngOnChanges() {
     if (this.selectedPageIndex == -1) {
       this.selectedPageIndex = this.numPages - 1
@@ -71,7 +68,6 @@ export class PhysicsWattComponent {
   anim_duration = 1
   anim_delay = 0
   watt_steps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  cup_height = 10
 
   content = "$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$";
   einstein = "$E = mc^2$";
@@ -93,13 +89,6 @@ export class PhysicsWattComponent {
       this.anim_duration = 5/this.current_watt
       this.anim_delay = this.anim_duration/5
     }
-  }
-
-  // cup filling
-  set_cup_height() {
-    timer(0, 50).subscribe(x=>{
-      this.cup_height = (this.cup_height - 9)%90 + 10
-    })
   }
 
 }

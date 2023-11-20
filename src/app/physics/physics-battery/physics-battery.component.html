@@ -66,11 +66,31 @@
 <ng-template #page2>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
-      Before attempting to convert <strong>mAh</strong> to <strong>J</strong>, Dionne wanted to first estimate the battery capacity in joules.
+      Before attempting to convert <strong>mAh</strong> to <strong>J</strong>, Dionne wants to estimate the battery capacity in joules.
       <br><br>
-      Starting with a battery percentage of <strong>12%</strong> and using the <strong>25W</strong> charger, Dionne records that it takes approximately <strong>40 minutes</strong> to fully charge.
+      Starting with a battery level of <strong>12%</strong> and using the <strong>25W</strong> charger, Dionne records that it takes approximately <strong>40 minutes</strong> to fully charge.
       <br><br>
-      Can you estimate the battery capacity in joules? (Rounded to nearest thousand)
+      Can you calculate the battery capacity in joules? (Rounded to the nearest thousand)
+      <br><br>
+      <mat-grid-list cols="2" rowHeight="4:1">
+        <mat-grid-tile *ngFor="let option of answer_options; let i = index">
+          <button mat-flat-button
+          class="phy-button phy-button-flat f-poppins" 
+          [ngClass]="{
+            'dark-theme': themeService.isDarkTheme,
+            'phy-correct-ans': i == correct_answer && question_answered,
+            'phy-wrong-ans': i == picked_answer && i != correct_answer && question_answered
+          }"
+          [disabled]="question_answered"
+          (click)="on_answer(i)">
+            {{option}}
+          </button>
+        </mat-grid-tile>
+      </mat-grid-list>
+      <div class="phy-great-job" *ngIf="picked_answer == correct_answer"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+        🥳 <em>Great job!</em> 🎉
+    </div>
     </div>
   </div>
 </ng-template>
@@ -79,6 +99,10 @@
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       68,182J => approx 68,000J
+      <br><br>
+      here is where all the calculation is will be 
+      <br><br>
+      =D
     </div>
   </div>
 </ng-template>

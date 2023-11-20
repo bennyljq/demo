@@ -18,6 +18,7 @@ export class PhysicsBatteryComponent {
   pagesArray = new Array(this.numPages)
   hideBack = true
   hideNext = false
+  preventNext = false
 
   ngOnChanges() {
     if (this.selectedPageIndex == -1) {
@@ -33,6 +34,7 @@ export class PhysicsBatteryComponent {
     this.setButtons()
   }
   nextPage() {
+    if (this.preventNext) { return }
     if (this.selectedPageIndex == this.numPages - 1) {
       return
     }
@@ -60,6 +62,27 @@ export class PhysicsBatteryComponent {
         this.hideBack = false
         break
     }
+    this.init_question()
+  }
+
+  answer_options = ['66,000 J', '67,000 J', '68,000 J', '69,000 J']
+  correct_answer = 2
+  picked_answer: number | undefined;
+  question_answered = false
+  init_question() {
+    if (this.question_answered) { return }
+    if (this.selectedPageIndex == 1) {
+      this.hideNext = true
+      this.preventNext = true
+    } else {
+      this.preventNext = false
+    }
+  }
+  on_answer(answer_index: number) {
+    this.picked_answer = answer_index
+    this.question_answered = true
+    this.hideNext = false
+    this.preventNext = false
   }
   
 }
