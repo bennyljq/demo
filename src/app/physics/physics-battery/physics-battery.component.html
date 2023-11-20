@@ -1,0 +1,84 @@
+<div class="phy-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}" (swipeleft)="nextPage()" (swiperight)="prevPage()">
+  <div class="phy-intro-title f-merri" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    Battery, don't hurt me
+  </div>
+  <div class="phy-content-subcontainer" [ngStyle]="{
+    'transform': 'translateX(calc(-' + 100/numPages + '%*' + selectedPageIndex + '))'
+    }">
+    <ng-container [ngTemplateOutlet]="page1"></ng-container>
+    <ng-container [ngTemplateOutlet]="page2"></ng-container>
+    <ng-container [ngTemplateOutlet]="page3"></ng-container>
+  </div>
+  <div class="phy-dot-container">
+    <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
+    (click)="selectedPageIndex = i; setButtons()"
+    [ngClass]="{'phy-dot-touch-target-active': i == selectedPageIndex}">
+      <div class="phy-dot"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme, 'phy-dot-active': i == selectedPageIndex}"></div>
+    </div>
+  </div>
+</div>
+<div class="phy-button-container">
+  <button mat-stroked-button *ngIf="selectedPageIndex == 0"
+  class="phy-button phy-button-stroked f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="prevChapter()">
+    <mat-icon>arrow_back</mat-icon>
+    &nbsp; Watt is Love
+  </button>
+  <button mat-stroked-button *ngIf="!hideBack"
+  class="phy-button phy-button-stroked f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="prevPage()">
+    Back
+  </button>
+  <div class="spacer"></div>
+  <button mat-flat-button *ngIf="!hideNext"
+  class="phy-button phy-button-flat f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="nextPage()">
+    Next
+  </button>
+  <button mat-flat-button *ngIf="selectedPageIndex == this.numPages-1"
+  class="phy-button phy-button-flat f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div style="display: flex; align-items: center;">
+      Next Chapter &nbsp;
+      <mat-icon>arrow_forward</mat-icon>
+    </div>
+  </button>
+</div>
+
+<ng-template #page1>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Dionne stares at the charging brick rated <strong>25W</strong>, then at the phone battery rated <strong>5000mAh</strong>, then back at the charging brick again.
+      <br><br>
+      It would make much more sense if the battery capacity was measured in joules instead, she thought. 
+      <br><br>
+      If so, the capacity could easily be calculated by multiplying wattage with charging time.
+      <br><br>
+      As we will uncover later, there turns out to be a rather convoluted way to indirectly convert <strong>mAh</strong> to <strong>J</strong>. 
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page2>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Before attempting to convert <strong>mAh</strong> to <strong>J</strong>, Dionne wanted to first estimate the battery capacity in joules.
+      <br><br>
+      Starting with a battery percentage of <strong>12%</strong> and using the <strong>25W</strong> charger, Dionne records that it takes approximately <strong>40 minutes</strong> to fully charge.
+      <br><br>
+      Can you estimate the battery capacity in joules? (Rounded to nearest thousand)
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page3>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      68,182J => approx 68,000J
+    </div>
+  </div>
+</ng-template>

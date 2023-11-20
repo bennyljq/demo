@@ -15,9 +15,9 @@ export class PhysicsHomeComponent implements OnInit {
   chapters = [
     "Introduction",
     "Watt is Love",
-    "Baby don't Hertz me"
+    "Battery, don't hurt me"
   ]
-  selectedIndex = 1
+  selectedIndex = 0
   childPageIndex = 0
 
   ngOnInit(): void {

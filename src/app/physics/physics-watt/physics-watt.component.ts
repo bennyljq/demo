@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ThemeService } from '../theme.service';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-physics-watt',
@@ -14,11 +15,14 @@ export class PhysicsWattComponent {
 
   @Output() selectChapter = new EventEmitter;
   @Input() selectedPageIndex = 0
-  numPages = 5;
+  numPages = 4;
   pagesArray = new Array(this.numPages)
   hideBack = true
   hideNext = false
 
+  ngOnInit() {
+    this.set_cup_height()
+  }
   ngOnChanges() {
     if (this.selectedPageIndex == -1) {
       this.selectedPageIndex = this.numPages - 1
@@ -34,7 +38,7 @@ export class PhysicsWattComponent {
   }
   nextPage() {
     if (this.selectedPageIndex == this.numPages - 1) {
-      return
+      this.nextChapter()
     }
     this.selectedPageIndex = (this.selectedPageIndex + 1) % this.numPages
     this.setButtons()
@@ -66,6 +70,8 @@ export class PhysicsWattComponent {
   current_watt = 1
   anim_duration = 1
   anim_delay = 0
+  watt_steps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  cup_height = 10
 
   content = "$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$";
   einstein = "$E = mc^2$";
@@ -73,20 +79,27 @@ export class PhysicsWattComponent {
   joule_eq = "$= 1\\ J$";
 
   // charging animation
-  set_watt(action: 'minus' | 'add') {
+  async set_watt(action: 'minus' | 'add') {
     if (action == 'minus' && this.current_watt > 1) {
-      this.current_watt -= 1
-    } else if (action == 'add' && this.current_watt < 10) {
-      this.current_watt += 1
+      this.current_watt = this.watt_steps[this.watt_steps.indexOf(this.current_watt) - 1]
+    } else if (action == 'add' && this.current_watt < 25) {
+      this.current_watt = this.watt_steps[this.watt_steps.indexOf(this.current_watt) + 1]
     }
 
     if (this.current_watt <= 5) {
       this.anim_duration = 1
       this.anim_delay = 1/this.current_watt
-    } else if (this.current_watt <= 10) {
+    } else {
       this.anim_duration = 5/this.current_watt
       this.anim_delay = this.anim_duration/5
     }
+  }
+
+  // cup filling
+  set_cup_height() {
+    timer(0, 50).subscribe(x=>{
+      this.cup_height = (this.cup_height - 9)%90 + 10
+    })
   }
 
 }

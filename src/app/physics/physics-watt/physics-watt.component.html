@@ -9,7 +9,6 @@
     <ng-container [ngTemplateOutlet]="page2"></ng-container>
     <ng-container [ngTemplateOutlet]="page3"></ng-container>
     <ng-container [ngTemplateOutlet]="page4"></ng-container>
-    <ng-container [ngTemplateOutlet]="page5"></ng-container>
   </div>
   <div class="phy-dot-container">
     <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
@@ -43,9 +42,10 @@
   </button>
   <button mat-flat-button *ngIf="selectedPageIndex == this.numPages-1"
   class="phy-button phy-button-flat f-poppins" 
-  [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="nextChapter()">
     <div style="display: flex; align-items: center;">
-      Baby don't Hertz me &nbsp;
+      Battery, don't hurt me &nbsp;
       <mat-icon>arrow_forward</mat-icon>
     </div>
   </button>
@@ -58,13 +58,8 @@
       <div [mathjax]="einstein"></div> -->
       Like most college students, Dionne charges her mobile phone overnight after a long day of use. 
       <br><br>
-      She notices that the charging brick is rated for <strong>25W</strong>, while the battery capacity is <strong>3000mAh</strong>. 
+      She notices that the charging brick is rated for <strong>25W</strong>, while the battery capacity is <strong>5000mAh</strong>. 
       <br><br>
-      <!-- Dionne recalls learning that <strong>watt(W)</strong> is a unit of power, where power is the rate of change of energy measured in <strong>joules(J)</strong>.  -->
-      <!-- In all, 1 watt is equivalent to 1 joule per second.
-      <div class="phy-equation">
-        <div [mathjax]="watt"></div>
-      </div> -->
       Dionne recalls learning that <strong>watt(W)</strong> is a unit of power, which measures the rate of energy transfer.
       <br><br>
       Since energy is measured in <strong>joules(J)</strong>, <br>1 watt is equivalent to an energy transfer rate of 1 joule per second. 
@@ -75,15 +70,14 @@
 <ng-template #page2>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
-      To visualise watts and joules, Dionne imagines electrical energy to be stored in packets of
-      <br>1 joule each.
+      To visualise watts and joules, Dionne <br> imagines electrical energy to be stored in packets of 1 joule each.
       <div class="phy-equation">
         <div class="phy-joule-container">
           <i class="material-icons phy-joule-icon">electric_bolt</i>
         </div>&nbsp;
         <div [mathjax]="joule_eq"></div>
       </div>
-      If a battery is being charged at a rate of <strong>{{current_watt}}W</strong>, that means <strong>{{current_watt}}J</strong> of energy is flowing into it every second.
+      If a battery is being charged at a rate of <strong>{{current_watt}}W</strong>, that means <strong>{{current_watt}}J</strong> of energy is flowing into it <br><strong>every second</strong>.
       <div class="phy-equation">
         <i class="material-icons phy-charger">electrical_services</i>
         <div class="phy-joule-container phy-joule-moving"
@@ -120,7 +114,7 @@
         <div style="width: 12%;"></div>
         <span style="width: 12%; text-align: center; 
         font-family: 'Cambria Math', sans-serif; transform: scale(1.2);">
-          {{current_watt}} W
+          {{current_watt}} <em>W</em>
         </span>
         <div style="width: 12%;"></div>
         <button mat-flat-button
@@ -143,14 +137,59 @@
       <div class="phy-equation">
         <div [mathjax]="watt"></div>
       </div>
-      [explain why energy is not quantized like the previous example, but behaves more like water flowing from your tap to fill your bathtub]
-      <br><br>
-      [maybe also explain kW and kWh here]
+      However in reality, energy does not flow in discrete packets. Instead, energy flow is more analogous to filling a glass with water.
+      <div class="phy-equation">
+        <img src="assets/tap.svg" class="phy-tap" *ngIf="!themeService.isDarkTheme">
+        <img src="assets/tap_white.svg" class="phy-tap" *ngIf="themeService.isDarkTheme">
+      </div>
+      <div class="phy-equation">
+        <div class="phy-joule-flow-container">
+          <i class="material-icons phy-joule-icon phy-joule-flowing">electric_bolt</i>
+          <i class="material-icons phy-joule-icon phy-joule-flowing" style="animation-delay: 0.25s;">electric_bolt</i>
+          <i class="material-icons phy-joule-icon phy-joule-flowing" style="animation-delay: 0.5s;">electric_bolt</i>
+          <i class="material-icons phy-joule-icon phy-joule-flowing" style="animation-delay: 0.75s;">electric_bolt</i>
+        </div>
+      </div>
+      <div class="phy-equation">
+        <div class="phy-cup-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <div class="phy-cup-filling" [ngStyle]="{'height': cup_height+'%'}"></div>
+        </div>
+      </div>
     </div>
   </div>
 </ng-template>
 
 <ng-template #page4>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      In this chapter, we have learnt:
+      <ul>
+        <li>A <strong>watt(W)</strong> is a unit of <strong>power</strong></li>
+        <li>A <strong>joule(J)</strong> is a unit of <strong>energy</strong></li>
+        <li>Power is the <strong>rate of transfer</strong> of energy</li>
+        <li>Watts and joules are related by the equation:</li>
+      </ul>
+      <div class="phy-equation">
+        <div [mathjax]="watt"></div>
+      </div>
+      However, Dionne remains confused about the battery capacity being measured in <strong>mAh</strong> instead of <strong>J</strong>. 
+      <br><br>
+      All this and more will be uncovered in the next chapter, <strong>"Battery, don't hurt me"</strong>.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #dummy>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      However, Dionne remains confused about the battery capacity being <strong>5000mAh</strong>. 
+      <br><br>
+      She reasons that since the charging speed is in watts, battery capacity should be in joules. 
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #dummy>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       But how does a charging speed of <strong>25W</strong> even relate to the battery capacity of <strong>3000mAh</strong>? 
@@ -162,7 +201,7 @@
   </div>
 </ng-template>
 
-<ng-template #page5>
+<ng-template #dummy>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       Before attempting to convert mAh to J, Dionne wanted to first estimate the battery capacity in joules.
@@ -171,11 +210,5 @@
       <br><br>
       Can you estimate the battery capacity in joules?
     </div>
-  </div>
-</ng-template>
-
-<ng-template #joule>
-  <div class="phy-joule-container">
-    <i class="material-icons phy-joule-icon">electric_bolt</i>
   </div>
 </ng-template>

@@ -3,7 +3,7 @@
   background-color: var(--content-bg);
   height: $phy-content-height;
   width: $phy-content-width;
-  margin: 16px 8px;
+  margin: 8px;
   border-radius: calc($phy-content-width * 0.02);
   border: 2px solid var(--text-color);
   overflow: hidden;
@@ -60,6 +60,7 @@ $phy-button-font-size: max(16px, calc($phy-content-width * 0.04));
   padding: 5%;
   letter-spacing: 0;
   border-radius: calc($phy-content-width * 0.02);
+  min-width: 0;
 }
 .phy-button-flat {
   background-color: var(--text-color) !important;
@@ -97,6 +98,7 @@ $phy-intro-desc-font-size: calc($phy-content-width * 0.042);
 .phy-intro-desc {
   font-size: $phy-intro-desc-font-size;
   line-height: 1.2;
+  width: 100%;
 }
 li:not(:last-child) {
   margin-bottom: calc($phy-intro-desc-font-size * 0.5);
@@ -138,6 +140,7 @@ li:not(:last-child) {
 .phy-joule-icon {
   font-size: calc($phy-intro-desc-font-size*0.8);
   color: black;
+  position: absolute;
 }
 .phy-joule-moving {
   opacity: 0;
@@ -151,6 +154,47 @@ $charging-width: 0.2;
 .phy-battery {
   font-size: calc($phy-intro-desc-font-size*2);
   transform: translateX(calc($charging-width*$phy-content-width));
+}
+.phy-tap {
+  width: calc($phy-intro-desc-font-size*3);
+  height: calc($phy-intro-desc-font-size*3);
+  transform: translateX(calc($phy-intro-desc-font-size*-0.68));
+}
+.phy-joule-flow-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: gold;
+  width: calc($phy-intro-desc-font-size*1);
+  height: calc($phy-intro-desc-font-size*7);
+  border-radius: calc($phy-intro-desc-font-size*0.5);
+  transform: translateY(calc($phy-intro-desc-font-size*-1.8));
+  z-index: 2;
+}
+.phy-joule-flowing {
+  opacity: 0;
+  animation: joule-flowing 1s infinite linear;
+}
+.phy-cup-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: calc($phy-intro-desc-font-size*3);
+  height: calc($phy-intro-desc-font-size*5);
+  border-radius: 0 0 calc($phy-intro-desc-font-size*0.5) calc($phy-intro-desc-font-size*0.5);
+  transform: translateY(calc($phy-intro-desc-font-size*-7.5));
+  border: 2px solid var(--text-color);
+  border-top: none;
+}
+.phy-cup-filling {
+  width: 100%;
+  height: 100%;
+  border-radius: 0 0 
+  calc($phy-intro-desc-font-size*0.5 - 2px) 
+  calc($phy-intro-desc-font-size*0.5 - 2px);
+  background-color: gold;
 }
 @keyframes phy-content-enter {
   from {
@@ -178,5 +222,24 @@ $charging-width: 0.2;
   100% {
     opacity: 0;
     transform: translateX(calc($charging-width*$phy-content-width));
+  }
+}
+@keyframes joule-flowing {
+  0% {
+    opacity: 0;
+    transform: translateY(calc(-3*$phy-intro-desc-font-size));
+  }
+  20% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(calc(3*$phy-intro-desc-font-size));
   }
 }
