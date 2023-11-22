@@ -8,10 +8,14 @@
     <ng-container [ngTemplateOutlet]="page1"></ng-container>
     <ng-container [ngTemplateOutlet]="page2"></ng-container>
     <ng-container [ngTemplateOutlet]="page3"></ng-container>
+    <ng-container [ngTemplateOutlet]="page4"></ng-container>
+    <ng-container [ngTemplateOutlet]="page5"></ng-container>
+    <ng-container [ngTemplateOutlet]="page6"></ng-container>
+    <ng-container [ngTemplateOutlet]="page7"></ng-container>
   </div>
   <div class="phy-dot-container">
     <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
-    (click)="selectedPageIndex = i; setButtons()"
+    (click)="onDotClick(i)"
     [ngClass]="{'phy-dot-touch-target-active': i == selectedPageIndex}">
       <div class="phy-dot"
       [ngClass]="{'dark-theme': themeService.isDarkTheme, 'phy-dot-active': i == selectedPageIndex}"></div>
@@ -53,7 +57,9 @@
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       Dionne stares at the charging brick rated <strong>25W</strong>, then at the phone battery rated <strong>5000mAh</strong>, then back at the charging brick again.
-      <br><br>
+      <div class="phy-equation">
+        <span style="font-size: 200%;">🤷🏻‍♀️📱</span>
+      </div>
       It would make <em>much</em> more sense if the battery capacity was measured in joules instead, she thought. 
       <br><br>
       If so, the capacity could easily be calculated by multiplying wattage with charging time.
@@ -88,9 +94,13 @@
         </mat-grid-tile>
       </mat-grid-list>
       <div class="phy-great-job" *ngIf="picked_answer == correct_answer"
-      [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-        🥳 <em>Great job!</em> 🎉
-    </div>
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          🥳 <em>Great job!</em> 🎉
+      </div>
+      <div class="phy-great-job" *ngIf="picked_answer && picked_answer !== correct_answer"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <em>68000J was the right answer</em>
+      </div>
     </div>
   </div>
 </ng-template>
@@ -98,11 +108,93 @@
 <ng-template #page3>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
-      68,182J => approx 68,000J
+      To calculate the battery capacity in joules, we first find out the total energy delivered by the charger.
       <br><br>
-      here is where all the calculation will be 
+      Since <strong>25 joules</strong> were delivered <strong>every second</strong> for <strong>40 minutes</strong>, the total energy would be:
+      <div class="phy-equation">
+        <div [mathjax]="energy_delivered"></div>
+      </div>
+      Given that <strong>88%</strong> of the battery was empty, we divide the total energy delivered by <strong>0.88</strong> to get the total capacity:
+      <div class="phy-equation">
+        <div [mathjax]="total_capacity"></div>
+      </div>
+      Rounding to the nearest thousand, we get:
+      <div class="phy-equation">
+        <div [mathjax]="total_capacity_2"></div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page4>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Confident with her estimate, Dionne conducts a thorough research on the mysterious unit named <strong>mAh</strong>.
+      <div class="phy-equation">
+        <span style="font-size: 200%;">👩🏻‍🎓📚</span>
+      </div>
+      Alas, she uncovers that there were <em>two ways</em> of quantifying a battery's capacity all along — 
+      <br><strong>energy capacity</strong> and <strong>charge capacity</strong>.
       <br><br>
-      =D 🥭🍎🍏🍅🍇🍈🍉🍊🍋🥝🥑🍓🍒🍑🍍🍌🍐
+      Dionne's estimate of <strong>68000J</strong> was an approximation of the battery's <strong>energy capacity</strong>.
+      <br><br>
+      On the contrary, the battery rating of <strong>5000mAh</strong> was its <strong>charge capacity</strong>.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page5>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Dionne learns that <strong>milliampere-hour (mAh)</strong> is a unit of <strong>electric charge</strong>, 
+      and it is a metric used by battery manufacturers because it is approximately proportional to the duration a device can run on a single charge.
+      <br><br>
+      Though <strong>energy capacity (J)</strong> also serves a similar purpose, 
+      rating a battery by <strong>charge capacity (mAh)</strong> allows consumers to deal with smaller numbers (<strong>5000mAh</strong> vs <strong>68000J</strong>), and it's been an industry standard for decades.
+      <br><br>
+      But after all this studying, Dionne is no closer to deriving energy capacity from charge capacity. The research continues...
+      <div class="phy-equation">
+        <span style="font-size: 200%;">🕵🏻‍♀️</span>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page6>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      To convert <strong>mAh</strong> to <strong>J</strong>, Dionne found that she needed a firm understanding of the following topics:
+      <ul>
+        <li>Electric Current and Charge</li>
+        <li>Electric Potential Difference</li>
+        <li>Electrical Power</li>
+        <li>Ohm's Law: 
+          <span style="font-family: 'Cambria Math', sans-serif;">
+            <em>P = VI</em>
+          </span>
+        </li>
+      </ul>
+      After studying all these topics, Dionne devises a simple formula to convert <strong>mAh</strong> to <strong>J</strong>. 
+      <br><br>
+      It is her opinion that anyone wishing to merely apply this formula need not study the above topics, 
+      but those wishing to thoroughly grasp the concept should certainly do so in their own time.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page7>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Given a charge capacity of <strong>5000mAh</strong> a constant battery voltage of <strong>3.8V</strong> (typical of modern smartphones), Dionne's formula first derives power using Ohm's Law:
+      <div class="phy-equation" style="flex-direction: column; line-height: 2;">
+        <div [mathjax]="mah_power_1"></div>
+        <div [mathjax]="mah_power_2"></div>
+      </div>
+      As she has assumed a discharge period of <br><strong>1 hour</strong>, she multiplies this power value by <strong>3600</strong> seconds:
+      <div class="phy-equation">
+        <div [mathjax]="mah_capacity"></div>
+      </div>
+      Dionne finally rests, satisfied with this value closely matching her estimate of <strong>68000J</strong>.
     </div>
   </div>
 </ng-template>

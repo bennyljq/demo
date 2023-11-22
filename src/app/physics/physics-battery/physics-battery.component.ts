@@ -14,7 +14,7 @@ export class PhysicsBatteryComponent {
 
   @Output() selectChapter = new EventEmitter;
   @Input() selectedPageIndex = 0
-  numPages = 3;
+  numPages = 7;
   pagesArray = new Array(this.numPages)
   hideBack = true
   hideNext = false
@@ -64,11 +64,25 @@ export class PhysicsBatteryComponent {
     }
     this.init_question()
   }
+  onDotClick(index: number) {
+    if (this.preventNext && index > this.selectedPageIndex) { return }
+    this.selectedPageIndex = index; 
+    this.setButtons()
+  }
 
-  answer_options = ['66,000 J', '67,000 J', '68,000 J', '69,000 J']
+  answer_options = ['66000 J', '67000 J', '68000 J', '69000 J']
   correct_answer = 2
   picked_answer: number | undefined;
   question_answered = false
+
+  energy_delivered = "$25J \\times 40 \\times 60 = 60000J$";
+  total_capacity = "$60000J \\div 0.88 \\approx 68182J$";
+  total_capacity_2 = "$68000J$";
+  p_vi = "$P=VI$"
+  mah_power_1 = "$5000mA = 5A$"
+  mah_power_2 = "$5A \\times 3.8V = 19W$"
+  mah_capacity = "$19W \\times 3600s = 68400J$"
+
   init_question() {
     if (this.question_answered) { return }
     if (this.selectedPageIndex == 1) {
