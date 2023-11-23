@@ -6,7 +6,8 @@
     'transform': 'translateX(calc(-' + 100/numPages + '%*' + selectedPageIndex + '))'
     }">
     <ng-container [ngTemplateOutlet]="page1"></ng-container>
-    <ng-container [ngTemplateOutlet]="page2"></ng-container>
+    <!-- <ng-container [ngTemplateOutlet]="page2a"></ng-container> -->
+    <ng-container [ngTemplateOutlet]="page2b"></ng-container>
     <ng-container [ngTemplateOutlet]="page3"></ng-container>
     <ng-container [ngTemplateOutlet]="page4"></ng-container>
     <ng-container [ngTemplateOutlet]="page5"></ng-container>
@@ -15,7 +16,7 @@
   </div>
   <div class="phy-dot-container">
     <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
-    (click)="onDotClick(i)"
+    (click)="selectedPageIndex=i; setButtons()"
     [ngClass]="{'phy-dot-touch-target-active': i == selectedPageIndex}">
       <div class="phy-dot"
       [ngClass]="{'dark-theme': themeService.isDarkTheme, 'phy-dot-active': i == selectedPageIndex}"></div>
@@ -69,7 +70,7 @@
   </div>
 </ng-template>
 
-<ng-template #page2>
+<ng-template #page2a>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       Before attempting to convert <strong>mAh</strong> to <strong>J</strong>, Dionne wants to estimate the battery capacity in joules.
@@ -97,9 +98,66 @@
         [ngClass]="{'dark-theme': themeService.isDarkTheme}">
           🥳 <em>Great job!</em> 🎉
       </div>
-      <div class="phy-great-job" *ngIf="picked_answer && picked_answer !== correct_answer"
+      <div class="phy-bad-job" *ngIf="picked_answer!=undefined && picked_answer !== correct_answer"
         [ngClass]="{'dark-theme': themeService.isDarkTheme}">
           <em>68000J was the right answer</em>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page2b>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Before attempting to convert <strong>mAh</strong> to <strong>J</strong>, Dionne wants to estimate the battery capacity in <strong>J</strong>.
+      <br><br>
+      Starting with a battery level of <strong>12%</strong> and using the <strong>25W</strong> charger, Dionne records that it takes approximately <strong>40 minutes</strong> to fully charge.
+      <div class="phy-equation">
+        <i class="material-icons phy-charger">electrical_services</i>
+        <ng-container *ngIf="battery_percent != 100 && battery_percent != 12">
+          <ng-container *ngFor="let _ of charging_array; let i = index">
+            <div class="phy-joule-container phy-joule-moving"
+            [ngStyle]="{'animation-delay': i/10 + 's', 'animation-duration': '0.5s', 'position': 'absolute'}">
+              <i class="material-icons phy-joule-icon">electric_bolt</i>
+            </div>
+          </ng-container>
+        </ng-container>
+        <div class="phy-battery-2">
+          <div class="phy-battery-2-lid" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+          <div class="phy-battery-2-body" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+            <div class="phy-battery-2-filler" [ngStyle]="{'height': battery_percent + '%'}"></div>
+            <div class="phy-battery-2-percent" [ngStyle]="{'text-shadow': themeService.isDarkTheme ? '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' : 'none'}">
+              {{battery_percent}}%
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phy-equation phy-charge-timer">{{charge_timer}}&nbsp;<em>min</em></div>
+      Can you calculate the battery capacity in joules? (Rounded to the nearest thousand)
+      <br><br>
+      <mat-grid-list cols="4" rowHeight="2:1">
+        <mat-grid-tile *ngFor="let option of answer_options; let i = index">
+          <button mat-flat-button
+          class="phy-button phy-button-flat f-poppins" 
+          [ngClass]="{
+            'dark-theme': themeService.isDarkTheme,
+            'phy-correct-ans': i == correct_answer && question_answered,
+            'phy-wrong-ans': i == picked_answer && i != correct_answer && question_answered
+          }"
+          style="font-size: 70%;"
+          [disabled]="question_answered"
+          (click)="on_answer(i)">
+            {{option}}
+          </button>
+        </mat-grid-tile>
+      </mat-grid-list>
+      <div class="phy-great-job" *ngIf="picked_answer == correct_answer"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          🥳 <em>Great job!</em> 🎉
+      </div>
+      <div class="phy-bad-job" *ngIf="picked_answer!=undefined && picked_answer !== correct_answer"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          68000J <em>was the right answer</em>
       </div>
     </div>
   </div>
@@ -138,7 +196,7 @@
       <br><br>
       Dionne's estimate of <strong>68000J</strong> was an approximation of the battery's <strong>energy capacity</strong>.
       <br><br>
-      On the contrary, the battery rating of <strong>5000mAh</strong> was its <strong>charge capacity</strong>.
+      On the other hand, the battery rating of <strong>5000mAh</strong> was its <strong>charge capacity</strong>.
     </div>
   </div>
 </ng-template>
@@ -176,8 +234,8 @@
       </ul>
       After studying all these topics, Dionne devises a simple formula to convert <strong>mAh</strong> to <strong>J</strong>. 
       <br><br>
-      It is her opinion that anyone wishing to merely apply this formula need not study the above topics, 
-      but those wishing to thoroughly grasp the concept should certainly do so in their own time.
+      It is her opinion that anyone wishing to <em>merely apply</em> this formula need not study the above topics, 
+      but those wishing to <em>thoroughly grasp</em> the concept should certainly do so in their own time.
     </div>
   </div>
 </ng-template>
@@ -185,7 +243,7 @@
 <ng-template #page7>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
-      Given a charge capacity of <strong>5000mAh</strong> a constant battery voltage of <strong>3.8V</strong> (typical of modern smartphones), Dionne's formula first derives power using Ohm's Law:
+      Given a charge capacity of <strong>5000mAh</strong> and a constant battery voltage of <strong>3.8V</strong> (typical of modern smartphones), Dionne's formula first derives power using <strong>Ohm's Law</strong>:
       <div class="phy-equation" style="flex-direction: column; line-height: 2;">
         <div [mathjax]="mah_power_1"></div>
         <div [mathjax]="mah_power_2"></div>

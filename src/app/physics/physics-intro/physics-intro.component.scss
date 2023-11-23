@@ -212,6 +212,47 @@ $charging-width: 0.2;
   color: var(--great-job-color) !important;
   animation: great-job 0.5s ease-in-out;
 }
+.phy-bad-job {
+  margin-top: calc($phy-intro-desc-font-size*0.5);
+  color: var(--wrong-color) !important;
+  animation: great-job 0.5s ease-in-out;
+}
+.phy-battery-2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(calc($charging-width*$phy-content-width));
+}
+.phy-battery-2-lid {
+  width: calc($phy-intro-desc-font-size*0.8);
+  height: calc($phy-intro-desc-font-size*0.3);
+  background-color: var(--text-color);
+  border-radius: calc($phy-intro-desc-font-size*0.2) calc($phy-intro-desc-font-size*0.2) 0 0;
+}
+.phy-battery-2-body {
+  width: calc($phy-intro-desc-font-size*2);
+  height: calc($phy-intro-desc-font-size*4);
+  border: 2px solid var(--text-color);
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+}
+.phy-battery-2-filler {
+  width: 100%;
+  background-color: gold;
+}
+.phy-battery-2-percent {
+  background-color: transparent;
+  position: absolute;
+  top: 42%;
+  font-size: calc($phy-intro-desc-font-size*0.7);
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+.phy-charge-timer {
+  transform: translateY(calc($phy-intro-desc-font-size*-2));
+  margin-bottom: calc($phy-intro-desc-font-size*-1);
+  font-family: 'Cambria Math', sans-serif;
+}
 @keyframes phy-content-enter {
   from {
     margin-top: -1vh;
