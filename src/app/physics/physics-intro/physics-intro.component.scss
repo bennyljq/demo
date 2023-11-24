@@ -157,6 +157,12 @@ $charging-width: 0.2;
   font-size: calc($phy-intro-desc-font-size*2);
   transform: translateX(calc($charging-width*$phy-content-width));
 }
+.phy-charging-blocker {
+  background-color: var(--content-bg);
+  position: absolute;
+  width: calc($charging-width*$phy-content-width*2);
+  height: calc($phy-intro-desc-font-size*2);
+}
 .phy-tap {
   width: calc($phy-intro-desc-font-size*3);
   height: calc($phy-intro-desc-font-size*3);
@@ -199,6 +205,15 @@ $charging-width: 0.2;
   background-color: gold;
   animation: cup-filling 4s infinite linear;
 }
+.phy-cup-filling-bottom {
+  width: 100%;
+  height: 15%;
+  border-radius: 0 0 
+  calc($phy-intro-desc-font-size*0.5 - 2px) 
+  calc($phy-intro-desc-font-size*0.5 - 2px);
+  background-color: gold;
+  position: absolute;
+}
 .phy-correct-ans {
   background-color: var(--correct-color) !important;
   color: black !important;
@@ -214,7 +229,7 @@ $charging-width: 0.2;
 }
 .phy-bad-job {
   margin-top: calc($phy-intro-desc-font-size*0.5);
-  color: var(--wrong-color) !important;
+  // color: var(--wrong-color) !important;
   animation: great-job 0.5s ease-in-out;
 }
 .phy-battery-2 {
@@ -301,9 +316,15 @@ $charging-width: 0.2;
   }
 }
 @keyframes cup-filling {
-  from {
-    height: 10%;
-  } to {
+  0% {
+    opacity: 1;
+    height: 15%;
+  } 
+  95% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
     height: 100%;
   }
 }

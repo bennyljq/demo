@@ -11,4 +11,10 @@ export class ThemeService {
   toggleTheme() {
     this.isDarkTheme = !this.isDarkTheme;
   }
+  lightTheme() {
+    this.isDarkTheme = false;
+  }
+  darkTheme() {
+    this.isDarkTheme = true;
+  }
 }

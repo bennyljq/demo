@@ -26,6 +26,8 @@ export class PhysicsHomeComponent implements OnInit {
   ngAfterViewInit() {
     // let x = document.getElementsByClassName("switch-touch-target")[0] as HTMLElement
     // x.click()
+    // this.themeService.darkTheme()
+    this.themeService.lightTheme()
   }
 
   onChapterSelect(event: any) {

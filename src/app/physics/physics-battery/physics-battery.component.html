@@ -12,7 +12,10 @@
     <ng-container [ngTemplateOutlet]="page4"></ng-container>
     <ng-container [ngTemplateOutlet]="page5"></ng-container>
     <ng-container [ngTemplateOutlet]="page6"></ng-container>
-    <ng-container [ngTemplateOutlet]="page7"></ng-container>
+    <!-- <ng-container [ngTemplateOutlet]="page7a"></ng-container> -->
+    <ng-container [ngTemplateOutlet]="page7b"></ng-container>
+    <ng-container [ngTemplateOutlet]="page8"></ng-container>
+    <ng-container [ngTemplateOutlet]="page9"></ng-container>
   </div>
   <div class="phy-dot-container">
     <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
@@ -114,18 +117,20 @@
       Starting with a battery level of <strong>12%</strong> and using the <strong>25W</strong> charger, Dionne records that it takes approximately <strong>40 minutes</strong> to fully charge.
       <div class="phy-equation">
         <i class="material-icons phy-charger">electrical_services</i>
-        <ng-container *ngIf="battery_percent != 100 && battery_percent != 12">
-          <ng-container *ngFor="let _ of charging_array; let i = index">
-            <div class="phy-joule-container phy-joule-moving"
-            [ngStyle]="{'animation-delay': i/10 + 's', 'animation-duration': '0.5s', 'position': 'absolute'}">
-              <i class="material-icons phy-joule-icon">electric_bolt</i>
-            </div>
-          </ng-container>
+        <!-- <ng-container *ngIf="battery_percent != 100 && battery_percent != 12"> -->
+        <ng-container *ngFor="let _ of charging_array; let i = index">
+          <div class="phy-joule-container phy-joule-moving"
+          [ngStyle]="{'animation-delay': i*0.14 + 's', 'animation-duration': '0.84s', 'position': 'absolute'}">
+            <i class="material-icons phy-joule-icon">electric_bolt</i>
+          </div>
         </ng-container>
+        <div class="phy-charging-blocker" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+        *ngIf="battery_percent == 100 || battery_percent == 12"></div>
         <div class="phy-battery-2">
           <div class="phy-battery-2-lid" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
           <div class="phy-battery-2-body" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-            <div class="phy-battery-2-filler" [ngStyle]="{'height': battery_percent + '%'}"></div>
+            <div class="phy-battery-2-filler" [ngStyle]="{'height': battery_percent + '%', 
+            'box-shadow': themeService.isDarkTheme ? '0 0 0 2px black inset' : 'none'}"></div>
             <div class="phy-battery-2-percent" [ngStyle]="{'text-shadow': themeService.isDarkTheme ? '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' : 'none'}">
               {{battery_percent}}%
             </div>
@@ -144,7 +149,7 @@
             'phy-correct-ans': i == correct_answer && question_answered,
             'phy-wrong-ans': i == picked_answer && i != correct_answer && question_answered
           }"
-          style="font-size: 70%;"
+          style="font-size: 80%; padding: 20% 15%;"
           [disabled]="question_answered"
           (click)="on_answer(i)">
             {{option}}
@@ -223,9 +228,13 @@
     <div class="phy-intro-desc">
       To convert <strong>mAh</strong> to <strong>J</strong>, Dionne found that she needed a firm understanding of the following topics:
       <ul>
-        <li>Electric Current and Charge</li>
-        <li>Electric Potential Difference</li>
-        <li>Electrical Power</li>
+        <li>Electric Current(A) and Charge(C)</li>
+        <li>Electric Potential Difference(V)</li>
+        <li>Electrical Work:
+          <span style="font-family: 'Cambria Math', sans-serif;">
+            <em>W = QV</em>
+          </span>
+        </li>
         <li>Ohm's Law: 
           <span style="font-family: 'Cambria Math', sans-serif;">
             <em>P = VI</em>
@@ -240,7 +249,7 @@
   </div>
 </ng-template>
 
-<ng-template #page7>
+<ng-template #page7a>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       Given a charge capacity of <strong>5000mAh</strong> and a constant battery voltage of <strong>3.8V</strong> (typical of modern smartphones), Dionne's formula first derives power using <strong>Ohm's Law</strong>:
@@ -253,6 +262,56 @@
         <div [mathjax]="mah_capacity"></div>
       </div>
       Dionne finally rests, satisfied with this value closely matching her estimate of <strong>68000J</strong>.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page7b>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      One <strong>ampere(A)</strong> represents an electric current carrying one <strong>coulomb(C)</strong> of electric charge per second, 
+      where coulomb is the standard unit of electric charge.
+      <br><br>
+      Consequently, <strong>one milliampere-hour(mAh)</strong> is equivalent to the amount of electric charge accumulated by
+      a <strong>one milliampere(mA)</strong> electric current running for <strong>one hour</strong>. 
+      <div class="phy-equation" style="flex-direction: column; line-height: 2;">
+        <div [mathjax]="ah_to_c"></div>
+        <div [mathjax]="mah_to_c"></div>
+      </div>
+      Armed with this <strong>mAh</strong> to <strong>C</strong> conversion, Dionne simply multiplies <strong>electric charge(C)</strong> with <strong>voltage(V)</strong> to get <strong>energy capacity(J)</strong>.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page8>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Given a charge capacity of <strong>5000mAh</strong> and a constant battery voltage of <strong>3.8V</strong> (typical of modern smartphones), Dionne's method first derives total electric charge:
+      <div class="phy-equation" style="flex-direction: column; line-height: 2;">
+        <div [mathjax]="mah_to_c_2"></div>
+        <div [mathjax]="mah_to_c_3"></div>
+      </div>
+      To get <strong>energy capacity(J)</strong>, Dionne multiplies <strong>electric charge(C)</strong> by <strong>battery voltage(V)</strong>:
+      <div class="phy-equation">
+        <div [mathjax]="c_times_v"></div>
+      </div>
+      Satisfied with this value closely matching her estimate of <strong>68000J</strong>, Dionne finally rests for the night.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page9>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      In this chapter, we have learnt:
+      <ul>
+        <li><strong>mAh</strong> stands for <strong>milliampere-hour</strong></li>
+        <li><strong>Coulomb(C)</strong> is the standard unit for <strong>electric charge</strong></li>
+        <li><strong>1mAh</strong> is equivalent to <strong>3.6C</strong></li>
+        <li>The battery voltage of smartphones is around <strong>3.8V</strong></li>
+        <li>Energy capacity is electric charge multiplied by voltage</li>
+      </ul>
+      In the next chapter <strong>"kilowatt-the-F?"</strong>, Dionne deciphers the puzzling unit of <strong>kWh</strong> and why it's plastered all over her utility bills. 
     </div>
   </div>
 </ng-template>

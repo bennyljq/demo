@@ -15,7 +15,7 @@ export class PhysicsBatteryComponent {
 
   @Output() selectChapter = new EventEmitter;
   @Input() selectedPageIndex = 0
-  numPages = 7;
+  numPages = 9;
   pagesArray = new Array(this.numPages)
   hideBack = true
   hideNext = false
@@ -73,7 +73,7 @@ export class PhysicsBatteryComponent {
   correct_answer = 2
   picked_answer: number | undefined;
   question_answered = false
-  charging_array = Array(5).fill(0)
+  charging_array = Array(6).fill(0)
   battery_percent = 12
   charge_timer = 0
 
@@ -84,6 +84,11 @@ export class PhysicsBatteryComponent {
   mah_power_1 = "$5000mA = 5A$"
   mah_power_2 = "$5A \\times 3.8V = 19W$"
   mah_capacity = "$19W \\times 3600s = 68400J$"
+  ah_to_c = "$1Ah = 3600C$"
+  mah_to_c = "$1mAh = 3600C \\div 1000 = 3.6C$"
+  mah_to_c_2 = "$5000mAh = 5Ah$"
+  mah_to_c_3 = "$5Ah = 5 \\times 3600C = 18000C$"
+  c_times_v = "$18000C \\times 3.8V = 68400J$"
 
   async init_battery_percent() {
     while (true) {
