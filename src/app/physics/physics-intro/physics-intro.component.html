@@ -60,7 +60,7 @@
     <div class="phy-intro-desc">
       In this lesson, you will learn:
       <ul>
-        <li>The definitions and applications of energy and power quantifiers such as <strong>watt (W)</strong>, <strong>joule (J)</strong>, and <strong>kilowatt-hour (kWh)</strong></li>
+        <li>The definitions and applications of energy and power quantifiers such as <strong>watt (W)</strong>, <br><strong>joule (J)</strong>, and <strong>kilowatt-hour (kWh)</strong></li>
         <li>How to interpret battery capacity stored in <strong>milliampere-hour (mAh)</strong></li>
         <li>How electrical energy is consumed by your devices and appliances</li>
         <li>How electrical energy is delivered from the grid to your home</li>
@@ -75,10 +75,20 @@
     <div class="phy-intro-desc">
       Today's lesson on <strong>"Everyday Electricity"</strong> assumes no prior knowledge, other than basic familiarity with electricity such as charging and using mobile devices, or using electrical appliances.
       <br><br>
-      In the first chapter <strong>"Watt is Love"</strong>, we will be following Dionne's shocking journey as she interacts with various electrical devices.
+      In the first two chapters <strong>"Watt is Love"</strong> and <strong>"Battery, don't hurt me"</strong>, we will be following Dionne's shocking revelations as she ponders about a seemingly straightforward chore. 
     </div>
-    <div class="phy-kettle phy-kettle-light" *ngIf="!themeService.isDarkTheme"></div>
-    <div class="phy-kettle phy-kettle-dark" *ngIf="themeService.isDarkTheme"></div>
+    <!-- <div class="phy-kettle phy-kettle-light" *ngIf="!themeService.isDarkTheme"></div>
+    <div class="phy-kettle phy-kettle-dark" *ngIf="themeService.isDarkTheme"></div> -->
+    <div style="display: flex; flex-direction: row; margin-top: 10%;">
+      <i class="material-icons phy-battery-charging-icon" 
+      style="transform: rotate(25deg) translate(26%, 0%);">
+        phone_iphone
+      </i>
+      <i class="material-icons phy-battery-charging-icon" 
+      style="transform: translate(-26%, 50%);">
+        electrical_services
+      </i>
+    </div>
   </div>
 </ng-template>
 
