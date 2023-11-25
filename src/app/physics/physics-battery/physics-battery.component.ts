@@ -19,7 +19,6 @@ export class PhysicsBatteryComponent {
   pagesArray = new Array(this.numPages)
   hideBack = true
   hideNext = false
-  preventNext = false
 
   ngOnInit() {
     this.init_battery_percent()
@@ -39,9 +38,8 @@ export class PhysicsBatteryComponent {
     this.setButtons()
   }
   nextPage() {
-    if (this.preventNext) { return }
     if (this.selectedPageIndex == this.numPages - 1) {
-      return
+      this.nextChapter()
     }
     this.selectedPageIndex = (this.selectedPageIndex + 1) % this.numPages
     this.setButtons()

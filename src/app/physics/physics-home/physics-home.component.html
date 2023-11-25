@@ -16,6 +16,7 @@
     <app-physics-intro *ngIf="selectedIndex==0" (selectChapter)="onChapterSelect($event)" [selectedPageIndex]="childPageIndex"></app-physics-intro>
     <app-physics-watt *ngIf="selectedIndex==1" (selectChapter)="onChapterSelect($event)" [selectedPageIndex]="childPageIndex"></app-physics-watt>
     <app-physics-battery *ngIf="selectedIndex==2" (selectChapter)="onChapterSelect($event)" [selectedPageIndex]="childPageIndex"></app-physics-battery>
+    <app-physics-power *ngIf="selectedIndex==3" (selectChapter)="onChapterSelect($event)" [selectedPageIndex]="childPageIndex"></app-physics-power>
 </div>
 <mat-menu #phyMenu="matMenu">
   <button *ngFor="let chapter of chapters; let i = index" mat-menu-item 

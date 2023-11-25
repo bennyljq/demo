@@ -31,6 +31,7 @@ import { PhysicsWattComponent } from './physics/physics-watt/physics-watt.compon
 import { MathjaxModule } from "mathjax-angular";
 import { HammerModule } from '@angular/platform-browser';
 import { PhysicsBatteryComponent } from './physics/physics-battery/physics-battery.component';
+import { PhysicsPowerComponent } from './physics/physics-power/physics-power.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { PhysicsBatteryComponent } from './physics/physics-battery/physics-batte
     SwitchComponent,
     PhysicsIntroComponent,
     PhysicsWattComponent,
-    PhysicsBatteryComponent
+    PhysicsBatteryComponent,
+    PhysicsPowerComponent
   ],
   imports: [
     BrowserModule,

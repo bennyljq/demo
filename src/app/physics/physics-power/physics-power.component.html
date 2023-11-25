@@ -1,0 +1,156 @@
+<div class="phy-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}" (swipeleft)="nextPage()" (swiperight)="prevPage()">
+  <div class="phy-intro-title f-merri" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    Unlimited Power!
+  </div>
+  <div class="phy-content-subcontainer" [ngStyle]="{
+    'transform': 'translateX(calc(-' + 100/numPages + '%*' + selectedPageIndex + '))'
+    }">
+    <ng-container [ngTemplateOutlet]="page1"></ng-container>
+    <ng-container [ngTemplateOutlet]="page2"></ng-container>
+    <!-- <ng-container [ngTemplateOutlet]="page3"></ng-container>
+    <ng-container [ngTemplateOutlet]="page4"></ng-container> -->
+  </div>
+  <div class="phy-dot-container">
+    <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
+    (click)="selectedPageIndex = i; setButtons()"
+    [ngClass]="{'phy-dot-touch-target-active': i == selectedPageIndex}">
+      <div class="phy-dot"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme, 'phy-dot-active': i == selectedPageIndex}"></div>
+    </div>
+  </div>
+</div>
+<div class="phy-button-container">
+  <button mat-stroked-button *ngIf="selectedPageIndex == 0"
+  class="phy-button phy-button-stroked f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="prevChapter()">
+    <mat-icon>arrow_back</mat-icon>
+    &nbsp; Battery, don't hurt me
+  </button>
+  <button mat-stroked-button *ngIf="!hideBack"
+  class="phy-button phy-button-stroked f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="prevPage()">
+    Back
+  </button>
+  <div class="spacer"></div>
+  <button mat-flat-button *ngIf="!hideNext"
+  class="phy-button phy-button-flat f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="nextPage()">
+    Next
+  </button>
+  <button mat-flat-button *ngIf="selectedPageIndex == this.numPages-1"
+  class="phy-button phy-button-flat f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div style="display: flex; align-items: center;">
+      Finish lesson &nbsp;
+      <mat-icon>arrow_forward</mat-icon>
+    </div>
+  </button>
+</div>
+
+<ng-template #page1>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Electricity is distributed from its source to individual homes through 
+      the electrical grid.
+      <br><br>
+      <div class="phy-power-grid-container">
+        <div class="phy-power-grid-line" style="border-right: none;"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+        <img *ngIf="!themeService.isDarkTheme"
+        src="assets/factory.svg" class="phy-power-grid-icon">
+        <img *ngIf="themeService.isDarkTheme"
+        src="assets/factory_white.svg" class="phy-power-grid-icon">
+        <div class="phy-power-grid-line" style="border-left: none;"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+      </div>
+      <div class="phy-power-grid-container">
+        <div class="phy-power-grid-line-2" 
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+        <div class="phy-power-grid-line-2" style="border-left: none;"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+
+        <!-- center bolt -->
+        <div class="phy-joule-container-2 phy-joule-centre"
+        style="animation-delay: 0.95s;">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+
+        <!-- left bolts -->
+        <div class="phy-joule-container-2 phy-joule-left" 
+        style="animation-delay: 0s;">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+        <div class="phy-joule-container-2 phy-joule-left" 
+        style="animation-delay: 0.5s;">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+        <div class="phy-joule-container-2 phy-joule-left" 
+        style="animation-delay: 1s;">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+
+        <!-- right bolts -->
+        <div class="phy-joule-container-2 phy-joule-right" 
+        style="animation-delay: 0s;">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+        <div class="phy-joule-container-2 phy-joule-right" 
+        style="animation-delay: 0.5s;">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+        <div class="phy-joule-container-2 phy-joule-right" 
+        style="animation-delay: 1s;">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+
+      </div>
+      <div class="phy-power-grid-container">
+        <img *ngIf="!themeService.isDarkTheme"
+        src="assets/house.svg" class="phy-power-grid-icon-small">
+        <img *ngIf="themeService.isDarkTheme"
+        src="assets/house_white.svg" class="phy-power-grid-icon-small">
+        <div class="phy-power-grid-spacer"></div>
+        <img *ngIf="!themeService.isDarkTheme"
+        src="assets/house.svg" class="phy-power-grid-icon-small">
+        <img *ngIf="themeService.isDarkTheme"
+        src="assets/house_white.svg" class="phy-power-grid-icon-small">
+        <div class="phy-power-grid-spacer"></div>
+        <img *ngIf="!themeService.isDarkTheme"
+        src="assets/house.svg" class="phy-power-grid-icon-small">
+        <img *ngIf="themeService.isDarkTheme"
+        src="assets/house_white.svg" class="phy-power-grid-icon-small">
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page2>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      As covered in the first chapter <strong>"Watt is Love"</strong>, 
+      we know that watts and joules are related by the equation:
+      <div class="phy-equation">
+        <div [mathjax]="watt"></div>
+      </div>
+      Electrical appliances in the home draw power from the electrical grid, 
+      and the amounts of power they draw differ from appliance to appliance.
+    </div>
+  </div>
+</ng-template>

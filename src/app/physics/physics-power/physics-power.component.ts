@@ -2,11 +2,11 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ThemeService } from '../theme.service';
 
 @Component({
-  selector: 'app-physics-watt',
-  templateUrl: './physics-watt.component.html',
-  styleUrls: ['./physics-watt.component.scss', '../physics-intro/physics-intro.component.scss']
+  selector: 'app-physics-power',
+  templateUrl: './physics-power.component.html',
+  styleUrls: ['./physics-power.component.scss', '../physics-intro/physics-intro.component.scss']
 })
-export class PhysicsWattComponent {
+export class PhysicsPowerComponent {
 
   constructor (
     public themeService: ThemeService
@@ -14,7 +14,7 @@ export class PhysicsWattComponent {
 
   @Output() selectChapter = new EventEmitter;
   @Input() selectedPageIndex = 0
-  numPages = 4;
+  numPages = 2;
   pagesArray = new Array(this.numPages)
   hideBack = true
   hideNext = false
@@ -34,7 +34,7 @@ export class PhysicsWattComponent {
   }
   nextPage() {
     if (this.selectedPageIndex == this.numPages - 1) {
-      this.nextChapter()
+      return
     }
     this.selectedPageIndex = (this.selectedPageIndex + 1) % this.numPages
     this.setButtons()
@@ -62,32 +62,6 @@ export class PhysicsWattComponent {
     }
   }
 
-  // variables & equations
-  current_watt = 1
-  anim_duration = 1
-  anim_delay = 0
-  watt_steps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-  content = "$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$";
-  einstein = "$E = mc^2$";
   watt = "$1\\ W = 1\\ Js^{-1}$";
-  joule_eq = "$= 1\\ J$";
-
-  // charging animation
-  async set_watt(action: 'minus' | 'add') {
-    if (action == 'minus' && this.current_watt > 1) {
-      this.current_watt = this.watt_steps[this.watt_steps.indexOf(this.current_watt) - 1]
-    } else if (action == 'add' && this.current_watt < 25) {
-      this.current_watt = this.watt_steps[this.watt_steps.indexOf(this.current_watt) + 1]
-    }
-
-    if (this.current_watt <= 5) {
-      this.anim_duration = 1
-      this.anim_delay = 1/this.current_watt
-    } else {
-      this.anim_duration = 5/this.current_watt
-      this.anim_delay = this.anim_duration/5
-    }
-  }
 
 }

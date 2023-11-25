@@ -271,6 +271,58 @@ $charging-width: 0.2;
 .phy-battery-charging-icon {
   font-size: calc($phy-intro-desc-font-size*3);
 }
+.phy-power-grid-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.phy-power-grid-line {
+  width: calc($phy-intro-desc-font-size*4);
+  height: calc($phy-intro-desc-font-size*2);
+  border: 3px dotted var(--text-color);
+  border-bottom: none;
+}
+.phy-power-grid-line-2 {
+  width: calc($phy-intro-desc-font-size*6);
+  height: calc($phy-intro-desc-font-size*3);
+  border: 3px dotted var(--text-color);
+  border-top: none;
+  border-bottom: none;
+  margin-top: 3px;
+}
+.phy-power-grid-icon {
+  width: calc($phy-intro-desc-font-size*4);
+  height: calc($phy-intro-desc-font-size*4);
+}
+.phy-power-grid-icon-small {
+  width: calc($phy-intro-desc-font-size*3);
+  height: calc($phy-intro-desc-font-size*3);
+}
+.phy-power-grid-spacer {
+  width: calc($phy-intro-desc-font-size*3);
+}
+.phy-joule-container-2 {
+  border-radius: 50%;
+  background-color: gold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $phy-intro-desc-font-size;
+  height: $phy-intro-desc-font-size;
+  position: absolute;
+}
+.phy-joule-centre {
+  opacity: 0;
+  animation: joule-centre 0.5s infinite linear;
+}
+.phy-joule-left {
+  opacity: 0;
+  animation: joule-left 1.5s infinite linear;
+}
+.phy-joule-right {
+  opacity: 0;
+  animation: joule-right 1.5s infinite linear;
+}
 @keyframes phy-content-enter {
   from {
     margin-top: -1vh;
@@ -338,5 +390,78 @@ $charging-width: 0.2;
   } to {
     opacity: 1;
     transform: translateY();
+  }
+}
+
+@keyframes joule-centre {
+  0% {
+    opacity: 0;
+    transform: translateY(calc(-2.5*$phy-intro-desc-font-size));
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+@keyframes joule-left {
+  0% {
+    opacity: 0;
+    transform: translate(
+      calc(-2.5*$phy-intro-desc-font-size),
+      calc(-4.5*$phy-intro-desc-font-size)
+    );
+  }
+  10% {
+    opacity: 1;
+  }
+  40% {
+    transform: translate(
+      calc(-6*$phy-intro-desc-font-size),
+      calc(-4.5*$phy-intro-desc-font-size)
+    );
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+      calc(-6*$phy-intro-desc-font-size),
+      0
+    );
+  }
+}
+@keyframes joule-right {
+  0% {
+    opacity: 0;
+    transform: translate(
+      calc(2.5*$phy-intro-desc-font-size),
+      calc(-4.5*$phy-intro-desc-font-size)
+    );
+  }
+  10% {
+    opacity: 1;
+  }
+  40% {
+    transform: translate(
+      calc(6*$phy-intro-desc-font-size),
+      calc(-4.5*$phy-intro-desc-font-size)
+    );
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+      calc(6*$phy-intro-desc-font-size),
+      0
+    );
   }
 }

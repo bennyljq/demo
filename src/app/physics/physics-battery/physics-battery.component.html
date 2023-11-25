@@ -49,9 +49,10 @@
   </button>
   <button mat-flat-button *ngIf="selectedPageIndex == this.numPages-1"
   class="phy-button phy-button-flat f-poppins" 
-  [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="nextChapter()">
     <div style="display: flex; align-items: center;">
-      Next Chapter &nbsp;
+      Unlimited Power! &nbsp;
       <mat-icon>arrow_forward</mat-icon>
     </div>
   </button>
@@ -311,7 +312,7 @@
         <li>The battery voltage of smartphones is around <strong>3.8V</strong></li>
         <li>Energy capacity is electric charge multiplied by voltage</li>
       </ul>
-      In the next chapter <strong>"kilowatt-the-F?"</strong>, Dionne deciphers the puzzling unit of <strong>kWh</strong> and why it's plastered all over her utility bills. 
+      In the next chapter <strong>"Unlimited Power!"</strong>, Dionne deciphers the puzzling unit of <strong>kWh</strong> and why it's plastered all over her utility bills. 
     </div>
   </div>
 </ng-template>
