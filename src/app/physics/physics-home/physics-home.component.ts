@@ -18,7 +18,7 @@ export class PhysicsHomeComponent implements OnInit {
     "Battery, don't hurt me",
     "Unlimited Power!"
   ]
-  selectedIndex = 3
+  selectedIndex = 0
   childPageIndex = 0
 
   ngOnInit(): void {

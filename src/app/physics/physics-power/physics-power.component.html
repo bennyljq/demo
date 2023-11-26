@@ -7,8 +7,14 @@
     }">
     <ng-container [ngTemplateOutlet]="page1"></ng-container>
     <ng-container [ngTemplateOutlet]="page2"></ng-container>
-    <!-- <ng-container [ngTemplateOutlet]="page3"></ng-container>
-    <ng-container [ngTemplateOutlet]="page4"></ng-container> -->
+    <ng-container [ngTemplateOutlet]="page3"></ng-container>
+    <ng-container [ngTemplateOutlet]="page4"></ng-container>
+    <ng-container [ngTemplateOutlet]="page5"></ng-container>
+    <ng-container [ngTemplateOutlet]="page6"></ng-container>
+    <ng-container [ngTemplateOutlet]="page7"></ng-container>
+    <ng-container [ngTemplateOutlet]="page8"></ng-container>
+    <ng-container [ngTemplateOutlet]="page9"></ng-container>
+    <ng-container [ngTemplateOutlet]="page10"></ng-container>
   </div>
   <div class="phy-dot-container">
     <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
@@ -42,7 +48,8 @@
   </button>
   <button mat-flat-button *ngIf="selectedPageIndex == this.numPages-1"
   class="phy-button phy-button-flat f-poppins" 
-  [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  routerLink="/main">
     <div style="display: flex; align-items: center;">
       Finish lesson &nbsp;
       <mat-icon>arrow_forward</mat-icon>
@@ -54,8 +61,8 @@
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       Electricity is distributed from its source to individual homes through 
-      the electrical grid.
-      <br><br>
+      the <strong>electrical grid</strong> using a network of interconnected power lines and transformers.
+      <br><br><br>
       <div class="phy-power-grid-container">
         <div class="phy-power-grid-line" style="border-right: none;"
         [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
@@ -144,13 +151,378 @@
 <ng-template #page2>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
-      As covered in the first chapter <strong>"Watt is Love"</strong>, 
-      we know that watts and joules are related by the equation:
+      The rate of electrical energy delivered to homes is measured in <strong>watts (W)</strong>, 
+      and as we learnt in the first chapter <strong>"Watt is Love"</strong>:
       <div class="phy-equation">
         <div [mathjax]="watt"></div>
       </div>
-      Electrical appliances in the home draw power from the electrical grid, 
-      and the amounts of power they draw differ from appliance to appliance.
+      Once again, Dionne thinks it would make sense for the cumulative energy delivered to a particular home
+      to be measured in <strong>joules (J)</strong>. 
+      <br><br>
+      Yet she recalls that her monthly utility bills have always been using <strong>kWh</strong> instead. 
+      <br><br>
+      Realising that she knows so little about this unit, 
+      Dionne switches on her research mode once more...
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page3>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Electrical energy is consumed at different rates for different appliances. 
+      This rate is defined as the <strong>wattage</strong> of the appliance. 
+      <br><br>
+      The total energy consumed by any appliance can be calculated by multiplying wattage with the 
+      duration of each appliance was used.
+      <br><br>
+      <strong>Tap Dionne's toaster</strong> below to see how this is calculated!
+      <div class="phy-equation">
+        <i class="material-icons phy-charger">electrical_services</i>
+        <ng-container *ngFor="let _ of charging_array; let i = index">
+          <div class="phy-joule-container phy-joule-moving"
+          [ngStyle]="{'animation-delay': i*0.14 + 's', 'animation-duration': '0.84s', 'position': 'absolute'}">
+            <i class="material-icons phy-joule-icon">electric_bolt</i>
+          </div>
+        </ng-container>
+        <div class="phy-charging-blocker" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+        *ngIf="!toaster_state"></div>
+        <img src="assets/toaster_white.svg" class="phy-toaster"
+        *ngIf="themeService.isDarkTheme && !toaster_state" 
+        (click)="toaster_state = !toaster_state">
+        <img src="assets/toaster_black.svg" class="phy-toaster"
+        *ngIf="!themeService.isDarkTheme && !toaster_state" 
+        (click)="toaster_state = !toaster_state">
+        <!-- <img src="assets/toaster_gold.svg" class="phy-toaster"
+        *ngIf="themeService.isDarkTheme && toaster_state" 
+        (click)="toaster_state = !toaster_state"> -->
+        <img src="assets/toaster_red.svg" class="phy-toaster"
+        *ngIf="toaster_state" 
+        (click)="toaster_state = !toaster_state">
+      </div>
+      <div class="phy-toaster-stats">
+        Toaster wattage: 
+        <div class="spacer"></div>
+        <span class="phy-math-font">1200 W</span>
+      </div>
+      <div class="phy-toaster-stats">
+        Usage duration:
+        <div class="spacer"></div>
+        <span class="phy-math-font">{{toaster_duration | number: '1.2-2'}} s</span>
+      </div>
+      <div class="phy-toaster-stats">
+        Energy consumed:
+        <div class="spacer"></div>
+        <span class="phy-math-font">{{toaster_duration*1200 | number: '1.0-0'}} J</span>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page4>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Very often, high wattages are expressed in <strong>kilowatts (kW)</strong> instead of 
+      <strong>watts (W)</strong>, where the kilo- prefix represents a multiplier of 1000. Hence, 
+      <div class="phy-equation">
+        <div [mathjax]="w_to_kw"></div>
+      </div>
+      Consequently, 
+      <div class="phy-equation">
+        <div [mathjax]="j_to_kj"></div>
+      </div>
+      The kilo- prefix is used so that manufacturers and consumers alike can keep track of less intimidating, low-magnitude numbers. 
+      <br><br>
+      This "shrinking" of numbers will be a theme as we work towards deciphering <strong>kWh</strong>.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page5>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Using Dionne's toaster again, notice the smaller numbers when tracking wattage and energy
+      in <strong>kW</strong> and <strong>kJ</strong> compared to <strong>W</strong> and <strong>J</strong>.
+      <div class="phy-equation">
+        <i class="material-icons phy-charger">electrical_services</i>
+        <ng-container *ngFor="let _ of charging_array; let i = index">
+          <div class="phy-joule-container phy-joule-moving"
+          [ngStyle]="{'animation-delay': i*0.14 + 's', 'animation-duration': '0.84s', 'position': 'absolute'}">
+            <i class="material-icons phy-joule-icon">electric_bolt</i>
+          </div>
+        </ng-container>
+        <div class="phy-charging-blocker" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+        *ngIf="!toaster_state"></div>
+        <img src="assets/toaster_white.svg" class="phy-toaster"
+        *ngIf="themeService.isDarkTheme && !toaster_state" 
+        (click)="toaster_state = !toaster_state">
+        <img src="assets/toaster_black.svg" class="phy-toaster"
+        *ngIf="!themeService.isDarkTheme && !toaster_state" 
+        (click)="toaster_state = !toaster_state">
+        <!-- <img src="assets/toaster_gold.svg" class="phy-toaster"
+        *ngIf="themeService.isDarkTheme && toaster_state" 
+        (click)="toaster_state = !toaster_state"> -->
+        <img src="assets/toaster_red.svg" class="phy-toaster"
+        *ngIf="toaster_state" 
+        (click)="toaster_state = !toaster_state">
+      </div>
+      <div class="phy-toaster-stats">
+        Toaster wattage (W): 
+        <div class="spacer"></div>
+        <span class="phy-math-font">1200 W</span>
+      </div>
+      <div class="phy-toaster-stats">
+        Toaster wattage (kW): 
+        <div class="spacer"></div>
+        <span class="phy-math-font">1.2 kW</span>
+      </div>
+      <div class="phy-toaster-stats">
+        Usage duration:
+        <div class="spacer"></div>
+        <span class="phy-math-font">{{toaster_duration | number: '1.2-2'}} s</span>
+      </div>
+      <div class="phy-toaster-stats">
+        Energy consumed (J):
+        <div class="spacer"></div>
+        <span class="phy-math-font">{{toaster_duration*1200 | number: '1.0-0'}} J</span>
+      </div>
+      <div class="phy-toaster-stats">
+        Energy consumed (kJ):
+        <div class="spacer"></div>
+        <span class="phy-math-font">{{toaster_duration*1.2 | number: '1.2-2'}} kJ</span>
+      </div>
+      <br>
+      But over the course of a month, toasters (and other appliances) will run for hours instead of mere seconds. How do we track those big numbers then?
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page6>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      This is where the concept of <strong>watt-hours (Wh)</strong> and <strong>kilowatt-hours (kWh)</strong> come in. 
+      <br><br>
+      A watt-hour is a quantifier of energy, equivalent to the energy consumed by a <strong>1W</strong> device running for <strong>1 hour</strong>. Its equivalence in <strong>joules (J)</strong> is therefore:
+      <div class="phy-equation" style="flex-direction: column; line-height: 2;">
+        <div [mathjax]="wh_to_j"></div>
+        <div [mathjax]="wh_to_kj"></div>
+      </div>
+      Similarly for <strong>kilowatt-hour (kWh)</strong>,
+      <div class="phy-equation" style="flex-direction: column; line-height: 2;">
+        <div [mathjax]="kwh_to_j"></div>
+        <div [mathjax]="kwh_to_kj"></div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page7>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Apart from reducing the magnitude of large amounts of energy, using <strong>kWh</strong> has the additional benefit of letting consumers calculate their energy consumption easily.
+      <br><br>
+      This is owing to its property of being the product of <strong>wattage (kW)</strong> and <strong>duration (hours)</strong>.
+      <br><br>
+      If Dionne uses her <strong>3kW</strong> air conditioner for <strong>8 hours</strong> per day, she can easily calculate her daily energy consumption in <strong>kWh</strong>:
+      <div class="phy-equation">
+        <div [mathjax]="aircon_kwh"></div>
+      </div>
+      While in <strong>joules</strong>:
+      <div class="phy-equation">
+        <div [mathjax]="aircon_j"></div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page8>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Using Dionne's toaster once more, we now explore the big numbers which are more consistent with monthly or annual energy consumption. 
+      <br><br>
+      The timescale has been set such that 1 second of real time equals 1 hour of simluated time.
+      <div class="phy-equation">
+        <i class="material-icons phy-charger">electrical_services</i>
+        <ng-container *ngFor="let _ of charging_array; let i = index">
+          <div class="phy-joule-container phy-joule-moving"
+          [ngStyle]="{'animation-delay': i*0.14 + 's', 'animation-duration': '0.84s', 'position': 'absolute'}">
+            <i class="material-icons phy-joule-icon">electric_bolt</i>
+          </div>
+        </ng-container>
+        <div class="phy-charging-blocker" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+        *ngIf="!toaster_state"></div>
+        <img src="assets/toaster_white.svg" class="phy-toaster"
+        *ngIf="themeService.isDarkTheme && !toaster_state" 
+        (click)="toaster_state = !toaster_state">
+        <img src="assets/toaster_black.svg" class="phy-toaster"
+        *ngIf="!themeService.isDarkTheme && !toaster_state" 
+        (click)="toaster_state = !toaster_state">
+        <img src="assets/toaster_red.svg" class="phy-toaster"
+        *ngIf="toaster_state" 
+        (click)="toaster_state = !toaster_state">
+      </div>
+      <div class="phy-toaster-stats-wide">
+        Toaster wattage: 
+        <div class="spacer"></div>
+        <span class="phy-math-font">1.2 kW</span>
+      </div>
+      <div class="phy-toaster-stats-wide">
+        Usage duration:
+        <div class="spacer"></div>
+        <span class="phy-math-font">{{toaster_duration | number: '1.2-2'}} hrs</span>
+      </div>
+      <div class="phy-toaster-stats-wide">
+        Energy consumed (J):
+        <div class="spacer"></div>
+        <span class="phy-math-font">{{toaster_duration*3600000 | number: '1.0-0'}} J</span>
+      </div>
+      <div class="phy-toaster-stats-wide">
+        Energy consumed (kJ):
+        <div class="spacer"></div>
+        <span class="phy-math-font">{{toaster_duration*3600 | number: '1.0-0'}} kJ</span>
+      </div>
+      <div class="phy-toaster-stats-wide">
+        Energy consumed (kWh):
+        <div class="spacer"></div>
+        <span class="phy-math-font">{{toaster_duration*1.2 | number: '1.2-2'}} kWh</span>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page9>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Extending the simulation to multiple household appliances, we can see how Dionne's energy consumption is accumulated and billed accordingly. Once again, 1 second = 1 hour.
+      <br><br>
+      <div class="phy-power-grid-container">
+        <div class="phy-power-grid-line" style="border-right: none;"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+        <img *ngIf="!themeService.isDarkTheme"
+        src="assets/factory.svg" class="phy-power-grid-icon">
+        <img *ngIf="themeService.isDarkTheme"
+        src="assets/factory_white.svg" class="phy-power-grid-icon">
+        <div class="phy-power-grid-line" style="border-left: none;"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+      </div>
+      <div class="phy-power-grid-container">
+        <div class="phy-power-grid-line-2" 
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+        <div class="phy-power-grid-line-2" style="border-left: none;"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+
+        <!-- center bolt -->
+        <div class="phy-joule-container-2 phy-joule-centre"
+        style="animation-delay: 0;" *ngIf="aircon_state">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+
+        <!-- left bolts -->
+        <div class="phy-joule-container-2 phy-joule-left" 
+        style="animation-delay: 0s;" *ngIf="toaster_state">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+        <div class="phy-joule-container-2 phy-joule-left" 
+        style="animation-delay: 0.5s;" *ngIf="toaster_state">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+        <div class="phy-joule-container-2 phy-joule-left" 
+        style="animation-delay: 1s;" *ngIf="toaster_state">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+
+        <!-- right bolts -->
+        <div class="phy-joule-container-2 phy-joule-right" 
+        style="animation-delay: 0s;" *ngIf="computer_state">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+        <div class="phy-joule-container-2 phy-joule-right" 
+        style="animation-delay: 0.5s;" *ngIf="computer_state">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+        <div class="phy-joule-container-2 phy-joule-right" 
+        style="animation-delay: 1s;" *ngIf="computer_state">
+          <i class="material-icons phy-joule-icon">
+            electric_bolt
+          </i>
+        </div>
+
+      </div>
+      <div class="phy-power-grid-container">
+        <div class="phy-grid-col" (click)="toaster_state = !toaster_state">
+          <img *ngIf="!themeService.isDarkTheme && !toaster_state"
+          src="assets/toaster_black.svg" class="phy-toaster-2">
+          <img *ngIf="themeService.isDarkTheme && !toaster_state"
+          src="assets/toaster_white.svg" class="phy-toaster-2">
+          <img src="assets/toaster_red.svg" class="phy-toaster-2"
+          *ngIf="toaster_state">
+          <span class="phy-math-font phy-grid-stats" style="margin-top: 7%;">1.2 kW</span>
+          <span class="phy-math-font phy-grid-stats">{{toaster_duration | number: '1.2-2'}} hrs</span>
+          <span class="phy-math-font phy-grid-stats">{{toaster_duration*1.2 | number: '1.2-2'}} kWh</span>
+        </div>
+
+        <div class="phy-grid-col" (click)="aircon_state = !aircon_state">
+          <img *ngIf="!themeService.isDarkTheme && !aircon_state"
+          src="assets/air-conditioner_black.svg" class="phy-toaster-2">
+          <img *ngIf="themeService.isDarkTheme && !aircon_state"
+          src="assets/air-conditioner_white.svg" class="phy-toaster-2">
+          <img src="assets/air-conditioner_red.svg" class="phy-toaster-2"
+          *ngIf="aircon_state">
+          <span class="phy-math-font phy-grid-stats" style="margin-top: 7%;">3 kW</span>
+          <span class="phy-math-font phy-grid-stats">{{aircon_duration | number: '1.2-2'}} hrs</span>
+          <span class="phy-math-font phy-grid-stats">{{aircon_duration*3 | number: '1.2-2'}} kWh</span>
+        </div>
+
+        <div class="phy-grid-col" (click)="computer_state = !computer_state">
+          <img *ngIf="!themeService.isDarkTheme && !computer_state"
+          src="assets/computer-outline_black.svg" class="phy-toaster-2">
+          <img *ngIf="themeService.isDarkTheme && !computer_state"
+          src="assets/computer-outline_white.svg" class="phy-toaster-2">
+          <img src="assets/computer-solid_red.svg" class="phy-toaster-2"
+          *ngIf="computer_state">
+          <span class="phy-math-font phy-grid-stats" style="margin-top: 7%;">0.5 kW</span>
+          <span class="phy-math-font phy-grid-stats">{{computer_duration | number: '1.2-2'}} hrs</span>
+          <span class="phy-math-font phy-grid-stats">{{computer_duration*0.5 | number: '1.2-2'}} kWh</span>
+        </div>
+      </div>
+      <br>
+      Total energy consumed: 
+      <span class="phy-math-font">
+        {{toaster_duration*1.2 + aircon_duration*3 + computer_duration*0.5 | number: '1.2-2'}} kWh
+      </span>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page10>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      In this chapter, we have learnt:
+      <ul>
+        <li><strong>kWh</strong> stands for <strong>kilowatt-hour</strong>.</li>
+        <li>
+          <strong>1kWh</strong> is equivalent to the energy consumed by a <strong>1kW</strong> device running for <strong>1 hour</strong>, which is <strong>3.6 million joules</strong>.
+        </li>
+        <li>
+          <strong>kWh</strong> is used for its ease of calculation in day-to-day contexts.
+        </li>
+        <li>
+          The energy consumption metric on utility bills is the cumulation of energy consumed by each electrical appliance, represented in <strong>kWh</strong>.
+        </li>
+      </ul>
+      Thanks for joining Dionne on this electrifying journey!
     </div>
   </div>
 </ng-template>

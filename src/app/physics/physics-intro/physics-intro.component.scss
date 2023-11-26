@@ -162,6 +162,7 @@ $charging-width: 0.2;
   position: absolute;
   width: calc($charging-width*$phy-content-width*2);
   height: calc($phy-intro-desc-font-size*2);
+  transition-duration: 0.2s;
 }
 .phy-tap {
   width: calc($phy-intro-desc-font-size*3);
@@ -236,7 +237,7 @@ $charging-width: 0.2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  transform: translateX(calc($charging-width*$phy-content-width));
+  transform: translateX(calc($charging-width*$phy-content-width + $phy-intro-desc-font-size*0.5));
 }
 .phy-battery-2-lid {
   width: calc($phy-intro-desc-font-size*0.8);
@@ -245,7 +246,7 @@ $charging-width: 0.2;
   border-radius: calc($phy-intro-desc-font-size*0.2) calc($phy-intro-desc-font-size*0.2) 0 0;
 }
 .phy-battery-2-body {
-  width: calc($phy-intro-desc-font-size*2);
+  width: calc($phy-intro-desc-font-size*2.6);
   height: calc($phy-intro-desc-font-size*4);
   border: 2px solid var(--text-color);
   display: flex;
@@ -260,7 +261,7 @@ $charging-width: 0.2;
   background-color: transparent;
   position: absolute;
   top: 42%;
-  font-size: calc($phy-intro-desc-font-size*0.7);
+  font-size: calc($phy-intro-desc-font-size*0.8);
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 .phy-charge-timer {
@@ -322,6 +323,47 @@ $charging-width: 0.2;
 .phy-joule-right {
   opacity: 0;
   animation: joule-right 1.5s infinite linear;
+}
+.phy-toaster {
+  width: calc($phy-intro-desc-font-size*4);
+  height: calc($phy-intro-desc-font-size*4);
+  transform: translateX(calc($charging-width*$phy-content-width + $phy-intro-desc-font-size*1.5));
+  margin-left: calc($phy-intro-desc-font-size*-2);
+  transition-duration: 0.2s;
+  cursor: pointer;
+}
+.phy-toaster:hover {
+  transform: scale(1.1) translateX(calc($charging-width*$phy-content-width + $phy-intro-desc-font-size*1));
+}
+.phy-math-font {
+  font-family: 'Cambria Math', sans-serif;
+}
+.phy-toaster-stats {
+  display: flex;
+  margin: 0 calc($phy-intro-desc-font-size*3);
+}
+.phy-toaster-stats-wide {
+  display: flex;
+  margin: 0 calc($phy-intro-desc-font-size*1);
+}
+.phy-toaster-2 {
+  width: calc($phy-intro-desc-font-size*3);
+  height: calc($phy-intro-desc-font-size*3);
+  cursor: pointer;
+  transition-duration: 0.2s;
+}
+.phy-toaster-2:hover {
+  transform: scale(1.1);
+}
+.phy-grid-stats {
+  font-size: 80%;
+}
+.phy-grid-col {
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+  width: calc($phy-intro-desc-font-size*6);
+  cursor: pointer;
 }
 @keyframes phy-content-enter {
   from {
@@ -396,7 +438,7 @@ $charging-width: 0.2;
 @keyframes joule-centre {
   0% {
     opacity: 0;
-    transform: translateY(calc(-2.5*$phy-intro-desc-font-size));
+    transform: translateY(calc(-2.666*$phy-intro-desc-font-size));
   }
   20% {
     opacity: 1;
