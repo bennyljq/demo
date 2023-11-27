@@ -394,7 +394,7 @@
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       Extending the simulation to multiple household appliances, we can see how Dionne's energy consumption is accumulated and billed accordingly. Once again, 1 second = 1 hour.
-      <br><br>
+      <br>
       <div class="phy-power-grid-container">
         <div class="phy-power-grid-line" style="border-right: none;"
         [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
@@ -497,7 +497,7 @@
           <span class="phy-math-font phy-grid-stats">{{computer_duration*0.5 | number: '1.2-2'}} kWh</span>
         </div>
       </div>
-      <br>
+      <div style="height: 5%;"></div>
       Total energy consumed: 
       <span class="phy-math-font">
         {{toaster_duration*1.2 + aircon_duration*3 + computer_duration*0.5 | number: '1.2-2'}} kWh
