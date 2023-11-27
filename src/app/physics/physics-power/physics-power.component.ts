@@ -80,8 +80,8 @@ export class PhysicsPowerComponent {
   aircon_duration = 0
   computer_duration = 0
   watt = "$1\\ W = 1\\ Js^{-1}$";
-  w_to_kw = "$1000\\ W = 1\\ kW$";
-  j_to_kj = "$1000\\ J = 1\\ kJ$";
+  kw_to_w = "$1\\ kW = 1000\\ W$";
+  kj_to_j = "$1\\ kJ = 1000\\ J$";
   wh_to_j = "$1\\ Wh = 3600\\ J$";
   wh_to_kj = "$1\\ Wh = 3.6\\ kJ$";
   kwh_to_j = "$1\\ kWh = 3600000\\ J$";
