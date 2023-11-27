@@ -22,6 +22,7 @@ export class PhysicsPowerComponent {
 
   ngOnInit() {
     this.init_toaster()
+    this.force_load_images()
   }
   ngOnChanges() {
     if (this.selectedPageIndex == -1) {
@@ -105,6 +106,27 @@ export class PhysicsPowerComponent {
       }
       await lastValueFrom(timer(time_step))
     }
+  }
+  async force_load_images() {
+    let darkTheme = this.themeService.isDarkTheme
+    this.toaster_state = true
+    this.aircon_state = true
+    this.computer_state = true
+    await lastValueFrom(timer(0))
+    if (darkTheme) {
+      this.themeService.lightTheme()
+    } else {
+      this.themeService.darkTheme()
+    }
+    await lastValueFrom(timer(0))
+    if (darkTheme) {
+      this.themeService.darkTheme()
+    } else {
+      this.themeService.lightTheme()
+    }
+    this.toaster_state = false
+    this.aircon_state = false
+    this.computer_state = false
   }
 
 }
