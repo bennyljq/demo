@@ -47,10 +47,20 @@
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       If you're reading this on a mobile device, electricity is quite literally coursing through your hands right now. 
-      <br><br>
+      <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;
+      margin: 3% 0 5% 0;">
+        <i class="material-icons phy-battery-charging-icon" 
+        style="transform: rotate(25deg)">
+          phone_iphone
+        </i>
+        <div class="phy-joule-container phy-joule-pulsing"
+        [ngStyle]="{'position': 'absolute'}">
+          <i class="material-icons phy-joule-icon">electric_bolt</i>
+        </div>
+      </div>
       Electricity is so integral in powering our modern world, yet it is usually taken for granted. Only in its absence do we truly appreciate its necessity and the creature comforts it provides.
       <br><br>
-      Given the pervasiveness of electricity, knowledge of how electricity is quantified and applied in our everyday lives is incredibly valuable.
+      Given the pervasiveness of electricity, this lesson aims to impart the valuable knowledge of how electricity is quantified and applied in our everyday lives.
     </div>
   </div>
 </ng-template>

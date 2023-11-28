@@ -368,6 +368,10 @@ $charging-width: 0.2;
 .phy-ans-reveal {
   animation: great-job 0.5s ease-in-out;
 }
+.phy-joule-pulsing {
+  transform: scale(3.5);
+  animation: pulsing 2s infinite ease-in-out;
+}
 ::ng-deep .mdc-button__label {
   white-space: nowrap;
 }
@@ -511,5 +515,16 @@ $charging-width: 0.2;
       calc(6*$phy-intro-desc-font-size),
       0
     );
+  }
+}
+@keyframes pulsing {
+  0% {
+    opacity: 0%;
+  }
+  50% {
+    opacity: 66%;
+  }
+  100% {
+    opacity: 0%;
   }
 }
