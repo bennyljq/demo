@@ -11,10 +11,11 @@
     <ng-container [ngTemplateOutlet]="page4"></ng-container>
     <ng-container [ngTemplateOutlet]="page5"></ng-container>
     <ng-container [ngTemplateOutlet]="page6"></ng-container>
-    <ng-container [ngTemplateOutlet]="page7"></ng-container>
+    <ng-container [ngTemplateOutlet]="page7b"></ng-container>
     <ng-container [ngTemplateOutlet]="page8"></ng-container>
     <ng-container [ngTemplateOutlet]="page9"></ng-container>
     <ng-container [ngTemplateOutlet]="page10"></ng-container>
+    <ng-container [ngTemplateOutlet]="page11"></ng-container>
   </div>
   <div class="phy-dot-container">
     <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
@@ -316,7 +317,7 @@
   </div>
 </ng-template>
 
-<ng-template #page7>
+<ng-template #page7a>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       Apart from reducing the magnitude of large amounts of energy, using <strong>kWh</strong> has the additional benefit of letting consumers calculate their energy consumption easily.
@@ -335,7 +336,83 @@
   </div>
 </ng-template>
 
+<ng-template #page7b>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Apart from reducing the magnitude of large amounts of energy, using <strong>kWh</strong> has the additional benefit of letting consumers calculate their energy consumption easily.
+      <br><br>
+      This is owing to its property of being the product of <strong>wattage (kW)</strong> and <strong>duration (hours)</strong>.
+      <br><br>
+      If Dionne uses her <strong>3kW</strong> air conditioner for <br><strong>8 hours</strong> per day, 
+      can you calculate her daily energy consumption in <strong>kWh</strong>?
+      <br><br>
+      <mat-grid-list cols="2" rowHeight="5:1" gutterSize="1%">
+        <mat-grid-tile *ngFor="let option of answer_options_1; let i = index">
+          <button mat-flat-button
+          class="phy-button phy-button-flat f-poppins" 
+          [ngClass]="{
+            'dark-theme': themeService.isDarkTheme,
+            'phy-correct-ans': i == correct_answer_1 && question_answered_1,
+            'phy-wrong-ans': i == picked_answer_1 && i != correct_answer_1 && question_answered_1
+          }"
+          style="font-size: 80%; padding: 5%; width: 80%; height: 95%;"
+          [disabled]="question_answered_1"
+          (click)="on_answer_1(i)">
+            {{option}}
+          </button>
+        </mat-grid-tile>
+      </mat-grid-list>
+      <div class="phy-great-job" *ngIf="picked_answer_1 == correct_answer_1"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          🥳 <em>Great job!</em> 🎉
+      </div>
+      <div class="phy-bad-job" *ngIf="picked_answer_1!=undefined && picked_answer_1 !== correct_answer_1"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <strong>24 kWh</strong> was the right answer
+      </div>
+    </div>
+  </div>
+</ng-template>
+
 <ng-template #page8>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Given the wattage of Dionne's air conditioner to be <strong>3kW</strong>, 
+      using it for <strong>8 hours</strong> will consume <strong>24kWh</strong>. The calculation is simply:
+      <div class="phy-equation">
+        <div [mathjax]="aircon_kwh"></div>
+      </div>
+      Can you calculate the equivalent energy consumption in <strong>joules</strong>?
+      <br><br>
+      <mat-grid-list cols="2" rowHeight="5:1" gutterSize="1%">
+        <mat-grid-tile *ngFor="let option of answer_options_2; let i = index">
+          <button mat-flat-button
+          class="phy-button phy-button-flat f-poppins" 
+          [ngClass]="{
+            'dark-theme': themeService.isDarkTheme,
+            'phy-correct-ans': i == correct_answer_2 && question_answered_2,
+            'phy-wrong-ans': i == picked_answer_2 && i != correct_answer_2 && question_answered_2
+          }"
+          style="font-size: 80%; padding: 5%; width: 80%; height: 95%;"
+          [disabled]="question_answered_2"
+          (click)="on_answer_2(i)">
+            {{option}}
+          </button>
+        </mat-grid-tile>
+      </mat-grid-list>
+      <br>
+      <div *ngIf="question_answered_2" class="phy-ans-reveal">
+        <span *ngIf="picked_answer_2 == correct_answer_2">That's right!</span>
+        Calculating energy consumption in joules is much more tedious:
+        <div class="phy-equation">
+          <div [mathjax]="aircon_j"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page9>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       Using Dionne's toaster once more, we now explore the big numbers which are more consistent with monthly or annual energy consumption. 
@@ -390,7 +467,7 @@
   </div>
 </ng-template>
 
-<ng-template #page9>
+<ng-template #page10>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       Extending the simulation to multiple household appliances, we can see how Dionne's energy consumption is accumulated and billed accordingly. Once again, 1 second = 1 hour.
@@ -507,7 +584,7 @@
   </div>
 </ng-template>
 
-<ng-template #page10>
+<ng-template #page11>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
       In this chapter, we have learnt:

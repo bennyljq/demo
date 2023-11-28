@@ -365,6 +365,12 @@ $charging-width: 0.2;
   width: calc($phy-intro-desc-font-size*6);
   cursor: pointer;
 }
+.phy-ans-reveal {
+  animation: great-job 0.5s ease-in-out;
+}
+::ng-deep .mdc-button__label {
+  white-space: nowrap;
+}
 @keyframes phy-content-enter {
   from {
     margin-top: -1vh;

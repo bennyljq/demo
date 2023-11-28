@@ -15,7 +15,7 @@ export class PhysicsPowerComponent {
 
   @Output() selectChapter = new EventEmitter;
   @Input() selectedPageIndex = 0
-  numPages = 10;
+  numPages = 11;
   pagesArray = new Array(this.numPages)
   hideBack = true
   hideNext = false
@@ -91,6 +91,18 @@ export class PhysicsPowerComponent {
   second_hour = "$(real) 1 second$"
   charging_array = Array(6).fill(0)
 
+  // question 1
+  answer_options_1 = ['11 kWh', '24 kWh', '11000 kWh', '24000 kWh']
+  correct_answer_1 = 1
+  picked_answer_1: number | undefined;
+  question_answered_1 = false
+
+  // question 2
+  answer_options_2 = ['86400000 J', '8640000 J', '864000 J', '86400 J']
+  correct_answer_2 = 0
+  picked_answer_2: number | undefined;
+  question_answered_2 = false
+
   async init_toaster() {
     let time_step = 50 //ms
     let time_step_s = time_step/1000
@@ -127,6 +139,14 @@ export class PhysicsPowerComponent {
     this.toaster_state = false
     this.aircon_state = false
     this.computer_state = false
+  }
+  on_answer_1(answer_index: number) {
+    this.picked_answer_1 = answer_index
+    this.question_answered_1 = true
+  }
+  on_answer_2(answer_index: number) {
+    this.picked_answer_2 = answer_index
+    this.question_answered_2 = true
   }
 
 }
