@@ -2,7 +2,7 @@ $logo-diameter: min(10vh, 10vw);
 $history-text-font-size: max(min(2.25vh, 3vw), 16px);
 .logo {
   height: $logo-diameter;
-  width: fit-content;
+  width: calc($history-text-font-size * 5);;
   border-radius: 50%;
   font-size: calc($history-text-font-size * 1.2);
   align-items: center;
@@ -21,7 +21,7 @@ $history-text-font-size: max(min(2.25vh, 3vw), 16px);
   width: 100%;
   height: fit-content;
   align-items: center;
-  margin: 0;
+  margin: 1vh 0;
 }
 $line-ball-dist: min(2vh, 2vw);
 $text-border-colour: black;
@@ -39,6 +39,7 @@ $text-border-colour: black;
   line-height: calc($history-text-font-size * 1.2);
   text-align: justify;
   width: calc(100% - $logo-diameter - 4px - (2*$line-ball-dist));
+  // width: calc(100% - $logo-diameter - 4px - (2*$line-ball-dist));
   padding: $line-ball-dist 0 $line-ball-dist $line-ball-dist;
   margin-left: $line-ball-dist;
   border-left: calc($line-ball-dist/5) solid $text-border-colour;
@@ -65,4 +66,10 @@ $text-border-colour: black;
     background: black;
     border-radius: 5px;
   }
+}
+.download-button {
+  font-size: calc($history-text-font-size*2);
+  padding: calc($history-text-font-size*1) calc($history-text-font-size*0.5);
+  min-width: 0 !important;
+  margin-left: calc($history-text-font-size*0.5);
 }

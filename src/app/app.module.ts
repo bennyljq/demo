@@ -32,6 +32,7 @@ import { MathjaxModule } from "mathjax-angular";
 import { HammerModule } from '@angular/platform-browser';
 import { PhysicsBatteryComponent } from './physics/physics-battery/physics-battery.component';
 import { PhysicsPowerComponent } from './physics/physics-power/physics-power.component';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
 @NgModule({
   declarations: [
@@ -68,7 +69,8 @@ import { PhysicsPowerComponent } from './physics/physics-power/physics-power.com
     FormsModule,
     MatMenuModule,
     [MathjaxModule.forRoot()],
-    HammerModule
+    HammerModule,
+    ClipboardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

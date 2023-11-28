@@ -13,7 +13,7 @@ import { PhysicsHomeComponent } from './physics/physics-home/physics-home.compon
 const routes: Routes = [
   { path: 'main', component: HomepageV2Component },
   { path: 'about', component: About2Component },
-  { path: 'experimental', component: ExperimentalComponent },
+  { path: 'sandbox', component: ExperimentalComponent },
   { path: 'enterprise', component: EnterpriseComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'physics', component: PhysicsHomeComponent },

@@ -1,15 +1,16 @@
 $logo-diameter: min(15vh, 15vw);
-$history-text-font-size: max(min(2.25vh, 3vw), 16px);
+$history-text-font-size: max(min(2.25vh, 3vw), 14px);
 .logo {
   height: $logo-diameter;
-  width: $logo-diameter;
+  // width: $logo-diameter;
+  width: fit-content;
   border-radius: 50%;
   font-size: calc($history-text-font-size * 1.2);
   align-items: center;
   justify-content: center;
   text-align: center;
   display: flex;
-  font-weight: 500;
+  font-weight: 700;
   line-height: calc($history-text-font-size * 1.2);
 }
 // .dbs-logo {
@@ -20,14 +21,14 @@ $history-text-font-size: max(min(2.25vh, 3vw), 16px);
   width: 100%;
   height: fit-content;
   align-items: center;
-  margin: 2% 0 10vh 0;
+  margin: 2% 0 5vh 0;
 }
 $line-ball-dist: min(2vh, 2vw);
 $text-border-colour: black;
 .history-text {
   font-size: $history-text-font-size;
-  line-height: calc($history-text-font-size * 1.2);
-  text-align: justify;
+  line-height: calc($history-text-font-size * 1.3);
+  text-align: left;
   width: calc(100% - $logo-diameter - 4px - (2*$line-ball-dist));
   padding: $line-ball-dist $line-ball-dist $line-ball-dist 0;
   margin-right: $line-ball-dist;
@@ -36,12 +37,13 @@ $text-border-colour: black;
 .history-text-alt {
   font-size: $history-text-font-size;
   line-height: calc($history-text-font-size * 1.2);
-  text-align: justify;
+  text-align: left;
   width: calc(100% - $logo-diameter - 4px - (2*$line-ball-dist));
   padding: $line-ball-dist 0 $line-ball-dist $line-ball-dist;
   margin-left: $line-ball-dist;
   border-left: calc($line-ball-dist/5) solid $text-border-colour;
 }
+$history-width: min(80vw, 1000px);
 .history-container {
   overflow-y: scroll;
   height: 100%;
@@ -64,4 +66,6 @@ $text-border-colour: black;
     background: black;
     border-radius: 5px;
   }
+  padding-left: 10vw;
+  padding-right: calc(90vw - $history-width);
 }

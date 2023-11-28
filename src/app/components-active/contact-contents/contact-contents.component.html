@@ -9,12 +9,29 @@
     <div class="logo">e-mail</div>
     <div class="history-text-alt f-poppins">
       bennyljq@gmail.com
+      <button mat-stroked-button class="download-button" 
+      cdkCopyToClipboard="bennyljq@gmail.com" title="Copy">
+        <i class="material-icons" style="font-size: 66%;">content_copy</i>
+      </button>
     </div>
   </div>
   <div class="history-item flex-row">
     <div class="logo">phone</div>
     <div class="history-text-alt f-poppins">
       +65 9272 2163
+      <button mat-stroked-button class="download-button" 
+      cdkCopyToClipboard="+65 9272 2163" title="Copy">
+        <i class="material-icons" style="font-size: 66%;">content_copy</i>
+      </button>
+    </div>
+  </div>
+  <div class="history-item flex-row">
+    <div class="logo">résumé</div>
+    <div class="history-text-alt f-poppins">
+      <button mat-stroked-button class="download-button" 
+      (click)="download_resume()" title="Download résumé">
+        <i class="material-icons" style="font-size: 66%;">download</i>
+      </button>
     </div>
   </div>
   <!-- <div class="history-item flex-row">

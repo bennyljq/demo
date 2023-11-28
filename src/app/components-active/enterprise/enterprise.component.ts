@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-enterprise',
@@ -9,7 +10,8 @@ import { lastValueFrom, timer } from 'rxjs';
 })
 export class EnterpriseComponent implements OnInit {
 
-  constructor(private router: Router){}
+  constructor(private router: Router,
+    private _location: Location){}
 
   innerWidth: any;
   numCols: any;
@@ -22,6 +24,10 @@ export class EnterpriseComponent implements OnInit {
   
   async goHome() {
     this.router.navigate(['/main']);
+  }
+
+  goBack() {
+    this._location.back();
   }
 
   @HostListener('window:resize', ['$event'])

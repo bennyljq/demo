@@ -7,4 +7,12 @@ import { Component } from '@angular/core';
 })
 export class ContactContentsComponent {
 
+  download_resume() {
+    // window.open("/assets/Bennys Resume - November 2023.pdf", '_blank');
+    let link = document.createElement("a");
+    link.download = "Benny's Resume - November 2023.pdf";
+    link.href = "assets/Benny's Resume - November 2023.pdf";
+    link.click();
+  }
+
 }

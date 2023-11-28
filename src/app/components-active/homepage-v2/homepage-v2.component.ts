@@ -13,11 +13,11 @@ export class HomepageV2Component implements OnInit {
 
   name = "Benny"
   descLine1 = [
-    "UX Engineer",
+    "Physicist",
     "Mathematician",
   ]
   descLine2 = [
-    "Physicist",
+    "UX Engineer",
     "UI Developer",
     "Software Engineer",
   ]
@@ -33,6 +33,7 @@ export class HomepageV2Component implements OnInit {
   circleStyle: any;
   linksClass: any;
   projectsClass = "hidden"
+  preload_kenobi = false
 
   async ngOnInit(): Promise<any> {
     this.hideElem("hello-there", 0.5)
@@ -45,6 +46,11 @@ export class HomepageV2Component implements OnInit {
     this.hideElem("about", 1.75)
     this.hideElem("projects", 2)
     this.hideElem("contact", 2.25)
+
+    // preload
+    this.preload_kenobi = true
+    await lastValueFrom(timer(1))
+    this.preload_kenobi = false
   }
 
   async hideElem(id: string, delay: number) { // delay in seconds
