@@ -1,6 +1,6 @@
 $kenobi-height: 100vh;
 #kenobi {
-  background-image: url("/assets/ben_kenobi.png");
+  background-image: url("../../../assets/ben_kenobi.png");
   height: $kenobi-height;
   width: calc($kenobi-height * 1141 / 724);
   background-size: cover;
