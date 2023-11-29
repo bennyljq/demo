@@ -375,6 +375,9 @@ $charging-width: 0.2;
 ::ng-deep .mdc-button__label {
   white-space: nowrap;
 }
+strong {
+  white-space: nowrap;
+}
 @keyframes phy-content-enter {
   from {
     margin-top: -1vh;
