@@ -17,7 +17,7 @@ $kenobi-height: 100vh;
 }
 $hes-me-font-size: min(6vw, calc(1000px * 0.04));
 #hes-me {
-  margin: 10vh 10vw 5vh 10vw;
+  margin: 0 5vw 0 10vw;
   animation: fade-down 1s ease-out 0.5s;
   font-size: $hes-me-font-size;
   line-height: $hes-me-font-size;
@@ -28,7 +28,7 @@ $history-width: min(80vw, 1000px);
 .history {
   // width: $history-width;
   width: 100vw;
-  height: calc(100vh - 10vh - ($hes-me-font-size * 3) - 5vh - 5vh);
+  height: 75vh;
   // margin: 0 calc(90vw - $history-width) 0 10vw;
   margin: 0;
   animation: fade-down 1s ease-out 1s;
@@ -40,6 +40,18 @@ $history-width: min(80vw, 1000px);
 }
 .unblur-image {
   animation: unblur-image 0.666s ease-out;
+}
+$logo-diameter: min(12vh, 30vw, calc(1000px * 0.3));
+.profile-pic {
+  background-image: url("../../../assets/profile pic.png");
+  height: $logo-diameter;
+  width: $logo-diameter;
+  min-width: $logo-diameter;
+  min-height: $logo-diameter;
+  border-radius: 50%;
+  background-size: cover;
+  animation: fade-down 1s ease-out 0.5s;
+  margin-right: 5vw;
 }
 @keyframes kenobi {
   0% {

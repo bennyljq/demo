@@ -17,6 +17,7 @@ export class About2Component {
 
   async ngOnInit(): Promise<any> {
     this.hideElem("hes-me", 1)
+    this.hideElem("pfp", 1)
     this.hideElem("history", 1.5)
   }
 
