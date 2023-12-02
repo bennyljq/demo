@@ -15,7 +15,7 @@ $kenobi-height: 100vh;
   top: 0;
   overflow: hidden;
 }
-$hes-me-font-size: min(6vw, calc(1000px * 0.04));
+$hes-me-font-size: min(4vh, 6vw, calc(1000px * 0.04));
 #hes-me {
   margin: 0 5vw 0 10vw;
   animation: fade-down 1s ease-out 0.5s;
