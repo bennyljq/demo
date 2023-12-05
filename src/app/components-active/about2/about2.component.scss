@@ -37,6 +37,7 @@ $history-width: min(80vw, 1000px);
 .blur-image {
   filter: blur(20px);
   animation: blur-image 1s ease-out;
+  opacity: 0.666;
 }
 .unblur-image {
   animation: unblur-image 0.666s ease-out;
@@ -69,16 +70,20 @@ $logo-diameter: min(12vh, 30vw, calc(1000px * 0.3));
 @keyframes blur-image {
   from {
     filter: blur(0);
+    opacity: 1;
   }
   to {
     filter: blur(20px);
+    opacity: 0.666;
   }
 }
 @keyframes unblur-image {
   from {
     filter: blur(20px);
+    opacity: 0.666;
   }
   to {
     filter: blur(0);
+    opacity: 1;
   }
 }
