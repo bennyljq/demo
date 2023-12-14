@@ -1,0 +1,48 @@
+<div class="grav-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+  <mat-toolbar class="grav-toolbar" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <button class="grav-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}" mat-icon-button [matMenuTriggerFor]="gravMenu">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <div class="spacer"></div>
+    <span class="grav-title f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">Gravity Simulator (WIP)</span>
+    <div class="spacer"></div>
+    <div class="grav-dark-mode" [ngClass]="{'dark-theme': themeService.isDarkTheme}" [title]="themeService.isDarkTheme ? 'Toggle Light Mode' : 'Toggle Dark Mode' ">
+      <mat-icon style="margin-right: -28px;">wb_sunny</mat-icon>
+      <app-switch (switchEmitter)="themeService.isDarkTheme = $event"></app-switch>
+      <mat-icon style="margin-left: -28px; transform: rotate(135deg) translateY(-2px);">brightness_3</mat-icon>
+    </div>
+  </mat-toolbar>
+  <div class="grav-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <ng-container *ngFor="let body of bodies">
+      <div *ngIf="body.type=='earth'" class="grav-earth" [id]="body.id" 
+      [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+      [ngStyle]="bodyStyles[body.id]"></div>
+      <div *ngIf="body.type=='sun'" class="grav-sun" [id]="body.id" 
+      [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+      [ngStyle]="bodyStyles[body.id]"></div>
+    </ng-container>
+  </div>
+  <mat-slider class="grav-slider" min="0" [max]="ticks-1">
+    <input matSliderThumb [(ngModel)]="currentTick" (input)="initBodyStyles(); interacted=true">
+  </mat-slider>
+  <span class="grav-tick-counter f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    tick: {{currentTick+1}}/{{ticks}}
+  </span>
+  <div class="grav-button-container">
+    <button mat-stroked-button 
+    class="grav-button grav-button-stroked f-poppins" 
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+    (click)="playAnimation()">
+      Replay
+    </button>
+  </div>
+</div>
+<mat-menu #gravMenu="matMenu">
+  <button mat-menu-item routerLink="/main">
+    <div style="display: flex; width: 220px; color: Firebrick;" class="f-poppins">
+      Exit Simulator
+      <div class="spacer"></div>
+      <mat-icon class="grav-menu-exit">exit_to_app</mat-icon>
+    </div>
+  </button>
+</mat-menu>

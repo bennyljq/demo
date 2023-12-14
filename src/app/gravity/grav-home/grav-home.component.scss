@@ -1,0 +1,110 @@
+@import "../grav-styles.scss";
+.grav-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fade-in 0.5s ease-in-out;
+  transition-duration: 0.2s;
+}
+.grav-toolbar {
+  background-color: var(--bg-color) !important;
+  height: 64px;
+  transition-duration: 0.2s;
+  padding: 0 8px;
+}
+.grav-menu-button {
+  color: var(--text-color);
+  margin-right: min(3vw, 56px); // to make it same width as night mode button
+}
+.grav-title {
+  color: var(--text-color);
+  font-size: clamp(16px, 3vw, 32px);
+}
+.grav-dark-mode {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: var(--switch-bg-color);
+}
+.grav-content-container {
+  background-color: var(--content-bg);
+  height: $grav-content-height;
+  width: $grav-content-width;
+  margin: 8px;
+  border-radius: calc($grav-content-width * 0.02);
+  border: 2px solid var(--text-color);
+  overflow: hidden;
+  transition-duration: 0.2s;
+}
+$sun-radius: calc($grav-content-width*0.05);
+$earth-radius: calc($grav-content-width*0.02);
+.grav-sun {
+  width: calc($sun-radius*2);
+  height: calc($sun-radius*2);
+  background-color: gold;
+  border-radius: 50%;
+  border: 2px solid var(--text-color);
+  position: absolute;
+  margin-left: calc(-1*$sun-radius);
+  margin-top: calc(-1*$sun-radius);
+}
+.grav-earth {
+  width: calc($earth-radius*2);
+  height: calc($earth-radius*2);
+  background-color: DeepSkyBlue;
+  border-radius: 50%;
+  border: 2px solid var(--text-color);
+  position: absolute;
+  margin-left: calc(-1*$earth-radius);
+  margin-top: calc(-1*$earth-radius);
+}
+.grav-slider {
+  width: calc($grav-content-width*0.9);
+}
+.grav-tick-counter {
+  color: var(--text-color);
+  font-size: clamp(16px, 3vw, 24px);
+}
+.grav-button-container {
+  width: $grav-content-width;
+}
+$grav-button-font-size: max(16px, calc($grav-content-width * 0.04));
+.grav-button {
+  font-size: $grav-button-font-size;
+  padding: calc($grav-button-font-size*1.2);
+  letter-spacing: 0;
+  border-radius: calc($grav-content-width * 0.02);
+  min-width: 0;
+}
+.grav-button-flat {
+  background-color: var(--text-color) !important;
+  color: var(--content-bg) !important; 
+}
+.grav-button-stroked {
+  border: 2px solid var(--text-color) !important;
+  background-color: var(--content-bg) !important;
+  color: var(--text-color) !important;
+  padding: calc($grav-button-font-size*1.2 - 2px);
+}
+.grav-menu-radio {
+  margin: 0 !important;
+  font-weight: bold;
+  color: DarkSlateBlue !important;
+}
+.grav-menu-exit {
+  margin: 0 !important;
+  transform: rotate(180deg);
+  color: Firebrick !important;
+}
+@keyframes fade-in {
+  from {
+    transform: translateY(-2vh);
+    opacity: 0.2;
+  } to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

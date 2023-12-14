@@ -9,6 +9,7 @@ import { EnterpriseComponent } from './components-active/enterprise/enterprise.c
 import { ButtonComponent } from './components-active/button/button.component';
 import { ContactComponent } from './components-active/contact/contact.component';
 import { PhysicsHomeComponent } from './physics/physics-home/physics-home.component';
+import { GravHomeComponent } from './gravity/grav-home/grav-home.component';
 
 const routes: Routes = [
   { path: 'main', component: HomepageV2Component },
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'enterprise', component: EnterpriseComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'physics', component: PhysicsHomeComponent },
+  { path: 'gravity-sim', component: GravHomeComponent },
   { path: '', redirectTo: '/main', pathMatch: 'full' }, // redirect to `homepage`
   // { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page
 ];

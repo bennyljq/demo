@@ -33,6 +33,8 @@ import { HammerModule } from '@angular/platform-browser';
 import { PhysicsBatteryComponent } from './physics/physics-battery/physics-battery.component';
 import { PhysicsPowerComponent } from './physics/physics-power/physics-power.component';
 import {ClipboardModule} from '@angular/cdk/clipboard';
+import { GravHomeComponent } from './gravity/grav-home/grav-home.component';
+import {MatSliderModule} from '@angular/material/slider';
 
 @NgModule({
   declarations: [
@@ -54,7 +56,8 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
     PhysicsIntroComponent,
     PhysicsWattComponent,
     PhysicsBatteryComponent,
-    PhysicsPowerComponent
+    PhysicsPowerComponent,
+    GravHomeComponent
   ],
   imports: [
     BrowserModule,
@@ -70,7 +73,8 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
     MatMenuModule,
     [MathjaxModule.forRoot()],
     HammerModule,
-    ClipboardModule
+    ClipboardModule,
+    MatSliderModule
   ],
   providers: [],
   bootstrap: [AppComponent]
