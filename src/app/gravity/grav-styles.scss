@@ -2,7 +2,7 @@ $height-width-ratio: 1;
 $grav-content-width: min(
   calc(100vw - 16px), 
   calc((100vh - 200px)/$height-width-ratio), 
-  800px
+  804px
 );
 $grav-content-height: calc($grav-content-width*$height-width-ratio);
 * {

@@ -4,40 +4,87 @@
       <mat-icon>menu</mat-icon>
     </button>
     <div class="spacer"></div>
-    <span class="grav-title f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">Gravity Simulator (WIP)</span>
+    <span class="grav-title f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">Gravity Simulator</span>
     <div class="spacer"></div>
     <div class="grav-dark-mode" [ngClass]="{'dark-theme': themeService.isDarkTheme}" [title]="themeService.isDarkTheme ? 'Toggle Light Mode' : 'Toggle Dark Mode' ">
-      <mat-icon style="margin-right: -28px;">wb_sunny</mat-icon>
+      <mat-icon style="margin-right: -28px;">sunny</mat-icon>
       <app-switch (switchEmitter)="themeService.isDarkTheme = $event"></app-switch>
       <mat-icon style="margin-left: -28px; transform: rotate(135deg) translateY(-2px);">brightness_3</mat-icon>
     </div>
   </mat-toolbar>
+  <span class="grav-subtitle f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    {{menuItems[selectedIndex]}}
+  </span>
   <div class="grav-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-    <ng-container *ngFor="let body of bodies">
+    <span class="grav-stats f-merri" *ngIf="stats"
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+      Tick: {{currentTick}}/{{ticks}}<br>
+      Time Step: {{timeStep/3600/24}} days<br>
+      Time Elapsed: {{currentTick*timeStep/3600/24}} days
+    </span>
+    <ng-container *ngFor="let body of bodies; let i = index">
       <div *ngIf="body.type=='earth'" class="grav-earth" [id]="body.id" 
       [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-      [ngStyle]="bodyStyles[body.id]"></div>
+      [ngStyle]="bodyStyles[body.id]">
+        <div class="grav-earth-stats f-merri" *ngIf="stats"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          id: {{body.id}}<br>
+          x: {{posTable[body.id][currentTick][2]/149597870700 | number: '1.2-2'}} au<br>
+          y: {{posTable[body.id][currentTick][3]/149597870700 | number: '1.2-2'}} au<br>
+          v_x: {{posTable[body.id][currentTick][4]/29780 | number: '1.2-2'}} v_e<br>
+          v_y: {{posTable[body.id][currentTick][5]/29780 | number: '1.2-2'}} v_e<br>
+        </div>
+      </div>
       <div *ngIf="body.type=='sun'" class="grav-sun" [id]="body.id" 
       [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-      [ngStyle]="bodyStyles[body.id]"></div>
+      [ngStyle]="bodyStyles[body.id]">
+        <div class="grav-earth-stats grav-sun-stats f-merri" *ngIf="stats"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          id: {{body.id}}<br>
+          x: {{posTable[body.id][currentTick][2]/149597870700 | number: '1.2-2'}} au<br>
+          y: {{posTable[body.id][currentTick][3]/149597870700 | number: '1.2-2'}} au<br>
+          v_x: {{posTable[body.id][currentTick][4]/29780 | number: '1.2-2'}} v_e<br>
+          v_y: {{posTable[body.id][currentTick][5]/29780 | number: '1.2-2'}} v_e<br>
+        </div>
+      </div>
     </ng-container>
   </div>
-  <mat-slider class="grav-slider" min="0" [max]="ticks-1">
+  <mat-slider class="grav-slider" min="0" [max]="ticks">
     <input matSliderThumb [(ngModel)]="currentTick" (input)="initBodyStyles(); interacted=true">
   </mat-slider>
-  <span class="grav-tick-counter f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-    tick: {{currentTick+1}}/{{ticks}}
-  </span>
   <div class="grav-button-container">
     <button mat-stroked-button 
     class="grav-button grav-button-stroked f-poppins" 
     [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-    (click)="playAnimation()">
-      Replay
+    (click)="restartAnimation()">
+      <mat-icon class="grav-play-button">replay</mat-icon>
+    </button>
+    <div style="width: 2%;"></div>
+    <button mat-stroked-button *ngIf="currentTick < ticks"
+    class="grav-button grav-button-stroked f-poppins" 
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+    (click)="togglePlay()">
+      <mat-icon class="grav-play-button" *ngIf="interacted">play_arrow</mat-icon>
+      <mat-icon class="grav-play-button" *ngIf="!interacted">pause</mat-icon>
+    </button>
+    <div class="spacer"></div>
+    <button mat-stroked-button
+    class="grav-button grav-button-stroked f-poppins" 
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+    (click)="stats = !stats">
+      Stats {{stats ? 'On' : 'Off'}}
     </button>
   </div>
 </div>
 <mat-menu #gravMenu="matMenu">
+  <button *ngFor="let item of menuItems; let i = index" mat-menu-item 
+  (click)="menuItemSelected(i);">
+    <div style="display: flex; width: 220px;" [ngStyle]="{'font-weight': i==selectedIndex ? '500' : '400'}" class="f-poppins">
+      {{item}}
+      <div class="spacer"></div>
+      <mat-icon class="grav-menu-radio" *ngIf="i==selectedIndex">star_purple500</mat-icon>
+    </div>
+  </button>
   <button mat-menu-item routerLink="/main">
     <div style="display: flex; width: 220px; color: Firebrick;" class="f-poppins">
       Exit Simulator
