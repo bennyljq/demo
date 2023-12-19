@@ -97,4 +97,56 @@ let presets = [
       }
     ]
   },
+  {
+    name: "Essentric Earths",
+    timeStep: 3600*12,
+    ticks: 3000,
+    state: [
+      {
+        id: "sun-1",
+        type: 'sun',
+        position_x: 0,
+        position_y: 0,
+        velocity_x: 0,
+        velocity_y: 0,
+        mass: eq.m_sun
+      },
+      {
+        id: "earth-1",
+        type: 'earth',
+        position_x: eq.au,
+        position_y: 0,
+        velocity_x: -0.2*eq.v_earth,
+        velocity_y: 0.6*eq.v_earth,
+        mass: eq.m_earth
+      },
+      {
+        id: "earth-2",
+        type: 'earth',
+        position_x: -eq.au,
+        position_y: 0,
+        velocity_x: 0.2*eq.v_earth,
+        velocity_y: -0.6*eq.v_earth,
+        mass: eq.m_earth
+      },
+      {
+        id: "earth-3",
+        type: 'earth',
+        position_x: 0,
+        position_y: -eq.au,
+        velocity_x: 0.6*eq.v_earth,
+        velocity_y: 0.2*eq.v_earth,
+        mass: eq.m_earth
+      },
+      {
+        id: "earth-4",
+        type: 'earth',
+        position_x: 0,
+        position_y: eq.au,
+        velocity_x: -0.6*eq.v_earth,
+        velocity_y: -0.2*eq.v_earth,
+        mass: eq.m_earth
+      }
+    ]
+  },
 ]

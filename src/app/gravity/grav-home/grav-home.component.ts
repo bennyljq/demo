@@ -26,7 +26,7 @@ export class GravHomeComponent {
   interacted = false // detects user interaction with slider
   bodies: any = []
   menuItems: string[] = []
-  selectedIndex: number = 1
+  selectedIndex: number = 2
   stats = true;
 
   @HostListener('window:resize', ['$event'])
@@ -39,15 +39,28 @@ export class GravHomeComponent {
     presets.forEach(x => {
       this.menuItems.push(x.name)
     })
+    // this.menuItems.push("Custom")
     this.menuItemSelected(this.selectedIndex)
   }
 
   menuItemSelected(index: number) {
     this.selectedIndex = index
+    if (this.menuItems[this.selectedIndex] == "Custom") {
+      this.initCustom()
+      return
+    }
     let selectedPreset = JSON.parse(JSON.stringify(presets[index]))
     this.bodies = selectedPreset.state
     this.ticks = selectedPreset.ticks
     this.timeStep = selectedPreset.timeStep
+    this.getPosTable(this.ticks)
+    this.restartAnimation()
+  }
+
+  initCustom() {
+    this.bodies = []
+    this.ticks = 1
+    this.timeStep = 0
     this.getPosTable(this.ticks)
     this.restartAnimation()
   }

@@ -23,23 +23,15 @@
       Time Elapsed: {{currentTick*timeStep/3600/24}} days
     </span>
     <ng-container *ngFor="let body of bodies; let i = index">
-      <div *ngIf="body.type=='earth'" class="grav-earth" [id]="body.id" 
-      [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+      <div [id]="body.id" 
+      [ngClass]="{
+        'dark-theme': themeService.isDarkTheme, 
+        'grav-earth': body.type=='earth',
+        'grav-sun': body.type=='sun'
+        }"
       [ngStyle]="bodyStyles[body.id]">
         <div class="grav-earth-stats f-merri" *ngIf="stats"
-        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-          id: {{body.id}}<br>
-          x: {{posTable[body.id][currentTick][2]/149597870700 | number: '1.2-2'}} au<br>
-          y: {{posTable[body.id][currentTick][3]/149597870700 | number: '1.2-2'}} au<br>
-          v_x: {{posTable[body.id][currentTick][4]/29780 | number: '1.2-2'}} v_e<br>
-          v_y: {{posTable[body.id][currentTick][5]/29780 | number: '1.2-2'}} v_e<br>
-        </div>
-      </div>
-      <div *ngIf="body.type=='sun'" class="grav-sun" [id]="body.id" 
-      [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-      [ngStyle]="bodyStyles[body.id]">
-        <div class="grav-earth-stats grav-sun-stats f-merri" *ngIf="stats"
-        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+        [ngClass]="{'dark-theme': themeService.isDarkTheme, 'grav-sun-stats': body.type=='sun'}">
           id: {{body.id}}<br>
           x: {{posTable[body.id][currentTick][2]/149597870700 | number: '1.2-2'}} au<br>
           y: {{posTable[body.id][currentTick][3]/149597870700 | number: '1.2-2'}} au<br>
