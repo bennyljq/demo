@@ -33,10 +33,10 @@
         <div class="grav-earth-stats f-merri" *ngIf="stats"
         [ngClass]="{'dark-theme': themeService.isDarkTheme, 'grav-sun-stats': body.type=='sun'}">
           id: {{body.id}}<br>
-          x: {{posTable[body.id][currentTick][2]/149597870700 | number: '1.2-2'}} au<br>
-          y: {{posTable[body.id][currentTick][3]/149597870700 | number: '1.2-2'}} au<br>
-          v_x: {{posTable[body.id][currentTick][4]/29780 | number: '1.2-2'}} v_e<br>
-          v_y: {{posTable[body.id][currentTick][5]/29780 | number: '1.2-2'}} v_e<br>
+          x: {{posTable[body.id][currentTick][2] | number: '1.2-2'}} au<br>
+          y: {{posTable[body.id][currentTick][3] | number: '1.2-2'}} au<br>
+          v_x: {{posTable[body.id][currentTick][4] | number: '1.2-2'}} v_e<br>
+          v_y: {{posTable[body.id][currentTick][5] | number: '1.2-2'}} v_e<br>
         </div>
       </div>
     </ng-container>
@@ -45,26 +45,33 @@
     <input matSliderThumb [(ngModel)]="currentTick" (input)="initBodyStyles(); interacted=true">
   </mat-slider>
   <div class="grav-button-container">
+    <button mat-stroked-button
+    class="grav-button grav-button-flat f-poppins" 
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+    (click)="edit()" title="Edit">
+      <mat-icon class="grav-play-button">edit</mat-icon>
+    </button>
+    <div style="width: 2%;"></div>
     <button mat-stroked-button 
     class="grav-button grav-button-stroked f-poppins" 
     [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-    (click)="restartAnimation()">
+    (click)="restartAnimation()" title="Replay">
       <mat-icon class="grav-play-button">replay</mat-icon>
     </button>
     <div style="width: 2%;"></div>
     <button mat-stroked-button *ngIf="currentTick < ticks"
     class="grav-button grav-button-stroked f-poppins" 
     [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-    (click)="togglePlay()">
+    (click)="togglePlay()" [title]="interacted ? 'Play' : 'Pause' ">
       <mat-icon class="grav-play-button" *ngIf="interacted">play_arrow</mat-icon>
       <mat-icon class="grav-play-button" *ngIf="!interacted">pause</mat-icon>
     </button>
     <div class="spacer"></div>
     <button mat-stroked-button
-    class="grav-button grav-button-stroked f-poppins" 
+    class="grav-button grav-button-flat f-poppins" 
     [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-    (click)="stats = !stats">
-      Stats {{stats ? 'On' : 'Off'}}
+    (click)="stats = !stats" title="Toggle Stats">
+      <mat-icon class="grav-play-button">info_outline</mat-icon>
     </button>
   </div>
 </div>

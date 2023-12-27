@@ -100,13 +100,14 @@ $earth-radius: calc($grav-content-width*0.02);
   width: $grav-content-width;
   display: flex;
 }
-$grav-button-font-size: max(16px, calc($grav-content-width * 0.04));
+$grav-button-font-size: max(20px, calc($grav-content-width * 0.04));
 .grav-button {
   font-size: $grav-button-font-size;
-  padding: calc($grav-button-font-size*1.2);
+  padding: calc($grav-button-font-size*1);
   letter-spacing: 0;
   border-radius: calc($grav-content-width * 0.02);
   min-width: 0;
+  height: 48px !important;
 }
 .grav-button-flat {
   background-color: var(--text-color) !important;
@@ -116,7 +117,7 @@ $grav-button-font-size: max(16px, calc($grav-content-width * 0.04));
   border: 2px solid var(--text-color) !important;
   background-color: var(--content-bg) !important;
   color: var(--text-color) !important;
-  padding: calc($grav-button-font-size*1.2 - 2px);
+  padding: calc($grav-button-font-size*1 - 2px);
 }
 .grav-menu-radio {
   margin: 0 !important;
@@ -130,7 +131,7 @@ $grav-button-font-size: max(16px, calc($grav-content-width * 0.04));
 }
 .grav-play-button {
   margin: 0 !important;
-  transform: scale(1.5);
+  transform: scale(2);
 }
 @keyframes fade-in {
   from {

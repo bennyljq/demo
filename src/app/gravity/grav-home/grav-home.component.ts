@@ -3,6 +3,8 @@ import { ThemeService } from 'src/app/physics/theme.service';
 import * as eq from '../grav-equations'
 import { lastValueFrom, timer } from 'rxjs';
 import { presets } from '../grav-presets';
+import { GravDialogComponent } from '../grav-dialog/grav-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-grav-home',
@@ -12,7 +14,8 @@ import { presets } from '../grav-presets';
 export class GravHomeComponent {
 
   constructor (
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    public dialog: MatDialog
   ) {}
 
   theme: 0 | 1 = 1 // 0 = light, 1 = dark
@@ -39,28 +42,33 @@ export class GravHomeComponent {
     presets.forEach(x => {
       this.menuItems.push(x.name)
     })
-    // this.menuItems.push("Custom")
     this.menuItemSelected(this.selectedIndex)
+  }
+
+  edit(): void {
+    this.interacted = true
+    const dialogRef = this.dialog.open(GravDialogComponent, {
+      data: {
+        bodies: JSON.parse(JSON.stringify(this.bodies))
+      },
+      restoreFocus: false,
+      maxWidth: "90vw"
+    });
+    dialogRef.afterClosed().subscribe((x: any) => {
+      if (x?.action == 'confirm') {
+        this.bodies = x.bodies
+        this.getPosTable(this.ticks)
+        this.restartAnimation()
+      }
+    });
   }
 
   menuItemSelected(index: number) {
     this.selectedIndex = index
-    if (this.menuItems[this.selectedIndex] == "Custom") {
-      this.initCustom()
-      return
-    }
     let selectedPreset = JSON.parse(JSON.stringify(presets[index]))
     this.bodies = selectedPreset.state
     this.ticks = selectedPreset.ticks
     this.timeStep = selectedPreset.timeStep
-    this.getPosTable(this.ticks)
-    this.restartAnimation()
-  }
-
-  initCustom() {
-    this.bodies = []
-    this.ticks = 1
-    this.timeStep = 0
     this.getPosTable(this.ticks)
     this.restartAnimation()
   }
@@ -85,6 +93,7 @@ export class GravHomeComponent {
   }
 
   getPosTable(ticks: number) {
+    let initialState = JSON.parse(JSON.stringify(this.bodies))
     let count = 0
     for (let body of this.bodies) {
       this.posTable[body.id] = []
@@ -92,8 +101,8 @@ export class GravHomeComponent {
     while (count <= ticks) {
       for (let body of this.bodies) {
         let newPos = [
-          Math.round(this.universeWidth_PX/2 + body.position_x*this.universeWidth_PX/this.universeWidth_AU/eq.au),
-          Math.round(this.universeWidth_PX/2 + body.position_y*this.universeWidth_PX/this.universeWidth_AU/eq.au),
+          Math.round(this.universeWidth_PX/2 + body.position_x*this.universeWidth_PX/this.universeWidth_AU),
+          Math.round(this.universeWidth_PX/2 + body.position_y*this.universeWidth_PX/this.universeWidth_AU),
           body.position_x,
           body.position_y,
           body.velocity_x,
@@ -104,6 +113,7 @@ export class GravHomeComponent {
       this.bodies = eq.update(this.bodies, this.timeStep)
       count += 1
     }
+    this.bodies = initialState
   }
 
   async restartAnimation() {

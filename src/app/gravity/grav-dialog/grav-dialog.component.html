@@ -1,0 +1,47 @@
+<div class="grav-dialog-container">
+  <mat-accordion hideToggle style="overflow: auto;">
+    <mat-expansion-panel *ngFor="let body of data.bodies; let i = index">
+      <mat-expansion-panel-header style="padding: 0;">
+        <mat-panel-title class="f-poppins" style="padding-left: 5%; font-size: 20px;">
+          {{body.id}}
+        </mat-panel-title>
+        <!-- <mat-panel-description>
+          This is a summary of the content
+        </mat-panel-description> -->
+        <button mat-icon-button (click)="data.bodies.splice(i, 1)" style="color: firebrick;">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-expansion-panel-header>
+      <div class="grav-dialog-body-container f-poppins">
+        <div>
+          X-Position: <input type="text" pInputText [(ngModel)]="body.position_x" class="grav-dialog-input"/> au
+        </div>
+        <div>
+          Y-Position: <input type="text" pInputText [(ngModel)]="body.position_y" class="grav-dialog-input"/> au
+        </div>
+        <div>
+          X-Velocity: <input type="text" pInputText [(ngModel)]="body.velocity_x" class="grav-dialog-input"/> v_e
+        </div>
+        <div>
+          Y-Velocity: <input type="text" pInputText [(ngModel)]="body.velocity_y" class="grav-dialog-input"/> v_e
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <div class="spacer"></div>
+  <div class="grav-dialog-toolbar">
+    <button mat-icon-button (click)="addSun()"
+    style="background-color: black; color: gold; margin-right: 12px;">
+      <mat-icon>sunny</mat-icon>
+    </button>
+    <button mat-icon-button (click)="addEarth()"
+    style="background-color: black; color: white; margin-right: 12px;">
+      <img src="assets/earth_icon.png">
+    </button>
+    <button mat-flat-button class="f-poppins" 
+    style="background-color: black; color: white; font-size: 20px; height: 48px;"
+    (click)="confirm()">
+      Confirm
+    </button>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+$width: min(600px, 90vw);
+$height: min(800px, 80vh);
+.grav-dialog-container {
+  width: $width;
+  height: $height;
+  display: flex;
+  flex-direction: column;
+}
+.grav-dialog-body-container {
+  font-size: 16px;
+}
+.grav-dialog-toolbar {
+  height: 60px;
+  min-height: 60px;
+  border-top: 2px solid lightgrey;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.grav-dialog-input {
+  max-width: 30%;
+}
