@@ -13,7 +13,7 @@ export class TrainHomeComponent {
     public themeService: ThemeService
   ) {}
 
-  theme: 0 | 1 = 1 // 0 = light, 1 = dark
+  theme: 0 | 1 = 0 // 0 = light, 1 = dark
   pi = 3.141592653589
   window_width: any;
   window_height: any;

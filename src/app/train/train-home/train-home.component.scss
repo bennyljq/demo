@@ -37,6 +37,8 @@
   border: 2px solid var(--text-color);
   overflow: hidden;
   transition-duration: 0.2s;
+  display: flex;
+  flex-direction: column;
 }
 .train-track {
   background-color: transparent;
@@ -167,12 +169,14 @@ $train-button-font-size: max(20px, calc($train-content-width * 0.04));
   transform: scale(2);
 }
 .train-replay-button {
-  position: absolute;
-  transform: translate(
-    calc($train-content-width*0.85), 
-    calc($train-content-height*0.01)
-  );
+  // position: absolute;
+  // transform: translate(
+  //   calc($train-content-width*0.8), 
+  //   calc($train-content-height*0.01)
+  // );
+  align-self: flex-end;
   z-index: 666;
+  margin: calc($train-content-width*0.02);
 }
 fade-in {
   from {
