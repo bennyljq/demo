@@ -43,6 +43,7 @@ import { MathjaxModule } from "mathjax-angular";
 import {MatSliderModule} from '@angular/material/slider';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { TrainHomeComponent } from './train/train-home/train-home.component';
 
 
 @NgModule({
@@ -67,7 +68,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
     PhysicsBatteryComponent,
     PhysicsPowerComponent,
     GravHomeComponent,
-    GravDialogComponent
+    GravDialogComponent,
+    TrainHomeComponent
   ],
   imports: [
     BrowserModule,

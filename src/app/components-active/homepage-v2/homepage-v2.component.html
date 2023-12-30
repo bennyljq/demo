@@ -33,11 +33,12 @@
         <div class="link" id="contact" (click)="goToRoute('contact')">Contact</div>
       </div>
       <div class="links-container flex-col f-merri" [ngClass]="projectsClass" style="position: absolute;">
-        <div class="link" (click)="goToRoute('physics')">Physics Lesson</div>
-        <div class="link" (click)="goToRoute('enterprise')">Enterprise</div>
-        <div class="link" (click)="goToRoute('gravity-sim')">Gravity Sim</div>
-        <div class="link" (click)="goToRoute('sandbox')">Sandbox</div>
-        <div class="link" (click)="resetProjects()">Back</div>
+        <div class="link link-secondary" (click)="goToRoute('physics')">Physics Lesson</div>
+        <div class="link link-secondary" (click)="goToRoute('enterprise')">Enterprise</div>
+        <div class="link link-secondary" (click)="goToRoute('gravity-sim')">Gravity Sim</div>
+        <div class="link link-secondary" (click)="goToRoute('train')">Train</div>
+        <div class="link link-secondary" (click)="goToRoute('sandbox')">Sandbox</div>
+        <div class="link link-secondary" (click)="resetProjects()">← Back</div>
       </div>
     </div>
   </div>

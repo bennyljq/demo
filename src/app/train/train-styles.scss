@@ -1,0 +1,29 @@
+$height-width-ratio: 1.6;
+$train-content-width: min(
+  calc(100vw - 16px), 
+  calc((100vh - 200px)/$height-width-ratio), 
+  804px
+);
+$train-content-height: calc($train-content-width*$height-width-ratio);
+* {
+  --bg-color: Lavender; 
+  --text-color: black;
+  --text-color-inverse: Gainsboro; 
+  --switch-bg-color: MidnightBlue;
+  --content-bg: white;
+  --dot-color: darkgrey;
+  --correct-color: MediumSpringGreen;
+  --wrong-color: Tomato;
+  --great-job-color: black;
+}
+.dark-theme {
+  --bg-color: rgb(16, 12, 32); 
+  --text-color: Gainsboro; 
+  --text-color-inverse: black; 
+  --switch-bg-color: white;
+  --content-bg: black;
+  --dot-color: grey;
+  --correct-color: MediumSpringGreen;
+  --wrong-color: Tomato;
+  --great-job-color: MediumSpringGreen;
+}

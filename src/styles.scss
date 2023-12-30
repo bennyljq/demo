@@ -131,6 +131,15 @@ $link-font-size: 4vh;
   font-size: calc(1.2*$link-font-size);
   // text-shadow: 0 0 5px gold;
 }
+.link-secondary {
+  font-size: calc($link-font-size * 0.8);
+  line-height: calc(1.2*$link-font-size);
+  width: 100%;
+}
+.link:hover {
+  font-size: calc(1*$link-font-size);
+  // text-shadow: 0 0 5px gold;
+}
 .background-credit {
   color: white;
   font-size: 12px;

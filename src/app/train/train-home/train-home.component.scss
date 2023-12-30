@@ -1,0 +1,185 @@
+@import "../train-styles.scss";
+.train-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fade-in 0.5s ease-in-out;
+  transition-duration: 0.2s;
+}
+.train-toolbar {
+  background-color: var(--bg-color) !important;
+  height: 64px;
+  transition-duration: 0.2s;
+  padding: 0 8px;
+}
+.train-menu-button {
+  color: var(--text-color);
+  margin-right: min(3vw, 56px); // to make it same width as night mode button
+}
+.train-title {
+  color: var(--text-color);
+  font-size: clamp(18px, 3vw, 32px);
+}
+.train-subtitle {
+  color: var(--text-color);
+  font-size: clamp(14px, 2vw, 24px);
+  line-height: 1.5;
+}
+.train-content-container {
+  background-color: var(--content-bg);
+  height: $train-content-height;
+  width: $train-content-width;
+  margin: 8px;
+  border-radius: calc($train-content-width * 0.02);
+  border: 2px solid var(--text-color);
+  overflow: hidden;
+  transition-duration: 0.2s;
+}
+.train-track {
+  background-color: transparent;
+  width: calc($train-content-width*0.5);
+  height: calc($train-content-height*0.9);
+  border-radius: calc($train-content-width*0.25);
+  position: absolute;
+  transform: translate(
+    calc($train-content-width*0.25), 
+    calc($train-content-height*0.05)
+  );
+  border: 2px solid var(--text-color);
+}
+.train-station {
+  width: calc($train-content-width*0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  border: 2px solid var(--text-color);
+}
+.train-station-left {
+  height: calc($train-content-height*0.25);
+  background-color: MediumAquamarine;
+  transform: translate(
+    calc($train-content-width*0.15/2), 
+    calc($train-content-height*0.375)
+  );
+}
+.train-station-right {
+  height: calc($train-content-height*0.1);
+  background-color: Pink;
+  transform: translate(
+    calc($train-content-width*(1 - 0.075 - 0.1)), 
+    calc($train-content-height*0.45)
+  );
+}
+.train-station-logo {
+  transform: scale(1.2);
+}
+$car-width: 0.0666;
+.train-car {
+  width: calc($train-content-width*$car-width);
+  height: calc($train-content-height*0.1);
+  background-color: var(--text-color);
+  border-radius: 8px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color-inverse);
+  font-weight: 600;
+  font-size: calc($train-content-height*0.03);
+}
+
+.train-stats {
+  color: var(--text-color);
+  width: $train-content-width;
+  display: flex;
+  flex-direction: row;
+  padding: 1%;
+  position: absolute;
+  opacity: 80%;
+  z-index: 66;
+  font-size: clamp(12px, 2vw, 18px);
+  line-height: 1.2;
+}
+.train-dark-mode {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: var(--switch-bg-color);
+}
+$earth-radius: calc($train-content-width*0.02);
+.train-earth {
+  width: calc($earth-radius*2);
+  height: calc($earth-radius*2);
+  background-color: DeepSkyBlue;
+  border-radius: 50%;
+  border: 2px solid var(--text-color);
+  position: absolute;
+  margin-left: calc(-1*$earth-radius);
+  margin-top: calc(-1*$earth-radius);
+}
+.train-earth-stats {
+  color: var(--text-color);
+  margin-top: calc(2*$earth-radius);
+  margin-left: calc(-1*$earth-radius);
+  width: clamp(100px, 20vw, 160px);
+  position: absolute;
+  font-size: clamp(10px, 2vw, 16px);
+  line-height: 1.1;
+  opacity: 80%;
+}
+.train-slider {
+  width: calc($train-content-width*0.9);
+  margin: calc($train-content-width*0.02) 0;
+}
+.train-button-container {
+  width: $train-content-width;
+  display: flex;
+}
+$train-button-font-size: max(20px, calc($train-content-width * 0.04));
+.train-button {
+  font-size: $train-button-font-size;
+  padding: calc($train-button-font-size*1);
+  letter-spacing: 0;
+  border-radius: calc($train-content-width * 0.02);
+  min-width: 0;
+  height: 48px !important;
+}
+.train-button-flat {
+  background-color: var(--text-color) !important;
+  color: var(--content-bg) !important; 
+}
+.train-button-stroked {
+  border: 2px solid var(--text-color) !important;
+  background-color: var(--content-bg) !important;
+  color: var(--text-color) !important;
+  padding: calc($train-button-font-size*1 - 2px);
+}
+.train-menu-exit {
+  transform: rotate(180deg);
+}
+.train-play-button {
+  margin: 0 !important;
+  transform: scale(2);
+}
+.train-replay-button {
+  position: absolute;
+  transform: translate(
+    calc($train-content-width*0.85), 
+    calc($train-content-height*0.01)
+  );
+  z-index: 666;
+}
+fade-in {
+  from {
+    transform: translateY(-2vh);
+    opacity: 0.2;
+  } to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,42 @@
+<div class="train-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+  <mat-toolbar class="train-toolbar" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <button class="train-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}" mat-icon-button title="Exit" routerLink="/main">
+      <mat-icon class="train-menu-exit">exit_to_app</mat-icon>
+    </button>
+    <div class="spacer"></div>
+    <span class="train-title f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">Train Simulator</span>
+    <div class="spacer"></div>
+    <div class="train-dark-mode" [ngClass]="{'dark-theme': themeService.isDarkTheme}" [title]="themeService.isDarkTheme ? 'Toggle Light Mode' : 'Toggle Dark Mode' ">
+      <mat-icon style="margin-right: -28px;">sunny</mat-icon>
+      <app-switch (switchEmitter)="themeService.isDarkTheme = $event"></app-switch>
+      <mat-icon style="margin-left: -28px; transform: rotate(135deg) translateY(-2px);">brightness_3</mat-icon>
+    </div>
+  </mat-toolbar>
+  <div class="train-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <span class="train-stats f-merri"
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+      Tick: {{currentTick}}/{{ticks}}<br>
+    </span>
+    <div class="train-track" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+    <div class="train-station train-station-left" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+      <mat-icon class="train-station-logo" [ngClass]="{'dark-theme': themeService.isDarkTheme}">train</mat-icon>
+    </div>
+    <div class="train-station train-station-right" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+      <mat-icon class="train-station-logo" [ngClass]="{'dark-theme': themeService.isDarkTheme}">train</mat-icon>
+    </div>
+    <div class="train-car f-merri" *ngFor="let car of cars; let i = index" [id]="car.id" 
+    [ngStyle]="car_styles[car.id]"
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+      <span [ngStyle]="{transform: 'rotate('+(-car.rotation)+'rad)'}">{{i+1}}</span>
+    </div>
+    <button mat-stroked-button 
+    class="train-button train-button-stroked f-poppins train-replay-button" 
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+    (click)="restartAnimation()" title="Replay">
+      <mat-icon class="train-play-button">replay</mat-icon>
+    </button>
+  </div>
+  <mat-slider class="train-slider" min="0" [max]="ticks">
+    <input matSliderThumb [(ngModel)]="currentTick" (input)="apply_car_styles(); interacted=true">
+  </mat-slider>
+</div>
