@@ -136,7 +136,7 @@ $link-font-size: 4vh;
   line-height: calc(1.2*$link-font-size);
   width: 100%;
 }
-.link:hover {
+.link-secondary:hover {
   font-size: calc(1*$link-font-size);
   // text-shadow: 0 0 5px gold;
 }

@@ -13,7 +13,7 @@
     </div>
   </mat-toolbar>
   <div class="train-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-    <span class="train-stats f-merri"
+    <span class="train-stats f-merri" style="display: none;"
     [ngClass]="{'dark-theme': themeService.isDarkTheme}">
       Tick: {{currentTick}}/{{ticks}}<br>
     </span>
@@ -29,14 +29,23 @@
     [ngClass]="{'dark-theme': themeService.isDarkTheme}">
       <span [ngStyle]="{transform: 'rotate('+(-car.rotation)+'rad)'}">{{i+1}}</span>
     </div>
+
+    <button mat-stroked-button 
+    class="train-button train-button-stroked f-merri train-speed-button" 
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+    (click)="toggle_speed()" title="Toggle Speed">
+      {{speed_multiplier}} x
+    </button>
+    <div class="spacer"></div>
     <button mat-stroked-button 
     class="train-button train-button-stroked f-poppins train-replay-button" 
     [ngClass]="{'dark-theme': themeService.isDarkTheme}"
     (click)="restartAnimation()" title="Replay">
       <mat-icon class="train-play-button">replay</mat-icon>
     </button>
+    
   </div>
-  <mat-slider class="train-slider" min="0" [max]="ticks">
+  <mat-slider class="train-slider" min="0" [max]="ticks" style="display: none;">
     <input matSliderThumb [(ngModel)]="currentTick" (input)="apply_car_styles(); interacted=true">
   </mat-slider>
 </div>

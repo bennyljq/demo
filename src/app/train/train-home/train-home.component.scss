@@ -38,7 +38,7 @@
   overflow: hidden;
   transition-duration: 0.2s;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 .train-track {
   background-color: transparent;
@@ -62,19 +62,19 @@
   border: 2px solid var(--text-color);
 }
 .train-station-left {
-  height: calc($train-content-height*0.25);
+  height: calc($train-content-height*0.3);
   background-color: MediumAquamarine;
   transform: translate(
     calc($train-content-width*0.15/2), 
-    calc($train-content-height*0.375)
+    calc($train-content-height*0.35)
   );
 }
 .train-station-right {
-  height: calc($train-content-height*0.1);
+  height: calc($train-content-height*0.15);
   background-color: Pink;
   transform: translate(
     calc($train-content-width*(1 - 0.075 - 0.1)), 
-    calc($train-content-height*0.45)
+    calc($train-content-height*0.425)
   );
 }
 .train-station-logo {
@@ -169,13 +169,10 @@ $train-button-font-size: max(20px, calc($train-content-width * 0.04));
   transform: scale(2);
 }
 .train-replay-button {
-  // position: absolute;
-  // transform: translate(
-  //   calc($train-content-width*0.8), 
-  //   calc($train-content-height*0.01)
-  // );
-  align-self: flex-end;
-  z-index: 666;
+  margin: calc($train-content-width*0.02);
+  display: flex;
+}
+.train-speed-button {
   margin: calc($train-content-width*0.02);
 }
 fade-in {

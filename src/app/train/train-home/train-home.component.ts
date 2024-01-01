@@ -30,6 +30,8 @@ export class TrainHomeComponent {
   currentTick = 0
   displacement_table: any = []
   interacted = false;
+  speed_multiplier = 1;
+  max_speed = 16;
   // track length = 1834 waypoints
 
   @HostListener('window:resize', ['$event'])
@@ -46,8 +48,8 @@ export class TrainHomeComponent {
   
   async ngOnInit() {
     this.onResize()
-    this.init_cars()
     this.init_waypoints()
+    this.init_cars()
     this.init_displacement_table()
     this.restartAnimation()
   }
@@ -90,39 +92,39 @@ export class TrainHomeComponent {
     this.cars = [
       {
         id: `car-0`,
-        speed: 1, // waypoint per tick
+        speed: this.speed_multiplier, // waypoint per tick
         displacement: 475,
         acceleration: 0
       },
       {
         id: `car-1`,
-        speed: 1,
+        speed: this.speed_multiplier,
         displacement: 380,
         acceleration: 0
       },
       {
         id: `car-2`,
-        speed: 1,
+        speed: this.speed_multiplier,
         displacement: 285,
         acceleration: 0
       },
       {
         id: `car-3`,
-        speed: 1,
+        speed: this.speed_multiplier,
         displacement: 190,
         acceleration: 0
       },
       {
         id: `car-4`,
-        speed: 1,
+        speed: this.speed_multiplier,
         displacement: 95,
-        acceleration: -0.0025
+        acceleration: -0.0025 * this.speed_multiplier**2
       },
       {
         id: `car-5`,
-        speed: 1,
+        speed: this.speed_multiplier,
         displacement: 0,
-        acceleration: -0.0025
+        acceleration: -0.0025 * this.speed_multiplier**2
       },
     ]
   }
@@ -150,93 +152,93 @@ export class TrainHomeComponent {
       this.displacement_table.push(temp2)
       count += 1
       // 5, 6 stop //
-      if (count == 400) {
+      if (count == Math.round(400 / this.speed_multiplier)) {
         this.cars[4].speed = 0
         this.cars[4].acceleration = 0
         this.cars[5].speed = 0
         this.cars[5].acceleration = 0
       }
       // 4 stop //
-      if (count == 724) {
-        this.cars[3].acceleration = -0.002
+      if (count == Math.round(722 / this.speed_multiplier)) {
+        this.cars[3].acceleration = -0.002 * this.speed_multiplier**2
       }
-      if (count == 724+500) {
+      if (count == Math.ceil((722+500) / this.speed_multiplier)) {
         this.cars[3].speed = 0
         this.cars[3].acceleration = 0
       }
       // 5, 6 go //
-      if (count == 1264) {
-        this.cars[4].acceleration = 0.0025
-        this.cars[5].acceleration = 0.0025
+      if (count == Math.round(1264 / this.speed_multiplier)) {
+        this.cars[4].acceleration = 0.0025 * this.speed_multiplier**2
+        this.cars[5].acceleration = 0.0025 * this.speed_multiplier**2
       }
-      if (count == 1264+400) {
-        this.cars[4].speed = 1
+      if (count == Math.round((1264+400) / this.speed_multiplier)) {
+        this.cars[4].speed = this.speed_multiplier
         this.cars[4].acceleration = 0
-        this.cars[5].speed = 1
+        this.cars[5].speed = this.speed_multiplier
         this.cars[5].acceleration = 0
       }
       // 2, 3 stop //
-      if (count == 1554) {
-        this.cars[1].acceleration = -0.0025
-        this.cars[2].acceleration = -0.0025
+      if (count == Math.round((1550) / this.speed_multiplier)) {
+        this.cars[1].acceleration = -0.0025 * this.speed_multiplier**2
+        this.cars[2].acceleration = -0.0025 * this.speed_multiplier**2
       }
-      if (count == 1554+400) {
+      if (count == Math.round((1550+400) / this.speed_multiplier)) {
         this.cars[1].speed = 0
         this.cars[1].acceleration = 0
         this.cars[2].speed = 0
         this.cars[2].acceleration = 0
       }
       // 4 go //
-      if (count == 1990) {
-        this.cars[3].acceleration = 0.002
+      if (count == Math.round((1990) / this.speed_multiplier)) {
+        this.cars[3].acceleration = 0.002 * this.speed_multiplier**2
       }
-      if (count == 1990+500) {
+      if (count == Math.round((1990+500) / this.speed_multiplier)) {
         this.cars[3].acceleration = 0
-        this.cars[3].speed = 1
+        this.cars[3].speed = this.speed_multiplier
       }
       // 1 stop //
-      if (count == 2270) {
-        this.cars[0].acceleration = -0.002
+      if (count == Math.round((2270) / this.speed_multiplier)) {
+        this.cars[0].acceleration = -0.002 * this.speed_multiplier**2
       }
-      if (count == 2270+500) {
+      if (count == Math.round((2270+500) / this.speed_multiplier)) {
         this.cars[0].acceleration = 0
         this.cars[0].speed = 0
       }
       // 2, 3 go //
-      if (count == 2820) {
-        this.cars[1].acceleration = 0.0025
-        this.cars[2].acceleration = 0.0025
+      if (count == Math.round((2820) / this.speed_multiplier)) {
+        this.cars[1].acceleration = 0.0025 * this.speed_multiplier**2
+        this.cars[2].acceleration = 0.0025 * this.speed_multiplier**2
       }
-      if (count == 2820+400) {
-        this.cars[1].speed = 1
+      if (count == Math.round((2820+400) / this.speed_multiplier)) {
+        this.cars[1].speed = this.speed_multiplier
         this.cars[1].acceleration = 0
-        this.cars[2].speed = 1
+        this.cars[2].speed = this.speed_multiplier
         this.cars[2].acceleration = 0
       }
       // 5, 6 stop //
-      if (count == 3100) {
-        this.cars[4].acceleration = -0.0025
-        this.cars[5].acceleration = -0.0025
+      if (count == Math.round((3095) / this.speed_multiplier)) {
+        this.cars[4].acceleration = -0.0025 * this.speed_multiplier**2
+        this.cars[5].acceleration = -0.0025 * this.speed_multiplier**2
       }
-      if (count == 3100+400) {
+      if (count == Math.round((3095+400) / this.speed_multiplier)) {
         this.cars[4].speed = 0
         this.cars[4].acceleration = 0
         this.cars[5].speed = 0
         this.cars[5].acceleration = 0
       }
       // 1 go //
-      if (count == 3540) {
-        this.cars[0].acceleration = 0.002
+      if (count == Math.round((3540) / this.speed_multiplier)) {
+        this.cars[0].acceleration = 0.002 * this.speed_multiplier**2
       }
-      if (count == 3540+500) {
+      if (count == Math.round((3540+500) / this.speed_multiplier)) {
         this.cars[0].acceleration = 0
-        this.cars[0].speed = 1
+        this.cars[0].speed = this.speed_multiplier
       }
       // 4 stop //
-      if (count == 3823) {
-        this.cars[3].acceleration = -0.002
+      if (count == Math.round((3823) / this.speed_multiplier)) {
+        this.cars[3].acceleration = -0.002 * this.speed_multiplier**2
       }
-      if (count == 3823+500) {
+      if (count == Math.round((3823+500) / this.speed_multiplier)) {
         this.cars[3].speed = 0
         this.cars[3].acceleration = 0
       }
@@ -265,8 +267,8 @@ export class TrainHomeComponent {
     this.interacted = false
     while (this.currentTick < this.ticks) {
       this.currentTick += 1
-      if (this.currentTick == 4040) {
-        this.currentTick = 940
+      if (this.currentTick == Math.round(4040 / this.speed_multiplier)) {
+        this.currentTick = Math.round(940 / this.speed_multiplier)
       }
       this.apply_car_styles()
       await lastValueFrom(timer(0))
@@ -274,6 +276,16 @@ export class TrainHomeComponent {
         break
       }
     }
+  }
+
+  toggle_speed() {
+    this.speed_multiplier *= 2
+    if (this.speed_multiplier > this.max_speed) {
+      this.speed_multiplier = 1
+    }
+    this.init_cars()
+    this.init_displacement_table()
+    this.restartAnimation()
   }
 
   ngAfterViewInit() {
