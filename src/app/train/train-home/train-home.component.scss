@@ -17,7 +17,6 @@
 }
 .train-menu-button {
   color: var(--text-color);
-  margin-right: min(3vw, 56px); // to make it same width as night mode button
 }
 .train-title {
   color: var(--text-color);
@@ -70,11 +69,11 @@
   );
 }
 .train-station-right {
-  height: calc($train-content-height*0.15);
+  height: calc($train-content-height*0.2);
   background-color: Pink;
   transform: translate(
     calc($train-content-width*(1 - 0.075 - 0.1)), 
-    calc($train-content-height*0.425)
+    calc($train-content-height*0.4)
   );
 }
 .train-station-logo {

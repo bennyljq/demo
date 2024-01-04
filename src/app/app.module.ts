@@ -28,6 +28,8 @@ import { PhysicsBatteryComponent } from './physics/physics-battery/physics-batte
 import { PhysicsPowerComponent } from './physics/physics-power/physics-power.component';
 import { GravHomeComponent } from './gravity/grav-home/grav-home.component';
 import { GravDialogComponent } from './gravity/grav-dialog/grav-dialog.component';
+import { TrainHomeComponent } from './train/train-home/train-home.component';
+import { TrainDialogComponent } from './train/train-dialog/train-dialog.component';
 
 // PrimeNG //
 import { TableModule } from 'primeng/table';
@@ -43,7 +45,6 @@ import { MathjaxModule } from "mathjax-angular";
 import {MatSliderModule} from '@angular/material/slider';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
-import { TrainHomeComponent } from './train/train-home/train-home.component';
 
 
 @NgModule({
@@ -69,7 +70,8 @@ import { TrainHomeComponent } from './train/train-home/train-home.component';
     PhysicsPowerComponent,
     GravHomeComponent,
     GravDialogComponent,
-    TrainHomeComponent
+    TrainHomeComponent,
+    TrainDialogComponent
   ],
   imports: [
     BrowserModule,

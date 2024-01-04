@@ -3,6 +3,10 @@
     <button class="train-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}" mat-icon-button title="Exit" routerLink="/main">
       <mat-icon class="train-menu-exit">exit_to_app</mat-icon>
     </button>
+    <button class="train-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}" 
+    mat-icon-button title="About" (click)="about_train()">
+      <mat-icon class="train-menu-exit">info_outline</mat-icon>
+    </button>
     <div class="spacer"></div>
     <span class="train-title f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">Train Simulator</span>
     <div class="spacer"></div>

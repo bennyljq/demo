@@ -1,6 +1,8 @@
 import { Component, HostListener } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { lastValueFrom, timer } from 'rxjs';
 import { ThemeService } from 'src/app/physics/theme.service';
+import { TrainDialogComponent } from '../train-dialog/train-dialog.component';
 
 @Component({
   selector: 'app-train-home',
@@ -10,7 +12,8 @@ import { ThemeService } from 'src/app/physics/theme.service';
 export class TrainHomeComponent {
 
   constructor (
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    public dialog: MatDialog
   ) {}
 
   theme: 0 | 1 = 0 // 0 = light, 1 = dark
@@ -286,6 +289,13 @@ export class TrainHomeComponent {
     this.init_cars()
     this.init_displacement_table()
     this.restartAnimation()
+  }
+
+  about_train(): void {
+    this.dialog.open(TrainDialogComponent, {
+      restoreFocus: false,
+      autoFocus: false
+    });
   }
 
   ngAfterViewInit() {
