@@ -36,6 +36,13 @@ export class GravDialogComponent {
     })
   }
 
+  discard() {
+    this.convertNum()
+    this.dialogRef.close({
+      action: 'discard'
+    })
+  }
+
   convertNum() {
     try {
       for (let body of this.data.bodies) {

@@ -47,9 +47,12 @@ export class GravHomeComponent {
 
   edit(): void {
     this.interacted = true
+    let bodies_copy = JSON.parse(JSON.stringify(this.bodies))
+    let bodies_copy_2 = JSON.parse(JSON.stringify(this.bodies))
+    this.bodies = []
     const dialogRef = this.dialog.open(GravDialogComponent, {
       data: {
-        bodies: JSON.parse(JSON.stringify(this.bodies))
+        bodies: bodies_copy
       },
       restoreFocus: false,
       maxWidth: "90vw"
@@ -58,6 +61,9 @@ export class GravHomeComponent {
       if (x?.action == 'confirm') {
         this.bodies = x.bodies
         this.getPosTable(this.ticks)
+        this.restartAnimation()
+      } else {
+        this.bodies = bodies_copy_2
         this.restartAnimation()
       }
     });

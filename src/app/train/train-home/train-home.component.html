@@ -44,12 +44,13 @@
     <button mat-stroked-button 
     class="train-button train-button-stroked f-poppins train-replay-button" 
     [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-    (click)="restartAnimation()" title="Replay">
-      <mat-icon class="train-play-button">replay</mat-icon>
+    (click)="toggle_pause()" [title]="paused ? 'Play' : 'Pause' ">
+      <mat-icon class="train-play-button" *ngIf="!paused">pause</mat-icon>
+      <mat-icon class="train-play-button" *ngIf="paused">play_arrow</mat-icon>
     </button>
     
   </div>
   <mat-slider class="train-slider" min="0" [max]="ticks" style="display: none;">
-    <input matSliderThumb [(ngModel)]="currentTick" (input)="apply_car_styles(); interacted=true">
+    <input matSliderThumb [(ngModel)]="currentTick" (input)="apply_car_styles(); paused=true">
   </mat-slider>
 </div>

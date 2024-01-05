@@ -38,10 +38,15 @@
     style="background-color: black; color: white; margin-right: 12px;">
       <img src="assets/earth_icon.png">
     </button>
-    <button mat-flat-button class="f-poppins" 
-    style="background-color: black; color: white; font-size: 20px; height: 48px;"
+    <button mat-icon-button
+    style="background-color: tomato; color: white; margin-right: 12px;"
+    (click)="discard()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <button mat-icon-button
+    style="background-color: MediumSeaGreen; color: white;"
     (click)="confirm()">
-      Confirm
+      <mat-icon>check</mat-icon>
     </button>
   </div>
 </div>

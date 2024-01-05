@@ -1,5 +1,5 @@
-$width: min(500px, 80vw);
-$height: min(700px, 80vh);
+$width: min(600px, 80vw);
+$height: min(800px, 80vh);
 .train-dialog-container {
   width: $width;
   height: $height;
@@ -23,7 +23,7 @@ $height: min(700px, 80vh);
 }
 .train-dialog-text {
   font-size: 18px;
-  padding: 12px;
+  padding: calc($height*0.05) calc($width*0.05);
   line-height: 1.5;
   overflow: auto;
 }

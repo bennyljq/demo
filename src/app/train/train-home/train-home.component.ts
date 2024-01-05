@@ -32,7 +32,7 @@ export class TrainHomeComponent {
   ticks = 4040
   currentTick = 0
   displacement_table: any = []
-  interacted = false;
+  paused = false;
   speed_multiplier = 1;
   max_speed = 16;
   // track length = 1834 waypoints
@@ -54,7 +54,7 @@ export class TrainHomeComponent {
     this.init_waypoints()
     this.init_cars()
     this.init_displacement_table()
-    this.restartAnimation()
+    this.startAnimation()
   }
 
   init_waypoints() {
@@ -263,11 +263,11 @@ export class TrainHomeComponent {
     }
   }  
   
-  async restartAnimation() {
+  async startAnimation() {
     this.currentTick = 0
-    this.interacted = true // to kill still-playing animations
-    await lastValueFrom(timer(50))
-    this.interacted = false
+    this.paused = true // to kill still-playing animations
+    await lastValueFrom(timer(10))
+    this.paused = false
     while (this.currentTick < this.ticks) {
       this.currentTick += 1
       if (this.currentTick == Math.round(4040 / this.speed_multiplier)) {
@@ -275,8 +275,27 @@ export class TrainHomeComponent {
       }
       this.apply_car_styles()
       await lastValueFrom(timer(0))
-      if (this.interacted) {
+      if (this.paused) {
         break
+      }
+    }
+  }
+
+  async toggle_pause() {
+    if (!this.paused) {
+      this.paused = true
+    } else {
+      this.paused = false
+      while (this.currentTick < this.ticks) {
+        this.currentTick += 1
+        if (this.currentTick == Math.round(4040 / this.speed_multiplier)) {
+          this.currentTick = Math.round(940 / this.speed_multiplier)
+        }
+        this.apply_car_styles()
+        await lastValueFrom(timer(0))
+        if (this.paused) {
+          break
+        }
       }
     }
   }
@@ -288,7 +307,7 @@ export class TrainHomeComponent {
     }
     this.init_cars()
     this.init_displacement_table()
-    this.restartAnimation()
+    this.startAnimation()
   }
 
   about_train(): void {
