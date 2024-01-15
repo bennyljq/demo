@@ -30,6 +30,9 @@ import { GravHomeComponent } from './gravity/grav-home/grav-home.component';
 import { GravDialogComponent } from './gravity/grav-dialog/grav-dialog.component';
 import { TrainHomeComponent } from './train/train-home/train-home.component';
 import { TrainDialogComponent } from './train/train-dialog/train-dialog.component';
+import { TrainConceptComponent } from './train/train-concept/train-concept.component';
+import { ProjectsComponent } from './components-active/projects/projects.component';
+import { ProjectContentsComponent } from './components-active/project-contents/project-contents.component';
 
 // PrimeNG //
 import { TableModule } from 'primeng/table';
@@ -71,7 +74,10 @@ import {MatExpansionModule} from '@angular/material/expansion';
     GravHomeComponent,
     GravDialogComponent,
     TrainHomeComponent,
-    TrainDialogComponent
+    TrainDialogComponent,
+    TrainConceptComponent,
+    ProjectsComponent,
+    ProjectContentsComponent
   ],
   imports: [
     BrowserModule,

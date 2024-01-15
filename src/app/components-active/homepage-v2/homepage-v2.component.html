@@ -29,7 +29,8 @@
     <div style="display: flex;">
       <div class="links-container flex-col f-merri" [ngClass]="linksClass">
         <div class="link" id="about" (click)="goToRoute('about')">About</div>
-        <div class="link" id="projects" (click)="showProjects()">Projects</div>
+        <!-- <div class="link" id="projects" (click)="showProjects()">Projects</div> -->
+        <div class="link" id="projects" (click)="goToRoute('projects')">Projects</div>
         <div class="link" id="contact" (click)="goToRoute('contact')">Contact</div>
       </div>
       <div class="links-container flex-col f-merri" [ngClass]="projectsClass" style="position: absolute;">

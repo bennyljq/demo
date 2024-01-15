@@ -160,8 +160,14 @@ $train-button-font-size: max(20px, calc($train-content-width * 0.04));
   color: var(--text-color) !important;
   padding: calc($train-button-font-size*1 - 2px);
 }
+.train-menu-radio {
+  margin: 0 !important;
+  color: black !important;
+}
 .train-menu-exit {
+  margin: 0 !important;
   transform: rotate(180deg);
+  color: firebrick !important;
 }
 .train-play-button {
   margin: 0 !important;

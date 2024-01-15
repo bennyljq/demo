@@ -1,0 +1,148 @@
+<button mat-icon-button class="scroll-top-button" *ngIf="showScrollButton" (click)="scrollToTop()">
+  <mat-icon>arrow_upward</mat-icon>
+</button>
+
+<div class="history-container" (scroll)="onScroll($event)">
+
+  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
+    <div class="logo-container"
+    (mouseenter)="hover1=true"
+    (mouseleave)="hover1=false"
+    routerLink="/enterprise">
+      <div class="logo-title f-poppins" [ngClass]="hover1 ? 'logo-title-hover' : ''">
+        Enterprise Component Library<br>
+        <span class="logo-subtitle">2021 - Present</span>
+      </div>
+      <img src="assets/enterprise-lib.png" class="logo"
+      [ngClass]="hover1 ? 'logo-hover' : ''">
+      <div class="logo-link f-poppins" [ngClass]="hover1 ? 'logo-link-hover' : ''">
+        Browse Library <span class="f-hino" style="font-weight: bold;">→</span>
+      </div>
+    </div>
+    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
+      A snippet of the bank-wide Angular component library of which I'm currently the principal developer at DBS Bank.
+    </div>
+  </div>
+
+  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row flex-row-reverse' : 'flex-col'">
+    <div class="logo-container"
+    (mouseenter)="hover2=true"
+    (mouseleave)="hover2=false"
+    (click)="go_to_link('https://www.parabola.unsw.edu.au/2010-2019/volume-54-2018/issue-3/article/prime-numbers-generated-highly-composite-numbers')">
+      <div class="logo-title f-poppins" [ngClass]="hover2 ? 'logo-title-hover' : ''">
+        Prime Numbers Generated From <br> Highly Composite Numbers<br>
+        <span class="logo-subtitle">2018</span>
+      </div>
+      <img src="assets/parabola.png" class="logo"
+      [ngClass]="hover2 ? 'logo-hover' : ''">
+      <div class="logo-link f-poppins" [ngClass]="hover2 ? 'logo-link-hover' : ''">
+        Read Paper <span class="f-hino" style="font-weight: bold;">→</span>
+      </div>
+    </div>
+    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
+      Parabola is a recreational math magazine published by the University of New South Wales since 1964.
+      <br><br>
+      <em><strong>Prime Numbers Generated From Highly Composite Numbers</strong></em> is a Number Theory article which I'd written for Parabola in December 2018. 
+    </div>
+  </div>
+
+  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
+    <div class="logo-container"
+    (mouseenter)="hover3=true"
+    (mouseleave)="hover3=false"
+    routerLink="/physics">
+      <div class="logo-title f-poppins" [ngClass]="hover3 ? 'logo-title-hover' : ''">
+        Everyday Electricity<br>
+        <span class="logo-subtitle">2023</span>
+      </div>
+      <img src="assets/electric.png" class="logo"
+      [ngClass]="hover3 ? 'logo-hover' : ''">
+      <div class="logo-link f-poppins" [ngClass]="hover3 ? 'logo-link-hover' : ''">
+        Start Lesson <span class="f-hino" style="font-weight: bold;">→</span>
+      </div>
+    </div>
+    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
+      An interactive Physics lesson on electricity in our everyday lives.
+      <br><br>
+      This project showcases my storytelling skills, scientific knowledge, and technical depth in UI/UX engineering.
+      It is also a step towards my goal of building a career in Educational Technology.
+      <br><br>
+      Do give the lesson a shot, and I hope you learn something from it! 🙃
+    </div>
+  </div>
+
+  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row flex-row-reverse' : 'flex-col'">
+    <div class="logo-container"
+    (mouseenter)="hover4=true"
+    (mouseleave)="hover4=false"
+    routerLink="/gravity-sim">
+      <div class="logo-title f-poppins" [ngClass]="hover4 ? 'logo-title-hover' : ''">
+        Gravity Simulator<br>
+        <span class="logo-subtitle">2023 - Present</span>
+      </div>
+      <img src="assets/grav-sim.png" class="logo"
+      [ngClass]="hover4 ? 'logo-hover' : ''">
+      <div class="logo-link f-poppins" [ngClass]="hover4 ? 'logo-link-hover' : ''">
+        Play with Gravity <span class="f-hino" style="font-weight: bold;">→</span>
+      </div>
+    </div>
+    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
+      A gravity simulator which is built entirely in TypeScript and within the Angular framework.
+      <br><br>
+      This project showcases my ability to build a physics engine from scratch, and technical competency in scripting and optimisation.
+    </div>
+  </div>
+
+  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
+    <div class="logo-container"
+    (mouseenter)="hover5=true"
+    (mouseleave)="hover5=false"
+    routerLink="/train">
+      <div class="logo-title f-poppins" [ngClass]="hover5 ? 'logo-title-hover' : ''">
+        Train Simulator<br>
+        <span class="logo-subtitle">2024</span>
+      </div>
+      <img src="assets/train-sim.png" class="logo"
+      [ngClass]="hover5 ? 'logo-hover' : ''">
+      <div class="logo-link f-poppins" [ngClass]="hover5 ? 'logo-link-hover' : ''">
+        Choo Choo <span class="f-hino" style="font-weight: bold;">→</span>
+      </div>
+    </div>
+    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
+      An simulation of a self-designed enhanced train management system.
+      <br><br>
+      I have since discovered that professors at <a href="https://ethz.ch/en.html" target="_blank">ETH Zurich</a> are working on something 
+      <a href="https://www.sciencedirect.com/science/article/pii/S2210970621000081#bib40" target="_blank">similar</a>.
+      <br><br>
+      I'm hoping for a collaboration in the near future, so I plan to furnish this simulation with 
+      <strong>rigorous statistical analysis</strong> along with <strong>beautiful animations and data visualisation</strong>
+      before contacting the fine folk at Zurich.
+    </div>
+  </div>
+
+  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row flex-row-reverse' : 'flex-col'">
+    <div class="logo-container"
+    (mouseenter)="hover6=true"
+    (mouseleave)="hover6=false"
+    (click)="download_article()">
+      <div class="logo-title f-poppins" [ngClass]="hover6 ? 'logo-title-hover' : ''">
+        On the Infinitude of Twin Primes<br>
+        <span class="logo-subtitle">2023 - Present</span>
+      </div>
+      <img src="assets/twin-primes-draft.png" class="logo"
+      [ngClass]="hover6 ? 'logo-hover' : ''">
+      <div class="logo-link f-poppins" [ngClass]="hover6 ? 'logo-link-hover' : ''">
+        Download Article <span class="f-hino" style="font-weight: bold; border-bottom: 1px solid black;">↓</span>
+      </div>
+    </div>
+    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
+      <em><strong>On the Infinitude of Twin Primes</strong></em> is another Number Theory paper I'm currently working on.
+      <br><br>
+      I have since received positive reviews, hence I plan to submit this paper for publishing in the near future.
+      <br><br>
+      Any interested readers are welcome to download the latest draft.
+    </div>
+  </div>
+
+  <div style="height: 25vh; width: 100%;"></div>
+</div>

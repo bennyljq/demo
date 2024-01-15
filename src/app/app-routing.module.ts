@@ -11,6 +11,7 @@ import { ContactComponent } from './components-active/contact/contact.component'
 import { PhysicsHomeComponent } from './physics/physics-home/physics-home.component';
 import { GravHomeComponent } from './gravity/grav-home/grav-home.component';
 import { TrainHomeComponent } from './train/train-home/train-home.component';
+import { ProjectsComponent } from './components-active/projects/projects.component';
 
 const routes: Routes = [
   { path: 'main', component: HomepageV2Component },
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'physics', component: PhysicsHomeComponent },
   { path: 'gravity-sim', component: GravHomeComponent },
   { path: 'train', component: TrainHomeComponent },
+  { path: 'projects', component: ProjectsComponent },
   { path: '', redirectTo: '/main', pathMatch: 'full' }, // redirect to `homepage`
   // { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page
 ];

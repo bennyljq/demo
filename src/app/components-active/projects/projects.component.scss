@@ -1,0 +1,51 @@
+$title-font-size: min(7vw, calc(1000px * 0.05));
+#title {
+  margin: 10vh 10vw 5vh 10vw;
+  animation: fade-down 1s ease-out 0.5s;
+  font-size: $title-font-size;
+  line-height: $title-font-size;
+  // height: calc($title-font-size * 3);
+  height: auto;
+}
+$history-width: min(80vw, 1000px);
+.history {
+  // width: $history-width;
+  width: 100vw;
+  height: 75vh;
+  // margin: 0 calc(90vw - $history-width) 0 10vw;
+  margin: 0;
+  animation: fade-down 1s ease-out 1s;
+  z-index: 2;
+}
+.content {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  overflow: hidden;
+}
+.blur-image {
+  filter: blur(20px);
+  animation: blur-image 1s ease-out;
+  opacity: 0.66;
+}
+.unblur-image {
+  animation: unblur-image 0.666s ease-out;
+}
+@keyframes blur-image {
+  from {
+    filter: blur(0);
+  }
+  to {
+    filter: blur(20px);
+    opacity: 0.66;
+  }
+}
+@keyframes unblur-image {
+  from {
+    filter: blur(20px);
+    opacity: 0.66;
+  }
+  to {
+    filter: blur(0);
+  }
+}

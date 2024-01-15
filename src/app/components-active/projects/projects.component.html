@@ -1,18 +1,15 @@
 <div class="container blur-image" [ngClass]="unblur">
 </div>
 <div class="content" [ngClass]="fadeOutLeft">
-  <!-- <div id="kenobi"></div> -->
   <div id="home" (click)="goHome()" title="to Homepage">
     <span id="left-arrow" class="f-hino">←</span>
   </div>
-  <div class="f-poppins f-normal" id="hes-me">
-    <!-- Do I know Ben? <br> Well, of course I know him. <br> He's me. -->
-    Benny Lim
-    <img src="assets/Flag_of_Singapore.svg.png" class="flag">
+  <div class="f-poppins f-normal" id="title">
+    Projects
   </div>
   <div class="history" id="history">
     <div [ngClass]="historyExit" style="width: 100%; height: 100%;">
-      <app-contact-contents></app-contact-contents>
+      <app-project-contents></app-project-contents>
     </div>
   </div>
 </div>
