@@ -33,6 +33,7 @@ import { TrainDialogComponent } from './train/train-dialog/train-dialog.componen
 import { TrainConceptComponent } from './train/train-concept/train-concept.component';
 import { ProjectsComponent } from './components-active/projects/projects.component';
 import { ProjectContentsComponent } from './components-active/project-contents/project-contents.component';
+import { Train2Component } from './train2/train2/train2.component';
 
 // PrimeNG //
 import { TableModule } from 'primeng/table';
@@ -48,6 +49,7 @@ import { MathjaxModule } from "mathjax-angular";
 import {MatSliderModule} from '@angular/material/slider';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { Train2HomeComponent } from './train2/train2-home/train2-home.component';
 
 
 @NgModule({
@@ -77,7 +79,9 @@ import {MatExpansionModule} from '@angular/material/expansion';
     TrainDialogComponent,
     TrainConceptComponent,
     ProjectsComponent,
-    ProjectContentsComponent
+    ProjectContentsComponent,
+    Train2Component,
+    Train2HomeComponent
   ],
   imports: [
     BrowserModule,

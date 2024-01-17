@@ -1,0 +1,48 @@
+* {
+  --bg-color: hsl(240, 75%, 85%); 
+  --bg-color-2: GhostWhite; 
+  --text-color: black;
+
+  --content-bg: white;
+  --dot-color: darkgrey;
+  --correct-color: MediumSpringGreen;
+  --wrong-color: Tomato;
+  --great-job-color: black;
+}
+.dark-theme {
+  --bg-color: DimGrey; 
+  --bg-color-2: rgb(33, 33, 33); 
+  --text-color: Gainsboro; 
+  
+  --content-bg: black;
+  --dot-color: grey;
+  --correct-color: MediumSpringGreen;
+  --wrong-color: Tomato;
+  --great-job-color: MediumSpringGreen;
+}
+.t2-fade-up {
+  animation: t2-fade-up 0.5s ease-in-out;
+}
+.t2-fade-down {
+  animation: t2-fade-down 0.5s ease-in-out;
+}
+@keyframes t2-fade-up {
+  from { 
+    transform: translateY(1.5vh);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes t2-fade-down {
+  from { 
+    transform: translateY(-1.5vh);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

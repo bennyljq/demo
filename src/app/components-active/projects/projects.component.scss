@@ -34,6 +34,7 @@ $history-width: min(80vw, 1000px);
 @keyframes blur-image {
   from {
     filter: blur(0);
+    opacity: 1;
   }
   to {
     filter: blur(20px);
@@ -47,5 +48,6 @@ $history-width: min(80vw, 1000px);
   }
   to {
     filter: blur(0);
+    opacity: 1;
   }
 }

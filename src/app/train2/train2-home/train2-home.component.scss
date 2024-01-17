@@ -1,0 +1,25 @@
+@import "../train2-styles.scss";
+.t2-back-arrow {
+  box-shadow: 0 0 0 2px var(--text-color) inset;
+  color: var(--text-color);
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  transition-duration: 0.333s;
+  background: transparent;
+}
+.t2-back-arrow:hover {
+  transform: scale(1.1);
+}
+.t2-back-arrow:active {
+  transform: scale(1.2);
+}
+.t2-title {
+  color: var(--text-color);
+  font-size: clamp(48px, min(12vw, 12vh), 100px);
+  position: absolute;
+  top: 20vh;
+  left: 7vw;
+  line-height: 1;
+  transition-duration: 0.33s;
+}

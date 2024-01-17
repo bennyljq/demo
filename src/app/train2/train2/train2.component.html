@@ -1,0 +1,32 @@
+<div class="t2-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+  <div class="t2-bg-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+  <div class="t2-bg-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)'}"></div>
+
+  <div class="t2-home-track-wood-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)'}">
+    <ng-container *ngIf="showWood">
+      <ng-container *ngFor="let _ of [].constructor(numWood)">
+        <div class="t2-home-track-wood" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+        [ngStyle]="{'transform': 'skewX(calc(-1 * '+skewAngle+'deg))'}"></div>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <div class="t2-home-track-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)'}"></div>
+  <div class="t2-home-track-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)'}"></div>
+
+  <button mat-icon-button class="t2-dark-mode t2-fade-up"
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="themeService.toggleTheme()"
+  [title]="themeService.isDarkTheme ? 'Toggle Light Mode' : 'Toggle Dark Mode' ">
+    <mat-icon *ngIf="!themeService.isDarkTheme">sunny</mat-icon>
+    <mat-icon *ngIf="themeService.isDarkTheme"
+    style="transform: rotate(135deg);">
+      brightness_3
+    </mat-icon>
+  </button>
+  <app-train2-home></app-train2-home>
+</div>

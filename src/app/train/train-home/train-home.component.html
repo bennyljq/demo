@@ -21,9 +21,9 @@
       <mat-icon style="margin-left: -28px; transform: rotate(135deg) translateY(-2px);">brightness_3</mat-icon>
     </div>
   </mat-toolbar>
-  <span class="train-subtitle f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+  <!-- <span class="train-subtitle f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     {{chapters[selectedIndex]}}
-  </span>
+  </span> -->
   <app-train-concept *ngIf="selectedIndex==0"></app-train-concept>
 </div>
 
