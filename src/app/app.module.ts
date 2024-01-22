@@ -50,6 +50,7 @@ import {MatSliderModule} from '@angular/material/slider';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { Train2HomeComponent } from './train2/train2-home/train2-home.component';
+import { Train2ConceptComponent } from './train2/train2-concept/train2-concept.component';
 
 
 @NgModule({
@@ -81,7 +82,8 @@ import { Train2HomeComponent } from './train2/train2-home/train2-home.component'
     ProjectsComponent,
     ProjectContentsComponent,
     Train2Component,
-    Train2HomeComponent
+    Train2HomeComponent,
+    Train2ConceptComponent
   ],
   imports: [
     BrowserModule,

@@ -1,10 +1,15 @@
 <div class="t2-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-  <div class="t2-bg-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+  <div class="t2-bg-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  [ngStyle]="{'height': bgHeight + 'vh'}"></div>
   <div class="t2-bg-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-  [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)'}"></div>
+  [ngStyle]="{
+    'transform': 'skewY('+skewAngle+'deg)', 
+    'height': bgHeight + 'vh', 
+    'top': 'calc(' + bgSkewHeight + 'vh * 50)'
+  }"></div>
 
   <div class="t2-home-track-wood-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-  [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)'}">
+  [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)', 'margin-top': 'calc(' + bgHeight + 'vh + ' + bgSkewHeight + 'vh * 50 + 3vh)'}">
     <ng-container *ngIf="showWood">
       <ng-container *ngFor="let _ of [].constructor(numWood)">
         <div class="t2-home-track-wood" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
@@ -14,9 +19,11 @@
   </div>
 
   <div class="t2-home-track-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-  [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)'}"></div>
+  [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)', 
+  'top': 'calc(' + bgHeight + 'vh + ' + bgSkewHeight + 'vh * 50 + 5vh)'}"></div>
   <div class="t2-home-track-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-  [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)'}"></div>
+  [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)', 
+  'top': 'calc(' + bgHeight + 'vh + ' + bgSkewHeight + 'vh * 50 + 15vh)'}"></div>
 
   <button mat-icon-button class="t2-dark-mode t2-fade-up"
   [ngClass]="{'dark-theme': themeService.isDarkTheme}"
@@ -28,5 +35,6 @@
       brightness_3
     </mat-icon>
   </button>
-  <app-train2-home></app-train2-home>
+  <app-train2-home *ngIf="currentPage == 'home' " (setPage)="pageTransition($event)"></app-train2-home>
+  <app-train2-concept *ngIf="currentPage == 'concept' " (setPage)="pageTransition($event)"></app-train2-concept>
 </div>

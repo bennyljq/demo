@@ -1,3 +1,4 @@
+$t2-transition-duration: 0.333s;
 * {
   --bg-color: hsl(240, 75%, 85%); 
   --bg-color-2: GhostWhite; 
@@ -8,6 +9,9 @@
   --correct-color: MediumSpringGreen;
   --wrong-color: Tomato;
   --great-job-color: black;
+
+  transition-duration: $t2-transition-duration;
+  transition-timing-function: ease-in-out;
 }
 .dark-theme {
   --bg-color: DimGrey; 
@@ -25,6 +29,10 @@
 }
 .t2-fade-down {
   animation: t2-fade-down 0.5s ease-in-out;
+}
+.t2-fade-out-left {
+  animation: fade-out-left 0.5s ease-in-out;
+  opacity: 0;
 }
 @keyframes t2-fade-up {
   from { 
@@ -45,4 +53,14 @@
     transform: translateY(0);
     opacity: 1;
   }
+}
+@keyframes fade-out-left {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  } 
+  100% {
+    transform: translateX(-5vw);
+    opacity: 0;
+  } 
 }

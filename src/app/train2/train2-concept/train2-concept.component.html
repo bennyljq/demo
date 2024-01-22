@@ -1,0 +1,10 @@
+<div class="t2-container" [ngClass]=" exit ? 't2-fade-out-left' : '' ">
+  <button mat-icon-button class="t2-back-arrow t2-fade-up" title="Back"
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}" (click)="setPage.emit('home'); exit=true">
+    <mat-icon class="t2-back-arrow-icon">arrow_back</mat-icon>
+  </button>
+  <div class="t2-concept-title f-poppins t2-fade-down"
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    Concept
+  </div>
+</div>

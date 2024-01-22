@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { ThemeService } from 'src/app/physics/theme.service';
 import {Location} from '@angular/common';
 
@@ -13,6 +13,9 @@ export class Train2HomeComponent {
     public themeService: ThemeService,
     private _location: Location
   ) {}
+
+  @Output() setPage = new EventEmitter
+  exit = false
   
   goBack() {
     this._location.back();

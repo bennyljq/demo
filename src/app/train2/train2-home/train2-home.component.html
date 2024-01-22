@@ -1,8 +1,17 @@
-<button mat-icon-button class="t2-back-arrow t2-fade-up" title="Back to Projects"
-[ngClass]="{'dark-theme': themeService.isDarkTheme}" routerLink="/projects">
-  <mat-icon class="t2-back-arrow-icon">arrow_back</mat-icon>
-</button>
-<div class="t2-title f-poppins t2-fade-down"
-[ngClass]="{'dark-theme': themeService.isDarkTheme}">
-  Dynamic<br>Decoupling<br>Trains
+<div class="t2-home-container" [ngClass]=" exit ? 't2-fade-out-left' : '' ">
+  <button mat-icon-button class="t2-back-arrow t2-fade-up" title="Back to Projects"
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}" routerLink="/projects">
+    <mat-icon class="t2-back-arrow-icon">arrow_back</mat-icon>
+  </button>
+  <div class="t2-title-container f-poppins t2-fade-down">
+    <div class="t2-title"
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+      Dynamic<br>Decoupling<br>Trains
+    </div>
+    <div class="t2-nav-button flex-row"
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+    (click)="setPage.emit('concept'); exit=true">
+      concept
+    </div>
+  </div>
 </div>

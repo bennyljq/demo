@@ -1,0 +1,12 @@
+@import "../train2-styles.scss";
+.t2-container {
+  position: absolute;
+  top: 0;
+}
+$title-font-size: clamp(50px, min(12vw, 9vh), 100px);
+.t2-concept-title {
+  color: var(--text-color);
+  font-size: calc($title-font-size * 0.666);
+  margin: 2vh 7vw;
+  line-height: 1;
+}
