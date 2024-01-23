@@ -16,7 +16,7 @@ export class Train2Component {
     private route: ActivatedRoute,
   ) {}
   
-  theme: 0 | 1 = 1 // 0 = light, 1 = dark
+  theme: 0 | 1 = 0 // 0 = light, 1 = dark
   currentPage = "home"
   pageWidth = 0
   pageHeight = 0
@@ -38,9 +38,10 @@ export class Train2Component {
     if (frag) {
       this.currentPage = frag
     } else {
-      this.router.navigate( [], { fragment: this.currentPage } )
+      this.currentPage = "home"
+      this.router.navigate( [], { fragment: "home" } )
     }
-    this.pageTransition(frag)
+    this.pageTransition(this.currentPage)
   }
 
   @HostListener('window:resize', ['$event'])
