@@ -1,4 +1,5 @@
 import { Component, HostListener } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
 import { ThemeService } from 'src/app/physics/theme.service';
@@ -14,7 +15,10 @@ export class Train2Component {
     public themeService: ThemeService,
     private router: Router,
     private route: ActivatedRoute,
-  ) {}
+    private titleService: Title
+  ) {
+    this.titleService.setTitle("Dynamic Decoupling Trains");
+  }
   
   theme: 0 | 1 = 0 // 0 = light, 1 = dark
   currentPage = "home"

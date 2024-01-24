@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
 
@@ -9,7 +10,12 @@ import { lastValueFrom, timer } from 'rxjs';
 })
 export class ContactComponent implements OnInit{
 
-  constructor(private router: Router){}
+  constructor(
+    private router: Router,
+    private titleService: Title
+  ) {
+    this.titleService.setTitle("Call me maybe");
+  }
   
   fadeOutLeft: any;
   historyExit: any;

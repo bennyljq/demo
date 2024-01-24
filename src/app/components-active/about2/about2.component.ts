@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
 
@@ -9,7 +10,12 @@ import { lastValueFrom, timer } from 'rxjs';
 })
 export class About2Component {
 
-  constructor(private router: Router){}
+  constructor(
+    private router: Router,
+    private titleService: Title
+  ) {
+    this.titleService.setTitle("About Benny");
+  }
   
   fadeOutLeft: any;
   historyExit: any;
