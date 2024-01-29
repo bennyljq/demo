@@ -34,6 +34,8 @@ import { TrainConceptComponent } from './train/train-concept/train-concept.compo
 import { ProjectsComponent } from './components-active/projects/projects.component';
 import { ProjectContentsComponent } from './components-active/project-contents/project-contents.component';
 import { Train2Component } from './train2/train2/train2.component';
+import { Train2HomeComponent } from './train2/train2-home/train2-home.component';
+import { Train2ConceptComponent } from './train2/train2-concept/train2-concept.component';
 
 // PrimeNG //
 import { TableModule } from 'primeng/table';
@@ -49,8 +51,6 @@ import { MathjaxModule } from "mathjax-angular";
 import {MatSliderModule} from '@angular/material/slider';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
-import { Train2HomeComponent } from './train2/train2-home/train2-home.component';
-import { Train2ConceptComponent } from './train2/train2-concept/train2-concept.component';
 
 
 @NgModule({
