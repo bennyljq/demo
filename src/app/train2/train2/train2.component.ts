@@ -20,7 +20,7 @@ export class Train2Component {
     this.titleService.setTitle("Dynamic Decoupling Trains");
   }
   
-  theme: 0 | 1 = 1 // 0 = light, 1 = dark
+  theme: 0 | 1 = 0 // 0 = light, 1 = dark
   currentPage = "home"
   pageWidth = 0
   pageHeight = 0

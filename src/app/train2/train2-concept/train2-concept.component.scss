@@ -19,19 +19,22 @@ $height: calc($width * $ratio);
   height: $height;
   width: $width;
   margin-left: 7vw;
+  --mask: linear-gradient(to bottom, 
+    rgba(0,0,0, 0) 0%,
+    rgba(0,0,0, 1) 20%,
+    rgba(0,0,0, 1) 80%, 
+    rgba(0,0,0, 0) 100%
+  );
+  -webkit-mask: var(--mask); 
+  mask: var(--mask);
 }
-.t2-train {
-  width: calc($height * 0.06);
-  height: calc($height * 0.15);
-  background-color: black;
-  position: absolute;
-  border-radius: calc($height * 0.02);
-  transform: translate(calc($width * 0.3), calc($height * 0.8));
-  animation-name: train-move, train-blur;
-  animation-duration: 1.5s;
-  animation-timing-function: cubic-bezier(0.25, 0.75, 0.75, 0.25);
-  // animation-timing-function: linear;
-  animation-iteration-count: infinite;
+.t2-concept-demo-container-bg {
+  background-color: GhostWhite;
+  height: $height;
+  width: $width;
+  margin-left: 7vw;
+  margin-bottom: calc(-1 * $height);
+  box-shadow: 0 0 0 3px black;
 }
 .t2-nsl-line {
   position: absolute;
@@ -75,26 +78,126 @@ $height: calc($width * $ratio);
   color: black;
   transform: translate(calc($width * 0.8), calc($height * 0.47));
 }
+.t2-train {
+  position: absolute;
+  width: calc($width * 0.08);
+  height: calc($height * 0.1);
+  background-color: black;
+  border-radius: calc($height * 0.02);
+  transform: translate(calc($width * 0.2), calc($height * 0.45));
+  animation-name: train-move;
+  animation-duration: 3.2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  border: calc($width * 0.005) solid GhostWhite;
+}
+.t2-train-track {
+  position: absolute;
+  width: calc($width * 0.02);
+  height: calc($height * 0.94);
+  background-color: grey;
+  transform: translate(calc($width * 0.23), calc($height * 0.03));
+  --mask: linear-gradient(to bottom, 
+    rgba(0,0,0, 0) 0%,
+    rgba(0,0,0, 1) 10%,
+    rgba(0,0,0, 1) 90%, 
+    rgba(0,0,0, 0) 100%
+  );
+  -webkit-mask: var(--mask); 
+  mask: var(--mask);
+}
+.t2-train-track-new {
+  transform: translate(calc($width * 0.48), calc($height * 0.03));
+}
+.t2-train-2 {
+  animation-name: train-move-2;
+}
+.t2-train-3 {
+  animation-name: train-move-3;
+}
+.t2-train-new {
+  transform: translate(calc($width * 0.45), calc($height * 0.45));
+  animation-name: train-new-move;
+  animation-duration: 1.6s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.t2-train-new-2 {
+  animation-name: train-new-move-2;
+}
+.t2-train-new-3 {
+  animation-name: train-new-move-3;
+}
 
 @keyframes train-move {
   0% {
-    transform: translate(calc($width * 0.3), calc($height * 0.8));
+    transform: translate(calc($width * 0.2), calc($height * 1.1));
+  }
+  37.5% {
+    transform: translate(calc($width * 0.2), calc($height * 0.45));
+  }
+  62.5% {
+    transform: translate(calc($width * 0.2), calc($height * 0.45));
   }
   100% {
-    transform: translate(calc($width * 0.3), calc($height * 0.05));
+    transform: translate(calc($width * 0.2), calc($height * -0.2));
   }
 }
-@keyframes train-blur {
+@keyframes train-move-2 {
   0% {
-    opacity: 0;
+    transform: translate(calc($width * 0.2), calc($height * 1.2));
   }
-  10% {
-    opacity: 1;
+  37.5% {
+    transform: translate(calc($width * 0.2), calc($height * 0.55));
   }
-  90% {
-    opacity: 1;
+  62.5% {
+    transform: translate(calc($width * 0.2), calc($height * 0.55));
   }
   100% {
-    opacity: 0;
+    transform: translate(calc($width * 0.2),  calc($height * -0.1));
+  }
+}
+@keyframes train-move-3 {
+  0% {
+    transform: translate(calc($width * 0.2), calc($height * 1));
+  }
+  37.5% {
+    transform: translate(calc($width * 0.2), calc($height * 0.35));
+  }
+  62.5% {
+    transform: translate(calc($width * 0.2), calc($height * 0.35));
+  }
+  100% {
+    transform: translate(calc($width * 0.2), calc($height * -0.3));
+  }
+}
+@keyframes train-new-move {
+  0% {
+    transform: translate(calc($width * 0.45), calc($height * 0.45));
+  }
+  37.5% {
+    transform: translate(calc($width * 0.45), calc($height * 0.45));
+  }
+  100% {
+    transform: translate(calc($width * 0.45), calc($height * -0.3));
+  }
+}
+@keyframes train-new-move-2 {
+  0% {
+    transform: translate(calc($width * 0.45), calc($height * 1.1));
+  }
+  54.166% {
+    transform: translate(calc($width * 0.45), calc($height * 0.45));
+  }
+  100% {
+    transform: translate(calc($width * 0.45), calc($height * 0.45));
+  }
+}
+@keyframes train-new-move-3 {
+  0% {
+    transform: translate(calc($width * 0.45), calc($height * 1));
+  }
+  100% {
+    transform: translate(calc($width * 0.45), calc($height * -0.2));
   }
 }
