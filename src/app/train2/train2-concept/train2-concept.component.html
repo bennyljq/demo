@@ -7,18 +7,20 @@
   [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     Concept
   </div>
-  <div class="t2-concept-demo-container-bg t2-fade-down"></div>
+  <div class="t2-concept-demo-container-bg t2-fade-down" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
   <div class="t2-concept-demo-container t2-fade-down" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="t2-nsl-line"></div>
-    <div class="t2-nsl-station">NS 13</div>
-    <div class="t2-nsl-station-name">Yishun</div>
+    <div class="t2-nsl-station" (click)="goToURL('https://en.wikipedia.org/wiki/Yishun_MRT_station')"
+    title="Yishun MRT Station">NS 13</div>
+    <div class="t2-nsl-station-name" [ngClass]="{'dark-theme': themeService.isDarkTheme}" title="Yishun MRT Station"
+    (click)="goToURL('https://en.wikipedia.org/wiki/Yishun_MRT_station')">Yishun</div>
     <div class="t2-train-track"></div>
-    <div class="t2-train"></div>
-    <div class="t2-train t2-train-2"></div>
-    <div class="t2-train t2-train-3"></div>
+    <div class="t2-train" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+    <div class="t2-train t2-train-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+    <div class="t2-train t2-train-3" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
     <div class="t2-train-track t2-train-track-new"></div>
-    <div class="t2-train t2-train-new"></div>
-    <div class="t2-train t2-train-new t2-train-new-2"></div>
-    <div class="t2-train t2-train-new t2-train-new-3"></div>
+    <div class="t2-train t2-train-new" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+    <div class="t2-train t2-train-new t2-train-new-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+    <div class="t2-train t2-train-new t2-train-new-3" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
   </div>
 </div>

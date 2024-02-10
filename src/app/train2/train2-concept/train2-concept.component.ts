@@ -14,4 +14,8 @@ export class Train2ConceptComponent {
   
   @Output() setPage = new EventEmitter
   exit = false
+
+  goToURL(url: string) : void {
+    window.open(url, "_blank");
+}
 }
