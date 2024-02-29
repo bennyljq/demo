@@ -13,6 +13,7 @@ import { GravHomeComponent } from './gravity/grav-home/grav-home.component';
 import { TrainHomeComponent } from './train/train-home/train-home.component';
 import { ProjectsComponent } from './components-active/projects/projects.component';
 import { Train2Component } from './train2/train2/train2.component';
+import { AnimTestComponent } from './components-wip/anim-test/anim-test.component';
 
 const routes: Routes = [
   { path: 'main', component: HomepageV2Component },
@@ -25,6 +26,7 @@ const routes: Routes = [
   { path: 'train', component: TrainHomeComponent },
   { path: 'train2', component: Train2Component },
   { path: 'projects', component: ProjectsComponent },
+  { path: 'anim-test', component: AnimTestComponent },
   { path: '', redirectTo: '/main', pathMatch: 'full' }, // redirect to `homepage`
   // { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page
 ];

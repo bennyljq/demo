@@ -36,6 +36,7 @@ import { ProjectContentsComponent } from './components-active/project-contents/p
 import { Train2Component } from './train2/train2/train2.component';
 import { Train2HomeComponent } from './train2/train2-home/train2-home.component';
 import { Train2ConceptComponent } from './train2/train2-concept/train2-concept.component';
+import { AnimTestComponent } from './components-wip/anim-test/anim-test.component';
 
 // PrimeNG //
 import { TableModule } from 'primeng/table';
@@ -83,7 +84,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
     ProjectContentsComponent,
     Train2Component,
     Train2HomeComponent,
-    Train2ConceptComponent
+    Train2ConceptComponent,
+    AnimTestComponent
   ],
   imports: [
     BrowserModule,

@@ -88,7 +88,7 @@ $height: calc($width * $ratio);
   border-radius: calc($height * 0.02);
   transform: translate(calc($width * 0.2), calc($height * 0.45));
   animation-name: train-move;
-  animation-duration: 3.6s;
+  animation-duration: 4s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   border: calc($width * 0.005) solid var(--concept-bg);
@@ -120,18 +120,19 @@ $height: calc($width * $ratio);
 .t2-train-new {
   transform: translate(calc($width * 0.45), calc($height * 0.45));
   animation-name: train-new-move;
-  animation-duration: 1.8s;
-  // animation-timing-function: linear;
-  animation-timing-function: ease-in-out;
+  animation-duration: 2s;
+  animation-timing-function: cubic-bezier(.5,0,.5,.15);
   animation-iteration-count: infinite;
-  // border-color: Maroon;
+  border-color: var(--text-color);
   background-color: var(--train-color);
 }
 .t2-train-new-2 {
   animation-name: train-new-move-2;
+  animation-timing-function: cubic-bezier(.49,.85,.55,1);
 }
 .t2-train-new-3 {
   animation-name: train-new-move-3;
+  animation-timing-function: linear;
 }
 
 @keyframes train-move {
@@ -180,9 +181,6 @@ $height: calc($width * $ratio);
   0% {
     transform: translate(calc($width * 0.45), calc($height * 0.45));
   }
-  24% {
-    transform: translate(calc($width * 0.45), calc($height * 0.45));
-  }
   100% {
     transform: translate(calc($width * 0.45), calc($height * -0.3));
   }
@@ -190,9 +188,6 @@ $height: calc($width * $ratio);
 @keyframes train-new-move-2 {
   0% {
     transform: translate(calc($width * 0.45), calc($height * 1.2));
-  }
-  76% {
-    transform: translate(calc($width * 0.45), calc($height * 0.45));
   }
   100% {
     transform: translate(calc($width * 0.45), calc($height * 0.45));

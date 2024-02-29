@@ -2,11 +2,47 @@ import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition
+} from '@angular/animations';
 
 @Component({
   selector: 'app-homepage-v2',
   templateUrl: './homepage-v2.component.html',
-  styleUrls: ['./homepage-v2.component.scss']
+  styleUrls: ['./homepage-v2.component.scss'],
+  animations: [
+    trigger('fadeIn1', [
+      state('void', style({
+        opacity: 0,
+        transform: 'translateY(-5vh)'
+      })),
+      transition('void => *', [
+        animate('0.5s 1.5s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ]),
+    trigger('fadeIn2', [
+      state('void', style({
+        opacity: 0,
+        transform: 'translateY(-5vh)'
+      })),
+      transition('void => *', [
+        animate('0.5s 1.75s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ]),
+    trigger('fadeIn3', [
+      state('void', style({
+        opacity: 0,
+        transform: 'translateY(-5vh)'
+      })),
+      transition('void => *', [
+        animate('0.5s 2s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class HomepageV2Component implements OnInit {
 
@@ -49,9 +85,9 @@ export class HomepageV2Component implements OnInit {
       this.hideElem(`desc${i}`, 4 + (i - 1) * 0.25)
       await lastValueFrom(timer(0))
     }
-    this.hideElem("about", 1.75)
-    this.hideElem("projects", 2)
-    this.hideElem("contact", 2.25)
+    // this.hideElem("about", 1.75)
+    // this.hideElem("projects", 2)
+    // this.hideElem("contact", 2.25)
 
     // preload
     this.preload_kenobi = true
