@@ -134,6 +134,10 @@ $height: calc($width * $ratio);
   animation-name: train-new-move-3;
   animation-timing-function: linear;
 }
+.t2-child-nav {
+  margin: 2vh 7vw;
+  line-height: 1;
+}
 
 @keyframes train-move {
   0% {

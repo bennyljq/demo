@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ThemeService } from 'src/app/physics/theme.service';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-train2-concept',
@@ -9,7 +10,8 @@ import { ThemeService } from 'src/app/physics/theme.service';
 export class Train2ConceptComponent {
 
   constructor (
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private _location: Location
   ) {}
   
   @Output() setPage = new EventEmitter
@@ -17,5 +19,9 @@ export class Train2ConceptComponent {
 
   goToURL(url: string) : void {
     window.open(url, "_blank");
-}
+  }
+
+  goBack() {
+    this._location.back();
+  }
 }

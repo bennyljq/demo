@@ -1,0 +1,15 @@
+<div class="t2-container" [ngClass]=" exit ? 't2-fade-out-left' : '' ">
+  <button mat-icon-button class="t2-back-arrow t2-fade-up" title="Home"
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}" (click)="setPage.emit('home'); exit=true">
+    <mat-icon class="t2-back-arrow-icon">home</mat-icon>
+  </button>
+  <div class="t2-analysis-title f-poppins t2-fade-down"
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    analysis
+  </div>
+  <div class="t2-nav-button flex-row f-poppins t2-child-nav t2-fade-down"
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="setPage.emit('concept'); exit=true">
+    concept
+  </div>
+</div>

@@ -44,6 +44,9 @@ $title-font-size: clamp(50px, min(12vw, 9vh), 100px);
   &:active {
     transform: scale(0.9);
   }
+  &:not(:last-child) {
+    margin-bottom: 1vh;
+  }
 }
 @keyframes nav-hover {
   0% {

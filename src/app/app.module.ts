@@ -52,6 +52,7 @@ import { MathjaxModule } from "mathjax-angular";
 import {MatSliderModule} from '@angular/material/slider';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { Train2AnalysisComponent } from './train2/train2-analysis/train2-analysis.component';
 
 
 @NgModule({
@@ -85,7 +86,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
     Train2Component,
     Train2HomeComponent,
     Train2ConceptComponent,
-    AnimTestComponent
+    AnimTestComponent,
+    Train2AnalysisComponent
   ],
   imports: [
     BrowserModule,

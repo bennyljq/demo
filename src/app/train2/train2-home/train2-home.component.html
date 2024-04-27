@@ -13,5 +13,10 @@
     (click)="setPage.emit('concept'); exit=true">
       concept
     </div>
+    <div class="t2-nav-button flex-row"
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+    (click)="setPage.emit('analysis'); exit=true">
+      analysis
+    </div>
   </div>
 </div>
