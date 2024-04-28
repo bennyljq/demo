@@ -48,6 +48,10 @@ $title-font-size: clamp(50px, min(12vw, 9vh), 100px);
     margin-bottom: 1vh;
   }
 }
+.t2-child-nav {
+  margin: 2vh 7vw;
+  line-height: 1;
+}
 @keyframes nav-hover {
   0% {
     background-position: 100% 0;

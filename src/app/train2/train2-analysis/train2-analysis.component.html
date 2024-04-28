@@ -7,6 +7,10 @@
   [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     analysis
   </div>
+  <div class="t2-analysis-demo-container-bg t2-fade-down" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+  <div class="t2-analysis-demo-container t2-fade-down" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    content
+  </div>
   <div class="t2-nav-button flex-row f-poppins t2-child-nav t2-fade-down"
   [ngClass]="{'dark-theme': themeService.isDarkTheme}"
   (click)="setPage.emit('concept'); exit=true">
