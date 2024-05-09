@@ -3,7 +3,8 @@
   width: 100vw;
   height: 100vh;
   background-color: azure;
-  padding: calc($home-font-size * 4) 2vw;
+  padding: calc($home-font-size * 4) min(2vw, 24px);
+  padding-bottom: min(calc($home-font-size * 4), 24px);
 }
 #sand-background {
   position: fixed;
@@ -18,8 +19,14 @@
   opacity: 0%;
 }
 #ent-container {
-  height: calc(100vh - calc($home-font-size * 8));
-  width: calc(96vw - 4px);
+  height: max(
+    calc(100vh - calc($home-font-size * 8)),
+    calc(100vh - calc($home-font-size * 4) - 24px)
+  );
+  width: max(
+    calc(96vw - 4px),
+    calc(100vw - 48px - 4px)
+  );
   border-radius: 8px;
   border: 2px solid Silver;
   background-color: white;

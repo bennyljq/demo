@@ -1,4 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-table',
@@ -6,6 +7,8 @@ import { Component, HostListener, OnInit } from '@angular/core';
   styleUrls: ['./table.component.scss']
 })
 export class TableComponent implements OnInit {
+  
+  constructor(private _snackBar: MatSnackBar) {}
 
   tableData: any = []
   columns: any = []
@@ -57,6 +60,9 @@ export class TableComponent implements OnInit {
   }
 
   save() {
+    this._snackBar.open("Row Saved!", "", {
+      duration: 2000,
+    });
     this.editing = false
     for (let r of this.tableData) {
       r.colour = "white"
@@ -65,13 +71,22 @@ export class TableComponent implements OnInit {
   }
 
   delete(row: any) {
+    console.log(row)
     for (let i in this.tableData) {
       if (this.tableData[i].ID == row.ID) {
         this.tableData.splice(i, 1)
       }
     }
+    this.tableData = [...this.tableData]
     if (this.tableData.length == 0) {
       this.dummyTable()
+      this._snackBar.open("Table Repopulated!", "", {
+        duration: 2000,
+      });
+    } else {
+      this._snackBar.open("Row Deleted!", "", {
+        duration: 2000,
+      });
     }
   }
 

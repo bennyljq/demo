@@ -37,6 +37,7 @@ import { Train2Component } from './train2/train2/train2.component';
 import { Train2HomeComponent } from './train2/train2-home/train2-home.component';
 import { Train2ConceptComponent } from './train2/train2-concept/train2-concept.component';
 import { AnimTestComponent } from './components-wip/anim-test/anim-test.component';
+import { Train2AnalysisComponent } from './train2/train2-analysis/train2-analysis.component';
 
 // PrimeNG //
 import { TableModule } from 'primeng/table';
@@ -52,7 +53,7 @@ import { MathjaxModule } from "mathjax-angular";
 import {MatSliderModule} from '@angular/material/slider';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
-import { Train2AnalysisComponent } from './train2/train2-analysis/train2-analysis.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -106,7 +107,8 @@ import { Train2AnalysisComponent } from './train2/train2-analysis/train2-analysi
     ClipboardModule,
     MatSliderModule,
     MatDialogModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

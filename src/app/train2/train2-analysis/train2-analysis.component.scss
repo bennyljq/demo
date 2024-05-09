@@ -10,7 +10,7 @@ $title-font-size: clamp(50px, min(12vw, 9vh), 100px);
   margin: 2vh 7vw;
   line-height: 1;
 }
-$ratio: 1.5;
+$ratio: 1.25;
 $width: min(calc(65vh / $ratio), 86vw, 800px);
 $height: calc($width * $ratio);
 .t2-analysis-demo-container {

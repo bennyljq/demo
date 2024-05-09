@@ -10,7 +10,7 @@ $title-font-size: clamp(50px, min(12vw, 9vh), 100px);
   margin: 2vh 7vw;
   line-height: 1;
 }
-$ratio: 1.5;
+$ratio: 1.25;
 $width: min(calc(65vh / $ratio), 86vw, 800px);
 $height: calc($width * $ratio);
 .t2-concept-demo-container {
@@ -85,13 +85,17 @@ $height: calc($width * $ratio);
   width: calc($width * 0.08);
   height: calc($height * 0.1);
   background-color: var(--text-color);
-  border-radius: calc($height * 0.015);
+  border-radius: calc($height * 0.012);
   transform: translate(calc($width * 0.2), calc($height * 0.45));
   animation-name: train-move;
   animation-duration: 6s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   border: calc($width * 0.0075) solid var(--concept-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 .t2-train-track {
   position: absolute;
@@ -118,64 +122,61 @@ $height: calc($width * $ratio);
   animation-name: train-move-3;
 }
 $new-train-duration: 3s;
+$connector-negative: Crimson;
+$connector-positive: LawnGreen;
 .t2-train-new {
   transform: translate(calc($width * 0.45), calc($height * 0.45));
   animation-name: train-new-move;
   animation-duration: $new-train-duration;
-  animation-timing-function: cubic-bezier(.5,0,.5,.15);
+  animation-timing-function: cubic-bezier(.55,0,.575,.3);
   animation-iteration-count: infinite;
   border-color: var(--text-color);
   background-color: var(--train-color);
 }
 .t2-train-new-2 {
-  animation-name: train-new-move-2;
-  animation-timing-function: cubic-bezier(.5,.9,.55,1);
-}
-.t2-train-new-3 {
   animation-name: train-new-move-3;
   animation-timing-function: linear;
+}
+.t2-train-new-3 {
+  animation-name: train-new-move-2;
+  animation-timing-function: cubic-bezier(.5,.9,.55,1);
 }
 .t2-train-connector {
   height: calc($width * 0.03);
   width: calc($width * 0.04);
   border-bottom-left-radius: calc($height * 0.05);
   border-bottom-right-radius: calc($height * 0.05);
-  background-color: Crimson;
+  background-color: $connector-negative;
   animation-iteration-count: infinite;
   animation-duration: $new-train-duration;
-  animation-name: train-connector;
   animation-timing-function: linear;
+  transform: translateY(calc($width * -0.0075));
 }
 .t2-train-connector-2 {
   border-radius: 0;
   border-top-left-radius: calc($height * 0.05);
   border-top-right-radius: calc($height * 0.05);
   animation-name: train-connector-2;
-  animation-timing-function: cubic-bezier(.5,0,.5,.15);
+  transform: translateY(calc($width * 0.0075));
 }
 .t2-train-connector-3 {
-  border-radius: 0;
-  border-top-left-radius: calc($height * 0.05);
-  border-top-right-radius: calc($height * 0.05);
-  animation-name: train-connector-3;
-  animation-timing-function: linear;
+  animation-name: train-connector-2;
 }
 .t2-train-connector-4 {
-  animation-name: train-connector-4;
-  animation-timing-function: cubic-bezier(.5,.9,.55,1);
-}
-.t2-train-connector-5 {
   border-radius: 0;
   border-top-left-radius: calc($height * 0.05);
   border-top-right-radius: calc($height * 0.05);
-  animation-name: train-connector-5;
-  animation-timing-function: cubic-bezier(.5,.9,.55,1);
-  background-color: crimson;
+  animation-name: train-connector-4;
+  transform: translateY(calc($width * 0.0075));
+}
+.t2-train-connector-5 {
+  animation-name: train-connector-4;
 }
 .t2-train-connector-6 {
-  animation-name: train-connector-6;
-  animation-timing-function: cubic-bezier(.5,0,.5,.15);
-  background-color: crimson;
+  border-radius: 0;
+  border-top-left-radius: calc($height * 0.05);
+  border-top-right-radius: calc($height * 0.05);
+  transform: translateY(calc($width * 0.0075));
 }
 
 @keyframes train-move {
@@ -244,83 +245,31 @@ $new-train-duration: 3s;
     transform: translate(calc($width * 0.45), calc($height * -0.2));
   }
 }
-@keyframes train-connector {
-  0% {
-    transform: translate(calc($width * 0.47), calc($height * 1.099));
-    background-color: Crimson;
-  }
-  65% {
-    background-color: Crimson;
-  }
-  66% {
-    background-color: lawngreen;
-  }
-  100% {
-    transform: translate(calc($width * 0.47), calc($height * -0.201));
-    background-color: lawngreen;
-  }
-}
 @keyframes train-connector-2 {
   0% {
-    transform: translate(calc($width * 0.47), calc($height * 0.51));
-    background-color: Crimson;
+    background-color: $connector-negative;
   }
-  65% {
-    background-color: Crimson;
+  59% {
+    background-color: $connector-negative;
   }
-  66% {
-    background-color: lawngreen;
-  }
-  100% {
-    transform: translate(calc($width * 0.47), calc($height * -0.24));
-    background-color: lawngreen;
-  }
-}
-@keyframes train-connector-3 {
-  0% {
-    transform: translate(calc($width * 0.47), calc($height * 1.138));
-    background-color: lawngreen;
-  }
-  32% {
-    background-color: lawngreen;
-  }
-  33% {
-    background-color: crimson;
+  60% {
+    background-color: $connector-positive;
   }
   100% {
-    transform: translate(calc($width * 0.47), calc($height * -0.162));
-    background-color: crimson;
+    background-color: $connector-positive;
   }
 }
 @keyframes train-connector-4 {
   0% {
-    transform: translate(calc($width * 0.47), calc($height * 1.14));
-    background-color: lawngreen;
+    background-color: $connector-positive;
   }
   32% {
-    background-color: lawngreen;
+    background-color: $connector-positive;
   }
   33% {
-    background-color: crimson;
+    background-color: $connector-negative;
   }
   100% {
-    transform: translate(calc($width * 0.47), calc($height * 0.39));
-    background-color: crimson;
-  }
-}
-@keyframes train-connector-5 {
-  0% {
-    transform: translate(calc($width * 0.47), calc($height * 1.2));
-  }
-  100% {
-    transform: translate(calc($width * 0.47), calc($height * 0.45));
-  }
-}
-@keyframes train-connector-6 {
-  0% {
-    transform: translate(calc($width * 0.47), calc($height * 0.35));
-  }
-  100% {
-    transform: translate(calc($width * 0.47), calc($height * -0.4));
+    background-color: $connector-negative;
   }
 }
