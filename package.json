@@ -24,6 +24,7 @@
     "@angular/router": "^16.1.0",
     "hammerjs": "^2.0.8",
     "mathjax-angular": "^2.1.1",
+    "moment": "^2.30.1",
     "primeng": "^16.5.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

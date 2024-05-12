@@ -1,0 +1,92 @@
+<div class="s-toolbar">
+  <button mat-icon-button color="primary" [ngStyle]="{
+    'background-color': 'black',
+    'color': 'white'
+  }" routerLink="/main">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <button mat-flat-button
+  (click)="showDemo = !showDemo; showHexagons = showPolygon = showWhiteboard = false;" 
+  [ngStyle]="{
+    'background-color': showDemo ? 'maroon' : 'DimGray',
+    'color': 'white'
+  }">
+    Demo
+  </button>
+  <button mat-flat-button [ngStyle]="{
+    'background-color': showHexagons? 'DarkSlateBlue' : 'DimGray',
+    'color': 'white'
+  }"
+  (click)="showHexagons = !showHexagons; showDemo = showPolygon = showWhiteboard = false;">
+    Hexagons
+  </button>
+  <button mat-flat-button [ngStyle]="{
+    'background-color': showPolygon ? 'OrangeRed' : 'DimGray',
+    'color': 'white'
+  }"
+  (click)="showPolygon = !showPolygon; calcVertices(true); showDemo = showHexagons = showWhiteboard = false;">
+    Polygon
+  </button>
+  <button mat-flat-button [ngStyle]="{
+    'background-color': showWhiteboard ? 'DarkGreen' : 'DimGray',
+    'color': 'white'
+  }"
+  (click)="showWhiteboard = !showWhiteboard; showDemo = showHexagons = showPolygon = false;">
+    Whiteboard
+  </button>
+</div>
+<div class="s-container">
+  <ng-container *ngIf="showDemo">
+    <ng-container *ngFor="let _ of [].constructor(5); index as i">
+      <div class="s-circle contains-text" id="circle-{{i}}"
+      [ngStyle]="{
+        'background-color': bgColor[i],
+        'width': size[i],
+        'height': size[i],
+        'animation-duration': animDuration[i],
+        }" 
+      (click)="demoOnClick(i)"
+      title="circle-{{i}}">
+        {{animDuration[i]}} per rotation
+      </div>
+    </ng-container>
+  </ng-container>
+  <div class="hexagon" *ngIf="showHexagons">
+    <div class="trapezoid"></div>
+    <div class="trapezoid flip-vertical"></div>
+    <span class="hexagon-text contains-text">
+      I am a hexagon!
+    </span>
+  </div>
+  <div class="hexagon" *ngIf="showHexagons">
+    <div class="triangle"></div>
+    <div class="rectangle contains-text">
+      I am a hexagon!
+    </div>
+    <div class="triangle flip-vertical"></div>
+  </div>
+  <ng-container *ngIf="showPolygon">
+    <div style="position: absolute; transform: translateY(max(-400px, -65vw)); width: min(700px, 90vw);
+    display: flex; flex-direction: column; align-items: stretch; gap: 36px;">
+      <span style="text-align: center; font-size: 36px; font-weight: 500; line-height: 1.3;">
+        {{sides}} Sides<br>
+        {{polygonNames[sides-3] | titlecase}}
+      </span>
+      <mat-slide-toggle style="text-align: center;" [(ngModel)]="showCircle">
+        <span style="font-size: 24px; font-weight: 500; margin-left: 8px; line-height: 1;">
+          Show circle
+        </span>
+      </mat-slide-toggle>
+      <mat-slider min="3" max="20" step="1" showTickMarks discrete (input)="calcVertices()">
+        <input matSliderThumb [(ngModel)]="sides">
+      </mat-slider>
+    </div>
+    <div class="n-gon-circle" *ngIf="showCircle"></div>
+    <div class="n-gon"></div>
+  </ng-container>
+  <ng-container *ngIf="showWhiteboard">
+    <!-- Start coding here -->
+    
+    <!-- End -->
+  </ng-container>
+</div>

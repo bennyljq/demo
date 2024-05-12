@@ -38,6 +38,8 @@ import { Train2HomeComponent } from './train2/train2-home/train2-home.component'
 import { Train2ConceptComponent } from './train2/train2-concept/train2-concept.component';
 import { AnimTestComponent } from './components-wip/anim-test/anim-test.component';
 import { Train2AnalysisComponent } from './train2/train2-analysis/train2-analysis.component';
+import { SalesforceComponent } from './salesforce/salesforce.component';
+import { Salesforce2Component } from './salesforce2/salesforce2.component';
 
 // PrimeNG //
 import { TableModule } from 'primeng/table';
@@ -54,6 +56,7 @@ import {MatSliderModule} from '@angular/material/slider';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 
 @NgModule({
@@ -88,7 +91,9 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     Train2HomeComponent,
     Train2ConceptComponent,
     AnimTestComponent,
-    Train2AnalysisComponent
+    Train2AnalysisComponent,
+    SalesforceComponent,
+    Salesforce2Component
   ],
   imports: [
     BrowserModule,
@@ -108,7 +113,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatSliderModule,
     MatDialogModule,
     MatExpansionModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatSlideToggleModule
   ],
   providers: [],
   bootstrap: [AppComponent]
