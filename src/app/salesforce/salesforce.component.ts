@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import * as moment from 'moment';
 import { lastValueFrom, timer } from 'rxjs';
 
@@ -12,12 +12,9 @@ export class SalesforceComponent {
   bgColor =  Array(5).fill('maroon');
   size = Array(5).fill('120px');
   animDuration: any = []
-  showDemo: boolean = false
-  showHexagons: boolean = false
   sides: number = 3
   showCircle: boolean = false
-  showPolygon: boolean = false
-  showWhiteboard: boolean = true
+  tabs = [0, 0, 0, 1, 0]
   polygonNames = [
     'triangle', 
     'square', 
@@ -38,6 +35,8 @@ export class SalesforceComponent {
     'enneadecagon/enneakaidecagon',
     'icosagon'
   ]
+  innerWidth = window.innerWidth;
+  numCols: number | undefined;
   
   ngOnInit() {
     for (let i=0; i<5; i++) {
@@ -46,6 +45,7 @@ export class SalesforceComponent {
     // let iso = moment("2024-06-01", "YYYY-MM-DD").toISOString()
     // this.getTimer(iso)
     this.calcVertices(true)
+    this.setNumCols()
   }
 
   demoOnClick(i: number) {
@@ -75,8 +75,8 @@ export class SalesforceComponent {
     return out
   }
 
-  async calcVertices(delay?: boolean) {
-    if (delay) {
+  async calcVertices(frameskip?: boolean) {
+    if (frameskip) {
       await lastValueFrom(timer(0)) // frameskip
     }
     let angle = 2*Math.PI / this.sides
@@ -98,6 +98,17 @@ export class SalesforceComponent {
     let nGon = document.getElementsByClassName('n-gon')[0] as HTMLElement
     nGon.style.background = 'tomato'
     nGon.style.clipPath = polygon
+  }  
+  
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.innerWidth = window.innerWidth;
+    this.setNumCols()
+  }
+  setNumCols() {
+    let minWidth = 300
+    let total = this.innerWidth*0.95
+    this.numCols = Math.min(Math.floor(total/minWidth), 5)
   }
 
 }
