@@ -32,7 +32,7 @@ const routes: Routes = [
   { path: 'salesforce', component: SalesforceComponent },
   { path: 'salesforce2', component: Salesforce2Component },
   { path: '', redirectTo: '/main', pathMatch: 'full' }, // redirect to `homepage`
-  // { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page
+  { path: '**', redirectTo: '/main', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];
 
 @NgModule({

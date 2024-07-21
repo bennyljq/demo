@@ -14,7 +14,7 @@ export class SalesforceComponent {
   animDuration: any = []
   sides: number = 3
   showCircle: boolean = false
-  tabs = [0, 0, 0, 1, 0]
+  tabs = [0, 0, 1, 0, 0]
   polygonNames = [
     'triangle', 
     'square', 
