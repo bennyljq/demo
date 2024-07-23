@@ -7,7 +7,7 @@ $title-font-size: clamp(50px, min(12vw, 9vh), 100px);
 .t2-concept-title {
   color: var(--text-color);
   font-size: calc($title-font-size * 0.666);
-  margin: 2vh 7vw;
+  margin: 0 7vw 2vh 7vw;
   line-height: 1;
 }
 $ratio: 1.25;
