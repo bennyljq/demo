@@ -26,7 +26,7 @@ const routes: Routes = [
   { path: 'physics', component: PhysicsHomeComponent },
   { path: 'gravity-sim', component: GravHomeComponent },
   { path: 'train', component: TrainHomeComponent },
-  { path: 'train2', component: Train2Component },
+  { path: 'snowpiercer', component: Train2Component },
   { path: 'projects', component: ProjectsComponent },
   { path: 'anim-test', component: AnimTestComponent },
   { path: 'salesforce', component: SalesforceComponent },
