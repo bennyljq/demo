@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ThemeService } from 'src/app/physics/theme.service';
 import {Location} from '@angular/common';
 
@@ -15,10 +15,19 @@ export class Train2HomeComponent {
   ) {}
 
   @Output() setPage = new EventEmitter
-  exit = false
+  @Input() exit = false
   
   goBack() {
+    this.changeFavicon("assets/smiley.png")
     this._location.back();
+  }
+
+  changeFavicon(faviconUrl: string): void {
+    const link: HTMLLinkElement = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    link.type = 'image/x-icon';
+    link.rel = 'shortcut icon';
+    link.href = faviconUrl;
+    document.getElementsByTagName('head')[0].appendChild(link);
   }
   
 }

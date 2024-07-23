@@ -37,5 +37,6 @@
   </button>
   <app-train2-home *ngIf="currentPage == 'home' " (setPage)="pageTransition($event)"></app-train2-home>
   <app-train2-concept *ngIf="currentPage == 'concept' " (setPage)="pageTransition($event)"></app-train2-concept>
+  <app-train2-prelim-concept *ngIf="currentPage == 'prelim-concept' " (setPage)="pageTransition($event)"></app-train2-prelim-concept>
   <app-train2-analysis *ngIf="currentPage == 'analysis' " (setPage)="pageTransition($event)"></app-train2-analysis>
 </div>

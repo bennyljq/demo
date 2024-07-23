@@ -1,0 +1,101 @@
+<div class="t2-container" [ngClass]=" exit ? 't2-fade-out-left' : '' ">
+  <button mat-icon-button class="t2-back-arrow t2-fade-up" title="Home"
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}" (click)="setPage.emit('home'); exit=true">
+    <mat-icon class="t2-back-arrow-icon">home</mat-icon>
+  </button>
+  <div class="t2-prelim-concept-title f-poppins t2-fade-down"
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    preliminary concept
+  </div>
+  <div class="t2-prelim-concept-demo-container-bg t2-fade-down" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+  <div class="t2-prelim-concept-demo-container t2-fade-down" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <ng-container *ngIf="showCarriages">
+      <!-- Track 1 -->
+      <div class="t2-prelim-track-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+      <div class="t2-prelim-track-1 t2-prelim-track-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+      <div class="t2-prelim-track-1 t2-prelim-track-3" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+      <div class="t2-prelim-track-1 t2-prelim-track-4" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+      <div class="t2-train t2-car-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+        <div class="t2-train-connector t2-train-connector-positive"></div>
+        <div class="t2-train-connector t2-train-connector-2"></div>
+      </div>
+      <div class="t2-train t2-car-1 t2-car-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+        <div class="t2-train-connector flip-1"></div>
+        <div class="t2-train-connector t2-train-connector-2 t2-train-connector-positive"></div>
+      </div>
+      <div class="t2-train t2-car-1 t2-car-3" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+        <div class="t2-train-connector"></div>
+        <div class="t2-train-connector t2-train-connector-2 flip-1"></div>
+      </div>
+
+      <!-- Track 2 -->
+      <div class="t2-track-container-2">
+        <div class="t2-prelim-track-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+        <div class="t2-prelim-track-1 t2-prelim-track-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+        <div class="t2-prelim-track-1 t2-prelim-track-3" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+        <div class="t2-prelim-track-1 t2-prelim-track-4" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+        <div class="t2-train t2-car-1 t2-car-4" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <div class="t2-train-connector flip-1"></div>
+          <div class="t2-train-connector t2-train-connector-2"></div>
+        </div>
+        <div class="t2-train t2-car-1 t2-car-5" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <div class="t2-train-connector t2-train-connector-positive"></div>
+          <div class="t2-train-connector t2-train-connector-2 flip-1"></div>
+        </div>
+        <div class="t2-train t2-car-1 t2-car-6" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <div class="t2-train-connector"></div>
+          <div class="t2-train-connector t2-train-connector-2 t2-train-connector-positive"></div>
+        </div>
+      </div>
+
+      <!-- Track 3 -->
+      <div class="t2-track-container-3">
+        <div class="t2-prelim-track-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+        <div class="t2-track-subcontainer">
+          <div class="t2-prelim-track-1 t2-prelim-track-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+          <div class="t2-prelim-track-1 t2-prelim-track-3" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+          <div class="t2-prelim-track-1 t2-prelim-track-4" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+        </div>
+        <div class="t2-train t2-car-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <div class="t2-train-connector t2-train-connector-positive"></div>
+          <div class="t2-train-connector t2-train-connector-2 flip-2"></div>
+        </div>
+        <div class="t2-train t2-car-1 t2-car-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <div class="t2-train-connector"></div>
+          <div class="t2-train-connector t2-train-connector-2 t2-train-connector-positive"></div>
+        </div>
+        <div class="t2-train t2-car-1 t2-car-7" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <div class="t2-train-connector flip-2"></div>
+          <div class="t2-train-connector t2-train-connector-2"></div>
+        </div>
+      </div>
+
+      <!-- Track 4 -->
+      <div class="t2-track-container-4">
+        <div class="t2-prelim-track-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+        <div class="t2-track-subcontainer">
+          <div class="t2-prelim-track-1 t2-prelim-track-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+          <div class="t2-prelim-track-1 t2-prelim-track-3" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+          <div class="t2-prelim-track-1 t2-prelim-track-4" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
+        </div>
+        <div class="t2-train t2-car-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <div class="t2-train-connector t2-train-connector-positive"></div>
+          <div class="t2-train-connector t2-train-connector-2"></div>
+        </div>
+        <div class="t2-train t2-car-1 t2-car-2" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <div class="t2-train-connector flip-3"></div>
+          <div class="t2-train-connector t2-train-connector-2 t2-train-connector-positive"></div>
+        </div>
+        <div class="t2-train t2-car-1 t2-car-8" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <div class="t2-train-connector"></div>
+          <div class="t2-train-connector t2-train-connector-2 flip-3"></div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="t2-nav-button flex-row f-poppins t2-child-nav t2-fade-down"
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="setPage.emit('concept'); exit=true">
+    core concept
+  </div>
+</div>

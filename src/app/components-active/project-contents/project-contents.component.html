@@ -167,5 +167,29 @@
     </div>
   </div>
 
+  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
+    <div class="logo-container"
+    (mouseenter)="hover7=true"
+    (mouseleave)="hover7=false"
+    routerLink="/train2">
+      <div class="logo-title f-poppins" [ngClass]="hover7 ? 'logo-title-hover' : ''">
+        <div style="transform: skew(15deg)">
+          Project Snowpiercer<br>
+          <span class="logo-subtitle">2024</span>
+        </div>
+      </div>
+      <img src="assets/snowflake-hd.png" class="logo"
+      [ngClass]="hover7 ? 'logo-hover' : ''">
+      <div class="logo-link f-poppins" [ngClass]="hover7 ? 'logo-link-hover' : ''">
+        <div style="transform: skew(15deg)">
+          Choo Choo <span class="f-hino" style="font-weight: bold;">→</span>
+        </div>
+      </div>
+    </div>
+    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
+      Possibly the future of all railway travel.
+    </div>
+  </div>
+
   <div style="height: 25vh; width: 100%;"></div>
 </div>

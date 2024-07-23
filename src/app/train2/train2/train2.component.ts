@@ -17,7 +17,7 @@ export class Train2Component {
     private route: ActivatedRoute,
     private titleService: Title
   ) {
-    this.titleService.setTitle("Dynamic Decoupling Trains");
+    this.titleService.setTitle("Snowpiercer");
   }
   
   theme: 0 | 1 = 0 // 0 = light, 1 = dark
@@ -35,7 +35,7 @@ export class Train2Component {
   bgHeight = 45
   bgSkewHeight = 0.2
   
-  ngOnInit() {
+  async ngOnInit() {
     this.theme == 1 ? this.themeService.darkTheme() : this.themeService.lightTheme()
     this.onResize()
     let frag = this.route.snapshot.fragment
@@ -45,7 +45,12 @@ export class Train2Component {
       this.currentPage = "home"
       this.router.navigate( [], { fragment: "home" } )
     }
+    await lastValueFrom(timer(0))
     this.pageTransition(this.currentPage)
+    this.route.fragment.subscribe( fragment =>{
+      this.pageTransition(fragment)
+    })
+    this.changeFavicon("assets/snowflake.png")
   }
 
   @HostListener('window:resize', ['$event'])
@@ -78,6 +83,14 @@ export class Train2Component {
     }
     await lastValueFrom(timer(500))
     this.currentPage = toPage
+  }
+  
+  changeFavicon(faviconUrl: string): void {
+    const link: HTMLLinkElement = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    link.type = 'image/x-icon';
+    link.rel = 'shortcut icon';
+    link.href = faviconUrl;
+    document.getElementsByTagName('head')[0].appendChild(link);
   }
 
 }

@@ -40,6 +40,7 @@ import { AnimTestComponent } from './components-wip/anim-test/anim-test.componen
 import { Train2AnalysisComponent } from './train2/train2-analysis/train2-analysis.component';
 import { SalesforceComponent } from './salesforce/salesforce.component';
 import { Salesforce2Component } from './salesforce2/salesforce2.component';
+import { Train2PrelimConceptComponent } from './train2/train2-prelim-concept/train2-prelim-concept.component';
 
 // PrimeNG //
 import { TableModule } from 'primeng/table';
@@ -93,7 +94,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     AnimTestComponent,
     Train2AnalysisComponent,
     SalesforceComponent,
-    Salesforce2Component
+    Salesforce2Component,
+    Train2PrelimConceptComponent
   ],
   imports: [
     BrowserModule,

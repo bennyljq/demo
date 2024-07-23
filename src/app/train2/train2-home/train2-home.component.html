@@ -1,19 +1,25 @@
+<div class="snowflake"></div>
 <div class="t2-home-container" [ngClass]=" exit ? 't2-fade-out-left' : '' ">
   <button mat-icon-button class="t2-back-arrow t2-fade-up" title="Back to Projects"
-  [ngClass]="{'dark-theme': themeService.isDarkTheme}" routerLink="/projects">
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}" routerLink="/projects" (click)="changeFavicon('assets/smiley.png')">
     <mat-icon class="t2-back-arrow-icon">arrow_back</mat-icon>
   </button>
   <div class="t2-title-container f-poppins t2-fade-down">
     <div class="t2-title"
     [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-      Dynamic<br>Decoupling<br>Trains
+        Project<br>Snowpiercer
+    </div>
+    <div class="t2-nav-button flex-row"
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+    (click)="setPage.emit('prelim-concept'); exit=true">
+      preliminary concept
     </div>
     <div class="t2-nav-button flex-row"
     [ngClass]="{'dark-theme': themeService.isDarkTheme}"
     (click)="setPage.emit('concept'); exit=true">
-      concept
+      core concept
     </div>
-    <div class="t2-nav-button flex-row"
+    <div class="t2-nav-button flex-row" style="display: none;"
     [ngClass]="{'dark-theme': themeService.isDarkTheme}"
     (click)="setPage.emit('analysis'); exit=true">
       analysis

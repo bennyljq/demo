@@ -1,0 +1,319 @@
+@import "../train2-styles.scss";
+.t2-container {
+  position: absolute;
+  top: 0;
+}
+$title-font-size: clamp(50px, min(12vw, 9vh), 100px);
+.t2-prelim-concept-title {
+  color: var(--text-color);
+  font-size: calc($title-font-size * 0.666);
+  margin: 2vh 7vw;
+  line-height: 1;
+}
+$ratio: 1.25;
+$width: min(calc(65vh / $ratio), 86vw, 800px);
+$height: calc($width * $ratio);
+.t2-prelim-concept-demo-container {
+  background-color: var(--concept-bg);
+  box-shadow: 0 0 0 3px var(--text-color);
+  height: $height;
+  width: $width;
+  margin-left: 7vw;
+  --mask: linear-gradient(to right, 
+    rgba(0,0,0, 0) 0%,
+    rgba(0,0,0, 1) 5%,
+    rgba(0,0,0, 1) 95%, 
+    rgba(0,0,0, 0) 100%
+  );
+  -webkit-mask: var(--mask); 
+  mask: var(--mask);
+}
+.t2-prelim-concept-demo-container-bg {
+  background-color: var(--bg-color-2);
+  height: $height;
+  width: $width;
+  margin-left: 7vw;
+  margin-bottom: calc(-1 * $height);
+  box-shadow: 0 0 0 3px var(--text-color);
+}
+.t2-prelim-track-1 {
+  height: calc(0.0075 * $height);
+  width: $width;
+  background-color: var(--text-color);
+  position: absolute;
+  transform: translateY(calc(0.15 * $height));
+}
+.t2-prelim-track-2 {
+  width: calc(0.1 * $height);
+  transform: translate(calc(0.5 * $width), calc(0.105 * $height)) rotate(-60deg);
+}
+.t2-prelim-track-3 {
+  width: calc(0.1 * $height);
+  transform: translate(calc(0.75 * $width), calc(0.105 * $height)) rotate(60deg);
+}
+.t2-prelim-track-4 {
+  width: calc(0.195 * $width);
+  transform: translate(calc(0.59 * $width), calc(0.064 * $height))
+}
+.t2-track-container-2 {
+  transform: translateY(calc(0.22 * $height))
+}
+.t2-track-container-3 {
+  transform: translateY(calc(0.44 * $height))
+}
+.t2-track-container-4 {
+  transform: translateY(calc(0.66 * $height))
+}
+.t2-track-subcontainer {
+  transform: translateX(calc(-0.4 * $width))
+}
+.t2-train {
+  position: absolute;
+  width: calc($width * 0.08);
+  height: calc($height * 0.1);
+  background-color: var(--text-color);
+  border-radius: calc($height * 0.012);
+  border: calc($width * 0.0075) solid var(--concept-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+$car-duration: 3s;
+.t2-car-1 {
+  transform: translate(calc($width * 0.45), calc($height * 0.103)) rotate(90deg) scale(0.8); 
+  border-color: var(--text-color);
+  background-color: var(--train-color);
+  animation-name: car-1;
+  animation-duration: $car-duration;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.t2-car-2 {
+  animation-name: car-2;
+}
+.t2-car-3 {
+  animation-name: car-3;
+}
+.t2-car-4 {
+  animation-name: car-4;
+}
+.t2-car-5 {
+  animation-name: car-5;
+}
+.t2-car-6 {
+  animation-name: car-6;
+}
+.t2-car-7 {
+  animation-name: car-7;
+}
+.t2-car-8 {
+  animation-name: car-8;
+}
+$connector-negative: Crimson;
+$connector-positive: LawnGreen;
+.t2-train-connector {
+  height: calc($width * 0.03);
+  width: calc($width * 0.04);
+  border-bottom-left-radius: calc($height * 0.05);
+  border-bottom-right-radius: calc($height * 0.05);
+  background-color: $connector-negative;
+  transform: translateY(calc($width * -0.0075));
+  animation-duration: $car-duration;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  // animation-delay: 250ms;
+}
+.t2-train-connector-2 {
+  border-radius: 0;
+  border-top-left-radius: calc($height * 0.05);
+  border-top-right-radius: calc($height * 0.05);
+  transform: translateY(calc($width * 0.0075));
+}
+.t2-train-connector-positive {
+  background-color: $connector-positive;
+}
+.flip-1 {
+  animation-name: flip-1;
+}
+.flip-2 {
+  animation-name: flip-2;
+}
+.flip-3 {
+  animation-name: flip-3;
+}
+@keyframes car-1 {
+  0% {
+    transform: translate(calc($width * -0.35), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  100% {
+    transform: translate(calc($width * 1.05), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+}
+@keyframes car-2 {
+  0% {
+    transform: translate(calc($width * -0.35 + $height * 0.08), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  100% {
+    transform: translate(calc($width * 1.05 + $height * 0.08), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+}
+@keyframes car-3 {
+  0% {
+    transform: translate(calc($width * -0.35 + $height * 0.16), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  30% {
+    transform: translate(calc($width * 0.07 + $height * 0.16), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  40% {
+    transform: translate(calc($width * 0.3 + $height * 0.16), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  41% {
+    transform: translate(calc($width * 0.3 + $height * 0.16), calc($height * 0.103)) rotate(30deg) scale(0.8);
+  }
+  50% {
+    transform: translate(calc($width * 0.36 + $height * 0.16), calc($height * 0.016)) rotate(30deg) scale(0.8);
+  }
+  51% {
+    transform: translate(calc($width * 0.36 + $height * 0.16), calc($height * 0.016)) rotate(90deg) scale(0.8);
+  }
+  60% {
+    transform: translate(calc($width * 0.45 + $height * 0.16), calc($height * 0.016)) rotate(90deg) scale(0.8);
+  }
+  100% {
+    transform: translate(calc($width * 0.45 + $height * 0.16), calc($height * 0.016)) rotate(90deg) scale(0.8);
+  }
+}
+@keyframes car-4 {
+  0% {
+    transform: translate(calc($width * -0.35), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  30% {
+    transform: translate(calc($width * 0.07), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  70% {
+    transform: translate(calc($width * 0.49), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  71% {
+    transform: translate(calc($width * 0.49), calc($height * 0.103)) rotate(30deg) scale(0.8);
+  }
+  80% {
+    transform: translate(calc($width * 0.55), calc($height * 0.016)) rotate(30deg) scale(0.8);
+  }
+  81% {
+    transform: translate(calc($width * 0.55), calc($height * 0.016)) rotate(90deg) scale(0.8);
+  }
+  90% {
+    transform: translate(calc($width * 0.65), calc($height * 0.016)) rotate(90deg) scale(0.8);
+  }
+  100% {
+    transform: translate(calc($width * 0.65), calc($height * 0.016)) rotate(90deg) scale(0.8);
+  }
+}
+@keyframes car-5 {
+  0% {
+    transform: translate(calc($width * -0.35 + $height * 0.08), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  100% {
+    transform: translate(calc($width * 1.05 + $height * 0.08), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+}
+@keyframes car-6 {
+  0% {
+    transform: translate(calc($width * -0.35 + $height * 0.16), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  100% {
+    transform: translate(calc($width * 1.05 + $height * 0.16), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+}
+@keyframes car-7 {
+  0% {
+    transform: translate(calc($width * 0.25), calc($height * 0.016)) rotate(90deg) scale(0.8);
+  }
+  30% {
+    transform: translate(calc($width * 0.25), calc($height * 0.016)) rotate(90deg) scale(0.8);
+  }
+  50% {
+    transform: translate(calc($width * 0.34), calc($height * 0.016)) rotate(90deg) scale(0.8);
+  }
+  51% {
+    transform: translate(calc($width * 0.34), calc($height * 0.016)) rotate(150deg) scale(0.8);
+  }
+  65% {
+    transform: translate(calc($width * 0.4), calc($height * 0.103)) rotate(150deg) scale(0.8);
+  }
+  66% {
+    transform: translate(calc($width * 0.4), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  75% {
+    transform: translate(calc($width * 0.6), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  100% {
+    transform: translate(calc($width * 1.05 - $height * 0.08), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+}
+@keyframes car-8 {
+  0% {
+    transform: translate(calc($width * 0.25), calc($height * 0.016)) rotate(90deg) scale(0.8);
+  }
+  10% {
+    transform: translate(calc($width * 0.34), calc($height * 0.016)) rotate(90deg) scale(0.8);
+  }
+  11% {
+    transform: translate(calc($width * 0.34), calc($height * 0.016)) rotate(150deg) scale(0.8);
+  }
+  25% {
+    transform: translate(calc($width * 0.4), calc($height * 0.103)) rotate(150deg) scale(0.8);
+  }
+  26% {
+    transform: translate(calc($width * 0.4), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  55% {
+    transform: translate(calc($width * 0.42 + $height * 0.16), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+  100% {
+    transform: translate(calc($width * 1.05 + $height * 0.16), calc($height * 0.103)) rotate(90deg) scale(0.8);
+  }
+}
+@keyframes flip-1 {
+  0% {
+    background-color: $connector-positive;
+  }
+  29% {
+    background-color: $connector-positive;
+  }
+  30% {
+    background-color: $connector-negative;
+  }
+  100% {
+    background-color: $connector-negative;
+  }
+}
+@keyframes flip-2 {
+  0% {
+    background-color: $connector-negative;
+  }
+  75% {
+    background-color: $connector-negative;
+  }
+  76% {
+    background-color: $connector-positive;
+  }
+  100% {
+    background-color: $connector-positive;
+  }
+}
+@keyframes flip-3 {
+  0% {
+    background-color: $connector-negative;
+  }
+  55% {
+    background-color: $connector-negative;
+  }
+  56% {
+    background-color: $connector-positive;
+  }
+  100% {
+    background-color: $connector-positive;
+  }
+}
