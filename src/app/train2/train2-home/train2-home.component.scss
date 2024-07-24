@@ -66,11 +66,37 @@ $title-font-size: clamp(50px, min(12vw, 9vh), 100px);
   margin: 2vh 7vw;
   line-height: 1;
 }
+.snowflake-fade-up {
+  animation: snowflake-fade-up 0.5s ease-in-out;
+}
+.snowflake-fade-out {
+  animation: snowflake-fade-out 0.5s ease-in-out;
+}
 @keyframes nav-hover {
   0% {
     background-position: 100% 0;
   } 
   100% {
     background-position: 0 0;
+  } 
+}
+@keyframes snowflake-fade-up {
+  from { 
+    transform: translateY(1.5vh);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 30%;
+  }
+}
+@keyframes snowflake-fade-out {
+  0% {
+    transform: translateY(0);
+    opacity: 30%;
+  } 
+  100% {
+    transform: translateY(-1.5vh);
+    opacity: 0;
   } 
 }
