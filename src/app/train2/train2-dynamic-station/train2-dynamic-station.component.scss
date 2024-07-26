@@ -1,0 +1,126 @@
+@import "../../train/train-home/train-home.component.scss";
+@import "../../train/train-styles.scss";
+.train-content-container-container {
+  margin: 0 7vw;
+  height: calc(
+    min(
+      calc(100vw - 16px), 
+      calc((100vh - 200px)/$height-width-ratio), 
+      804px
+    ) * 1.6 * 0.8
+  );
+}
+.train-content-container {
+  transform: scale(0.8);
+  transform-origin: top left;
+  margin: 0;
+}
+.t2-container {
+  position: absolute;
+  top: 0;
+}
+$title-font-size: clamp(50px, min(12vw, 9vh), 100px);
+.t2-concept-title {
+  color: var(--text-color);
+  font-size: calc($title-font-size * 0.666);
+  margin: 0 7vw 2vh 7vw;
+  line-height: 1;
+}
+.t2-back-arrow {
+  box-shadow: 0 0 0 2px var(--text-color) inset;
+  color: var(--text-color);
+  margin: 8px 16px;
+  background: transparent;
+}
+.t2-fade-up {
+  animation: t2-fade-up 0.5s ease-in-out;
+}
+.t2-fade-down {
+  animation: t2-fade-down 0.5s ease-in-out;
+}
+.t2-fade-out-left {
+  animation: fade-out-left 0.5s ease-in-out;
+  opacity: 0;
+}
+@keyframes t2-fade-up {
+  from { 
+    transform: translateY(1.5vh);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes t2-fade-down {
+  from { 
+    transform: translateY(-1.5vh);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes fade-out-left {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  } 
+  100% {
+    transform: translateX(-5vw);
+    opacity: 0;
+  } 
+}
+* {
+  --bg-color: hsl(240, 75%, 85%); 
+  --bg-color-2: GhostWhite; 
+  --text-color: black;
+  --concept-bg: GhostWhite;
+  --train-color: BlueViolet;
+  --red-line: #e22726;
+}
+.dark-theme {
+  --bg-color: DimGrey; 
+  --bg-color-2: rgb(33, 33, 33); 
+  --text-color: Gainsboro; 
+  --concept-bg: black;
+  --train-color: BlueViolet;
+}
+.t2-nav-button {
+  color: var(--bg-color-2);
+  font-size: calc($title-font-size*0.5);
+  background: linear-gradient(90deg, var(--bg-color) 50%, var(--text-color) 50%);
+	background-size: 201% 100%;
+  background-position: 100% 0;
+  width: fit-content;
+  padding: calc($title-font-size*0.2);
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  &:hover {
+    transform: scale(1.1);
+    background-position: 0 0;
+    color: var(--text-color);
+  }
+  &:active {
+    transform: scale(0.9);
+  }
+  &:not(:last-child) {
+    margin-bottom: 1vh;
+  }
+  transition-duration: 0.333s;
+  transition-timing-function: ease-in-out;
+}
+.t2-child-nav {
+  margin: 2vh 7vw;
+  line-height: 1;
+}
+@keyframes nav-hover {
+  0% {
+    background-position: 100% 0;
+  } 
+  100% {
+    background-position: 0 0;
+  } 
+}

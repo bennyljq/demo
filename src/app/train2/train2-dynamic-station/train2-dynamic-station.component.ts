@@ -1,13 +1,13 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, EventEmitter, HostListener, Output } from '@angular/core';
 import { lastValueFrom, timer } from 'rxjs';
 import { ThemeService } from 'src/app/physics/theme.service';
 
 @Component({
-  selector: 'app-train-concept',
-  templateUrl: './train-concept.component.html',
-  styleUrls: ['./train-concept.component.scss', '../train-home/train-home.component.scss']
+  selector: 'app-train2-dynamic-station',
+  templateUrl: './train2-dynamic-station.component.html',
+  styleUrls: ['./train2-dynamic-station.component.scss']
 })
-export class TrainConceptComponent {
+export class Train2DynamicStationComponent {
 
   constructor (
     public themeService: ThemeService,
@@ -305,4 +305,7 @@ export class TrainConceptComponent {
     this.init_displacement_table()
     this.startAnimation()
   }
+
+  exit = false
+  @Output() setPage = new EventEmitter
 }

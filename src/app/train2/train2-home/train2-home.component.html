@@ -19,6 +19,11 @@
     (click)="setPage.emit('concept'); exit=true">
       core concept
     </div>
+    <div class="t2-nav-button flex-row"
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+    (click)="setPage.emit('dynamic-stations'); exit=true">
+      dynamic stations
+    </div>
     <div class="t2-nav-button flex-row" style="display: none;"
     [ngClass]="{'dark-theme': themeService.isDarkTheme}"
     (click)="setPage.emit('analysis'); exit=true">
