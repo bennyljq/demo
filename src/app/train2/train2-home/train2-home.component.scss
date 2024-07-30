@@ -3,18 +3,19 @@
   position: absolute;
   top: 0;
 }
-$snowflake-width: min(50vh, 100vw);
+$snowflake-width: min(50vh, 96vw);
 .snowflake {
   position: absolute;
-  top: 0;
+  top: 2vh;
+  left: 2vw;
   background-image: url("snowflake-hd.png");
   background-size: $snowflake-width $snowflake-width;
   background-repeat: no-repeat;
-  background-position-x: 2%;
-  background-position-y: 10%;
+  // background-position-x: 2%;
+  // background-position-y: 10%;
   filter: blur(5px);
-  height: 100%;
-  width: 100%;
+  height: $snowflake-width;
+  width: $snowflake-width;
   opacity: 30%;
 }
 .t2-back-arrow {
@@ -72,6 +73,9 @@ $title-font-size: clamp(50px, min(12vw, 9vh), 100px);
 .snowflake-fade-out {
   animation: snowflake-fade-out 0.5s ease-in-out;
 }
+.snowflake-rotate {
+  animation: rotate 12s infinite linear, snowflake-fade-up 0.5s linear;
+}
 @keyframes nav-hover {
   0% {
     background-position: 100% 0;
@@ -82,21 +86,28 @@ $title-font-size: clamp(50px, min(12vw, 9vh), 100px);
 }
 @keyframes snowflake-fade-up {
   from { 
-    transform: translateY(1.5vh);
+    transform: translateY(1.5vh) rotate(0);
     opacity: 0;
   }
   to { 
-    transform: translateY(0);
+    transform: translateY(0) rotate(15deg);
     opacity: 30%;
   }
 }
 @keyframes snowflake-fade-out {
   0% {
     transform: translateY(0);
-    opacity: 30%;
+    opacity: 100%;
   } 
   100% {
     transform: translateY(-1.5vh);
     opacity: 0;
   } 
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0);
+  } to {
+    transform: rotate(360deg);
+  }
 }

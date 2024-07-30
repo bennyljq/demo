@@ -1,4 +1,6 @@
-<div class="snowflake snowflake-fade-up" [ngClass]=" exit ? 'snowflake-fade-out' : '' "></div>
+<div [ngClass]=" exit ? 'snowflake-fade-out' : '' " style="position: absolute; top: 0;">
+  <div class="snowflake snowflake-rotate"></div>
+</div>
 <div class="t2-home-container" [ngClass]=" exit ? 't2-fade-out-left' : '' ">
   <button mat-icon-button class="t2-back-arrow t2-fade-up" title="Back to Projects"
   [ngClass]="{'dark-theme': themeService.isDarkTheme}" routerLink="/projects" (click)="changeFavicon('assets/smiley.png')">
