@@ -16,6 +16,7 @@ import { Train2Component } from './train2/train2/train2.component';
 import { AnimTestComponent } from './components-wip/anim-test/anim-test.component';
 import { SalesforceComponent } from './salesforce/salesforce.component';
 import { Salesforce2Component } from './salesforce2/salesforce2.component';
+import { Gravity2Component } from './gravity2/gravity2.component';
 
 const routes: Routes = [
   { path: 'main', component: HomepageV2Component },
@@ -31,6 +32,7 @@ const routes: Routes = [
   { path: 'anim-test', component: AnimTestComponent },
   { path: 'salesforce', component: SalesforceComponent },
   { path: 'salesforce2', component: Salesforce2Component },
+  { path: 'gravity', component: Gravity2Component },
   { path: '', redirectTo: '/main', pathMatch: 'full' }, // redirect to `homepage`
   { path: '**', redirectTo: '/main', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];

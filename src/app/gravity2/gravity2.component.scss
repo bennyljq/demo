@@ -1,0 +1,23 @@
+.g2-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#g2-canvas {
+  background-color: pink;
+  cursor: crosshair;
+}
+.g2-play-controls-container {
+  display: none; 
+  flex-direction: row; 
+  gap: 8px; 
+  padding: 8px; 
+  background-color: whitesmoke;
+  margin: 12px; 
+  border-radius: 8px; 
+  transform: scale(1.2); 
+  transform-origin: top;
+}

@@ -1,0 +1,14 @@
+<div class="g2-container">
+  <canvas id="g2-canvas"
+  (mouseenter)="onMouseEnter($event)" 
+  (mousemove)="onMouseMove($event)"
+  (mouseleave)="onMouseLeave($event)"
+  (touchstart)="$event.preventDefault(); onTouchStart($event)" 
+  (touchmove)="$event.preventDefault(); onTouchMove($event)" 
+  (touchend)="onTouchEnd($event)"></canvas>
+  <div class="g2-play-controls-container">
+    <button *ngIf="!this.animationId" mat-flat-button color="primary" (click)="playAnimation()">Play</button>
+    <button *ngIf="this.animationId" mat-flat-button color="accent" (click)="pauseAnimation()">Pause</button>
+    <button mat-flat-button color="primary" (click)="initBalls()">Init Balls</button>
+  </div>
+</div>

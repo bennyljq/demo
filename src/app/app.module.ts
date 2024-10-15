@@ -59,6 +59,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { Gravity2Component } from './gravity2/gravity2.component';
 
 
 @NgModule({
@@ -97,7 +98,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     SalesforceComponent,
     Salesforce2Component,
     Train2PrelimConceptComponent,
-    Train2DynamicStationComponent
+    Train2DynamicStationComponent,
+    Gravity2Component
   ],
   imports: [
     BrowserModule,
