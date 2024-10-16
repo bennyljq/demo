@@ -1,4 +1,4 @@
-.g2-container {
+.bm-container {
   width: 100vw;
   height: 100vh;
   background-color: black;
@@ -6,12 +6,12 @@
   flex-direction: column;
   align-items: center;
 }
-#g2-canvas {
+#bm-canvas {
   background-color: pink;
   cursor: crosshair;
 }
-.g2-play-controls-container {
-  display: none; 
+.bm-play-controls-container {
+  display: flex; 
   flex-direction: row; 
   gap: 8px; 
   padding: 8px; 

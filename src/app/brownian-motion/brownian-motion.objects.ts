@@ -4,10 +4,10 @@ export class Ball {
     public radius: number, public color: string
   ) {}
 
-  maxRadius = 15;
+  maxRadius = 10;
   minRadius = 5;
   growing = Math.random() < 0.5
-  growthRate = 0.1
+  growthRate = 0.01
 
   draw(context: CanvasRenderingContext2D) {
     context.beginPath();
@@ -39,13 +39,13 @@ export class Ball {
       let distX = (mouseX-this.x)
       let distY = (mouseY-this.y)
       let dist = Math.sqrt(distX**2 + distY**2)
-      let gravConstant = canvasWidth * canvasHeight * 0.0666
+      let gravConstant = canvasWidth * canvasHeight * 0.05
       let repulsion = gravConstant / (dist**2)
-      this.x = Math.abs(this.x + this.dx - repulsion*(distX/dist)) % canvasWidth;
-      this.y = Math.abs(this.y + this.dy - repulsion*(distY/dist)) % canvasHeight;
+      this.x = Math.abs(this.x + this.dx - repulsion*(distX/dist));
+      this.y = Math.abs(this.y + this.dy - repulsion*(distY/dist));
     } else {
-      this.x = Math.abs(this.x + this.dx) % canvasWidth;
-      this.y = Math.abs(this.y + this.dy) % canvasHeight;
+      this.x = Math.abs(this.x + this.dx);
+      this.y = Math.abs(this.y + this.dy);
     }
 
     if (this.radius >= this.maxRadius || this.radius <= this.minRadius) {

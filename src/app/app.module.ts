@@ -42,6 +42,8 @@ import { SalesforceComponent } from './salesforce/salesforce.component';
 import { Salesforce2Component } from './salesforce2/salesforce2.component';
 import { Train2PrelimConceptComponent } from './train2/train2-prelim-concept/train2-prelim-concept.component';
 import { Train2DynamicStationComponent } from './train2/train2-dynamic-station/train2-dynamic-station.component';
+import { BrownianMotionComponent } from './brownian-motion/brownian-motion.component';
+import { BrownianMotion2Component } from './brownian-motion2/brownian-motion2.component';
 
 // PrimeNG //
 import { TableModule } from 'primeng/table';
@@ -59,7 +61,6 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import { Gravity2Component } from './gravity2/gravity2.component';
 
 
 @NgModule({
@@ -99,7 +100,8 @@ import { Gravity2Component } from './gravity2/gravity2.component';
     Salesforce2Component,
     Train2PrelimConceptComponent,
     Train2DynamicStationComponent,
-    Gravity2Component
+    BrownianMotionComponent,
+    BrownianMotion2Component
   ],
   imports: [
     BrowserModule,

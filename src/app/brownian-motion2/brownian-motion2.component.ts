@@ -1,16 +1,16 @@
 import { Component, HostListener } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Ball } from './gravity2.objects';
+import { Ball } from './brownian-motion2.objects';
 
 @Component({
-  selector: 'app-gravity2',
-  templateUrl: './gravity2.component.html',
-  styleUrls: ['./gravity2.component.scss']
+  selector: 'app-brownian-motion2',
+  templateUrl: './brownian-motion2.component.html',
+  styleUrls: ['./brownian-motion2.component.scss']
 })
 
-export class Gravity2Component {
+export class BrownianMotion2Component {
   constructor( private titleService: Title ) {
-    this.titleService.setTitle("Gravity Simulator 2024");
+    this.titleService.setTitle("Brownian Motion");
   }
   private c!: CanvasRenderingContext2D;
   public animationId: number | null = null;
@@ -34,9 +34,9 @@ export class Gravity2Component {
   }
 
   initCanvas() {
-    const canvas = document.getElementById('g2-canvas') as HTMLCanvasElement
+    const canvas = document.getElementById('bm-canvas') as HTMLCanvasElement
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight * 1;
+    canvas.height = window.innerHeight * 0.8;
     this.c = canvas.getContext('2d')!;
     this.canvasWidth = this.c.canvas.width;
     this.canvasHeight = this.c.canvas.height;
@@ -44,17 +44,18 @@ export class Gravity2Component {
 
   initBalls() {
     this.balls = []
-    let minSpeed = 0.05
-    let varSpeed = 1.5
+    let minSpeed = 0.00
+    let varSpeed = (this.canvasWidth + this.canvasHeight)/2500
     let density = 2 // balls per 1000 pixels
     let area = this.canvasWidth * this.canvasHeight
-    let numBalls = density * area / 1000
+    let minBalls = 1000
+    let numBalls = Math.max(minBalls, density * area / 1000) 
     let colours = ['MistyRose', 'MediumOrchid', 'MidnightBlue', 'Maroon', 'MediumSlateBlue']
     console.log("Density:", density)
     console.log("Area:", area)
     console.log("Number of Balls:", numBalls)
     for (let i=0; i<numBalls; i++) {
-      let radius = Math.random() * 10 + 5
+      let radius = Math.random() * 5 + 5
       let x = Math.random() * (this.canvasWidth - 20) + 10
       let y = Math.random() * (this.canvasHeight - 20) + 10
       let dx = (Math.random() * varSpeed + minSpeed) * [-1, 1][Math.floor(Math.random()*2)]

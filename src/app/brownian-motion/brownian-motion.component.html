@@ -4,7 +4,7 @@
   (mousemove)="onMouseMove($event)"
   (mouseleave)="onMouseLeave($event)"
   (touchstart)="$event.preventDefault(); onTouchStart($event)" 
-  (touchmove)="$event.preventDefault(); onTouchMove($event)" 
+  (touchmove)="onTouchMove($event)" 
   (touchend)="onTouchEnd($event)"></canvas>
   <div class="g2-play-controls-container">
     <button *ngIf="!this.animationId" mat-flat-button color="primary" (click)="playAnimation()">Play</button>
