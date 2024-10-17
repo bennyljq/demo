@@ -5,10 +5,11 @@
   (mouseleave)="onMouseLeave($event)"
   (touchstart)="$event.preventDefault(); onTouchStart($event)" 
   (touchmove)="onTouchMove($event)" 
-  (touchend)="onTouchEnd($event)"></canvas>
+  (touchend)="onTouchEnd($event)"
+  (click)="onMouseClick($event)"></canvas>
   <div class="bm-play-controls-container">
     <button *ngIf="!this.animationId" mat-flat-button color="primary" (click)="playAnimation()">Play</button>
     <button *ngIf="this.animationId" mat-flat-button color="accent" (click)="pauseAnimation()">Pause</button>
-    <button mat-flat-button color="primary" (click)="initBalls()">Init Balls</button>
+    <button mat-flat-button color="primary">Init Balls</button>
   </div>
 </div>

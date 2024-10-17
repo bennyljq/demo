@@ -36,7 +36,7 @@ export class BrownianMotionComponent {
   initCanvas() {
     const canvas = document.getElementById('g2-canvas') as HTMLCanvasElement
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight * 0.8;
+    canvas.height = window.innerHeight * 1;
     this.c = canvas.getContext('2d')!;
     this.canvasWidth = this.c.canvas.width;
     this.canvasHeight = this.c.canvas.height;
@@ -45,7 +45,7 @@ export class BrownianMotionComponent {
   initBalls() {
     this.balls = []
     let minSpeed = 0.00
-    let varSpeed = (this.canvasWidth + this.canvasHeight)/2500
+    let varSpeed = (this.canvasWidth + this.canvasHeight)/1600
     let density = 2 // balls per 1000 pixels
     let area = this.canvasWidth * this.canvasHeight
     let minBalls = 1000
