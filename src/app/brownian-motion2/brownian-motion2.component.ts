@@ -39,6 +39,8 @@ export class BrownianMotion2Component {
   prevFrameTimestamp;
   cutoffSpeed = 0.02; // force stop movement if absolute speed is below this speed
   lineWidth;
+  alpha = 0.15;
+  mouseDown = false;
 
   ngAfterViewInit() {
     this.initCanvas()
@@ -85,7 +87,14 @@ export class BrownianMotion2Component {
   }
 
   private animate = () => {
-    this.c.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+    // this.c.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+    if (this.mouseDown) {
+      this.alpha = 0.15
+    } else if (!this.mouseDown) {
+      this.alpha = 1
+    }
+    this.c.fillStyle = `rgba(10, 10, 10, ${this.alpha})`
+    this.c.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
     if (this.balls.length < this.numBalls) {
       this.sinceLastPushed = performance.now() - this.lastPushedTimestamp
       if (this.sinceLastPushed >= this.delay) {
@@ -151,12 +160,12 @@ export class BrownianMotion2Component {
   }
 
   onMouseClick(event?: MouseEvent) {
-    if (!this.animationId) {
-      this.animate();
-    } else {
-      cancelAnimationFrame(this.animationId);
-      this.animationId = null;
-    }
+  }
+  onMouseDown(event?: MouseEvent) {
+    this.mouseDown = true
+  }
+  onMouseUp(event?: MouseEvent) {
+    this.mouseDown = false
   }
   onMouseMove(event: MouseEvent) {
     this.mouseInCanvas = true
@@ -177,7 +186,7 @@ export class BrownianMotion2Component {
     const touch = event.touches[0];
     this.mouseX = touch.clientX
     this.mouseY = touch.clientY
-    this.pauseAnimation()
+    this.mouseDown = true
   }
   onTouchMove(event: TouchEvent) {
     event.preventDefault();
@@ -189,7 +198,7 @@ export class BrownianMotion2Component {
   onTouchEnd(event: TouchEvent) {
     event.preventDefault();
     this.mouseInCanvas = false
-    this.playAnimation()
+    this.mouseDown = false
   }
   playAnimation() {
     if (!this.animationId) {
