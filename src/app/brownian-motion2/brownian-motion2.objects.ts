@@ -4,18 +4,23 @@ export class Ball {
     public radius: number, public color: string
   ) {}
 
-  draw(context: CanvasRenderingContext2D) {
+  draw(context: CanvasRenderingContext2D, lineWidth: number) {
     context.beginPath();
     context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     context.fillStyle = this.color;
     context.fill();
-    context.stroke()
     context.closePath()
+
+    // Draw the inner stroked circle
+    context.beginPath();
+    context.arc(this.x, this.y, this.radius - lineWidth/2, 0, Math.PI * 2);
+    context.stroke();
+    context.closePath();
   }
 
   update(canvasWidth: number, canvasHeight: number, context: CanvasRenderingContext2D,
     nearBalls: Array<number>, allBalls: Array<Ball>, mouseInCanvas: boolean, mouseX: number, mouseY: number,
-    elasticity: number, g: number, viscosity: number, sincePrevFrame: number, cutoffSpeed: number) {
+    elasticity: number, g: number, viscosity: number, sincePrevFrame: number, cutoffSpeed: number, lineWidth: number) {
 
     // viscosity
     let pixelToMetreRatio = 100
@@ -108,15 +113,15 @@ export class Ball {
         nearBall.y += nearBall.dy;
     
         // Draw the balls after updating
-        this.draw(context);
-        nearBall.draw(context);
+        this.draw(context, lineWidth);
+        nearBall.draw(context, lineWidth);
         return;
       }
     }
 
     this.x += this.dx;
     this.y += this.dy;
-    this.draw(context)
+    this.draw(context, lineWidth)
     
     // old collision logic
     // for (let ballIndex of nearBalls) {

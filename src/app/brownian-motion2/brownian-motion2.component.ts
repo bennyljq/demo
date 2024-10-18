@@ -40,6 +40,7 @@ export class BrownianMotion2Component {
   g = 9.81; // ms**(-2)
   prevFrameTimestamp;
   cutoffSpeed = 0.02; // force stop movement if absolute speed is below this speed
+  lineWidth;
 
   ngAfterViewInit() {
     this.initCanvas()
@@ -58,7 +59,8 @@ export class BrownianMotion2Component {
     this.c = canvas.getContext('2d')!;
     this.canvasWidth = this.c.canvas.width;
     this.canvasHeight = this.c.canvas.height;
-    this.c.lineWidth = this.canvasWidth * this.canvasHeight * 0.000002
+    this.lineWidth = this.canvasWidth * this.canvasHeight * 0.0000015 + 1
+    this.c.lineWidth = this.lineWidth
     this.radius = (this.canvasWidth + this.canvasHeight) * 0.01
     this.minGridSize = this.radius * 2
     this.numCols = Math.floor(this.canvasWidth/this.minGridSize)
@@ -79,9 +81,9 @@ export class BrownianMotion2Component {
   }
 
   pushBall() {
-    let minSpeed = this.canvasWidth * this.canvasHeight / 320000 + 1
+    let minSpeed = this.canvasWidth * this.canvasHeight / 420000 + 2
     let varSpeed = minSpeed
-    let colours = ['MistyRose', 'MediumOrchid', 'MidnightBlue', 'Maroon', 'MediumSlateBlue']
+    let colours = ['MediumVioletRed', 'MediumOrchid', 'MidnightBlue', 'Maroon', 'MediumSlateBlue']
     let dx = (Math.random() * varSpeed + minSpeed)
     let dy = (Math.random() * varSpeed + minSpeed)
     let randomColour = colours[Math.floor(Math.random()*colours.length)]
@@ -104,8 +106,8 @@ export class BrownianMotion2Component {
     }
 
     // draw grid
-    this.c.fillStyle = 'pink'
-    this.c.strokeStyle = 'black'
+    this.c.fillStyle = 'black'
+    this.c.strokeStyle = 'MistyRose'
     this.gridArray = JSON.parse(JSON.stringify(this.gridArrayEmpty))
     for (let j=0; j<this.numRows; j++) {
       for (let i=0; i<this.numCols; i++) {
@@ -152,7 +154,7 @@ export class BrownianMotion2Component {
       if (nearBalls[index])
       this.balls[index].update(this.canvasWidth, this.canvasHeight, this.c, 
         nearBalls[index], this.balls, this.mouseInCanvas, this.mouseX, this.mouseY, 
-        this.elasticity, this.g, this.viscosity, sincePrevFrame, this.cutoffSpeed);
+        this.elasticity, this.g, this.viscosity, sincePrevFrame, this.cutoffSpeed, this.lineWidth);
     };
     this.animationId = requestAnimationFrame(this.animate);
   }
@@ -184,7 +186,7 @@ export class BrownianMotion2Component {
     const touch = event.touches[0];
     this.mouseX = touch.clientX
     this.mouseY = touch.clientY
-    this.onMouseClick()
+    this.pauseAnimation()
   }
   onTouchMove(event: TouchEvent) {
     event.preventDefault();
@@ -196,6 +198,7 @@ export class BrownianMotion2Component {
   onTouchEnd(event: TouchEvent) {
     event.preventDefault();
     this.mouseInCanvas = false
+    this.playAnimation()
   }
   playAnimation() {
     if (!this.animationId) {
