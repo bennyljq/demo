@@ -71,7 +71,7 @@ export class BrownianMotion2Component {
   }
 
   pushBall() {
-    let minSpeed = this.radius * 0.2 + 2
+    let minSpeed = this.radius * 0.15 + 2
     let varSpeed = minSpeed
     let colours = ['MediumVioletRed', 'MediumOrchid', 'MidnightBlue', 'Maroon', 'MediumSlateBlue']
     let dx = (Math.random() * varSpeed + minSpeed)
