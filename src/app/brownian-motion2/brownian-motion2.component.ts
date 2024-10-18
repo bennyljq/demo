@@ -1,7 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Ball } from './brownian-motion2.objects';
-import { lastValueFrom, timer } from 'rxjs';
 
 @Component({
   selector: 'app-brownian-motion2',
@@ -23,15 +22,14 @@ export class BrownianMotion2Component {
   mouseY = 0
   lastPushedTimestamp = performance.now();
   sinceLastPushed = Infinity // ms since last ball was pushed
-  delay = 40 // delay between ball push in ms
+  delay = 50 // delay between ball push in ms
   radius = 150;
   minGridSize;
   gridWidth;
   gridHeight;
   numCols;
   numRows;
-  gridArray;
-  gridArrayEmpty;
+  gridTracker; // to track per-cell population
   numBalls = 4;
   dropBallsLeft = true;
   debug = false;
@@ -59,29 +57,21 @@ export class BrownianMotion2Component {
     this.c = canvas.getContext('2d')!;
     this.canvasWidth = this.c.canvas.width;
     this.canvasHeight = this.c.canvas.height;
-    this.lineWidth = this.canvasWidth * this.canvasHeight * 0.0000015 + 1
+    this.radius = (this.canvasWidth + this.canvasHeight) * 0.012
+    this.lineWidth = this.radius * 0.1 + 1
     this.c.lineWidth = this.lineWidth
-    this.radius = (this.canvasWidth + this.canvasHeight) * 0.01
     this.minGridSize = this.radius * 2
     this.numCols = Math.floor(this.canvasWidth/this.minGridSize)
     this.numRows = Math.floor(this.canvasHeight/this.minGridSize)
     this.gridWidth = this.canvasWidth/this.numCols
     this.gridHeight = this.canvasHeight/this.numRows
-    this.gridArray = [];
-    for (let j=0; j<=this.numRows; j++) {
-      let row = []
-      for (let i=0; i<=this.numCols; i++) {
-        row.push([])
-      }
-      this.gridArray.push(row)
-    }
-    this.gridArrayEmpty = JSON.parse(JSON.stringify(this.gridArray))
+    this.gridTracker = {}
     this.numBalls = this.canvasWidth * this.canvasHeight / this.minGridSize**2 / 3
     this.balls = []
   }
 
   pushBall() {
-    let minSpeed = this.canvasWidth * this.canvasHeight / 420000 + 2
+    let minSpeed = this.radius * 0.2 + 2
     let varSpeed = minSpeed
     let colours = ['MediumVioletRed', 'MediumOrchid', 'MidnightBlue', 'Maroon', 'MediumSlateBlue']
     let dx = (Math.random() * varSpeed + minSpeed)
@@ -107,14 +97,18 @@ export class BrownianMotion2Component {
 
     // draw grid
     this.c.fillStyle = 'black'
-    this.c.strokeStyle = 'MistyRose'
-    this.gridArray = JSON.parse(JSON.stringify(this.gridArrayEmpty))
+    this.c.strokeStyle = 'WhiteSmoke'
+    this.gridTracker = {}
     for (let j=0; j<this.numRows; j++) {
       for (let i=0; i<this.numCols; i++) {
         for (let k in this.balls) {
           if (this.balls[k].x >= i*this.gridWidth && this.balls[k].x < (i+1)*this.gridWidth && 
           this.balls[k].y >= j*this.gridHeight && this.balls[k].y < (j+1)*this.gridHeight) {
-            this.gridArray[j][i].push(k)
+            if (`${i}|${j}` in this.gridTracker) {
+              this.gridTracker[`${i}|${j}`].push(k)
+            } else {
+              this.gridTracker[`${i}|${j}`] = [k]
+            }
           }
         }
         if (this.debug) {
@@ -127,19 +121,16 @@ export class BrownianMotion2Component {
     // finding near balls
     let nearBalls = {};
     this.c.fillStyle = 'SeaGreen';
-    for (let j=0; j<this.numRows; j++) {
-      for (let i=0; i<this.numCols; i++) {
-        if (this.gridArray[j][i].length > 0) {
-          let tempNearBalls = getAdjacentCells(this.gridArray, j, i).flat(Infinity)
-          for (let ballIndex of this.gridArray[j][i]) {
-            nearBalls[ballIndex] = tempNearBalls.filter(item => item !== ballIndex);
-          }
-          if (this.debug) {
-            this.c.fillRect(i*this.gridWidth, j*this.gridHeight, this.gridWidth, this.gridHeight)
-          }
-        }
+    Object.keys(this.gridTracker).forEach(key => {
+      const [i, j] = key.split('|').map(Number);
+      let tempNearBalls = getNearBalls(this.gridTracker, i, j, this.numCols, this.numRows)
+      for (let ballIndex of this.gridTracker[key]) {
+        nearBalls[ballIndex] = tempNearBalls.filter(item => item !== ballIndex);
       }
-    }
+      if (this.debug) {
+        this.c.fillRect(i*this.gridWidth, j*this.gridHeight, this.gridWidth, this.gridHeight)
+      }
+    });
 
     // measuring time since last frame
     let sincePrevFrame; // ms
@@ -213,22 +204,24 @@ export class BrownianMotion2Component {
   }
 }
 
-function getAdjacentCells(matrix, row, col) {
+function getNearBalls(trackerObj, col, row, numCols, numRows) {
   const directions = [
     [-1, 0], [1, 0], [0, -1], [0, 1],   // Up, Down, Left, Right
     [-1, -1], [-1, 1], [1, -1], [1, 1],  // Diagonals
     [0, 0] // self
   ];
   
-  const adjacentCells = [];
+  let output = [];
 
   for (const [dx, dy] of directions) {
     const newRow = row + dx;
     const newCol = col + dy;
 
-    if (newRow >= 0 && newRow < matrix.length && newCol >= 0 && newCol < matrix[0].length) {
-      adjacentCells.push(matrix[newRow][newCol]);
+    if (`${newCol}|${newRow}` in trackerObj && 
+    newRow >= 0 && newRow < numRows && 
+    newCol >= 0 && newCol < numCols) {
+      output = output.concat(trackerObj[`${newCol}|${newRow}`])
     }
   }
-  return adjacentCells;
+  return output;
 }
