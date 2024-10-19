@@ -1,7 +1,7 @@
 export class Ball {
   constructor(public x: number, public y: number, 
     public dx: number, public dy: number,
-    public radius: number, public color: string
+    public radius: number, public color: string, public borderColor: string
   ) {}
 
   draw(context: CanvasRenderingContext2D, lineWidth: number) {
@@ -14,6 +14,7 @@ export class Ball {
     // Draw the inner stroked circle
     context.beginPath();
     context.arc(this.x, this.y, this.radius - lineWidth/2, 0, Math.PI * 2);
+    context.strokeStyle = this.borderColor
     context.stroke();
     context.closePath();
   }

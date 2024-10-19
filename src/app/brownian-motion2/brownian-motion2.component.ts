@@ -39,8 +39,6 @@ export class BrownianMotion2Component {
   prevFrameTimestamp;
   cutoffSpeed = 0.02; // force stop movement if absolute speed is below this speed
   lineWidth;
-  alpha = 0.15;
-  mouseDown = false;
 
   ngAfterViewInit() {
     this.initCanvas()
@@ -76,24 +74,27 @@ export class BrownianMotion2Component {
     let minSpeed = this.radius * 0.15 + 2
     let varSpeed = minSpeed
     let colours = ['MediumVioletRed', 'MediumOrchid', 'MidnightBlue', 'Maroon', 'MediumSlateBlue']
+    const colourMapping = {
+      'MediumVioletRed': 'rgb(255, 150, 180)',
+      'MediumOrchid': 'rgb(232, 202, 255)',
+      'MidnightBlue': 'rgb(134, 134, 198)',
+      'Maroon': 'rgb(233, 92, 92)',
+      'MediumSlateBlue': 'rgb(206, 178, 255)'
+    };
     let dx = (Math.random() * varSpeed + minSpeed)
     let dy = (Math.random() * varSpeed + minSpeed)
     let randomColour = colours[Math.floor(Math.random()*colours.length)]
     if (this.dropBallsLeft) {
-      this.balls.push(new Ball(this.radius, this.radius, dx, dy, this.radius, randomColour));
+      this.balls.push(new Ball(this.radius, this.radius, dx, dy, this.radius, randomColour, colourMapping[randomColour]));
     } else {
-      this.balls.push(new Ball(this.canvasWidth - this.radius, this.radius, dx, dy, this.radius, randomColour));
+      this.balls.push(new Ball(this.canvasWidth - this.radius, this.radius, dx, dy, 
+        this.radius, randomColour, colourMapping[randomColour]));
     }
   }
 
   private animate = () => {
     // this.c.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-    if (this.mouseDown) {
-      this.alpha = 0.15
-    } else if (!this.mouseDown) {
-      this.alpha = 1
-    }
-    this.c.fillStyle = `rgba(10, 10, 10, ${this.alpha})`
+    this.c.fillStyle = `rgba(10, 10, 10, 0.25)`
     this.c.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
     if (this.balls.length < this.numBalls) {
       this.sinceLastPushed = performance.now() - this.lastPushedTimestamp
@@ -160,12 +161,12 @@ export class BrownianMotion2Component {
   }
 
   onMouseClick(event?: MouseEvent) {
+    if (!this.animationId) {
+      this.animate();
+    } else {
+      cancelAnimationFrame(this.animationId);
+      this.animationId = null;
   }
-  onMouseDown(event?: MouseEvent) {
-    this.mouseDown = true
-  }
-  onMouseUp(event?: MouseEvent) {
-    this.mouseDown = false
   }
   onMouseMove(event: MouseEvent) {
     this.mouseInCanvas = true
@@ -186,7 +187,7 @@ export class BrownianMotion2Component {
     const touch = event.touches[0];
     this.mouseX = touch.clientX
     this.mouseY = touch.clientY
-    this.mouseDown = true
+    this.pauseAnimation()
   }
   onTouchMove(event: TouchEvent) {
     event.preventDefault();
@@ -198,7 +199,7 @@ export class BrownianMotion2Component {
   onTouchEnd(event: TouchEvent) {
     event.preventDefault();
     this.mouseInCanvas = false
-    this.mouseDown = false
+    this.playAnimation()
   }
   playAnimation() {
     if (!this.animationId) {
