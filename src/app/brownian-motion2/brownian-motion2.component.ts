@@ -1,6 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Ball } from './brownian-motion2.objects';
+import { BackgroundStar } from '../gravity-game/gravity-game.objects';
 
 @Component({
   selector: 'app-brownian-motion2',
@@ -16,6 +17,7 @@ export class BrownianMotion2Component {
   public animationId: number | null = null;
   canvasWidth: number;
   canvasHeight: number;
+  canvasArea: number;
   balls: Ball[] = [];
   mouseInCanvas = false;
   mouseX = 0
@@ -39,15 +41,25 @@ export class BrownianMotion2Component {
   prevFrameTimestamp;
   cutoffSpeed = 0.02; // force stop movement if absolute speed is below this speed
   lineWidth;
+  backgroundStars: Array<BackgroundStar> = []
+  numStars: number;
+  extendedWidth: number;
+  bgStarsColours = ['LemonChiffon', 'Pink', 'WhiteSmoke', 'MistyRose', 'PowderBlue']
+  private offscreenCanvas: HTMLCanvasElement;
+  private offscreenContext: CanvasRenderingContext2D;
+  angle: number = 0;
+  angleIncrement: number;
 
   ngAfterViewInit() {
     this.initCanvas()
+    this.initBackgroundStars(this.numStars)
     this.animate();
   }
 
   @HostListener('window:resize', ['$event'])
   onResize(event?) {
     this.initCanvas()
+    this.initBackgroundStars(this.numStars)
   }
 
   initCanvas() {
@@ -57,6 +69,8 @@ export class BrownianMotion2Component {
     this.c = canvas.getContext('2d')!;
     this.canvasWidth = this.c.canvas.width;
     this.canvasHeight = this.c.canvas.height;
+    this.canvasArea = this.canvasWidth * this.canvasHeight;
+    this.numStars = this.canvasArea * 0.0008
     this.radius = (this.canvasWidth + this.canvasHeight) * 0.012
     this.lineWidth = this.radius * 0.1 + 1
     this.c.lineWidth = this.lineWidth
@@ -68,6 +82,27 @@ export class BrownianMotion2Component {
     this.gridTracker = {}
     this.numBalls = this.canvasWidth * this.canvasHeight / this.minGridSize**2 / 3
     this.balls = []
+    this.angleIncrement = Math.sqrt(this.canvasArea) * 0.0000001 + 0.0001
+  }
+
+  initBackgroundStars(numStars: number) {
+    this.backgroundStars = []
+    this.extendedWidth = Math.sqrt(this.canvasWidth**2 + this.canvasHeight**2);
+    for (let i=0; i<numStars; i++) {
+      this.backgroundStars.push(new BackgroundStar(
+        Math.random() * this.extendedWidth,
+        Math.random() * this.extendedWidth,
+        Math.random() * 1.5 + 0.5,
+        this.bgStarsColours[Math.floor(Math.random()*this.bgStarsColours.length)]
+      ))
+    }
+    this.offscreenCanvas = document.createElement("canvas");
+    this.offscreenCanvas.width = this.extendedWidth;
+    this.offscreenCanvas.height = this.extendedWidth;
+    this.offscreenContext = this.offscreenCanvas.getContext("2d")!;
+    for (let star of this.backgroundStars) {
+      star.draw(this.offscreenContext);
+    }
   }
 
   pushBall() {
@@ -94,8 +129,22 @@ export class BrownianMotion2Component {
 
   private animate = () => {
     // this.c.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-    this.c.fillStyle = `rgba(10, 10, 10, 0.25)`
+    this.c.fillStyle = `rgba(0, 0, 0, 0.25)`
     this.c.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+    // draw rotating background stars
+    this.c.save();
+    this.c.translate(this.canvasWidth / 2, this.canvasHeight / 2);
+    this.c.rotate(this.angle);
+    this.c.translate(-this.canvasWidth / 2, -this.canvasHeight / 2);
+    this.c.globalAlpha = 0.8;
+    this.c.drawImage(this.offscreenCanvas, 
+      -(this.extendedWidth - this.canvasWidth)/2, 
+      -(this.extendedWidth - this.canvasHeight)/2
+    );
+    this.c.restore()
+    this.angle += this.angleIncrement
+
     if (this.balls.length < this.numBalls) {
       this.sinceLastPushed = performance.now() - this.lastPushedTimestamp
       if (this.sinceLastPushed >= this.delay) {
@@ -166,7 +215,7 @@ export class BrownianMotion2Component {
     } else {
       cancelAnimationFrame(this.animationId);
       this.animationId = null;
-  }
+    }
   }
   onMouseMove(event: MouseEvent) {
     this.mouseInCanvas = true

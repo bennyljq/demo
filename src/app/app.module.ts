@@ -44,6 +44,7 @@ import { Train2PrelimConceptComponent } from './train2/train2-prelim-concept/tra
 import { Train2DynamicStationComponent } from './train2/train2-dynamic-station/train2-dynamic-station.component';
 import { BrownianMotionComponent } from './brownian-motion/brownian-motion.component';
 import { BrownianMotion2Component } from './brownian-motion2/brownian-motion2.component';
+import { GravityGameComponent } from './gravity-game/gravity-game.component';
 
 // PrimeNG //
 import { TableModule } from 'primeng/table';
@@ -101,7 +102,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     Train2PrelimConceptComponent,
     Train2DynamicStationComponent,
     BrownianMotionComponent,
-    BrownianMotion2Component
+    BrownianMotion2Component,
+    GravityGameComponent
   ],
   imports: [
     BrowserModule,

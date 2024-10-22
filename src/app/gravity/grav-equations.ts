@@ -6,13 +6,15 @@ const m_earth = 5.972 * 10**24
 const au = 149597870700 // Astronomical unit (m)
 const v_earth = 29780 // Average Earth orbital speed (m/s)
 interface celestialBody {
-  id: string
+  id: string | number
   type?: 'earth' | 'sun'
   mass: number
   position_x: number // au
   position_y: number // au
   velocity_x: number // v_e
   velocity_y: number // v_e
+  colour?: string
+  trailColour?: string
 }
 
 function update(bodies: celestialBody[], timeStep: number): celestialBody[] {
