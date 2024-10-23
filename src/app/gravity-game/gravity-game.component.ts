@@ -1,6 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { BackgroundStar, celestialBodyPreset1, celestialBodyPreset2, celestialBodyPreset3 } from './gravity-game.objects';
+import { BackgroundStar, celestialBodyPreset1, celestialBodyPreset2, celestialBodyPreset3, celestialBodyPreset4, celestialBodyPreset5 } from './gravity-game.objects';
 import * as eq from '../gravity/grav-equations'
 
 @Component({
@@ -35,6 +35,8 @@ export class GravityGameComponent {
   trails: Array<any> = [];
   private trailFadeSpeed = 0.005;
   presetActive: number = 1;
+  timestep = 3600*24;
+  fps;
 
   ngAfterViewInit() {
     this.initCanvas()
@@ -53,12 +55,12 @@ export class GravityGameComponent {
     this.canvas = document.getElementById('gg-canvas') as HTMLCanvasElement
     this.c = this.canvas.getContext('2d')!;
     this.canvas.width = this.canvasWidth = window.innerWidth;
-    this.canvas.height = this.canvasHeight = window.innerHeight;
+    this.canvas.height = this.canvasHeight = window.innerHeight - 52;
     this.canvasArea = this.canvasWidth * this.canvasHeight;
     this.shortEdge = Math.min(this.canvasWidth, this.canvasHeight)
     this.numStars = this.canvasArea * 0.0008
     this.angleIncrement = Math.sqrt(this.canvasArea) * 0.0000001 + 0.0001
-    this.celestialBodyRadius = Math.sqrt(this.canvasArea) * 0.03
+    this.celestialBodyRadius = this.shortEdge * 0.03
     this.c.lineJoin = "round";
     this.c.lineWidth = this.celestialBodyRadius * 0.1 + 1
   }
@@ -94,8 +96,24 @@ export class GravityGameComponent {
       case 3:
         this.celestialBodies = JSON.parse(JSON.stringify(celestialBodyPreset3))
         break
+      case 4:
+        this.celestialBodies = JSON.parse(JSON.stringify(celestialBodyPreset4))
+        break
+      case 5:
+        this.celestialBodies = JSON.parse(JSON.stringify(celestialBodyPreset5))
+        break
     }
     this.presetActive = presetNum
+    if (this.celestialBodies[0].shortEdgeAU) {
+      this.shortEdgeAU = this.celestialBodies[0].shortEdgeAU
+    } else {
+      this.shortEdgeAU = 2.5
+    }
+    if (this.celestialBodies[0].timestep) {
+      this.timestep = this.celestialBodies[0].timestep
+    } else {
+      this.timestep = 3600*24
+    }
     this.trails = []
     if (!this.animationId) {
       this.animate();
@@ -184,7 +202,7 @@ export class GravityGameComponent {
       this.c.closePath();
     }
     this.c.restore()
-    this.celestialBodies = eq.update(this.celestialBodies, 3600*24)
+    this.celestialBodies = eq.update(this.celestialBodies, this.timestep)
 
     if (this.debug) {
       // measuring time since last frame
@@ -195,12 +213,7 @@ export class GravityGameComponent {
         sincePrevFrame = 0
       }
       this.prevFrameTimestamp = performance.now()
-      this.c.font = "24px Calibri";
-      this.c.textAlign = "right";
-      this.c.textBaseline = "top";
-      this.c.fillStyle = 'LimeGreen'
-      let fps = Math.round(1/sincePrevFrame*1000)
-      this.c.fillText(`${fps} FPS`, this.canvasWidth - 12, 12);
+      this.fps = Math.round(1/sincePrevFrame*1000)
     }
 
     this.animationId = requestAnimationFrame(this.animate);

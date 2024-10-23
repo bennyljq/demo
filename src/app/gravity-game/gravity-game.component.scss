@@ -12,15 +12,22 @@
   cursor: crosshair;
   will-change: transform;
 }
-.gg-button-container {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-}
 .gg-icon-number {
   font-weight: bold;
   font-size: 16px;
+}
+.gg-toolbar {
+  background-color: rgb(6, 3, 15);
+  width: 100vw;
+  height: 52px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 6px 12px;
+  gap: 8px;
+}
+.gg-fps {
+  font-size: 16px;
+  color: limegreen;
+  font-family: 'Cambria Math';
 }

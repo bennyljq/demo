@@ -15,6 +15,8 @@ interface celestialBody {
   velocity_y: number // v_e
   colour?: string
   trailColour?: string
+  shortEdgeAU?: number
+  timestep?: number
 }
 
 function update(bodies: celestialBody[], timeStep: number): celestialBody[] {

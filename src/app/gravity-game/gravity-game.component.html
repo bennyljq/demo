@@ -1,21 +1,21 @@
 <div class="gg-container">
-  <canvas id="gg-canvas" 
-  (click)="onMouseClick($event)"></canvas>
-  <div class="gg-button-container">
-    <button mat-mini-fab color="primary"
+  <div class="gg-toolbar">
+    <button mat-mini-fab color="accent"
     [title]=" animationId ? 'Pause' : 'Play' " (click)="toggleAnimation()">
       <mat-icon>{{animationId ? 'pause' : 'play_arrow'}}</mat-icon>
     </button>
-    <ng-container *ngFor="let item of [].constructor(3); let i = index">
-      <!-- stupid disabled button bugging out >:( -->
-      <button mat-mini-fab *ngIf="presetActive == i+1"
-      style="background-color: grey; cursor: not-allowed;">
-        <span class="gg-icon-number">{{i+1}}</span>
-      </button>
-      <button mat-mini-fab color="accent" (click)="initCelestialBodies(i+1)"
-      *ngIf="presetActive != i+1">
+    <ng-container *ngFor="let item of [].constructor(5); let i = index">
+      <button mat-mini-fab color="primary" (click)="initCelestialBodies(i+1)"
+      [ngStyle]="{
+        'background-color': presetActive == i+1 ? 'LimeGreen' : '',
+        'color': presetActive == i+1 ? 'Black' : ''
+      }">
         <span class="gg-icon-number">{{i+1}}</span>
       </button>
     </ng-container>
+    <div class="spacer"></div>
+    <span class="gg-fps">{{fps}} FPS</span>
   </div>
+  <canvas id="gg-canvas" 
+  (click)="onMouseClick($event)"></canvas>
 </div>
