@@ -50,7 +50,7 @@
     <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
       Parabola is a recreational math magazine published by the University of New South Wales since 1964.
       <br><br>
-      <strong>Prime Numbers Generated From Highly Composite Numbers</strong> is a Number Theory article which I'd written for Parabola in December 2018. 
+      <strong>Prime Numbers Generated From Highly Composite Numbers</strong> is a Number Theory article of mine which Parabola had graciously published in December 2018. 
     </div>
   </div>
 
@@ -87,14 +87,14 @@
     <div class="logo-container"
     (mouseenter)="hover4=true"
     (mouseleave)="hover4=false"
-    routerLink="/gravity-sim">
+    routerLink="/3body">
       <div class="logo-title f-poppins" [ngClass]="hover4 ? 'logo-title-hover' : ''">
         <div style="transform: skew(15deg)">
-          Gravity Simulator<br>
-          <span class="logo-subtitle">2023 - Present</span>
+          Three Body Problem<br>
+          <span class="logo-subtitle">2024</span>
         </div>
       </div>
-      <img src="assets/grav-sim.png" class="logo"
+      <img src="assets/3body.gif" class="logo" style="aspect-ratio: 1;"
       [ngClass]="hover4 ? 'logo-hover' : ''">
       <div class="logo-link f-poppins" [ngClass]="hover4 ? 'logo-link-hover' : ''">
         <div style="transform: skew(15deg)">
@@ -103,9 +103,11 @@
       </div>
     </div>
     <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
-      A gravity simulator which is built entirely in TypeScript and within the Angular framework.
+      A refinement of the <b>Gravity Simulator 2023</b> project, built in HTML Canvas.
       <br><br>
-      This project showcases the building of a physics engine from scratch, and demonstrates technical competency in scripting and optimisation.
+      This canvas presents five quasi-stable three-body configurations interacting gravitationally.
+      <br><br>
+      I plan to turn this into a fun little game in the near future 🤪
     </div>
   </div>
 
@@ -113,29 +115,25 @@
     <div class="logo-container"
     (mouseenter)="hover5=true"
     (mouseleave)="hover5=false"
-    routerLink="/train">
+    routerLink="/gravity-sim">
       <div class="logo-title f-poppins" [ngClass]="hover5 ? 'logo-title-hover' : ''">
         <div style="transform: skew(15deg)">
-          Train Simulator<br>
-          <span class="logo-subtitle">2024</span>
+          Gravity Simulator<br>
+          <span class="logo-subtitle">2023</span>
         </div>
       </div>
-      <img src="assets/train-sim.png" class="logo"
+      <img src="assets/grav-sim.gif" class="logo" style="aspect-ratio: 1;"
       [ngClass]="hover5 ? 'logo-hover' : ''">
       <div class="logo-link f-poppins" [ngClass]="hover5 ? 'logo-link-hover' : ''">
         <div style="transform: skew(15deg)">
-          Choo Choo <span class="f-hino" style="font-weight: bold;">→</span>
+          Play with Gravity <span class="f-hino" style="font-weight: bold;">→</span>
         </div>
       </div>
     </div>
     <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
-      A simulation of a novel, self-designed train management system.
+      A gravity simulator which is built entirely in TypeScript and within the Angular framework.
       <br><br>
-      I have since discovered that professional engineers at <a href="https://ethz.ch/en.html" target="_blank">ETH Zurich</a> are working on something 
-      <a href="https://www.sciencedirect.com/science/article/pii/S2210970621000081#bib40" target="_blank">similar</a>.
-      <br><br>
-      In hopes of a possible collaboration in the near future, I plan to furnish this simulation with 
-      <strong>rigorous statistical analysis</strong> along with <strong>beautiful animations and data visualisation</strong>.
+      This project showcases the building of a physics engine from scratch, and demonstrates technical competency in scripting and optimisation.
     </div>
   </div>
 
@@ -143,16 +141,69 @@
     <div class="logo-container"
     (mouseenter)="hover6=true"
     (mouseleave)="hover6=false"
-    (click)="download_article()">
+    routerLink="/brownian-motion">
       <div class="logo-title f-poppins" [ngClass]="hover6 ? 'logo-title-hover' : ''">
+        <div style="transform: skew(15deg)">
+          Brownian Motion v2<br>
+          <span class="logo-subtitle">2024</span>
+        </div>
+      </div>
+      <img src="assets/brownian-motion2.gif" class="logo" style="aspect-ratio: 1;"
+      [ngClass]="hover6 ? 'logo-hover' : ''">
+      <div class="logo-link f-poppins" [ngClass]="hover6 ? 'logo-link-hover' : ''">
+        <div style="transform: skew(15deg)">
+          Play with Particles <span class="f-hino" style="font-weight: bold;">→</span>
+        </div>
+      </div>
+    </div>
+    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
+      A refinement of the <b>Brownian Motion</b> project, also built in HTML Canvas.
+      <br><br>
+      Particles here collide and observe viscosity and gravity.
+    </div>
+  </div>
+
+  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
+    <div class="logo-container"
+    (mouseenter)="hover7=true"
+    (mouseleave)="hover7=false"
+    routerLink="/brownian-motion">
+      <div class="logo-title f-poppins" [ngClass]="hover7 ? 'logo-title-hover' : ''">
+        <div style="transform: skew(15deg)">
+          Brownian Motion<br>
+          <span class="logo-subtitle">2024</span>
+        </div>
+      </div>
+      <img src="assets/brownian-motion.gif" class="logo" style="aspect-ratio: 1;"
+      [ngClass]="hover7 ? 'logo-hover' : ''">
+      <div class="logo-link f-poppins" [ngClass]="hover7 ? 'logo-link-hover' : ''">
+        <div style="transform: skew(15deg)">
+          Play with Particles <span class="f-hino" style="font-weight: bold;">→</span>
+        </div>
+      </div>
+    </div>
+    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
+      A particle simulator built in HTML Canvas.
+      <br><br>
+      Particles here are "repelled" by the cursor and on touch. 
+      My two-year-old goddaughter has taken a liking to this.
+    </div>
+  </div>
+
+  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row flex-row-reverse' : 'flex-col'">
+    <div class="logo-container"
+    (mouseenter)="hover8=true"
+    (mouseleave)="hover8=false"
+    (click)="download_article()">
+      <div class="logo-title f-poppins" [ngClass]="hover8 ? 'logo-title-hover' : ''">
         <div style="transform: skew(15deg)">
           On the Infinitude of Twin Primes<br>
           <span class="logo-subtitle">2023 - Present</span>
         </div>
       </div>
       <img src="assets/twin-primes-draft.png" class="logo"
-      [ngClass]="hover6 ? 'logo-hover' : ''">
-      <div class="logo-link f-poppins" [ngClass]="hover6 ? 'logo-link-hover' : ''">
+      [ngClass]="hover8 ? 'logo-hover' : ''">
+      <div class="logo-link f-poppins" [ngClass]="hover8 ? 'logo-link-hover' : ''">
         <div style="transform: skew(15deg)">
           Download Article <span class="f-hino" style="font-weight: bold; border-bottom: 1px solid white;">↓</span>
         </div>
@@ -169,25 +220,60 @@
 
   <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
     <div class="logo-container"
-    (mouseenter)="hover7=true"
-    (mouseleave)="hover7=false"
+    (mouseenter)="hover9=true"
+    (mouseleave)="hover9=false"
     routerLink="/snowpiercer">
-      <div class="logo-title f-poppins" [ngClass]="hover7 ? 'logo-title-hover' : ''">
+      <div class="logo-title f-poppins" [ngClass]="hover9 ? 'logo-title-hover' : ''">
         <div style="transform: skew(15deg)">
           Project Snowpiercer<br>
-          <span class="logo-subtitle">2024</span>
+          <span class="logo-subtitle">2024 - Present</span>
         </div>
       </div>
-      <img src="assets/snowflake-hd.png" class="logo"
-      [ngClass]="hover7 ? 'logo-hover' : ''">
-      <div class="logo-link f-poppins" [ngClass]="hover7 ? 'logo-link-hover' : ''">
+      <div class="logo" style="background-color: lavender; width: 
+      clamp(300px, 80vw, 500px); height: clamp(300px, 80vw, 500px);
+      display: flex; align-items: center; justify-content: center;">
+        <img src="assets/snowflake-2.png" class="snowflake"
+        [ngClass]="hover9 ? 'logo-hover' : ''">
+      </div>
+      <div class="logo-link f-poppins" [ngClass]="hover9 ? 'logo-link-hover' : ''">
         <div style="transform: skew(15deg)">
           Choo Choo <span class="f-hino" style="font-weight: bold;">→</span>
         </div>
       </div>
     </div>
     <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
-      Possibly the start of the transport revolution.
+      Supporting material for an ongoing civil engineering project. 
+      See the following project <b>Train Simulator 2023</b> for additional context.
+    </div>
+  </div>
+
+  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row flex-row-reverse' : 'flex-col'">
+    <div class="logo-container"
+    (mouseenter)="hover10=true"
+    (mouseleave)="hover10=false"
+    routerLink="/train">
+      <div class="logo-title f-poppins" [ngClass]="hover10 ? 'logo-title-hover' : ''">
+        <div style="transform: skew(15deg)">
+          Train Simulator<br>
+          <span class="logo-subtitle">2023</span>
+        </div>
+      </div>
+      <img src="assets/train-sim.png" class="logo"
+      [ngClass]="hover10 ? 'logo-hover' : ''">
+      <div class="logo-link f-poppins" [ngClass]="hover10 ? 'logo-link-hover' : ''">
+        <div style="transform: skew(15deg)">
+          Choo Choo <span class="f-hino" style="font-weight: bold;">→</span>
+        </div>
+      </div>
+    </div>
+    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
+      A simulation of a novel, self-designed train management system.
+      <br><br>
+      I have since discovered that professional engineers at <a href="https://ethz.ch/en.html" target="_blank">ETH Zurich</a> are working on something 
+      <a href="https://www.sciencedirect.com/science/article/pii/S2210970621000081#bib40" target="_blank">similar</a>.
+      <br><br>
+      In hopes of a possible collaboration in the near future, I plan to furnish this simulation with 
+      <strong>rigorous statistical analysis</strong> along with <strong>beautiful animations and data visualisation</strong>.
     </div>
   </div>
 

@@ -15,6 +15,9 @@ export class ProjectContentsComponent {
   hover5 = false;
   hover6 = false;
   hover7 = false;
+  hover8 = false;
+  hover9 = false;
+  hover10 = false;
 
   ngOnInit(): void {
     this.innerWidth = window.innerWidth;

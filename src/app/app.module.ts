@@ -45,6 +45,7 @@ import { Train2DynamicStationComponent } from './train2/train2-dynamic-station/t
 import { BrownianMotionComponent } from './brownian-motion/brownian-motion.component';
 import { BrownianMotion2Component } from './brownian-motion2/brownian-motion2.component';
 import { GravityGameComponent } from './gravity-game/gravity-game.component';
+import { ParallaxComponent } from './parallax/parallax.component';
 
 // PrimeNG //
 import { TableModule } from 'primeng/table';
@@ -103,7 +104,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     Train2DynamicStationComponent,
     BrownianMotionComponent,
     BrownianMotion2Component,
-    GravityGameComponent
+    GravityGameComponent,
+    ParallaxComponent
   ],
   imports: [
     BrowserModule,

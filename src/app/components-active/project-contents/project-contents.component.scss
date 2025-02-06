@@ -139,6 +139,11 @@ $history-width: min(80vw, 1200px);
   background-color: white;
   opacity: 0.5;
 }
+.snowflake {
+  animation: rotate 6s linear infinite;
+  width: calc($logo-width * 0.9);
+  height: calc($logo-width * 0.9);
+}
 @keyframes scroll-button-fade {
   from {
     transform: translateY(-12px);
@@ -146,5 +151,13 @@ $history-width: min(80vw, 1200px);
   } to {
     transform: translateY(0);
     opacity: 0.5;
+  }
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }

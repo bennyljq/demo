@@ -1,0 +1,33 @@
+/* Styling each section */
+.parallax-section {
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 2em;
+  text-align: center;
+  background-size: 200% 200%;  /* Double the size to avoid edge exposure */
+  background-position: center;  /* Center the gradient */
+}
+
+/* Gradient backgrounds for each section */
+.parallax-section:nth-child(1) {
+  background: linear-gradient(135deg, #ff7e5f, maroon);
+}
+
+.parallax-section:nth-child(2) {
+  background: radial-gradient(circle, #43cea2, #185a9d);
+}
+
+.parallax-section:nth-child(3) {
+  background: linear-gradient(120deg, #ff512f, #f09819);
+}
+
+.parallax-container {
+  overflow: auto;
+  height: 100vh;
+  background-color: black;
+  // padding: 12px;
+}
