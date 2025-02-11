@@ -7,7 +7,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "build": "ng build --configuration=production --base-href=/demo/",
-    "create_cname": "echo 'bennyl.im' > dist/demo/CNAME",
+    "create_cname": "echo bennyl.im > dist/demo/CNAME",
     "deploy": "npx angular-cli-ghpages --dir=dist/demo --branch=gh-pages",
     "combo": "npm run build && npm run create_cname && npm run deploy"
   },
