@@ -21,7 +21,7 @@
       </div>
     </span>
     <span class="flex-row desc-row">
-      <div *ngFor="let item of descLine3; let i = index" [id]="'desc' + (i+5)"
+      <div *ngFor="let item of descLine3; let i = index" [id]="'desc' + (i+4)"
       class="desc f-poppins">
         {{item}}<ng-container *ngIf="i!=5">,&nbsp;</ng-container>
       </div>
@@ -47,7 +47,7 @@
     background credit
   </a> -->
   <div class="circle"></div>
-</div>
 
-<!-- preload image -->
-<img src="../../../assets/ben_kenobi.png" style="position: absolute; height: 1;" *ngIf="preload_kenobi">
+  <!-- preload image -->
+  <img src="../../../assets/ben_kenobi.png" style="position: fixed; height: 1px; width: 1px; opacity: 0;">
+</div>
