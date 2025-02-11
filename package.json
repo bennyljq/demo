@@ -9,7 +9,7 @@
     "build": "ng build --configuration=production --base-href=/demo/",
     "create_cname": "echo 'bennyl.im' > dist/demo/CNAME",
     "deploy": "npx angular-cli-ghpages --dir=dist/demo",
-    "combo": "npm run build && npm run deploy"
+    "combo": "npm run build && npm run create_cname && npm run deploy"
   },
   "private": true,
   "dependencies": {
