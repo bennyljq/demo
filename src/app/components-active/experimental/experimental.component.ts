@@ -97,7 +97,7 @@ export class ExperimentalComponent {
   }
   
   async goHome() {
-    this.router.navigate(['/main']);
+    this.router.navigate(['']);
   }
 
 }

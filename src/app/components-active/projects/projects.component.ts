@@ -46,7 +46,7 @@ export class ProjectsComponent {
     this.historyExit = "history-exit"
     this.unblur = "unblur-image"
     await lastValueFrom(timer(666))
-    this.router.navigate(['/main']);
+    this.router.navigate(['']);
   }
   
 }

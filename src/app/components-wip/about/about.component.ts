@@ -115,7 +115,7 @@ export class AboutComponent {
     this.fadeOutLeft = "fade-out-left"
     this.historyExit = "history-exit"
     await lastValueFrom(timer(666))
-    this.router.navigate(['/main']);
+    this.router.navigate(['']);
   }
   
 }

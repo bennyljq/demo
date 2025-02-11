@@ -5,7 +5,7 @@
       <mat-icon>menu</mat-icon>
     </button> -->
     <button class="train-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}" 
-    mat-icon-button routerLink="/main" title="Exit">
+    mat-icon-button routerLink="" title="Exit">
         <mat-icon class="train-menu-exit">exit_to_app</mat-icon>
     </button>
     <button class="train-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}" 
@@ -35,7 +35,7 @@
       <mat-icon class="train-menu-radio" *ngIf="i==selectedIndex">train</mat-icon>
     </div>
   </button>
-  <button mat-menu-item routerLink="/main">
+  <button mat-menu-item routerLink="">
     <div style="display: flex; width: 220px; color: Firebrick;" class="f-poppins">
       I'm done with trains
       <div class="spacer"></div>

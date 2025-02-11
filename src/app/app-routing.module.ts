@@ -22,7 +22,7 @@ import { GravityGameComponent } from './gravity-game/gravity-game.component';
 import { ParallaxComponent } from './parallax/parallax.component';
 
 const routes: Routes = [
-  { path: 'main', component: HomepageV2Component },
+  { path: '', component: HomepageV2Component },
   { path: 'about', component: About2Component },
   { path: 'sandbox', component: ExperimentalComponent },
   { path: 'enterprise', component: EnterpriseComponent },
@@ -39,8 +39,7 @@ const routes: Routes = [
   { path: 'brownian-motion2', component: BrownianMotion2Component },
   { path: '3body', component: GravityGameComponent },
   { path: 'parallax', component: ParallaxComponent },
-  { path: '', redirectTo: '/main', pathMatch: 'full' }, // redirect to `homepage`
-  { path: '**', redirectTo: '/main', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
+  { path: '**', redirectTo: '', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];
 
 @NgModule({

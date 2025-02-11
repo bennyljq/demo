@@ -23,7 +23,7 @@ export class EnterpriseComponent implements OnInit {
   }
   
   async goHome() {
-    this.router.navigate(['/main']);
+    this.router.navigate(['']);
   }
 
   goBack() {
