@@ -6,7 +6,8 @@
     "start": "ng serve",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build": "ng build --base-href=/demo/",
+    "build": "ng build --configuration=production --base-href=/demo/",
+    "create_cname": "echo 'bennyl.im' > dist/demo/CNAME",
     "deploy": "npx angular-cli-ghpages --dir=dist/demo",
     "combo": "npm run build && npm run deploy"
   },
