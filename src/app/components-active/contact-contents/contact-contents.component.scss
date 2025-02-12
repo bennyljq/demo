@@ -56,15 +56,11 @@ $text-border-colour: black;
   ) 100% 50% / 100% 100% repeat-x;
   -webkit-mask: var(--mask); 
   mask: var(--mask);
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 
   &::-webkit-scrollbar {
-    width: calc($line-ball-dist/5);
     display: none;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: black;
-    border-radius: 5px;
   }
 }
 .download-button {

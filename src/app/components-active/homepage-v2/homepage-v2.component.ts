@@ -67,8 +67,7 @@ export class HomepageV2Component implements OnInit {
     "Pianist",
     "Godfather",
     "Baker",
-    "Gamer",
-    "Existentialist"
+    "Gamer"
   ]
   contentClass: any;
   circleStyle: any;
