@@ -63,6 +63,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { Gravity2025Component } from './gravity2025/gravity2025.component';
 
 
 @NgModule({
@@ -105,7 +106,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     BrownianMotionComponent,
     BrownianMotion2Component,
     GravityGameComponent,
-    ParallaxComponent
+    ParallaxComponent,
+    Gravity2025Component
   ],
   imports: [
     BrowserModule,

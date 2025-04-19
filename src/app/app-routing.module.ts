@@ -20,6 +20,7 @@ import { BrownianMotionComponent } from './brownian-motion/brownian-motion.compo
 import { BrownianMotion2Component } from './brownian-motion2/brownian-motion2.component';
 import { GravityGameComponent } from './gravity-game/gravity-game.component';
 import { ParallaxComponent } from './parallax/parallax.component';
+import { Gravity2025Component } from './gravity2025/gravity2025.component';
 
 const routes: Routes = [
   { path: '', component: HomepageV2Component },
@@ -37,7 +38,8 @@ const routes: Routes = [
   { path: 'salesforce2', component: Salesforce2Component },
   { path: 'brownian-motion', component: BrownianMotionComponent },
   { path: 'brownian-motion2', component: BrownianMotion2Component },
-  { path: '3body', component: GravityGameComponent },
+  { path: '3body-2024', component: GravityGameComponent },
+  { path: '3body', component: Gravity2025Component },
   { path: 'parallax', component: ParallaxComponent },
   { path: '**', redirectTo: '', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];
