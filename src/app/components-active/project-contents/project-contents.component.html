@@ -56,6 +56,34 @@
 
   <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
     <div class="logo-container"
+    (mouseenter)="hover4=true"
+    (mouseleave)="hover4=false"
+    routerLink="/3body-2024">
+      <div class="logo-title f-poppins" [ngClass]="hover4 ? 'logo-title-hover' : ''">
+        <div style="transform: skew(15deg)">
+          Three Body Problem<br>
+          <span class="logo-subtitle">2024</span>
+        </div>
+      </div>
+      <img src="assets/3body.gif" class="logo" style="aspect-ratio: 1;"
+      [ngClass]="hover4 ? 'logo-hover' : ''">
+      <div class="logo-link f-poppins" [ngClass]="hover4 ? 'logo-link-hover' : ''">
+        <div style="transform: skew(15deg)">
+          Play with Gravity <span class="f-hino" style="font-weight: bold;">→</span>
+        </div>
+      </div>
+    </div>
+    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
+      A refinement of the <b>Gravity Simulator 2023</b> project, built in HTML Canvas.
+      <br><br>
+      This canvas presents five quasi-stable three-body configurations interacting gravitationally.
+      <br><br>
+      I plan to turn this into a fun little game in the near future 🤪
+    </div>
+  </div>
+
+  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row flex-row-reverse' : 'flex-col'">
+    <div class="logo-container"
     (mouseenter)="hover3=true"
     (mouseleave)="hover3=false"
     routerLink="/physics">
@@ -73,41 +101,13 @@
         </div>
       </div>
     </div>
-    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
+    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
       An interactive Physics lesson on electricity in our everyday lives.
       <br><br>
       This project showcases storytelling, scientific knowledge, and technical depth in UI/UX engineering.
       It is also a step towards my goal of building a career in Educational Technology.
       <br><br>
       Do give the lesson a shot - I hope you learn something from it! 🙃
-    </div>
-  </div>
-
-  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row flex-row-reverse' : 'flex-col'">
-    <div class="logo-container"
-    (mouseenter)="hover4=true"
-    (mouseleave)="hover4=false"
-    routerLink="/3body">
-      <div class="logo-title f-poppins" [ngClass]="hover4 ? 'logo-title-hover' : ''">
-        <div style="transform: skew(15deg)">
-          Three Body Problem<br>
-          <span class="logo-subtitle">2024</span>
-        </div>
-      </div>
-      <img src="assets/3body.gif" class="logo" style="aspect-ratio: 1;"
-      [ngClass]="hover4 ? 'logo-hover' : ''">
-      <div class="logo-link f-poppins" [ngClass]="hover4 ? 'logo-link-hover' : ''">
-        <div style="transform: skew(15deg)">
-          Play with Gravity <span class="f-hino" style="font-weight: bold;">→</span>
-        </div>
-      </div>
-    </div>
-    <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
-      A refinement of the <b>Gravity Simulator 2023</b> project, built in HTML Canvas.
-      <br><br>
-      This canvas presents five quasi-stable three-body configurations interacting gravitationally.
-      <br><br>
-      I plan to turn this into a fun little game in the near future 🤪
     </div>
   </div>
 

@@ -29,7 +29,7 @@ export class TrainConceptComponent {
   currentTick = 0
   displacement_table: any = []
   paused = false;
-  speed_multiplier = 1;
+  speed_multiplier = 2;
   max_speed = 16;
   // track length = 1834 waypoints
 
