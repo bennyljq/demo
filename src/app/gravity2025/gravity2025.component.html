@@ -18,13 +18,34 @@
     [title]=" rotateStars ? 'Static Stars' : 'Rotate Stars' ">
       <span class="material-symbols-outlined">cached</span>
     </button>
+    <button mat-mini-fab class="button-green"
+    (click)="togglePreset()">
+      <span style="font-size: 20px;">{{preset+1}}</span>
+    </button>
+    <button mat-mini-fab [ngClass]="{ 'button-green': !isPlaying, 'button-orange': isPlaying }"
+    (click)="togglePlay()">
+      <span class="material-symbols-outlined">{{isPlaying ? 'pause' : 'play_arrow'}}</span>
+    </button>
     <!-- <ng-container *ngFor="let item of [].constructor(5); let i = index">
       <button mat-mini-fab color="primary">
         <span class="gg-icon-number">{{i+1}}</span>
       </button>
     </ng-container> -->
     <div class="spacer"></div>
-    <span *ngIf="showFps" class="gg-fps">{{fps}} FPS</span>
+    <div class="gg-fps-container">
+      <span *ngIf="showFps" class="gg-fps">{{currentFrame+1}}/{{framesRendered}}</span>
+      <span *ngIf="showFps" class="gg-fps">{{frameRate/60}}x Speed</span>
+      <button mat-mini-fab class="button-green"
+      (click)="toggleSpeed()">
+        <span class="material-symbols-outlined">speed</span>
+      </button>
+    </div>
+  </div>
+  <div class="gg-toolbar gg-toolbar-slider">
+    <mat-slider min="0" max="{{framesRendered-1}}" step="1" style="width: 90%;" color="accent">
+      <!-- <input matSliderThumb [(ngModel)]="currentFrame" (dragStart)="isPlaying=false"> -->
+      <input matSliderThumb [(ngModel)]="currentFrame">
+    </mat-slider>
   </div>
   <canvas id="gg-canvas"></canvas>
 </div>

@@ -11,16 +11,25 @@
 }
 .gg-toolbar {
   width: 100vw;
-  height: 52px;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   padding: 6px 12px;
   gap: 8px;  
   position: absolute;
   top: 0;
   z-index: 1;
   background: transparent;
+}
+.gg-toolbar-slider {
+  top: unset;
+  bottom: 5%;
+  justify-content: center;
+}
+.gg-fps-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 .gg-fps {
   font-size: 16px;
@@ -32,6 +41,10 @@
 }
 .button-green {
   background-color: ForestGreen;
+  color: white;
+}
+.button-orange {
+  background-color: OrangeRed;
   color: white;
 }
 .button-grey {
