@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { HammerModule } from '@angular/platform-browser';
 import {ClipboardModule} from '@angular/cdk/clipboard';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 // Components //
 import { HomepageComponent } from './components-wip/homepage/homepage.component';
@@ -46,6 +47,9 @@ import { BrownianMotionComponent } from './brownian-motion/brownian-motion.compo
 import { BrownianMotion2Component } from './brownian-motion2/brownian-motion2.component';
 import { GravityGameComponent } from './gravity-game/gravity-game.component';
 import { ParallaxComponent } from './parallax/parallax.component';
+import { Gravity2025Component } from './gravity2025/gravity2025.component';
+import { Gravity2025DialogComponent } from './gravity2025-dialog/gravity2025-dialog.component';
+import { Gravity2025DialogEditComponent } from './gravity2025-dialog-edit/gravity2025-dialog-edit.component';
 
 // PrimeNG //
 import { TableModule } from 'primeng/table';
@@ -63,7 +67,8 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import { Gravity2025Component } from './gravity2025/gravity2025.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 
 @NgModule({
@@ -107,7 +112,9 @@ import { Gravity2025Component } from './gravity2025/gravity2025.component';
     BrownianMotion2Component,
     GravityGameComponent,
     ParallaxComponent,
-    Gravity2025Component
+    Gravity2025Component,
+    Gravity2025DialogComponent,
+    Gravity2025DialogEditComponent
   ],
   imports: [
     BrowserModule,
@@ -128,7 +135,10 @@ import { Gravity2025Component } from './gravity2025/gravity2025.component';
     MatDialogModule,
     MatExpansionModule,
     MatSnackBarModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    DragDropModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -216,6 +216,13 @@ $home-font-size: max(1vw, 2vh, 18px);
 #left-arrow {
   font-weight: bolder;
 }
+.transparent-backdrop {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+}
+.no-backdrop .mat-mdc-dialog-container {
+  opacity: 0.5;
+}
 // Animations //
 @keyframes fade-down {
   from {

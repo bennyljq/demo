@@ -25,6 +25,9 @@
   top: unset;
   bottom: 5%;
   justify-content: center;
+  align-items: center;
+  padding: 0 max(5%, 32px);
+  gap: 16px;
 }
 .gg-fps-container {
   display: flex;

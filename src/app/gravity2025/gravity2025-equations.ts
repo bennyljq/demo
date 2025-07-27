@@ -10,6 +10,8 @@ interface celestialBody {
   position_y: number // au
   velocity_x: number // v_e
   velocity_y: number // v_e
+  acceleration_x?: number
+  acceleration_y?: number
   colour?: string
   trailColour?: string
 }
@@ -28,8 +30,14 @@ function update(bodies: celestialBody[], timeStep: number): celestialBody[] {
       a_y += a * dist_y/dist
     }
     otherBodies.forEach(update_body_acceleration);
-    body.velocity_x += a_x*timeStep
-    body.velocity_y += a_y*timeStep
+    body.acceleration_x = a_x
+    body.acceleration_y = a_y
+    return body
+  }
+
+  function update_velocity(body: celestialBody): celestialBody {
+    body.velocity_x += body.acceleration_x*timeStep
+    body.velocity_y += body.acceleration_y*timeStep
     return body
   }
 
@@ -40,6 +48,7 @@ function update(bodies: celestialBody[], timeStep: number): celestialBody[] {
   }
 
   bodies = bodies.map(update_acceleration)
+  bodies = bodies.map(update_velocity)
   bodies = bodies.map(update_position)
   return bodies
 }

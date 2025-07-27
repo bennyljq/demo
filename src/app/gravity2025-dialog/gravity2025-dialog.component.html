@@ -1,0 +1,48 @@
+<h2 mat-dialog-title  cdkFocusInitial>Settings</h2>
+
+<mat-dialog-content>
+  <div id="content-container">
+    <div id="setting-container">
+      Draw Trails
+      <div class="spacer"></div>
+      <mat-slide-toggle [(ngModel)]="this.data.drawTrails" (change)="sendUpdate()"></mat-slide-toggle>
+    </div>
+    <div id="setting-container">
+      Draw Velocity Arrows
+      <div class="spacer"></div>
+      <mat-slide-toggle [(ngModel)]="this.data.drawVelocityArrow" (change)="sendUpdate()"></mat-slide-toggle>
+    </div>
+    <div id="setting-container">
+      Draw Acceleration Arrows
+      <div class="spacer"></div>
+      <mat-slide-toggle [(ngModel)]="this.data.drawAccelerationArrow" (change)="sendUpdate()"></mat-slide-toggle>
+    </div>
+    <div id="setting-container">
+      Show Axes
+      <div class="spacer"></div>
+      <mat-slide-toggle [(ngModel)]="this.data.showAxes" (change)="sendUpdate()"></mat-slide-toggle>
+    </div>
+    <div id="setting-container">
+      Background Stars
+      <div class="spacer"></div>
+      <mat-slide-toggle [(ngModel)]="this.data.showStars" (change)="sendUpdate()"></mat-slide-toggle>
+    </div>
+    <div id="setting-container">
+      Rotate Stars
+      <div class="spacer"></div>
+      <mat-slide-toggle [(ngModel)]="this.data.rotateStars" (change)="sendUpdate()"></mat-slide-toggle>
+    </div>
+    <span>Presets</span>
+    <div id="preset-container">
+      <ng-container *ngFor="let n of [].constructor(data.numPresets); let i = index">
+        <button mat-mini-fab (click)="sendUpdate(i); onCancel()" [ngClass]="data.preset == i ? '' : 'button-grey' ">
+          <span style="font-size: 20px;">{{ i + 1 }}</span>
+        </button>
+      </ng-container>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onSave()">Close</button>
+</mat-dialog-actions>

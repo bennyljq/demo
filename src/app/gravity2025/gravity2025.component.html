@@ -4,28 +4,32 @@
     [title]=" animationId ? 'Pause' : 'Play' ">
       <mat-icon>{{animationId ? 'pause' : 'play_arrow'}}</mat-icon>
     </button> -->
-    <button mat-mini-fab color="accent" (click)="showAxes = !showAxes"
+    <button mat-mini-fab color="accent" (click)="openDialog()"
+    title="Settings" class="button-grey">
+      <span class="material-symbols-outlined">settings</span>
+    </button>
+    <button mat-mini-fab color="accent" (click)="openEditDialog()"
+    title="Settings" class="button-grey">
+      <span class="material-symbols-outlined">edit</span>
+    </button>
+    <!-- <button mat-mini-fab color="accent" (click)="showAxes = !showAxes"
     [title]=" showAxes ? 'Hide Axes' : 'Show Axes' " [ngClass]=" showAxes ? 'button-green' : 'button-grey' " >
       <span class="material-symbols-outlined">point_scan</span>
-    </button>
-    <button mat-mini-fab [ngClass]=" showStars ? 'button-green' : 'button-grey' " 
+    </button> -->
+    <!-- <button mat-mini-fab [ngClass]=" showStars ? 'button-green' : 'button-grey' " 
     (click)="showStars = !showStars"
     [title]=" showStars ? 'Hide Stars' : 'Show Stars' ">
       <span class="material-symbols-outlined">stars_2</span>
-    </button>
-    <button mat-mini-fab [ngClass]=" rotateStars ? 'button-green' : 'button-grey' " 
+    </button> -->
+    <!-- <button mat-mini-fab [ngClass]=" rotateStars ? 'button-green' : 'button-grey' " 
     (click)="rotateStars = !rotateStars"
     [title]=" rotateStars ? 'Static Stars' : 'Rotate Stars' ">
       <span class="material-symbols-outlined">cached</span>
-    </button>
-    <button mat-mini-fab class="button-green"
+    </button> -->
+    <!-- <button mat-mini-fab class="button-green"
     (click)="togglePreset()">
       <span style="font-size: 20px;">{{preset+1}}</span>
-    </button>
-    <button mat-mini-fab [ngClass]="{ 'button-green': !isPlaying, 'button-orange': isPlaying }"
-    (click)="togglePlay()">
-      <span class="material-symbols-outlined">{{isPlaying ? 'pause' : 'play_arrow'}}</span>
-    </button>
+    </button> -->
     <!-- <ng-container *ngFor="let item of [].constructor(5); let i = index">
       <button mat-mini-fab color="primary">
         <span class="gg-icon-number">{{i+1}}</span>
@@ -34,15 +38,25 @@
     <div class="spacer"></div>
     <div class="gg-fps-container">
       <span *ngIf="showFps" class="gg-fps">{{currentFrame+1}}/{{framesRendered}}</span>
-      <span *ngIf="showFps" class="gg-fps">{{frameRate/60}}x Speed</span>
-      <button mat-mini-fab class="button-green"
-      (click)="toggleSpeed()">
-        <span class="material-symbols-outlined">speed</span>
+      <span *ngIf="showFps" class="gg-fps">{{frameRate/120}}x Speed</span>
+      <button mat-mini-fab style="transform: scale(0.9);"
+      [ngClass]=" frameRate/120 >= 16 ? 'button-grey' : 'button-green' "
+      (click)="upSpeed()">
+        <span class="material-symbols-outlined">arrow_upward</span>
+      </button>
+      <button mat-mini-fab style="transform: scale(0.9);"
+      [ngClass]=" frameRate == 30 ? 'button-grey' : 'button-green' "
+      (click)="downSpeed()">
+        <span class="material-symbols-outlined">arrow_downward</span>
       </button>
     </div>
   </div>
   <div class="gg-toolbar gg-toolbar-slider">
-    <mat-slider min="0" max="{{framesRendered-1}}" step="1" style="width: 90%;" color="accent">
+    <button mat-mini-fab [ngClass]="{ 'button-orange': !isPlaying, 'button-grey': isPlaying }"
+    (click)="togglePlay()">
+      <span class="material-symbols-outlined">{{isPlaying ? 'pause' : 'play_arrow'}}</span>
+    </button>
+    <mat-slider min="0" max="{{framesRendered-1}}" step="1" style="width: 100%" color="accent">
       <!-- <input matSliderThumb [(ngModel)]="currentFrame" (dragStart)="isPlaying=false"> -->
       <input matSliderThumb [(ngModel)]="currentFrame">
     </mat-slider>

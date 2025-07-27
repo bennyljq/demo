@@ -2,6 +2,9 @@ import { Component, HostListener } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import * as eq from './gravity2025-equations';
 import * as dec from './gravity2025-decorations';
+import { MatDialog } from '@angular/material/dialog';
+import { Gravity2025DialogComponent } from '../gravity2025-dialog/gravity2025-dialog.component';
+import { Gravity2025DialogEditComponent } from '../gravity2025-dialog-edit/gravity2025-dialog-edit.component';
 
 @Component({
   selector: 'app-gravity2025',
@@ -9,7 +12,7 @@ import * as dec from './gravity2025-decorations';
   styleUrls: ['./gravity2025.component.scss']
 })
 export class Gravity2025Component {
-  constructor( private titleService: Title ) {
+  constructor( private titleService: Title, private dialog: MatDialog ) {
     this.titleService.setTitle("3 Body Problem");
   }
   
@@ -55,6 +58,12 @@ export class Gravity2025Component {
   drawTrails: boolean = true;
   trailLength: number = 400;
   preset: number = 0;
+  velocityArrowScale: number;
+  accelerationArrowScale: number;
+  arrowHeadLength: number;
+  arrowHeadAngleDeg: number = 30;
+  drawVelocityArrow: boolean = true;
+  drawAccelerationArrow: boolean = true;
 
   ngAfterViewInit() {
     this.initMaster()
@@ -109,6 +118,9 @@ export class Gravity2025Component {
     this.celestialBodyRadius = this.shortEdge * 0.03;
     this.c.lineJoin = "round";
     this.c.lineWidth = this.celestialBodyRadius * 0.1 + 1;
+    this.velocityArrowScale = this.shortEdge * 0.1;
+    this.accelerationArrowScale = this.shortEdge * 0.015;
+    this.arrowHeadLength = Math.sqrt(this.shortEdge) * 0.8
   }
 
   initBackgroundStars(numStars: number) {
@@ -177,20 +189,91 @@ export class Gravity2025Component {
     } 
 
     // --- Draw Bodies ---
-    this.drawBodies();
+    this.drawCelestialBodies();
 
     // --- Next Frame ---
     this.animationId = requestAnimationFrame(this.animate);
   };
 
-  private drawBodies() {
+  private drawCelestialBodies() {
     this.c.save();
     this.c.shadowBlur = this.celestialBodyRadius * 2;
 
     let counter = 0;
     for (let body of this.bodyLocations[this.currentFrame]) {
+      this.c.shadowColor = this.bodyColours[counter].body;
       const x = body.x * (this.shortEdge / this.shortEdgeAU) + this.canvasWidth / 2;
       const y = body.y * (this.shortEdge / this.shortEdgeAU) + this.canvasHeight / 2;
+
+      if (this.drawVelocityArrow && (Math.abs(body.v_x) + Math.abs(body.v_y)) > 0.001) {
+        this.c.strokeStyle = this.bodyColours[counter].trail;
+        this.c.fillStyle = this.bodyColours[counter].trail;
+
+        let arrowTipX = x + body.v_x*this.velocityArrowScale
+        let arrowTipY = y + body.v_y*this.velocityArrowScale
+        const angle = Math.atan2(arrowTipY - y, arrowTipX - x);
+        arrowTipX += (this.celestialBodyRadius + this.arrowHeadLength) * Math.cos(angle) * 0.9
+        arrowTipY += (this.celestialBodyRadius + this.arrowHeadLength) * Math.sin(angle) * 0.9
+        const headAngle = (Math.PI * this.arrowHeadAngleDeg) / 180;
+
+        const shaftX = arrowTipX - this.arrowHeadLength * Math.cos(angle) * 0.5;
+        const shaftY = arrowTipY - this.arrowHeadLength * Math.sin(angle) * 0.5;
+
+        const arrowLeftX = arrowTipX - this.arrowHeadLength * Math.cos(angle - headAngle);
+        const arrowLeftY = arrowTipY - this.arrowHeadLength * Math.sin(angle - headAngle);
+
+        const arrowRightX = arrowTipX - this.arrowHeadLength * Math.cos(angle + headAngle);
+        const arrowRightY = arrowTipY - this.arrowHeadLength * Math.sin(angle + headAngle);
+
+        // Draw arrow shaft
+        this.c.beginPath();
+        this.c.moveTo(x, y);
+        this.c.lineTo(shaftX, shaftY);
+        this.c.stroke();
+
+        // Draw arrowhead
+        this.c.beginPath();
+        this.c.moveTo(arrowTipX, arrowTipY);
+        this.c.lineTo(arrowLeftX, arrowLeftY);
+        this.c.lineTo(arrowRightX, arrowRightY);
+        this.c.closePath();
+        this.c.fill();
+      }
+
+      if (this.drawAccelerationArrow && (Math.abs(body.a_x) + Math.abs(body.a_y)) > 0.001) {
+        this.c.strokeStyle = this.bodyColours[counter].body;
+        this.c.fillStyle = this.bodyColours[counter].body;
+
+        let arrowTipX = x + body.a_x*this.accelerationArrowScale
+        let arrowTipY = y + body.a_y*this.accelerationArrowScale
+        const angle = Math.atan2(arrowTipY - y, arrowTipX - x);
+        arrowTipX += (this.celestialBodyRadius + this.arrowHeadLength) * Math.cos(angle) * 0.9
+        arrowTipY += (this.celestialBodyRadius + this.arrowHeadLength) * Math.sin(angle) * 0.9
+        const headAngle = (Math.PI * this.arrowHeadAngleDeg) / 180;
+
+        const shaftX = arrowTipX - this.arrowHeadLength * Math.cos(angle) * 0.5;
+        const shaftY = arrowTipY - this.arrowHeadLength * Math.sin(angle) * 0.5;
+
+        const arrowLeftX = arrowTipX - this.arrowHeadLength * Math.cos(angle - headAngle);
+        const arrowLeftY = arrowTipY - this.arrowHeadLength * Math.sin(angle - headAngle);
+
+        const arrowRightX = arrowTipX - this.arrowHeadLength * Math.cos(angle + headAngle);
+        const arrowRightY = arrowTipY - this.arrowHeadLength * Math.sin(angle + headAngle);
+
+        // Draw arrow shaft
+        this.c.beginPath();
+        this.c.moveTo(x, y);
+        this.c.lineTo(shaftX, shaftY);
+        this.c.stroke();
+
+        // Draw arrowhead
+        this.c.beginPath();
+        this.c.moveTo(arrowTipX, arrowTipY);
+        this.c.lineTo(arrowLeftX, arrowLeftY);
+        this.c.lineTo(arrowRightX, arrowRightY);
+        this.c.closePath();
+        this.c.fill();
+      }
 
       // Body fill
       this.c.beginPath();
@@ -202,7 +285,7 @@ export class Gravity2025Component {
       // Body stroke
       this.c.beginPath();
       this.c.arc(x, y, this.celestialBodyRadius - this.c.lineWidth / 2, 0, Math.PI * 2);
-      this.c.strokeStyle = body.trailColour;
+      this.c.strokeStyle = this.bodyColours[counter].trail;
       this.c.stroke();
       this.c.closePath();
 
@@ -230,19 +313,46 @@ export class Gravity2025Component {
     }
   }
 
-  initCelestialBodies() {
-    this.celestialBodies = JSON.parse(JSON.stringify(eq.celestialBodyPresets[this.preset]))
+  initCelestialBodies(skipPreset?: boolean) {
+    if (!skipPreset) {
+      this.celestialBodies = JSON.parse(JSON.stringify(eq.celestialBodyPresets[this.preset]))
+    }
+    let bodies = this.celestialBodies
     this.trails = []
     this.bodyLocations = []
-    let temp = JSON.parse(JSON.stringify(eq.celestialBodyPresets[this.preset]))
+    let temp = JSON.parse(JSON.stringify(bodies))
 
-    let countdown = this.trailLength + 100
+    function calc_acceleration(body: eq.celestialBody): eq.celestialBody {
+      let a_x = 0
+      let a_y = 0
+      let otherBodies = bodies.filter(x => x.id != body.id)
+      function calc_body_acceleration(otherBody: eq.celestialBody) {
+        const dist_x = otherBody.position_x - body.position_x
+        const dist_y = otherBody.position_y - body.position_y
+        const dist = Math.sqrt(dist_x**2 + dist_y**2)
+        const a = (eq.G*otherBody.mass)/(dist**2)
+        a_x += a * dist_x/dist
+        a_y += a * dist_y/dist
+      }
+      otherBodies.forEach(calc_body_acceleration);
+      body.acceleration_x = a_x
+      body.acceleration_y = a_y
+      return body
+    }
+
+    temp = temp.map(calc_acceleration)
+
+    let countdown = this.trailLength + 150
     let countingDown = false
     for (let i = 0; i < this.framesRendered; i++) {
       let temp2 = []
       for (let j in temp) {
         temp2.push(
-          { x: temp[j].position_x, y: temp[j].position_y }
+          { 
+            x: temp[j].position_x, y: temp[j].position_y, 
+            v_x: temp[j].velocity_x, v_y: temp[j].velocity_y,
+            a_x: temp[j].acceleration_x, a_y: temp[j].acceleration_y,
+          }
         )
         if (Math.max(temp[j].position_x, temp[j].position_y) > 5) {
           countingDown = true
@@ -324,28 +434,107 @@ export class Gravity2025Component {
     }
   }
   
-  toggleSpeed() {
+  upSpeed() {
+    if (this.frameRate/120 >= 16) return;
     this.frameRate *= 2
-    if (this.frameRate/60 > 32) this.frameRate = 60;
+  }
+  
+  downSpeed() {
+    if (this.frameRate/120 <= 0.25) return;
+    this.frameRate /= 2
   }
 
-  togglePreset() {
-    this.preset = (this.preset + 1) % eq.celestialBodyPresets.length
+  initPreset() {
+    // this.preset = (this.preset + 1) % eq.celestialBodyPresets.length
     this.currentFrame = 0
     this.framesRendered = this.maxFramesRendered
     this.initCanvas()
     this.initCelestialBodies()
-    this.isPlaying = false
-    this.togglePlay()
+    // this.isPlaying = false
+    // this.togglePlay()
   }
 
   @HostListener('window:keydown', ['$event'])
   handleKey(event: KeyboardEvent) {
+    if (event.key === 'ArrowUp') {
+      this.upSpeed()
+      return
+    } else if (event.key === 'ArrowDown') {
+      this.downSpeed()
+      return
+    }
     if (event.key === 'ArrowLeft' && this.currentFrame > 0) {
       this.currentFrame -= 1;
     } else if (event.key === 'ArrowRight' && this.currentFrame < this.framesRendered-1) {
       this.currentFrame += 1;
+    } else if (event.key === ' ') {
+      this.togglePlay()
     }
+  }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(Gravity2025DialogComponent, {
+      width: '300px',
+      data: { 
+        showAxes: this.showAxes,
+        showStars: this.showStars,
+        rotateStars: this.rotateStars,
+        drawTrails: this.drawTrails,
+        drawVelocityArrow: this.drawVelocityArrow,
+        drawAccelerationArrow: this.drawAccelerationArrow,
+        numPresets: eq.celestialBodyPresets.length,
+        preset: this.preset
+      },
+      restoreFocus: false,
+      backdropClass: 'transparent-backdrop',
+      panelClass: 'no-backdrop',
+    });
+    
+    const instance = dialogRef.componentInstance;
+
+    // Subscribe to live updates
+    instance.dataChanges$.subscribe(output => {
+      this.showAxes = output.showAxes;
+      this.showStars = output.showStars;
+      this.rotateStars = output.rotateStars;
+      this.drawTrails = output.drawTrails;
+      this.drawVelocityArrow = output.drawVelocityArrow;
+      this.drawAccelerationArrow = output.drawAccelerationArrow;
+
+      if (output.preset !== undefined && this.preset !== output.preset) {
+        this.preset = output.preset
+        this.initPreset()
+      }
+    });
+  }
+
+  openEditDialog() {
+    this.currentFrame = 0
+    this.isPlaying = false
+    const dialogRef = this.dialog.open(Gravity2025DialogEditComponent, {
+      width: 'min(80%, 600px)',
+      data: { 
+        celestialBodies: this.celestialBodies
+      },
+      restoreFocus: false,
+      backdropClass: 'transparent-backdrop',
+      panelClass: 'no-backdrop',
+    });
+    
+    const instance = dialogRef.componentInstance;
+
+    // Subscribe to live updates
+    instance.dataChanges$.subscribe(output => {
+      this.preset = undefined
+      this.celestialBodies = output.celestialBodies;
+      this.framesRendered = this.maxFramesRendered
+      this.initCelestialBodies(true);
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // this.framesRendered = this.maxFramesRendered
+      // this.initCelestialBodies(true);
+    })
   }
 
 }

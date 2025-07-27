@@ -1,6 +1,7 @@
 export {drawAxes}
 
 function drawAxes(c: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, shortEdge: number, longEdge: number) {
+  c.save()
   c.strokeStyle = "white";
   c.lineWidth = 1;
   c.beginPath()
@@ -27,4 +28,5 @@ function drawAxes(c: CanvasRenderingContext2D, canvasWidth: number, canvasHeight
   c.moveTo(canvasWidth/2 - longEdge*0.01, canvasHeight/2 + shortEdge/2 - shortEdge*0.05);
   c.lineTo(canvasWidth/2 + longEdge*0.01, canvasHeight/2 + shortEdge/2 - shortEdge*0.05);
   c.stroke();
+  c.restore()
 }
