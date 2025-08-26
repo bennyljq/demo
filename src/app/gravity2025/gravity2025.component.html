@@ -1,9 +1,5 @@
 <div class="gg-container">
   <div class="gg-toolbar">
-    <!-- <button mat-mini-fab color="accent"
-    [title]=" animationId ? 'Pause' : 'Play' ">
-      <mat-icon>{{animationId ? 'pause' : 'play_arrow'}}</mat-icon>
-    </button> -->
     <button mat-mini-fab color="accent" (click)="openDialog()"
     title="Settings" class="button-grey">
       <span class="material-symbols-outlined">settings</span>
@@ -12,29 +8,6 @@
     title="Settings" class="button-grey">
       <span class="material-symbols-outlined">edit</span>
     </button>
-    <!-- <button mat-mini-fab color="accent" (click)="showAxes = !showAxes"
-    [title]=" showAxes ? 'Hide Axes' : 'Show Axes' " [ngClass]=" showAxes ? 'button-green' : 'button-grey' " >
-      <span class="material-symbols-outlined">point_scan</span>
-    </button> -->
-    <!-- <button mat-mini-fab [ngClass]=" showStars ? 'button-green' : 'button-grey' " 
-    (click)="showStars = !showStars"
-    [title]=" showStars ? 'Hide Stars' : 'Show Stars' ">
-      <span class="material-symbols-outlined">stars_2</span>
-    </button> -->
-    <!-- <button mat-mini-fab [ngClass]=" rotateStars ? 'button-green' : 'button-grey' " 
-    (click)="rotateStars = !rotateStars"
-    [title]=" rotateStars ? 'Static Stars' : 'Rotate Stars' ">
-      <span class="material-symbols-outlined">cached</span>
-    </button> -->
-    <!-- <button mat-mini-fab class="button-green"
-    (click)="togglePreset()">
-      <span style="font-size: 20px;">{{preset+1}}</span>
-    </button> -->
-    <!-- <ng-container *ngFor="let item of [].constructor(5); let i = index">
-      <button mat-mini-fab color="primary">
-        <span class="gg-icon-number">{{i+1}}</span>
-      </button>
-    </ng-container> -->
     <div class="spacer"></div>
     <div class="gg-fps-container">
       <span *ngIf="showFps" class="gg-fps">{{currentFrame+1}}/{{framesRendered}}</span>

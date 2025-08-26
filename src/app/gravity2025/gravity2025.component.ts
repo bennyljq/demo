@@ -53,7 +53,7 @@ export class Gravity2025Component {
   frameRate: number = 120;
   public intervalId: ReturnType<typeof setInterval> | null = null;
   accumulatedTime: number = 0;
-  maxFramesRendered: number = 20000;
+  maxFramesRendered: number = 25000;
   framesRendered: number;
   drawTrails: boolean = true;
   trailLength: number = 400;
@@ -71,16 +71,17 @@ export class Gravity2025Component {
 
   @HostListener('window:resize', ['$event'])
   onResize(event?) {
-    this.initMaster()
+    this.initMaster(true)
   }
 
-  initMaster() {
+  initMaster(no_play?: boolean) {
     this.currentFrame = 0
     this.framesRendered = this.maxFramesRendered
     this.initCanvas()
     this.initBackgroundStars(this.numStars)
     this.initCelestialBodies()
     this.isPlaying = false
+    if (no_play) return;
     this.togglePlay()
   }
 
@@ -91,8 +92,8 @@ export class Gravity2025Component {
     this.c = this.canvas.getContext('2d')!;
 
     // Logical dimensions (CSS pixels)
-    const logicalWidth = window.innerWidth;
-    const logicalHeight = window.innerHeight;
+    const logicalWidth = document.documentElement.clientWidth;
+    const logicalHeight = document.documentElement.clientHeight;
 
     // Set canvas style size (CSS size)
     this.canvas.style.width = `${logicalWidth}px`;

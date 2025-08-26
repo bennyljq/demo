@@ -69,83 +69,93 @@ export class BackgroundStar {
 }
 
 export const celestialBodyPresets: Array<Array<celestialBody>> = [
+  // [
+  //   {
+  //     id: 0,
+  //     position_x: 0,
+  //     position_y: 0,
+  //     velocity_x: 0,
+  //     velocity_y: 1.55,
+  //     mass: 2,
+  //   },
+  //   {
+  //     id: 1,
+  //     position_x: 0.8,
+  //     position_y: 0,
+  //     velocity_x: 0,
+  //     velocity_y: -0.25,
+  //     mass: 2,
+  //   },
+  //   {
+  //     id: 2,
+  //     position_x: -0.95,
+  //     position_y: 0,
+  //     velocity_x: 0,
+  //     velocity_y: -1.3,
+  //     mass: 2,
+  //   }
+  // ],
   [
     {
       id: 0,
       position_x: 0,
       position_y: 0,
       velocity_x: 0,
-      velocity_y: 1.55,
+      velocity_y: 1.7,
       mass: 2,
     },
     {
       id: 1,
-      position_x: 0.8,
+      position_x: 1.1,
       position_y: 0,
       velocity_x: 0,
-      velocity_y: -0.25,
+      velocity_y: -0.35,
       mass: 2,
     },
     {
       id: 2,
-      position_x: -0.95,
+      position_x: -1.1,
       position_y: 0,
       velocity_x: 0,
-      velocity_y: -1.3,
+      velocity_y: -1.35,
       mass: 2,
     }
   ],
   [
-    {
-      id: 0,
-      position_x: 0.2,
-      position_y: 0,
-      velocity_x: 0,
-      velocity_y: 1.55,
-      mass: 2,
-    },
-    {
-      id: 1,
-      position_x: 1,
-      position_y: 0,
-      velocity_x: 0,
-      velocity_y: -0.25,
-      mass: 2,
-    },
-    {
-      id: 2,
-      position_x: -1,
-      position_y: 0,
-      velocity_x: 0,
-      velocity_y: -1.3,
-      mass: 2,
-    }
+    {"id": 0, "position_x":  1.00000000,   "position_y":  0.00000000,   "velocity_x":  0.00000000,   "velocity_y":  1.07456993, "mass": 2},
+    {"id": 1, "position_x": -0.50000000,   "position_y":  0.86602540,   "velocity_x": -0.93029604,   "velocity_y": -0.53728497, "mass": 2},
+    {"id": 2, "position_x": -0.50000000,   "position_y": -0.86602540,   "velocity_x":  0.93029604,   "velocity_y": -0.53728497, "mass": 2}
   ],
+  // [
+  //   {
+  //     id: 0,
+  //     position_x: 0,
+  //     position_y: 0,
+  //     velocity_x: 0,
+  //     velocity_y: 1.55,
+  //     mass: 2,
+  //   },
+  //   {
+  //     id: 1,
+  //     position_x: 1,
+  //     position_y: 0,
+  //     velocity_x: 0,
+  //     velocity_y: -0.25,
+  //     mass: 2,
+  //   },
+  //   {
+  //     id: 2,
+  //     position_x: -1,
+  //     position_y: 0,
+  //     velocity_x: 0,
+  //     velocity_y: -1.3,
+  //     mass: 2,
+  //   }
+  // ],
   [
-    {
-      id: 0,
-      position_x: 0,
-      position_y: 0,
-      velocity_x: 0,
-      velocity_y: 1.55,
-      mass: 2,
-    },
-    {
-      id: 1,
-      position_x: 1,
-      position_y: 0,
-      velocity_x: 0,
-      velocity_y: -0.25,
-      mass: 2,
-    },
-    {
-      id: 2,
-      position_x: -1,
-      position_y: 0,
-      velocity_x: 0,
-      velocity_y: -1.3,
-      mass: 2,
-    }
+    {"id": 0, "position_x": -0.24308753,   "position_y":  0.97000436,   "velocity_x":  0.61100004,   "velocity_y":  0.65932743, "mass": 2},
+    {"id": 1, "position_x":  0.24308753,   "position_y": -0.97000436,   "velocity_x":  0.61100004,   "velocity_y":  0.65932743, "mass": 2},
+    {"id": 2, "position_x":  0.00000000,   "position_y":  0.00000000,   "velocity_x": -1.22200008,   "velocity_y": -1.31865487, "mass": 2}
   ],
   // [
   //   {
