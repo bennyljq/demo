@@ -4,6 +4,8 @@
   will-change: transform;
   position: absolute;
   top: 0;
+  touch-action: none;
+  display: block;
 }
 .gg-icon-number {
   font-weight: bold;
@@ -53,4 +55,20 @@
 .button-grey {
   background-color: grey;
   color: white;
+}
+.marker-layer {
+  position: fixed;   /* sits above entire window */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* clicks go through to canvas */
+}
+.marker {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: pink;
+  border-radius: 50%;
+  transform: translate(-50%, -50%); /* center on click */
 }

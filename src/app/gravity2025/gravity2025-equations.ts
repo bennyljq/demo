@@ -98,6 +98,14 @@ export const celestialBodyPresets: Array<Array<celestialBody>> = [
   [
     {
       id: 0,
+      position_x: -1.1,
+      position_y: 0,
+      velocity_x: 0,
+      velocity_y: -1.35,
+      mass: 2,
+    },
+    {
+      id: 1,
       position_x: 0,
       position_y: 0,
       velocity_x: 0,
@@ -105,21 +113,13 @@ export const celestialBodyPresets: Array<Array<celestialBody>> = [
       mass: 2,
     },
     {
-      id: 1,
+      id: 2,
       position_x: 1.1,
       position_y: 0,
       velocity_x: 0,
       velocity_y: -0.35,
       mass: 2,
     },
-    {
-      id: 2,
-      position_x: -1.1,
-      position_y: 0,
-      velocity_x: 0,
-      velocity_y: -1.35,
-      mass: 2,
-    }
   ],
   [
     {"id": 0, "position_x":  1.00000000,   "position_y":  0.00000000,   "velocity_x":  0.00000000,   "velocity_y":  1.07456993, "mass": 2},
@@ -194,20 +194,20 @@ export const celestialBodyPresets: Array<Array<celestialBody>> = [
     },
     {
       "id": 1,
+      "position_x": 0,
+      "position_y": 0,
+      "velocity_x": -1.31865487,
+      "velocity_y": 1.22200008,
+      "mass": 2
+    },
+    {
+      "id": 2,
       "position_x": -0.97000436,
       "position_y": -0.24308753,
       "velocity_x": 0.65932743,
       "velocity_y": -0.61100004,
       "mass": 2
     },
-    {
-      "id": 2,
-      "position_x": 0,
-      "position_y": 0,
-      "velocity_x": -1.31865487,
-      "velocity_y": 1.22200008,
-      "mass": 2
-    }
   ],
   // [
   //   {'id': 0, 'position_x': -1.0, 'position_y': 0.0, 'velocity_x': 0.0, 'velocity_y': 0.5656854249492381, 'mass': 2},

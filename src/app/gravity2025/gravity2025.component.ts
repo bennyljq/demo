@@ -5,6 +5,8 @@ import * as dec from './gravity2025-decorations';
 import { MatDialog } from '@angular/material/dialog';
 import { Gravity2025DialogComponent } from '../gravity2025-dialog/gravity2025-dialog.component';
 import { Gravity2025DialogEditComponent } from '../gravity2025-dialog-edit/gravity2025-dialog-edit.component';
+import { Gravity2025DialogGalleryComponent } from '../gravity2025-dialog-gallery/gravity2025-dialog-gallery.component';
+import { Gravity2025DialogVelocityComponent } from '../gravity2025-dialog-velocity/gravity2025-dialog-velocity.component';
 
 @Component({
   selector: 'app-gravity2025',
@@ -25,10 +27,10 @@ export class Gravity2025Component {
   shortEdge: number;
   shortEdgeAU: number = 2.5; // how many Astronomical Units is the short edge
   longEdge: number;
-  showFps: boolean = true;
+  showFrames: boolean = true;
   showAxes: boolean = false;
-  showStars: boolean = true;
-  rotateStars: boolean = true;
+  showStars: boolean = false;
+  rotateStars: boolean = false;
   prevFrameTimestamp: number;
   numStars: number;
   angle: number = 0;
@@ -44,8 +46,8 @@ export class Gravity2025Component {
   trails: Array<any> = [];
   bodyColours = [
     { body: 'DodgerBlue', trail: 'PowderBlue' },
-    { body: 'Firebrick', trail: 'Pink' },
     { body: 'DarkViolet', trail: 'Thistle' },
+    { body: 'Firebrick', trail: 'Pink' },
   ]
   bodyLocations: Array<any>;
   currentFrame: number = 0;
@@ -57,16 +59,21 @@ export class Gravity2025Component {
   framesRendered: number;
   drawTrails: boolean = true;
   trailLength: number = 400;
-  preset: number = 0;
+  preset: number = undefined;
   velocityArrowScale: number;
   accelerationArrowScale: number;
   arrowHeadLength: number;
   arrowHeadAngleDeg: number = 30;
   drawVelocityArrow: boolean = true;
   drawAccelerationArrow: boolean = true;
+  showControls: boolean = false;
+  modeRandom: boolean = false;
+  modeGallery: boolean = false;
+  modeEdit: boolean = false;
 
   ngAfterViewInit() {
-    this.initMaster()
+    // this.initMaster(true)
+    this.initRandom()
   }
 
   @HostListener('window:resize', ['$event'])
@@ -446,17 +453,50 @@ export class Gravity2025Component {
   }
 
   initPreset() {
-    // this.preset = (this.preset + 1) % eq.celestialBodyPresets.length
     this.currentFrame = 0
     this.framesRendered = this.maxFramesRendered
     this.initCanvas()
     this.initCelestialBodies()
-    // this.isPlaying = false
-    // this.togglePlay()
+    this.showControls = true
+    this.modeGallery = true
+    this.modeRandom = false
+    this.modeEdit = false
+    this.isPlaying = false
+    this.togglePlay()
+  }
+
+  initRandom() {
+    this.currentFrame = 0
+    this.framesRendered = 1
+    this.initCanvas()
+    this.initBackgroundStars(this.numStars)
+    this.celestialBodies = [ // change to random 
+      {
+        id: 0,
+        position_x: -1.1,
+        position_y: 0,
+        velocity_x: 0,
+        velocity_y: -1.35,
+        mass: 2,
+      },
+      {
+        id: 1,
+        position_x: 0,
+        position_y: 0,
+        velocity_x: 0,
+        velocity_y: 1.7,
+        mass: 2,
+      },
+    ]
+    this.initCelestialBodies(true)
+    this.showControls = this.modeGallery = this.isPlaying = false
+    this.modeRandom = this.modeEdit = true
+    this.preset = undefined
   }
 
   @HostListener('window:keydown', ['$event'])
   handleKey(event: KeyboardEvent) {
+    return
     if (event.key === 'ArrowUp') {
       this.upSpeed()
       return
@@ -468,8 +508,6 @@ export class Gravity2025Component {
       this.currentFrame -= 1;
     } else if (event.key === 'ArrowRight' && this.currentFrame < this.framesRendered-1) {
       this.currentFrame += 1;
-    } else if (event.key === ' ') {
-      this.togglePlay()
     }
   }
 
@@ -538,4 +576,95 @@ export class Gravity2025Component {
     })
   }
 
+  openGalleryDialog() {
+    const dialogRef = this.dialog.open(Gravity2025DialogGalleryComponent, {
+      width: '300px',
+      data: { 
+        numPresets: eq.celestialBodyPresets.length,
+        preset: this.preset
+      },
+      restoreFocus: false,
+      backdropClass: 'transparent-backdrop',
+      panelClass: 'no-backdrop',
+    });
+    
+    const instance = dialogRef.componentInstance;
+
+    // Subscribe to live updates
+    instance.dataChanges$.subscribe(output => {
+      if (output.preset !== undefined && this.preset !== output.preset) {
+        this.preset = output.preset
+        this.initPreset()
+      }
+    });
+  }
+
+  openVelocityDialog() {
+    const dialogRef = this.dialog.open(Gravity2025DialogVelocityComponent, {
+      width: 'min(80%, 600px)',
+      data: { 
+        celestialBodies: this.celestialBodies
+      },
+      restoreFocus: false,
+      backdropClass: 'transparent-backdrop',
+    });
+    
+    const instance = dialogRef.componentInstance;
+
+    // Subscribe to live updates
+    instance.dataChanges$.subscribe(output => {
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+    })
+  }
+
+  private dragging = false;
+  private activePointerId: number | null = null;
+  private getLogicalPoint(evt: PointerEvent) {
+    const rect = this.canvas.getBoundingClientRect();
+    const x = evt.clientX - rect.left;
+    const y = evt.clientY - rect.top;
+    return { x, y };
+  }
+  renderNewBody(evt: PointerEvent) {
+    evt.preventDefault();
+    const { x, y } = this.getLogicalPoint(evt);
+    this.activePointerId = evt.pointerId;
+    let new_body = {
+      id: 2,
+      position_x: ( x - (this.canvasWidth / 2) ) * (this.shortEdgeAU / this.shortEdge),
+      position_y: ( y - (this.canvasHeight / 2) ) * (this.shortEdgeAU / this.shortEdge),
+      velocity_x: 0,
+      velocity_y: 0,
+      mass: 2,
+    }
+    if (this.celestialBodies.length == 3) {
+      this.celestialBodies.pop()
+    }
+    this.celestialBodies.push(new_body)
+    this.canvas.setPointerCapture?.(evt.pointerId);
+    this.currentFrame = 0
+    this.framesRendered = 1
+    this.initCanvas()
+    this.initCelestialBodies(true)
+    this.showControls = this.modeGallery = this.isPlaying = false
+  }
+  onPointerDown(evt: PointerEvent) {
+    if (!this.modeEdit) return
+    this.dragging = true;
+    this.renderNewBody(evt)
+  }
+  onPointerMove(evt: PointerEvent) {
+    if (!this.modeEdit) return
+    if (!this.dragging || evt.pointerId !== this.activePointerId) return;
+    this.renderNewBody(evt)
+  }
+  onPointerUp(evt: PointerEvent) {
+    if (!this.modeEdit) return
+    if (!this.dragging || evt.pointerId !== this.activePointerId) return;
+    this.dragging = false;
+    this.activePointerId = null;
+    this.openVelocityDialog()
+  }
 }

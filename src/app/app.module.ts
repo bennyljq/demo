@@ -69,6 +69,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { Gravity2025DialogGalleryComponent } from './gravity2025-dialog-gallery/gravity2025-dialog-gallery.component';
+import { Gravity2025DialogVelocityComponent } from './gravity2025-dialog-velocity/gravity2025-dialog-velocity.component';
 
 
 @NgModule({
@@ -114,7 +116,9 @@ import { MatInputModule } from '@angular/material/input';
     ParallaxComponent,
     Gravity2025Component,
     Gravity2025DialogComponent,
-    Gravity2025DialogEditComponent
+    Gravity2025DialogEditComponent,
+    Gravity2025DialogGalleryComponent,
+    Gravity2025DialogVelocityComponent
   ],
   imports: [
     BrowserModule,

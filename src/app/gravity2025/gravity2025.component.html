@@ -4,14 +4,18 @@
     title="Settings" class="button-grey">
       <span class="material-symbols-outlined">settings</span>
     </button>
-    <button mat-mini-fab color="accent" (click)="openEditDialog()"
-    title="Settings" class="button-grey">
-      <span class="material-symbols-outlined">edit</span>
+    <button mat-mini-fab color="accent" (click)="initRandom()"
+    title="Random Puzzle" [class]=" modeRandom ? '': 'button-grey' ">
+      <span class="material-symbols-outlined">casino</span>
+    </button>
+    <button mat-mini-fab color="accent" (click)="openGalleryDialog()"
+    title="Gallery" [class]=" modeGallery ? '': 'button-grey' ">
+      <span class="material-symbols-outlined">gallery_thumbnail</span>
     </button>
     <div class="spacer"></div>
     <div class="gg-fps-container">
-      <span *ngIf="showFps" class="gg-fps">{{currentFrame+1}}/{{framesRendered}}</span>
-      <span *ngIf="showFps" class="gg-fps">{{frameRate/120}}x Speed</span>
+      <span *ngIf="showFrames" class="gg-fps">{{currentFrame+1}}/{{framesRendered}}</span>
+      <span class="gg-fps">{{frameRate/120}}x Speed</span>
       <button mat-mini-fab style="transform: scale(0.9);"
       [ngClass]=" frameRate/120 >= 16 ? 'button-grey' : 'button-green' "
       (click)="upSpeed()">
@@ -24,7 +28,7 @@
       </button>
     </div>
   </div>
-  <div class="gg-toolbar gg-toolbar-slider">
+  <div class="gg-toolbar gg-toolbar-slider" *ngIf="showControls">
     <button mat-mini-fab [ngClass]="{ 'button-orange': !isPlaying, 'button-grey': isPlaying }"
     (click)="togglePlay()">
       <span class="material-symbols-outlined">{{isPlaying ? 'pause' : 'play_arrow'}}</span>
@@ -34,5 +38,12 @@
       <input matSliderThumb [(ngModel)]="currentFrame">
     </mat-slider>
   </div>
-  <canvas id="gg-canvas"></canvas>
+  <canvas id="gg-canvas"
+    (pointerdown)="onPointerDown($event)"
+    (pointermove)="onPointerMove($event)"
+    (pointerup)="onPointerUp($event)"
+    (pointercancel)="onPointerUp($event)"
+    (pointerleave)="onPointerUp($event)"
+    (contextmenu)="$event.preventDefault()">
+  </canvas>
 </div>
