@@ -3,9 +3,10 @@ import { lastValueFrom, timer } from 'rxjs';
 import { ThemeService } from 'src/app/physics/theme.service';
 
 @Component({
-  selector: 'app-train-concept',
-  templateUrl: './train-concept.component.html',
-  styleUrls: ['./train-concept.component.scss', '../train-home/train-home.component.scss']
+    selector: 'app-train-concept',
+    templateUrl: './train-concept.component.html',
+    styleUrls: ['./train-concept.component.scss', '../train-home/train-home.component.scss'],
+    standalone: false
 })
 export class TrainConceptComponent {
 

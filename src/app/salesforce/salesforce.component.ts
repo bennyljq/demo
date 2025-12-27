@@ -3,9 +3,10 @@ import * as moment from 'moment';
 import { lastValueFrom, timer } from 'rxjs';
 
 @Component({
-  selector: 'app-salesforce',
-  templateUrl: './salesforce.component.html',
-  styleUrls: ['./salesforce.component.scss']
+    selector: 'app-salesforce',
+    templateUrl: './salesforce.component.html',
+    styleUrls: ['./salesforce.component.scss'],
+    standalone: false
 })
 export class SalesforceComponent {
 

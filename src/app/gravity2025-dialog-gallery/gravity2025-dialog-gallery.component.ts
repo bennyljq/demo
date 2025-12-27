@@ -3,9 +3,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 
 @Component({
-  selector: 'app-gravity2025-dialog-gallery',
-  templateUrl: './gravity2025-dialog-gallery.component.html',
-  styleUrls: ['./gravity2025-dialog-gallery.component.scss']
+    selector: 'app-gravity2025-dialog-gallery',
+    templateUrl: './gravity2025-dialog-gallery.component.html',
+    styleUrls: ['./gravity2025-dialog-gallery.component.scss'],
+    standalone: false
 })
 export class Gravity2025DialogGalleryComponent {
   dataChanges$ = new Subject<any>();

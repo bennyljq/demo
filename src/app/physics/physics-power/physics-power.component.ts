@@ -3,9 +3,10 @@ import { ThemeService } from '../theme.service';
 import { lastValueFrom, timer, timestamp } from 'rxjs';
 
 @Component({
-  selector: 'app-physics-power',
-  templateUrl: './physics-power.component.html',
-  styleUrls: ['./physics-power.component.scss', '../physics-intro/physics-intro.component.scss']
+    selector: 'app-physics-power',
+    templateUrl: './physics-power.component.html',
+    styleUrls: ['./physics-power.component.scss', '../physics-intro/physics-intro.component.scss'],
+    standalone: false
 })
 export class PhysicsPowerComponent {
 

@@ -4,9 +4,10 @@ import {Location} from '@angular/common';
 import { lastValueFrom, timer } from 'rxjs';
 
 @Component({
-  selector: 'app-train2-concept',
-  templateUrl: './train2-concept.component.html',
-  styleUrls: ['./train2-concept.component.scss', '../train2-home/train2-home.component.scss']
+    selector: 'app-train2-concept',
+    templateUrl: './train2-concept.component.html',
+    styleUrls: ['./train2-concept.component.scss', '../train2-home/train2-home.component.scss'],
+    standalone: false
 })
 export class Train2ConceptComponent {
 

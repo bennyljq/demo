@@ -1,9 +1,10 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 
 @Component({
-  selector: 'app-parallax',
-  templateUrl: './parallax.component.html',
-  styleUrls: ['./parallax.component.scss']
+    selector: 'app-parallax',
+    templateUrl: './parallax.component.html',
+    styleUrls: ['./parallax.component.scss'],
+    standalone: false
 })
 export class ParallaxComponent {
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;

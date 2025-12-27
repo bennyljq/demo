@@ -9,9 +9,10 @@ import { Gravity2025DialogGalleryComponent } from '../gravity2025-dialog-gallery
 import { Gravity2025DialogVelocityComponent } from '../gravity2025-dialog-velocity/gravity2025-dialog-velocity.component';
 
 @Component({
-  selector: 'app-gravity2025',
-  templateUrl: './gravity2025.component.html',
-  styleUrls: ['./gravity2025.component.scss']
+    selector: 'app-gravity2025',
+    templateUrl: './gravity2025.component.html',
+    styleUrls: ['./gravity2025.component.scss'],
+    standalone: false
 })
 export class Gravity2025Component {
   constructor( private titleService: Title, private dialog: MatDialog ) {

@@ -3,9 +3,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 
 @Component({
-  selector: 'app-gravity2025-dialog-edit',
-  templateUrl: './gravity2025-dialog-edit.component.html',
-  styleUrls: ['./gravity2025-dialog-edit.component.scss']
+    selector: 'app-gravity2025-dialog-edit',
+    templateUrl: './gravity2025-dialog-edit.component.html',
+    styleUrls: ['./gravity2025-dialog-edit.component.scss'],
+    standalone: false
 })
 export class Gravity2025DialogEditComponent {
   

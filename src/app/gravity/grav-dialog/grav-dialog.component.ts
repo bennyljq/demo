@@ -4,9 +4,10 @@ import * as eq from '../grav-equations'
 import { lastValueFrom, timer } from 'rxjs';
 
 @Component({
-  selector: 'app-grav-dialog',
-  templateUrl: './grav-dialog.component.html',
-  styleUrls: ['./grav-dialog.component.scss']
+    selector: 'app-grav-dialog',
+    templateUrl: './grav-dialog.component.html',
+    styleUrls: ['./grav-dialog.component.scss'],
+    standalone: false
 })
 export class GravDialogComponent {
 

@@ -3,9 +3,10 @@ import { Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
 
 @Component({
-  selector: 'app-experimental',
-  templateUrl: './experimental.component.html',
-  styleUrls: ['./experimental.component.scss']
+    selector: 'app-experimental',
+    templateUrl: './experimental.component.html',
+    styleUrls: ['./experimental.component.scss'],
+    standalone: false
 })
 export class ExperimentalComponent {
 

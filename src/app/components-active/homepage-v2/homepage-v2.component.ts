@@ -11,38 +11,39 @@ import {
 } from '@angular/animations';
 
 @Component({
-  selector: 'app-homepage-v2',
-  templateUrl: './homepage-v2.component.html',
-  styleUrls: ['./homepage-v2.component.scss'],
-  animations: [
-    trigger('fadeIn1', [
-      state('void', style({
-        opacity: 0,
-        transform: 'translateY(-5vh)'
-      })),
-      transition('void => *', [
-        animate('0.5s 1.5s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ])
-    ]),
-    trigger('fadeIn2', [
-      state('void', style({
-        opacity: 0,
-        transform: 'translateY(-5vh)'
-      })),
-      transition('void => *', [
-        animate('0.5s 1.75s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ])
-    ]),
-    trigger('fadeIn3', [
-      state('void', style({
-        opacity: 0,
-        transform: 'translateY(-5vh)'
-      })),
-      transition('void => *', [
-        animate('0.5s 2s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ])
-    ])
-  ]
+    selector: 'app-homepage-v2',
+    templateUrl: './homepage-v2.component.html',
+    styleUrls: ['./homepage-v2.component.scss'],
+    animations: [
+        trigger('fadeIn1', [
+            state('void', style({
+                opacity: 0,
+                transform: 'translateY(-5vh)'
+            })),
+            transition('void => *', [
+                animate('0.5s 1.5s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+            ])
+        ]),
+        trigger('fadeIn2', [
+            state('void', style({
+                opacity: 0,
+                transform: 'translateY(-5vh)'
+            })),
+            transition('void => *', [
+                animate('0.5s 1.75s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+            ])
+        ]),
+        trigger('fadeIn3', [
+            state('void', style({
+                opacity: 0,
+                transform: 'translateY(-5vh)'
+            })),
+            transition('void => *', [
+                animate('0.5s 2s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+            ])
+        ])
+    ],
+    standalone: false
 })
 export class HomepageV2Component implements OnInit {
 

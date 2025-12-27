@@ -4,9 +4,10 @@ import { Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
 
 @Component({
-  selector: 'app-about2',
-  templateUrl: './about2.component.html',
-  styleUrls: ['./about2.component.scss']
+    selector: 'app-about2',
+    templateUrl: './about2.component.html',
+    styleUrls: ['./about2.component.scss'],
+    standalone: false
 })
 export class About2Component {
 

@@ -4,9 +4,10 @@ import { Ball } from './brownian-motion2.objects';
 import { BackgroundStar } from '../gravity-game/gravity-game.objects';
 
 @Component({
-  selector: 'app-brownian-motion2',
-  templateUrl: './brownian-motion2.component.html',
-  styleUrls: ['./brownian-motion2.component.scss']
+    selector: 'app-brownian-motion2',
+    templateUrl: './brownian-motion2.component.html',
+    styleUrls: ['./brownian-motion2.component.scss'],
+    standalone: false
 })
 
 export class BrownianMotion2Component {

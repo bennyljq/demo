@@ -5,9 +5,10 @@ import { ThemeService } from 'src/app/physics/theme.service';
 import { TrainDialogComponent } from '../train-dialog/train-dialog.component';
 
 @Component({
-  selector: 'app-train-home',
-  templateUrl: './train-home.component.html',
-  styleUrls: ['./train-home.component.scss']
+    selector: 'app-train-home',
+    templateUrl: './train-home.component.html',
+    styleUrls: ['./train-home.component.scss'],
+    standalone: false
 })
 export class TrainHomeComponent {
 

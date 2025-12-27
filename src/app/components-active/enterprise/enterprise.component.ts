@@ -4,9 +4,10 @@ import { lastValueFrom, timer } from 'rxjs';
 import {Location} from '@angular/common';
 
 @Component({
-  selector: 'app-enterprise',
-  templateUrl: './enterprise.component.html',
-  styleUrls: ['./enterprise.component.scss']
+    selector: 'app-enterprise',
+    templateUrl: './enterprise.component.html',
+    styleUrls: ['./enterprise.component.scss'],
+    standalone: false
 })
 export class EnterpriseComponent implements OnInit {
 

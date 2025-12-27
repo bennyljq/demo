@@ -3,9 +3,10 @@ import { Subject } from 'rxjs';
 import { AfterViewInit, Component, ElementRef, EventEmitter, Output, ViewChild, Inject } from '@angular/core';
 
 @Component({
-  selector: 'app-gravity2025-dialog-velocity',
-  templateUrl: './gravity2025-dialog-velocity.component.html',
-  styleUrls: ['./gravity2025-dialog-velocity.component.scss']
+    selector: 'app-gravity2025-dialog-velocity',
+    templateUrl: './gravity2025-dialog-velocity.component.html',
+    styleUrls: ['./gravity2025-dialog-velocity.component.scss'],
+    standalone: false
 })
 export class Gravity2025DialogVelocityComponent {
   dataChanges$ = new Subject<any>();

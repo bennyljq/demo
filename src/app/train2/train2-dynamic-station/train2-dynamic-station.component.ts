@@ -3,9 +3,10 @@ import { lastValueFrom, timer } from 'rxjs';
 import { ThemeService } from 'src/app/physics/theme.service';
 
 @Component({
-  selector: 'app-train2-dynamic-station',
-  templateUrl: './train2-dynamic-station.component.html',
-  styleUrls: ['./train2-dynamic-station.component.scss']
+    selector: 'app-train2-dynamic-station',
+    templateUrl: './train2-dynamic-station.component.html',
+    styleUrls: ['./train2-dynamic-station.component.scss'],
+    standalone: false
 })
 export class Train2DynamicStationComponent {
 

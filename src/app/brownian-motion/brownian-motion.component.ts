@@ -3,9 +3,10 @@ import { Title } from '@angular/platform-browser';
 import { Ball } from './brownian-motion.objects';
 
 @Component({
-  selector: 'app-brownian-motion',
-  templateUrl: './brownian-motion.component.html',
-  styleUrls: ['./brownian-motion.component.scss']
+    selector: 'app-brownian-motion',
+    templateUrl: './brownian-motion.component.html',
+    styleUrls: ['./brownian-motion.component.scss'],
+    standalone: false
 })
 export class BrownianMotionComponent {
   constructor(private titleService: Title) {

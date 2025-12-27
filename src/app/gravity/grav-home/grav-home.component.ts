@@ -7,9 +7,10 @@ import { GravDialogComponent } from '../grav-dialog/grav-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-grav-home',
-  templateUrl: './grav-home.component.html',
-  styleUrls: ['./grav-home.component.scss']
+    selector: 'app-grav-home',
+    templateUrl: './grav-home.component.html',
+    styleUrls: ['./grav-home.component.scss'],
+    standalone: false
 })
 export class GravHomeComponent {
 

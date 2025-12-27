@@ -3,9 +3,10 @@ import { ThemeService } from 'src/app/physics/theme.service';
 import {Location} from '@angular/common';
 
 @Component({
-  selector: 'app-train2-home',
-  templateUrl: './train2-home.component.html',
-  styleUrls: ['./train2-home.component.scss']
+    selector: 'app-train2-home',
+    templateUrl: './train2-home.component.html',
+    styleUrls: ['./train2-home.component.scss'],
+    standalone: false
 })
 export class Train2HomeComponent {
 

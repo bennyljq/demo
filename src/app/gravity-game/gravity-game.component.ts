@@ -4,9 +4,10 @@ import { BackgroundStar, celestialBodyPreset1, celestialBodyPreset2, celestialBo
 import * as eq from '../gravity/grav-equations'
 
 @Component({
-  selector: 'app-gravity-game',
-  templateUrl: './gravity-game.component.html',
-  styleUrls: ['./gravity-game.component.scss']
+    selector: 'app-gravity-game',
+    templateUrl: './gravity-game.component.html',
+    styleUrls: ['./gravity-game.component.scss'],
+    standalone: false
 })
 export class GravityGameComponent {
   constructor( private titleService: Title ) {

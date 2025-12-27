@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ThemeService } from '../theme.service';
 
 @Component({
-  selector: 'app-physics-home',
-  templateUrl: './physics-home.component.html',
-  styleUrls: ['./physics-home.component.scss']
+    selector: 'app-physics-home',
+    templateUrl: './physics-home.component.html',
+    styleUrls: ['./physics-home.component.scss'],
+    standalone: false
 })
 export class PhysicsHomeComponent implements OnInit {
 

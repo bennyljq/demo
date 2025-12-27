@@ -3,9 +3,10 @@ import { ThemeService } from '../theme.service';
 import { lastValueFrom, timer } from 'rxjs';
 
 @Component({
-  selector: 'app-physics-battery',
-  templateUrl: './physics-battery.component.html',
-  styleUrls: ['./physics-battery.component.scss', '../physics-intro/physics-intro.component.scss']
+    selector: 'app-physics-battery',
+    templateUrl: './physics-battery.component.html',
+    styleUrls: ['./physics-battery.component.scss', '../physics-intro/physics-intro.component.scss'],
+    standalone: false
 })
 export class PhysicsBatteryComponent {
 

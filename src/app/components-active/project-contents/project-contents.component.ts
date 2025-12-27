@@ -1,9 +1,10 @@
 import { Component, HostListener } from '@angular/core';
 
 @Component({
-  selector: 'app-project-contents',
-  templateUrl: './project-contents.component.html',
-  styleUrls: ['./project-contents.component.scss']
+    selector: 'app-project-contents',
+    templateUrl: './project-contents.component.html',
+    styleUrls: ['./project-contents.component.scss'],
+    standalone: false
 })
 export class ProjectContentsComponent {
 

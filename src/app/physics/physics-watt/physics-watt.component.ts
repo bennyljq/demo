@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ThemeService } from '../theme.service';
 
 @Component({
-  selector: 'app-physics-watt',
-  templateUrl: './physics-watt.component.html',
-  styleUrls: ['./physics-watt.component.scss', '../physics-intro/physics-intro.component.scss']
+    selector: 'app-physics-watt',
+    templateUrl: './physics-watt.component.html',
+    styleUrls: ['./physics-watt.component.scss', '../physics-intro/physics-intro.component.scss'],
+    standalone: false
 })
 export class PhysicsWattComponent {
 
