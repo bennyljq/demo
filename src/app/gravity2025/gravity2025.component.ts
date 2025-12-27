@@ -29,8 +29,8 @@ export class Gravity2025Component {
   longEdge: number;
   showFrames: boolean = true;
   showAxes: boolean = false;
-  showStars: boolean = false;
-  rotateStars: boolean = false;
+  showStars: boolean = true;
+  rotateStars: boolean = true;
   prevFrameTimestamp: number;
   numStars: number;
   angle: number = 0;
@@ -70,6 +70,8 @@ export class Gravity2025Component {
   modeRandom: boolean = false;
   modeGallery: boolean = false;
   modeEdit: boolean = false;
+  userVX: number;
+  userVY: number;
 
   ngAfterViewInit() {
     // this.initMaster(true)
@@ -362,7 +364,7 @@ export class Gravity2025Component {
             a_x: temp[j].acceleration_x, a_y: temp[j].acceleration_y,
           }
         )
-        if (Math.max(temp[j].position_x, temp[j].position_y) > 5) {
+        if (Math.max(Math.abs(temp[j].position_x), Math.abs(temp[j].position_y)) > 5) {
           countingDown = true
         }
       }
@@ -471,20 +473,36 @@ export class Gravity2025Component {
     this.initCanvas()
     this.initBackgroundStars(this.numStars)
     this.celestialBodies = [ // change to random 
+      // {
+      //   id: 0,
+      //   position_x: -1.1,
+      //   position_y: 0,
+      //   velocity_x: 0,
+      //   velocity_y: -1.35,
+      //   mass: 2,
+      // },
+      // {
+      //   id: 1,
+      //   position_x: 0,
+      //   position_y: 0,
+      //   velocity_x: 0,
+      //   velocity_y: 1.7,
+      //   mass: 2,
+      // },
       {
         id: 0,
-        position_x: -1.1,
-        position_y: 0,
-        velocity_x: 0,
-        velocity_y: -1.35,
+        position_x: randBetween(-1, 1),
+        position_y: randBetween(-1, 1),
+        velocity_x: randBetween(-1, 1),
+        velocity_y: randBetween(-1, 1),
         mass: 2,
       },
       {
         id: 1,
-        position_x: 0,
-        position_y: 0,
-        velocity_x: 0,
-        velocity_y: 1.7,
+        position_x: randBetween(-1, 1),
+        position_y: randBetween(-1, 1),
+        velocity_x: randBetween(-1, 1),
+        velocity_y: randBetween(-1, 1),
         mass: 2,
       },
     ]
@@ -603,20 +621,27 @@ export class Gravity2025Component {
     const dialogRef = this.dialog.open(Gravity2025DialogVelocityComponent, {
       width: 'min(80%, 600px)',
       data: { 
-        celestialBodies: this.celestialBodies
+        userVX: this.userVX,
+        userVY: this.userVY
       },
       restoreFocus: false,
       backdropClass: 'transparent-backdrop',
+      panelClass: 'no-backdrop',
     });
     
     const instance = dialogRef.componentInstance;
 
     // Subscribe to live updates
     instance.dataChanges$.subscribe(output => {
+      if (output) {
+        this.userVX = output.vector.v_x
+        this.userVY = output.vector.v_y
+        this.updateNewBodyVelocity()
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-    })
+    });
   }
 
   private dragging = false;
@@ -644,11 +669,25 @@ export class Gravity2025Component {
     }
     this.celestialBodies.push(new_body)
     this.canvas.setPointerCapture?.(evt.pointerId);
+    if (this.userVX && this.userVY) {
+      this.updateNewBodyVelocity()
+      return
+    }
     this.currentFrame = 0
-    this.framesRendered = 1
+    this.framesRendered = this.maxFramesRendered
     this.initCanvas()
     this.initCelestialBodies(true)
     this.showControls = this.modeGallery = this.isPlaying = false
+  }
+  updateNewBodyVelocity() {
+    this.celestialBodies[2].velocity_x = this.userVX
+    this.celestialBodies[2].velocity_y = this.userVY
+    this.currentFrame = 0
+    this.framesRendered = this.maxFramesRendered
+    this.initCanvas()
+    this.initCelestialBodies(true)
+    this.modeGallery = this.isPlaying = false
+    this.showControls = true
   }
   onPointerDown(evt: PointerEvent) {
     if (!this.modeEdit) return
@@ -667,4 +706,8 @@ export class Gravity2025Component {
     this.activePointerId = null;
     this.openVelocityDialog()
   }
+}
+
+function randBetween(min: number, max: number): number {
+  return Math.random() * (max - min) + min;
 }

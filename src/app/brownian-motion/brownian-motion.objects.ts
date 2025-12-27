@@ -17,7 +17,7 @@ export class Ball {
   }
 
   update(canvasWidth: number, canvasHeight: number, context: CanvasRenderingContext2D,
-    mouseInCanvas: boolean, mouseX: number, mouseY: number) {
+    mouseInCanvas: boolean, mouseX: number, mouseY: number, activeTouches: Array<any>) {
     if (this.x + this.maxRadius >= canvasWidth) {
       this.dx = -this.dx
       this.x = canvasWidth - this.maxRadius
@@ -36,13 +36,25 @@ export class Ball {
     }
 
     if (mouseInCanvas) {
-      let distX = (mouseX-this.x)
-      let distY = (mouseY-this.y)
-      let dist = Math.sqrt(distX**2 + distY**2)
-      let gravConstant = canvasWidth * canvasHeight * 0.05
-      let repulsion = gravConstant / (dist**2)
-      this.x = Math.abs(this.x + this.dx - repulsion*(distX/dist));
-      this.y = Math.abs(this.y + this.dy - repulsion*(distY/dist));
+      if (activeTouches && activeTouches.length > 0) {
+        for (let touch of activeTouches) {
+          let distX = (touch.x-this.x)
+          let distY = (touch.y-this.y)
+          let dist = Math.sqrt(distX**2 + distY**2)
+          let gravConstant = canvasWidth * canvasHeight * 0.05
+          let repulsion = gravConstant / (dist**2)
+          this.x = Math.abs(this.x + this.dx - repulsion*(distX/dist));
+          this.y = Math.abs(this.y + this.dy - repulsion*(distY/dist));
+        }
+      } else {
+        let distX = (mouseX-this.x)
+        let distY = (mouseY-this.y)
+        let dist = Math.sqrt(distX**2 + distY**2)
+        let gravConstant = canvasWidth * canvasHeight * 0.05
+        let repulsion = gravConstant / (dist**2)
+        this.x = Math.abs(this.x + this.dx - repulsion*(distX/dist));
+        this.y = Math.abs(this.y + this.dy - repulsion*(distY/dist));
+      }
     } else {
       this.x = Math.abs(this.x + this.dx);
       this.y = Math.abs(this.y + this.dy);

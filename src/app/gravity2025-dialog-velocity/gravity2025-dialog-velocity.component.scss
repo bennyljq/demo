@@ -31,3 +31,12 @@
   background-color: grey;
   color: white;
 }
+.velocity-pad {
+  width: 100%; 
+  aspect-ratio: 1;
+  border: 1px solid #ccc; 
+  touch-action: none;
+  display: block; /* ensures getBoundingClientRect matches CSS size */
+}
+.pad-wrap { display:inline-block; border:1px solid #ccc; width:100%; height:100%;}
+canvas { display:block; width:100%; height:100%; padding:0; border:0; }
