@@ -1,4 +1,4 @@
-@import "../physics-styles.scss";
+@use "../physics-styles" as *;
 .phy-container {
   width: 100vw;
   height: 100vh;

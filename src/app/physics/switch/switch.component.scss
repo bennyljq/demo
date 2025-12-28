@@ -1,4 +1,4 @@
-@import "../physics-styles.scss";
+@use "../physics-styles.scss" as *;
 .switch-touch-target {
   padding: 12px 32px 12px 36px;
   cursor: pointer;

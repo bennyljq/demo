@@ -1,4 +1,4 @@
-@import "../train2-styles.scss";
+@use "../train2-styles" as *;
 .t2-container {
   height: 100vh;
   width: 100vw;

@@ -1,4 +1,4 @@
-@import "../train2-styles.scss";
+@use "../train2-styles.scss" as *;
 .t2-home-container {
   position: absolute;
   top: 0;

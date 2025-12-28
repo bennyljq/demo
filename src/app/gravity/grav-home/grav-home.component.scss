@@ -1,4 +1,4 @@
-@import "../grav-styles.scss";
+@use "../grav-styles" as *;
 .grav-container {
   width: 100vw;
   height: 100vh;

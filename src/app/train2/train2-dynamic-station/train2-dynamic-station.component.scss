@@ -1,5 +1,5 @@
-@import "../../train/train-home/train-home.component.scss";
-@import "../../train/train-styles.scss";
+@use "../../train/train-home/train-home.component.scss" as *;
+@use "../../train/train-styles.scss" as *;
 .train-content-container-container {
   margin: 0 7vw;
   height: calc(

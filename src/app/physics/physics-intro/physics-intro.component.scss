@@ -1,4 +1,4 @@
-@import "../physics-styles.scss";
+@use "../physics-styles" as *;
 .phy-content-container {
   background-color: var(--content-bg);
   height: $phy-content-height;
