@@ -31,7 +31,7 @@ export class EnterpriseComponent implements OnInit {
     this._location.back();
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize', [])
   onResize() {
     this.innerWidth = window.innerWidth;
     this.setNumCols()

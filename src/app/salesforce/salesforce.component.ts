@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import * as moment from 'moment';
+import moment from 'moment';
 import { lastValueFrom, timer } from 'rxjs';
 
 @Component({

@@ -1,11 +1,24 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { MatIconModule } from '@angular/material/icon';
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
-    selector: 'app-table',
-    templateUrl: './table.component.html',
-    styleUrls: ['./table.component.scss'],
-    standalone: false
+  selector: 'app-table',
+  templateUrl: './table.component.html',
+  styleUrls: ['./table.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    TableModule,
+    InputTextModule,
+  ],
 })
 export class TableComponent implements OnInit {
   
@@ -22,7 +35,7 @@ export class TableComponent implements OnInit {
     this.onResize()
   }
   
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize', [])
   onResize() {
     this.innerWidth = window.innerWidth;
   }

@@ -52,8 +52,8 @@ import { Gravity2025DialogComponent } from './gravity2025-dialog/gravity2025-dia
 import { Gravity2025DialogEditComponent } from './gravity2025-dialog-edit/gravity2025-dialog-edit.component';
 
 // PrimeNG //
-import { TableModule } from 'primeng/table';
-import { InputTextModule } from 'primeng/inputtext';
+// import { TableModule } from 'primeng/table';
+// import { InputTextModule } from 'primeng/inputtext';
 
 // Angular Material //
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -85,7 +85,7 @@ import { Gravity2025DialogVelocityComponent } from './gravity2025-dialog-velocit
     History2Component,
     EnterpriseComponent,
     ButtonComponent,
-    TableComponent,
+    // TableComponent,
     ContactComponent,
     ContactContentsComponent,
     PhysicsHomeComponent,
@@ -127,9 +127,9 @@ import { Gravity2025DialogVelocityComponent } from './gravity2025-dialog-velocit
     MatToolbarModule,
     MatButtonModule,
     MatGridListModule,
-    TableModule,
+    // TableModule,
     MatIconModule,
-    InputTextModule,
+    // InputTextModule,
     FormsModule,
     MatMenuModule,
     [MathjaxModule.forRoot()],
@@ -142,7 +142,8 @@ import { Gravity2025DialogVelocityComponent } from './gravity2025-dialog-velocit
     MatSlideToggleModule,
     MatFormFieldModule,
     MatInputModule,
-    DragDropModule
+    DragDropModule,
+    TableComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
