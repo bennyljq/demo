@@ -101,7 +101,7 @@ export class SalesforceComponent {
     nGon.style.clipPath = polygon
   }  
   
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize', [])
   onResize() {
     this.innerWidth = window.innerWidth;
     this.setNumCols()

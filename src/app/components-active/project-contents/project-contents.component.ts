@@ -24,7 +24,7 @@ export class ProjectContentsComponent {
     this.innerWidth = window.innerWidth;
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize', [])
   onResize() {
     this.innerWidth = window.innerWidth;
   }

@@ -76,13 +76,14 @@ $phy-button-font-size: max(16px, calc($phy-content-width * 0.04));
 }
 .phy-content {
   height: calc($phy-content-height * 0.85 - $phy-dot-height*2);
-  width: calc($phy-content-width - 6px);
+  width: $phy-content-width;
   color: var(--text-color);
   padding: 0 calc($phy-content-width * 0.04);
   display: flex;
   flex-direction: column;
   align-items: center;
   // animation: phy-content-enter-right 0.5s ease-out;
+  box-sizing: border-box;
 }
 .phy-intro-title {
   font-weight: 500;
