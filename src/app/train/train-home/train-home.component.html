@@ -1,40 +1,46 @@
 <div class="train-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
   <mat-toolbar class="train-toolbar" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-    <!-- <button class="train-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}" 
+    <!-- <button class="train-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
     mat-icon-button [matMenuTriggerFor]="trainMenu">
-      <mat-icon>menu</mat-icon>
-    </button> -->
-    <button class="train-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}" 
+    <mat-icon>menu</mat-icon>
+  </button> -->
+  <button class="train-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
     mat-icon-button routerLink="" title="Exit">
-        <mat-icon class="train-menu-exit">exit_to_app</mat-icon>
-    </button>
-    <button class="train-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}" 
+    <mat-icon class="train-menu-exit">exit_to_app</mat-icon>
+  </button>
+  <button class="train-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
     mat-icon-button title="About" (click)="about_train()">
-      <mat-icon>info_outline</mat-icon>
-    </button>
-    <div class="spacer"></div>
-    <span class="train-title f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">Train Simulator</span>
-    <div class="spacer"></div>
-    <div class="train-dark-mode" [ngClass]="{'dark-theme': themeService.isDarkTheme}" [title]="themeService.isDarkTheme ? 'Toggle Light Mode' : 'Toggle Dark Mode' ">
-      <mat-icon style="margin-right: -28px;">sunny</mat-icon>
-      <app-switch (switchEmitter)="themeService.isDarkTheme = $event"></app-switch>
-      <mat-icon style="margin-left: -28px; transform: rotate(135deg) translateY(-2px);">brightness_3</mat-icon>
-    </div>
-  </mat-toolbar>
-  <!-- <span class="train-subtitle f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-    {{chapters[selectedIndex]}}
-  </span> -->
-  <app-train-concept *ngIf="selectedIndex==0"></app-train-concept>
+    <mat-icon>info_outline</mat-icon>
+  </button>
+  <div class="spacer"></div>
+  <span class="train-title f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">Train Simulator</span>
+  <div class="spacer"></div>
+  <div class="train-dark-mode" [ngClass]="{'dark-theme': themeService.isDarkTheme}" [title]="themeService.isDarkTheme ? 'Toggle Light Mode' : 'Toggle Dark Mode' ">
+    <mat-icon style="margin-right: -28px;">sunny</mat-icon>
+    <app-switch (switchEmitter)="themeService.isDarkTheme = $event"></app-switch>
+    <mat-icon style="margin-left: -28px; transform: rotate(135deg) translateY(-2px);">brightness_3</mat-icon>
+  </div>
+</mat-toolbar>
+<!-- <span class="train-subtitle f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+{{chapters[selectedIndex]}}
+</span> -->
+@if (selectedIndex==0) {
+  <app-train-concept></app-train-concept>
+}
 </div>
 
 <mat-menu #trainMenu="matMenu">
-  <button *ngFor="let chapter of chapters; let i = index" mat-menu-item (click)="selectedIndex=i">
-    <div style="display: flex; width: 220px;" [ngStyle]="{'font-weight': i==selectedIndex ? '500' : '400'}" class="f-poppins">
-      {{chapter}}
-      <div class="spacer"></div>
-      <mat-icon class="train-menu-radio" *ngIf="i==selectedIndex">train</mat-icon>
-    </div>
-  </button>
+  @for (chapter of chapters; track chapter; let i = $index) {
+    <button mat-menu-item (click)="selectedIndex=i">
+      <div style="display: flex; width: 220px;" [ngStyle]="{'font-weight': i==selectedIndex ? '500' : '400'}" class="f-poppins">
+        {{chapter}}
+        <div class="spacer"></div>
+        @if (i==selectedIndex) {
+          <mat-icon class="train-menu-radio">train</mat-icon>
+        }
+      </div>
+    </button>
+  }
   <button mat-menu-item routerLink="">
     <div style="display: flex; width: 220px; color: Firebrick;" class="f-poppins">
       I'm done with trains

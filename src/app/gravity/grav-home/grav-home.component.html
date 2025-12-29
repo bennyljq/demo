@@ -16,74 +16,88 @@
     {{menuItems[selectedIndex]}}
   </span>
   <div class="grav-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-    <span class="grav-stats f-merri" *ngIf="stats"
-    [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-      Tick: {{currentTick}}/{{ticks}}<br>
-      Time Step: {{timeStep/3600/24}} days<br>
-      Time Elapsed: {{currentTick*timeStep/3600/24}} days
-    </span>
-    <ng-container *ngFor="let body of bodies; let i = index">
-      <div [id]="body.id" 
+    @if (stats) {
+      <span class="grav-stats f-merri"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+        Tick: {{currentTick}}/{{ticks}}<br>
+        Time Step: {{timeStep/3600/24}} days<br>
+        Time Elapsed: {{currentTick*timeStep/3600/24}} days
+      </span>
+    }
+    @for (body of bodies; track body; let i = $index) {
+      <div [id]="body.id"
       [ngClass]="{
         'dark-theme': themeService.isDarkTheme, 
         'grav-earth': body.type=='earth',
         'grav-sun': body.type=='sun'
         }"
-      [ngStyle]="bodyStyles[body.id]">
-        <div class="grav-earth-stats f-merri" *ngIf="stats"
-        [ngClass]="{'dark-theme': themeService.isDarkTheme, 'grav-sun-stats': body.type=='sun'}">
-          id: {{body.id}}<br>
-          x: {{posTable[body.id][currentTick][2] | number: '1.2-2'}} au<br>
-          y: {{posTable[body.id][currentTick][3] | number: '1.2-2'}} au<br>
-          v_x: {{posTable[body.id][currentTick][4] | number: '1.2-2'}} v_e<br>
-          v_y: {{posTable[body.id][currentTick][5] | number: '1.2-2'}} v_e<br>
-        </div>
+        [ngStyle]="bodyStyles[body.id]">
+        @if (stats) {
+          <div class="grav-earth-stats f-merri"
+            [ngClass]="{'dark-theme': themeService.isDarkTheme, 'grav-sun-stats': body.type=='sun'}">
+            id: {{body.id}}<br>
+            x: {{posTable[body.id][currentTick][2] | number: '1.2-2'}} au<br>
+            y: {{posTable[body.id][currentTick][3] | number: '1.2-2'}} au<br>
+            v_x: {{posTable[body.id][currentTick][4] | number: '1.2-2'}} v_e<br>
+            v_y: {{posTable[body.id][currentTick][5] | number: '1.2-2'}} v_e<br>
+          </div>
+        }
       </div>
-    </ng-container>
+    }
   </div>
   <mat-slider class="grav-slider" min="0" [max]="ticks">
     <input matSliderThumb [(ngModel)]="currentTick" (input)="initBodyStyles(); interacted=true">
   </mat-slider>
   <div class="grav-button-container">
     <button mat-stroked-button
-    class="grav-button grav-button-flat f-poppins" 
-    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-    (click)="edit()" title="Edit">
+      class="grav-button grav-button-flat f-poppins"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+      (click)="edit()" title="Edit">
       <mat-icon class="grav-play-button">edit</mat-icon>
     </button>
     <div style="width: 2%;"></div>
-    <button mat-stroked-button 
-    class="grav-button grav-button-stroked f-poppins" 
-    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-    (click)="restartAnimation()" title="Replay">
+    <button mat-stroked-button
+      class="grav-button grav-button-stroked f-poppins"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+      (click)="restartAnimation()" title="Replay">
       <mat-icon class="grav-play-button">replay</mat-icon>
     </button>
     <div style="width: 2%;"></div>
-    <button mat-stroked-button *ngIf="currentTick < ticks"
-    class="grav-button grav-button-stroked f-poppins" 
-    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-    (click)="togglePlay()" [title]="interacted ? 'Play' : 'Pause' ">
-      <mat-icon class="grav-play-button" *ngIf="interacted">play_arrow</mat-icon>
-      <mat-icon class="grav-play-button" *ngIf="!interacted">pause</mat-icon>
-    </button>
+    @if (currentTick < ticks) {
+      <button mat-stroked-button
+        class="grav-button grav-button-stroked f-poppins"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+        (click)="togglePlay()" [title]="interacted ? 'Play' : 'Pause' ">
+        @if (interacted) {
+          <mat-icon class="grav-play-button">play_arrow</mat-icon>
+        }
+        @if (!interacted) {
+          <mat-icon class="grav-play-button">pause</mat-icon>
+        }
+      </button>
+    }
     <div class="spacer"></div>
     <button mat-stroked-button
-    class="grav-button grav-button-flat f-poppins" 
-    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-    (click)="stats = !stats" title="Toggle Stats">
+      class="grav-button grav-button-flat f-poppins"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+      (click)="stats = !stats" title="Toggle Stats">
       <mat-icon class="grav-play-button">info_outline</mat-icon>
     </button>
   </div>
 </div>
 <mat-menu #gravMenu="matMenu">
-  <button *ngFor="let item of menuItems; let i = index" mat-menu-item 
-  (click)="menuItemSelected(i);">
-    <div style="display: flex; width: 220px;" [ngStyle]="{'font-weight': i==selectedIndex ? '500' : '400'}" class="f-poppins">
-      {{item}}
-      <div class="spacer"></div>
-      <mat-icon class="grav-menu-radio" *ngIf="i==selectedIndex">star_purple500</mat-icon>
-    </div>
-  </button>
+  @for (item of menuItems; track item; let i = $index) {
+    <button mat-menu-item
+      (click)="menuItemSelected(i);">
+      <div style="display: flex; width: 220px;" [ngStyle]="{'font-weight': i==selectedIndex ? '500' : '400'}" class="f-poppins">
+        {{item}}
+        <div class="spacer"></div>
+        @if (i==selectedIndex) {
+          <mat-icon class="grav-menu-radio">star_purple500</mat-icon>
+        }
+      </div>
+    </button>
+  }
   <button mat-menu-item routerLink="">
     <div style="display: flex; width: 220px; color: Firebrick;" class="f-poppins">
       Exit Simulator

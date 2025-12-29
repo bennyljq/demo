@@ -1,43 +1,47 @@
 <div class="gg-container">
   <div class="gg-toolbar">
     <button mat-mini-fab color="accent" (click)="openDialog()"
-    title="Settings" class="button-grey">
+      title="Settings" class="button-grey">
       <span class="material-symbols-outlined">settings</span>
     </button>
     <button mat-mini-fab color="accent" (click)="initRandom()"
-    title="Random Puzzle" [class]=" modeRandom ? '': 'button-grey' ">
+      title="Random Puzzle" [class]=" modeRandom ? '': 'button-grey' ">
       <span class="material-symbols-outlined">casino</span>
     </button>
     <button mat-mini-fab color="accent" (click)="openGalleryDialog()"
-    title="Gallery" [class]=" modeGallery ? '': 'button-grey' ">
+      title="Gallery" [class]=" modeGallery ? '': 'button-grey' ">
       <span class="material-symbols-outlined">gallery_thumbnail</span>
     </button>
     <div class="spacer"></div>
     <div class="gg-fps-container">
-      <span *ngIf="showFrames" class="gg-fps">{{currentFrame+1}}/{{framesRendered}}</span>
+      @if (showFrames) {
+        <span class="gg-fps">{{currentFrame+1}}/{{framesRendered}}</span>
+      }
       <span class="gg-fps">{{frameRate/120}}x Speed</span>
       <button mat-mini-fab style="transform: scale(0.9);"
-      [ngClass]=" frameRate/120 >= 16 ? 'button-grey' : 'button-green' "
-      (click)="upSpeed()">
+        [ngClass]=" frameRate/120 >= 16 ? 'button-grey' : 'button-green' "
+        (click)="upSpeed()">
         <span class="material-symbols-outlined">arrow_upward</span>
       </button>
       <button mat-mini-fab style="transform: scale(0.9);"
-      [ngClass]=" frameRate == 30 ? 'button-grey' : 'button-green' "
-      (click)="downSpeed()">
+        [ngClass]=" frameRate == 30 ? 'button-grey' : 'button-green' "
+        (click)="downSpeed()">
         <span class="material-symbols-outlined">arrow_downward</span>
       </button>
     </div>
   </div>
-  <div class="gg-toolbar gg-toolbar-slider" *ngIf="showControls">
-    <button mat-mini-fab [ngClass]="{ 'button-orange': !isPlaying, 'button-grey': isPlaying }"
-    (click)="togglePlay()">
-      <span class="material-symbols-outlined">{{isPlaying ? 'pause' : 'play_arrow'}}</span>
-    </button>
-    <mat-slider min="0" max="{{framesRendered-1}}" step="1" style="width: 100%" color="accent">
-      <!-- <input matSliderThumb [(ngModel)]="currentFrame" (dragStart)="isPlaying=false"> -->
-      <input matSliderThumb [(ngModel)]="currentFrame">
-    </mat-slider>
-  </div>
+  @if (showControls) {
+    <div class="gg-toolbar gg-toolbar-slider">
+      <button mat-mini-fab [ngClass]="{ 'button-orange': !isPlaying, 'button-grey': isPlaying }"
+        (click)="togglePlay()">
+        <span class="material-symbols-outlined">{{isPlaying ? 'pause' : 'play_arrow'}}</span>
+      </button>
+      <mat-slider min="0" max="{{framesRendered-1}}" step="1" style="width: 100%" color="accent">
+        <!-- <input matSliderThumb [(ngModel)]="currentFrame" (dragStart)="isPlaying=false"> -->
+        <input matSliderThumb [(ngModel)]="currentFrame">
+      </mat-slider>
+    </div>
+  }
   <canvas id="gg-canvas"
     (pointerdown)="onPointerDown($event)"
     (pointermove)="onPointerMove($event)"

@@ -1,10 +1,10 @@
 <div class="gg-container">
   <div class="gg-toolbar">
     <button mat-mini-fab color="accent"
-    [title]=" animationId ? 'Pause' : 'Play' " (click)="toggleAnimation()">
+      [title]=" animationId ? 'Pause' : 'Play' " (click)="toggleAnimation()">
       <mat-icon>{{animationId ? 'pause' : 'play_arrow'}}</mat-icon>
     </button>
-    <ng-container *ngFor="let item of [].constructor(5); let i = index">
+    @for (item of [].constructor(5); track item; let i = $index) {
       <button mat-mini-fab color="primary" (click)="initCelestialBodies(i+1)"
       [ngStyle]="{
         'background-color': presetActive == i+1 ? 'LimeGreen' : '',
@@ -12,10 +12,10 @@
       }">
         <span class="gg-icon-number">{{i+1}}</span>
       </button>
-    </ng-container>
+    }
     <div class="spacer"></div>
     <span class="gg-fps">{{fps}} FPS</span>
   </div>
-  <canvas id="gg-canvas" 
+  <canvas id="gg-canvas"
   (click)="onMouseClick($event)"></canvas>
 </div>

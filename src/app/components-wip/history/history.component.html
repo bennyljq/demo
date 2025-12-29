@@ -1,56 +1,64 @@
 <div class="history-container">
   <div [style.height]="'2%'"></div>
-  <span *ngFor="let year of years; let i = index;">
-    <span *ngFor="let entry of year.entries; let j = index;">
-      <!-- <div class="year-bar" *ngIf="i != 0 || j != 0"></div>
-      <div class="flex-row month-container">
-        <div class="month-ball flex-col f-bold f-poppins">
-          {{entry.month}}
-        </div>
-        <div class="history-text flex-row">
-          <div class="month-bar"></div>
-          <div class="text-container">
-            {{entry.text}}
-          </div>
-        </div>
-      </div> -->
-      <div class="flex-row month-container" #monthContainer>
-        <div class="flex-col">
-          <div class="year-bar" *ngIf="i != 0 || j != 0"
-          [ngStyle]="{'height': ((monthContainer.offsetHeight/2) - (monthBall.offsetHeight/2)) + 'px'}"></div>
-          <div class="month-ball flex-col f-bold f-poppins" #monthBall>
-            {{entry.month}}
-          </div> 
+  @for (year of years; track year; let i = $index) {
+    <span>
+      @for (entry of year.entries; track entry; let j = $index) {
+        <span>
+          <!-- <div class="year-bar" *ngIf="i != 0 || j != 0"></div>
+          <div class="flex-row month-container">
+            <div class="month-ball flex-col f-bold f-poppins">
+              {{entry.month}}
+            </div>
+            <div class="history-text flex-row">
+              <div class="month-bar"></div>
+              <div class="text-container">
+                {{entry.text}}
+              </div>
+            </div>
+          </div> -->
+          <div class="flex-row month-container" #monthContainer>
+            <div class="flex-col">
+              @if (i != 0 || j != 0) {
+                <div class="year-bar"
+                [ngStyle]="{'height': ((monthContainer.offsetHeight/2) - (monthBall.offsetHeight/2)) + 'px'}"></div>
+              }
+              <div class="month-ball flex-col f-bold f-poppins" #monthBall>
+                {{entry.month}}
+              </div>
           <div class="year-bar" [ngStyle]="{
             'height': ((monthContainer.offsetHeight/2) - (monthBall.offsetHeight/2)) + 'px'
           }"></div>
-        </div>
-        <div class="history-text flex-row">
-          <div class="month-bar"></div>
-          <div class="text-container">
-            {{entry.text}}
+            </div>
+            <div class="history-text flex-row">
+              <div class="month-bar"></div>
+              <div class="text-container">
+                {{entry.text}}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </span>
-    <div class="flex-row month-container" #yearContainer>
-      <div class="flex-col">
-        <div class="year-bar" [ngStyle]="{'height': ((yearContainer.offsetHeight/2) - (yearBall.offsetHeight/2)) + 'px'}"></div>
-        <div class="year-ball flex-col f-bold f-poppins" #yearBall>
-          {{year.year}}
-        </div> 
+        </span>
+      }
+      <div class="flex-row month-container" #yearContainer>
+        <div class="flex-col">
+          <div class="year-bar" [ngStyle]="{'height': ((yearContainer.offsetHeight/2) - (yearBall.offsetHeight/2)) + 'px'}"></div>
+          <div class="year-ball flex-col f-bold f-poppins" #yearBall>
+            {{year.year}}
+          </div>
         <div class="year-bar" [ngStyle]="{
           'height': ((yearContainer.offsetHeight/2) - (yearBall.offsetHeight/2)) + 'px',
           'opacity': year.year==1992 ? '0' : '1'
         }"></div>
-      </div>
-      <div class="history-text flex-row" *ngIf="year.text">
-        <div class="month-bar"></div>
-        <div class="text-container">
-          {{year.text}}
         </div>
+        @if (year.text) {
+          <div class="history-text flex-row">
+            <div class="month-bar"></div>
+            <div class="text-container">
+              {{year.text}}
+            </div>
+          </div>
+        }
       </div>
-    </div>
-  </span>
+    </span>
+  }
   <div [style.height]="'15%'"></div>
 </div>

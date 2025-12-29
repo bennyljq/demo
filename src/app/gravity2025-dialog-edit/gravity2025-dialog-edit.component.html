@@ -1,33 +1,35 @@
 <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
-<h2 mat-dialog-title cdkFocusInitial cdkDragHandle style="cursor: move;">Edit Bodies</h2>
+  <h2 mat-dialog-title cdkFocusInitial cdkDragHandle style="cursor: move;">Edit Bodies</h2>
 
-<mat-dialog-content>
-  <div id="content-container">
-    <div id="setting-container">
-      <div *ngFor="let _ of [].constructor(3); let i = index" [ngClass]="'grid-item grid-item-' + i">
-        <div id="grid">
-          <mat-form-field appearance="fill">
-            <mat-label>Pos X</mat-label>
-            <input matInput type="number" [(ngModel)]="this.data.celestialBodies[i].position_x" (input)="sendUpdate()">
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Pos Y</mat-label>
-            <input matInput type="number" [(ngModel)]="this.data.celestialBodies[i].position_y" (input)="sendUpdate()">
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Velocity X</mat-label>
-            <input matInput type="number" [(ngModel)]="this.data.celestialBodies[i].velocity_x" (input)="sendUpdate()">
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Velocity Y</mat-label>
-            <input matInput type="number" [(ngModel)]="this.data.celestialBodies[i].velocity_y" (input)="sendUpdate()">
-          </mat-form-field>
-        </div>
+  <mat-dialog-content>
+    <div id="content-container">
+      <div id="setting-container">
+        @for (_ of [].constructor(3); track _; let i = $index) {
+          <div [ngClass]="'grid-item grid-item-' + i">
+            <div id="grid">
+              <mat-form-field appearance="fill">
+                <mat-label>Pos X</mat-label>
+                <input matInput type="number" [(ngModel)]="this.data.celestialBodies[i].position_x" (input)="sendUpdate()">
+              </mat-form-field>
+              <mat-form-field appearance="fill">
+                <mat-label>Pos Y</mat-label>
+                <input matInput type="number" [(ngModel)]="this.data.celestialBodies[i].position_y" (input)="sendUpdate()">
+              </mat-form-field>
+              <mat-form-field appearance="fill">
+                <mat-label>Velocity X</mat-label>
+                <input matInput type="number" [(ngModel)]="this.data.celestialBodies[i].velocity_x" (input)="sendUpdate()">
+              </mat-form-field>
+              <mat-form-field appearance="fill">
+                <mat-label>Velocity Y</mat-label>
+                <input matInput type="number" [(ngModel)]="this.data.celestialBodies[i].velocity_y" (input)="sendUpdate()">
+              </mat-form-field>
+            </div>
+          </div>
+        }
       </div>
     </div>
-  </div>
-</mat-dialog-content>
+  </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onSave()">Close</button>
-</mat-dialog-actions>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onSave()">Close</button>
+  </mat-dialog-actions>

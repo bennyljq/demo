@@ -18,44 +18,54 @@
     <ng-container [ngTemplateOutlet]="page9"></ng-container>
   </div>
   <div class="phy-dot-container">
-    <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
-    (click)="selectedPageIndex=i; setButtons()"
-    [ngClass]="{'phy-dot-touch-target-active': i == selectedPageIndex}">
-      <div class="phy-dot"
-      [ngClass]="{'dark-theme': themeService.isDarkTheme, 'phy-dot-active': i == selectedPageIndex}"></div>
-    </div>
+    @for (page of pagesArray; track page; let i = $index) {
+      <div class="phy-dot-touch-target"
+        (click)="selectedPageIndex=i; setButtons()"
+        [ngClass]="{'phy-dot-touch-target-active': i == selectedPageIndex}">
+        <div class="phy-dot"
+        [ngClass]="{'dark-theme': themeService.isDarkTheme, 'phy-dot-active': i == selectedPageIndex}"></div>
+      </div>
+    }
   </div>
 </div>
 <div class="phy-button-container">
-  <button mat-stroked-button *ngIf="selectedPageIndex == 0"
-  class="phy-button phy-button-stroked f-poppins" 
-  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-  (click)="prevChapter()">
-    <mat-icon>arrow_back</mat-icon>
-    &nbsp; Watt is Love
-  </button>
-  <button mat-stroked-button *ngIf="!hideBack"
-  class="phy-button phy-button-stroked f-poppins" 
-  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-  (click)="prevPage()">
-    Back
-  </button>
+  @if (selectedPageIndex == 0) {
+    <button mat-stroked-button
+      class="phy-button phy-button-stroked f-poppins"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+      (click)="prevChapter()">
+      <mat-icon>arrow_back</mat-icon>
+      &nbsp; Watt is Love
+    </button>
+  }
+  @if (!hideBack) {
+    <button mat-stroked-button
+      class="phy-button phy-button-stroked f-poppins"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+      (click)="prevPage()">
+      Back
+    </button>
+  }
   <div class="spacer"></div>
-  <button mat-flat-button *ngIf="!hideNext"
-  class="phy-button phy-button-flat f-poppins" 
-  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-  (click)="nextPage()">
-    Next
-  </button>
-  <button mat-flat-button *ngIf="selectedPageIndex == this.numPages-1"
-  class="phy-button phy-button-flat f-poppins" 
-  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-  (click)="nextChapter()">
-    <div style="display: flex; align-items: center;">
-      Unlimited Power! &nbsp;
-      <mat-icon>arrow_forward</mat-icon>
-    </div>
-  </button>
+  @if (!hideNext) {
+    <button mat-flat-button
+      class="phy-button phy-button-flat f-poppins"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+      (click)="nextPage()">
+      Next
+    </button>
+  }
+  @if (selectedPageIndex == this.numPages-1) {
+    <button mat-flat-button
+      class="phy-button phy-button-flat f-poppins"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+      (click)="nextChapter()">
+      <div style="display: flex; align-items: center;">
+        Unlimited Power! &nbsp;
+        <mat-icon>arrow_forward</mat-icon>
+      </div>
+    </button>
+  }
 </div>
 
 <ng-template #page1>
@@ -65,11 +75,11 @@
       <div class="phy-equation">
         <span style="font-size: 200%;">🤷🏻‍♀️📱</span>
       </div>
-      It would make <em>much</em> more sense if the battery capacity was measured in joules instead, she thought. 
+      It would make <em>much</em> more sense if the battery capacity was measured in joules instead, she thought.
       <br><br>
       If so, the capacity could easily be calculated by multiplying wattage with charging time.
       <br><br>
-      As we will discover later, there turns out to be a rather convoluted way to indirectly convert <strong>mAh</strong> to <strong>J</strong>. 
+      As we will discover later, there turns out to be a rather convoluted way to indirectly convert <strong>mAh</strong> to <strong>J</strong>.
     </div>
   </div>
 </ng-template>
@@ -84,28 +94,34 @@
       Can you calculate the battery capacity in joules? (Rounded to the nearest thousand)
       <br><br>
       <mat-grid-list cols="2" rowHeight="3:1">
-        <mat-grid-tile *ngFor="let option of answer_options; let i = index">
-          <button mat-flat-button
-          class="phy-button phy-button-flat f-poppins" 
+        @for (option of answer_options; track option; let i = $index) {
+          <mat-grid-tile>
+            <button mat-flat-button
+              class="phy-button phy-button-flat f-poppins"
           [ngClass]="{
             'dark-theme': themeService.isDarkTheme,
             'phy-correct-ans': i == correct_answer && question_answered,
             'phy-wrong-ans': i == picked_answer && i != correct_answer && question_answered
           }"
-          [disabled]="question_answered"
-          (click)="on_answer(i)">
-            {{option}}
-          </button>
-        </mat-grid-tile>
+              [disabled]="question_answered"
+              (click)="on_answer(i)">
+              {{option}}
+            </button>
+          </mat-grid-tile>
+        }
       </mat-grid-list>
-      <div class="phy-great-job" *ngIf="picked_answer == correct_answer"
-        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+      @if (picked_answer == correct_answer) {
+        <div class="phy-great-job"
+          [ngClass]="{'dark-theme': themeService.isDarkTheme}">
           🥳 <em>Great job!</em> 🎉
-      </div>
-      <div class="phy-bad-job" *ngIf="picked_answer!=undefined && picked_answer !== correct_answer"
-        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+        </div>
+      }
+      @if (picked_answer!=undefined && picked_answer !== correct_answer) {
+        <div class="phy-bad-job"
+          [ngClass]="{'dark-theme': themeService.isDarkTheme}">
           <em>68000J was the right answer</em>
-      </div>
+        </div>
+      }
     </div>
   </div>
 </ng-template>
@@ -119,14 +135,16 @@
       <div class="phy-equation">
         <i class="material-icons phy-charger">electrical_services</i>
         <!-- <ng-container *ngIf="battery_percent != 100 && battery_percent != 12"> -->
-        <ng-container *ngFor="let _ of charging_array; let i = index">
+        @for (_ of charging_array; track _; let i = $index) {
           <div class="phy-joule-container phy-joule-moving"
-          [ngStyle]="{'animation-delay': i*0.14 + 's', 'animation-duration': '0.84s', 'position': 'absolute'}">
+            [ngStyle]="{'animation-delay': i*0.14 + 's', 'animation-duration': '0.84s', 'position': 'absolute'}">
             <i class="material-icons phy-joule-icon">electric_bolt</i>
           </div>
-        </ng-container>
-        <div class="phy-charging-blocker" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-        *ngIf="battery_percent == 100 || battery_percent == 12"></div>
+        }
+        @if (battery_percent == 100 || battery_percent == 12) {
+          <div class="phy-charging-blocker" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+          ></div>
+        }
         <div class="phy-battery-2">
           <div class="phy-battery-2-lid" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
           <div class="phy-battery-2-body" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
@@ -142,29 +160,35 @@
       Can you calculate the battery capacity in joules? (Rounded to the nearest thousand)
       <br><br>
       <mat-grid-list cols="4" rowHeight="2:1">
-        <mat-grid-tile *ngFor="let option of answer_options; let i = index">
-          <button mat-flat-button
-          class="phy-button phy-button-flat f-poppins" 
+        @for (option of answer_options; track option; let i = $index) {
+          <mat-grid-tile>
+            <button mat-flat-button
+              class="phy-button phy-button-flat f-poppins"
           [ngClass]="{
             'dark-theme': themeService.isDarkTheme,
             'phy-correct-ans': i == correct_answer && question_answered,
             'phy-wrong-ans': i == picked_answer && i != correct_answer && question_answered
           }"
-          style="font-size: 80%; padding: 20% 15%;"
-          [disabled]="question_answered"
-          (click)="on_answer(i)">
-            {{option}}
-          </button>
-        </mat-grid-tile>
+              style="font-size: 80%; padding: 20% 15%;"
+              [disabled]="question_answered"
+              (click)="on_answer(i)">
+              {{option}}
+            </button>
+          </mat-grid-tile>
+        }
       </mat-grid-list>
-      <div class="phy-great-job" *ngIf="picked_answer == correct_answer"
-        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+      @if (picked_answer == correct_answer) {
+        <div class="phy-great-job"
+          [ngClass]="{'dark-theme': themeService.isDarkTheme}">
           🥳 <em>Great job!</em> 🎉
-      </div>
-      <div class="phy-bad-job" *ngIf="picked_answer!=undefined && picked_answer !== correct_answer"
-        [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+        </div>
+      }
+      @if (picked_answer!=undefined && picked_answer !== correct_answer) {
+        <div class="phy-bad-job"
+          [ngClass]="{'dark-theme': themeService.isDarkTheme}">
           <strong>68000 J</strong> was the right answer
-      </div>
+        </div>
+      }
     </div>
   </div>
 </ng-template>
@@ -197,7 +221,7 @@
       <div class="phy-equation">
         <span style="font-size: 200%;">👩🏻‍🎓📚</span>
       </div>
-      Alas, she uncovers that there were <em>two ways</em> of quantifying a battery's capacity all along — 
+      Alas, she uncovers that there were <em>two ways</em> of quantifying a battery's capacity all along —
       <br><strong>energy capacity</strong> and <strong>charge capacity</strong>.
       <br><br>
       Dionne's estimate of <strong>68000J</strong> was an approximation of the battery's <strong>energy capacity</strong>.
@@ -210,10 +234,10 @@
 <ng-template #page5>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
-      Dionne learns that <strong>milliampere-hour (mAh)</strong> is a unit of <strong>electric charge</strong>, 
+      Dionne learns that <strong>milliampere-hour (mAh)</strong> is a unit of <strong>electric charge</strong>,
       and it is a metric used by battery manufacturers because it is approximately proportional to the duration a device can run on a single charge.
       <br><br>
-      Though <strong>energy capacity (J)</strong> also serves a similar purpose, 
+      Though <strong>energy capacity (J)</strong> also serves a similar purpose,
       rating a battery by <strong>charge capacity (mAh)</strong> allows consumers to deal with smaller numbers (<strong>5000mAh</strong> vs <strong>68000J</strong>), and it's been an industry standard for decades.
       <br><br>
       But after all this studying, Dionne is no closer to deriving energy capacity from charge capacity. The research continues...
@@ -236,15 +260,15 @@
             <em>W = QV</em>
           </span>
         </li>
-        <li>Ohm's Law: 
+        <li>Ohm's Law:
           <span class="phy-math-font">
             <em>P = VI</em>
           </span>
         </li>
       </ul>
-      After studying all these topics, Dionne devises a simple formula to convert <strong>mAh</strong> to <strong>J</strong>. 
+      After studying all these topics, Dionne devises a simple formula to convert <strong>mAh</strong> to <strong>J</strong>.
       <br><br>
-      It is her opinion that anyone wishing to <em>merely apply</em> this formula need not study the above topics, 
+      It is her opinion that anyone wishing to <em>merely apply</em> this formula need not study the above topics,
       but those wishing to <em>thoroughly grasp</em> the concept should certainly do so in their own time.
     </div>
   </div>
@@ -270,11 +294,11 @@
 <ng-template #page7b>
   <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     <div class="phy-intro-desc">
-      One <strong>ampere (A)</strong> represents an electric current equivalent to one <strong>coulomb (C)</strong> per second, 
+      One <strong>ampere (A)</strong> represents an electric current equivalent to one <strong>coulomb (C)</strong> per second,
       where coulomb is the standard unit for <strong>electric charge</strong>.
       <br><br>
       Consequently, <strong>one milliampere-hour (mAh)</strong> is equivalent to the amount of electric charge accumulated by
-      a <strong>one milliampere (mA)</strong> electric current running for <strong>one hour</strong>. 
+      a <strong>one milliampere (mA)</strong> electric current running for <strong>one hour</strong>.
       <div class="phy-equation" style="flex-direction: column; line-height: 2;">
         <div [mathjax]="ah_to_c"></div>
         <div [mathjax]="mah_to_c"></div>
@@ -312,7 +336,7 @@
         <li>The battery voltage of smartphones is around <strong>3.8V</strong>.</li>
         <li>Energy capacity is electric charge multiplied by voltage.</li>
       </ul>
-      In the next chapter <strong>"Unlimited Power!"</strong>, Dionne deciphers the puzzling unit of <strong>kWh</strong> and why it's plastered all over her utility bills. 
+      In the next chapter <strong>"Unlimited Power!"</strong>, Dionne deciphers the puzzling unit of <strong>kWh</strong> and why it's plastered all over her utility bills.
     </div>
   </div>
 </ng-template>

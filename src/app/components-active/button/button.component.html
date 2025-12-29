@@ -1,8 +1,12 @@
-<button mat-flat-button *ngIf="flat"
-[ngStyle]="buttonStyle" class="f-poppins" id="button">
-  {{text}}
-</button>
-<button mat-stroked-button *ngIf="!flat"
-[ngStyle]="buttonStyle" class="f-poppins" id="button">
-  {{text}}
-</button>
+@if (flat) {
+  <button mat-flat-button
+    [ngStyle]="buttonStyle" class="f-poppins" id="button">
+    {{text}}
+  </button>
+}
+@if (!flat) {
+  <button mat-stroked-button
+    [ngStyle]="buttonStyle" class="f-poppins" id="button">
+    {{text}}
+  </button>
+}

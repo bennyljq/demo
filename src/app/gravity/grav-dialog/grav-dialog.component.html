@@ -1,11 +1,12 @@
 <div class="grav-dialog-container">
   <mat-accordion hideToggle style="overflow: auto;">
-    <mat-expansion-panel *ngFor="let body of data.bodies; let i = index">
-      <mat-expansion-panel-header style="padding: 0;">
-        <mat-panel-title class="f-poppins" style="padding-left: 5%; font-size: 20px;">
-          {{body.id}}
-        </mat-panel-title>
-        <!-- <mat-panel-description>
+    @for (body of data.bodies; track body; let i = $index) {
+      <mat-expansion-panel>
+        <mat-expansion-panel-header style="padding: 0;">
+          <mat-panel-title class="f-poppins" style="padding-left: 5%; font-size: 20px;">
+            {{body.id}}
+          </mat-panel-title>
+          <!-- <mat-panel-description>
           This is a summary of the content
         </mat-panel-description> -->
         <button mat-icon-button (click)="data.bodies.splice(i, 1)" style="color: firebrick;">
@@ -27,26 +28,27 @@
         </div>
       </div>
     </mat-expansion-panel>
-  </mat-accordion>
-  <div class="spacer"></div>
-  <div class="grav-dialog-toolbar">
-    <button mat-icon-button (click)="addSun()"
+  }
+</mat-accordion>
+<div class="spacer"></div>
+<div class="grav-dialog-toolbar">
+  <button mat-icon-button (click)="addSun()"
     style="background-color: black; color: gold; margin-right: 12px;">
-      <mat-icon>sunny</mat-icon>
-    </button>
-    <button mat-icon-button (click)="addEarth()"
+    <mat-icon>sunny</mat-icon>
+  </button>
+  <button mat-icon-button (click)="addEarth()"
     style="background-color: black; color: white; margin-right: 12px;">
-      <img src="assets/earth_icon.png">
-    </button>
-    <button mat-icon-button
+    <img src="assets/earth_icon.png">
+  </button>
+  <button mat-icon-button
     style="background-color: tomato; color: white; margin-right: 12px;"
     (click)="discard()">
-      <mat-icon>close</mat-icon>
-    </button>
-    <button mat-icon-button
+    <mat-icon>close</mat-icon>
+  </button>
+  <button mat-icon-button
     style="background-color: MediumSeaGreen; color: white;"
     (click)="confirm()">
-      <mat-icon>check</mat-icon>
-    </button>
-  </div>
+    <mat-icon>check</mat-icon>
+  </button>
+</div>
 </div>

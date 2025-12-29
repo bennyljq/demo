@@ -15,39 +15,45 @@
       </div>
     </span>
     <span class="flex-row desc-row">
-      <div *ngFor="let item of descLine2; let i = index" [id]="'desc' + (i+2)"
-      class="desc f-poppins">
-        {{item}},&nbsp;
-      </div>
+      @for (item of descLine2; track item; let i = $index) {
+        <div [id]="'desc' + (i+2)"
+          class="desc f-poppins">
+          {{item}},&nbsp;
+        </div>
+      }
     </span>
     <span class="flex-row desc-row">
-      <div *ngFor="let item of descLine3; let i = index" [id]="'desc' + (i+4)"
-      class="desc f-poppins">
-        {{item}}<ng-container *ngIf="i!=4">,&nbsp;</ng-container>
+      @for (item of descLine3; track item; let i = $index) {
+        <div [id]="'desc' + (i+4)"
+          class="desc f-poppins">
+          {{item}}@if (i!=4) {
+          ,&nbsp;
+        }
       </div>
-    </span>
-    <div style="display: flex;">
-      <div class="links-container flex-col f-merri" [ngClass]="linksClass">
-        <div class="link" id="about" [@fadeIn1] (click)="goToRoute('about')">About</div>
-        <div class="link" id="projects" [@fadeIn2] (click)="goToRoute('projects')">Projects</div>
-        <div class="link" id="contact" [@fadeIn3] (click)="goToRoute('contact')">Contact</div>
-      </div>
-      <div class="links-container flex-col f-merri" [ngClass]="projectsClass" style="position: absolute;">
-        <div class="link link-secondary" (click)="goToRoute('physics')">Physics Lesson</div>
-        <div class="link link-secondary" (click)="goToRoute('enterprise')">Enterprise</div>
-        <div class="link link-secondary" (click)="goToRoute('gravity-sim')">Gravity Sim</div>
-        <div class="link link-secondary" (click)="goToRoute('train')">Train Sim</div>
-        <div class="link link-secondary" (click)="goToRoute('sandbox')">Sandbox</div>
-        <div class="link link-secondary" (click)="resetProjects()">← Back</div>
-      </div>
+    }
+  </span>
+  <div style="display: flex;">
+    <div class="links-container flex-col f-merri" [ngClass]="linksClass">
+      <div class="link" id="about" [@fadeIn1] (click)="goToRoute('about')">About</div>
+      <div class="link" id="projects" [@fadeIn2] (click)="goToRoute('projects')">Projects</div>
+      <div class="link" id="contact" [@fadeIn3] (click)="goToRoute('contact')">Contact</div>
+    </div>
+    <div class="links-container flex-col f-merri" [ngClass]="projectsClass" style="position: absolute;">
+      <div class="link link-secondary" (click)="goToRoute('physics')">Physics Lesson</div>
+      <div class="link link-secondary" (click)="goToRoute('enterprise')">Enterprise</div>
+      <div class="link link-secondary" (click)="goToRoute('gravity-sim')">Gravity Sim</div>
+      <div class="link link-secondary" (click)="goToRoute('train')">Train Sim</div>
+      <div class="link link-secondary" (click)="goToRoute('sandbox')">Sandbox</div>
+      <div class="link link-secondary" (click)="resetProjects()">← Back</div>
     </div>
   </div>
-  <!-- <a class="f-poppins background-credit" target="_blank"
-  href="https://wallpaper.mob.org/pc/image/earth-beach-sand-910039.html">
-    background credit
-  </a> -->
-  <div class="circle"></div>
+</div>
+<!-- <a class="f-poppins background-credit" target="_blank"
+href="https://wallpaper.mob.org/pc/image/earth-beach-sand-910039.html">
+background credit
+</a> -->
+<div class="circle"></div>
 
-  <!-- preload image -->
-  <img src="../../../assets/ben_kenobi.png" style="position: fixed; height: 1px; width: 1px; opacity: 0;">
+<!-- preload image -->
+<img src="../../../assets/ben_kenobi.png" style="position: fixed; height: 1px; width: 1px; opacity: 0;">
 </div>

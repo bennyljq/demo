@@ -1,15 +1,19 @@
 <div class="bm-container">
   <canvas id="bm-canvas"
-  (mouseenter)="onMouseEnter($event)" 
-  (mousemove)="onMouseMove($event)"
-  (mouseleave)="onMouseLeave($event)"
-  (touchstart)="$event.preventDefault(); onTouchStart($event)" 
-  (touchmove)="onTouchMove($event)" 
-  (touchend)="onTouchEnd($event)"
+    (mouseenter)="onMouseEnter($event)"
+    (mousemove)="onMouseMove($event)"
+    (mouseleave)="onMouseLeave($event)"
+    (touchstart)="$event.preventDefault(); onTouchStart($event)"
+    (touchmove)="onTouchMove($event)"
+    (touchend)="onTouchEnd($event)"
   (click)="onMouseClick($event)"></canvas>
   <div class="bm-play-controls-container">
-    <button *ngIf="!this.animationId" mat-flat-button color="primary" (click)="playAnimation()">Play</button>
-    <button *ngIf="this.animationId" mat-flat-button color="accent" (click)="pauseAnimation()">Pause</button>
+    @if (!this.animationId) {
+      <button mat-flat-button color="primary" (click)="playAnimation()">Play</button>
+    }
+    @if (this.animationId) {
+      <button mat-flat-button color="accent" (click)="pauseAnimation()">Pause</button>
+    }
     <button mat-flat-button color="primary">Init Balls</button>
   </div>
 </div>

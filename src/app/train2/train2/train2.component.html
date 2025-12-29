@@ -9,13 +9,13 @@
   }"></div>
 
   <div class="t2-home-track-wood-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-  [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)', 'margin-top': 'calc(' + bgHeight + 'vh + ' + bgSkewHeight + 'vh * 50 + 3vh)'}">
-    <ng-container *ngIf="showWood">
-      <ng-container *ngFor="let _ of [].constructor(numWood)">
+    [ngStyle]="{'transform': 'skewY('+skewAngle+'deg)', 'margin-top': 'calc(' + bgHeight + 'vh + ' + bgSkewHeight + 'vh * 50 + 3vh)'}">
+    @if (showWood) {
+      @for (_ of [].constructor(numWood); track _) {
         <div class="t2-home-track-wood" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
         [ngStyle]="{'transform': 'skewX(calc(-1 * '+skewAngle+'deg))'}"></div>
-      </ng-container>
-    </ng-container>
+      }
+    }
   </div>
 
   <div class="t2-home-track-1" [ngClass]="{'dark-theme': themeService.isDarkTheme}"
@@ -26,18 +26,32 @@
   'top': 'calc(' + bgHeight + 'vh + ' + bgSkewHeight + 'vh * 50 + 15vh)'}"></div>
 
   <button mat-icon-button class="t2-dark-mode t2-fade-up"
-  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-  (click)="themeService.toggleTheme()"
-  [title]="themeService.isDarkTheme ? 'Toggle Light Mode' : 'Toggle Dark Mode' ">
-    <mat-icon *ngIf="!themeService.isDarkTheme">sunny</mat-icon>
-    <mat-icon *ngIf="themeService.isDarkTheme"
-    style="transform: rotate(135deg);">
-      brightness_3
-    </mat-icon>
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+    (click)="themeService.toggleTheme()"
+    [title]="themeService.isDarkTheme ? 'Toggle Light Mode' : 'Toggle Dark Mode' ">
+    @if (!themeService.isDarkTheme) {
+      <mat-icon>sunny</mat-icon>
+    }
+    @if (themeService.isDarkTheme) {
+      <mat-icon
+        style="transform: rotate(135deg);">
+        brightness_3
+      </mat-icon>
+    }
   </button>
-  <app-train2-home *ngIf="currentPage == 'home' " (setPage)="pageTransition($event)"></app-train2-home>
-  <app-train2-concept *ngIf="currentPage == 'concept' " (setPage)="pageTransition($event)"></app-train2-concept>
-  <app-train2-prelim-concept *ngIf="currentPage == 'prelim-concept' " (setPage)="pageTransition($event)"></app-train2-prelim-concept>
-  <app-train2-dynamic-station *ngIf="currentPage == 'dynamic-stations' " (setPage)="pageTransition($event)"></app-train2-dynamic-station>
-  <app-train2-analysis *ngIf="currentPage == 'analysis' " (setPage)="pageTransition($event)"></app-train2-analysis>
+  @if (currentPage == 'home' ) {
+    <app-train2-home (setPage)="pageTransition($event)"></app-train2-home>
+  }
+  @if (currentPage == 'concept' ) {
+    <app-train2-concept (setPage)="pageTransition($event)"></app-train2-concept>
+  }
+  @if (currentPage == 'prelim-concept' ) {
+    <app-train2-prelim-concept (setPage)="pageTransition($event)"></app-train2-prelim-concept>
+  }
+  @if (currentPage == 'dynamic-stations' ) {
+    <app-train2-dynamic-station (setPage)="pageTransition($event)"></app-train2-dynamic-station>
+  }
+  @if (currentPage == 'analysis' ) {
+    <app-train2-analysis (setPage)="pageTransition($event)"></app-train2-analysis>
+  }
 </div>

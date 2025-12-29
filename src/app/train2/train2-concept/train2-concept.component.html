@@ -1,15 +1,15 @@
 <div class="t2-container" [ngClass]=" exit ? 't2-fade-out-left' : '' ">
   <button mat-icon-button class="t2-back-arrow t2-fade-up" title="Home"
-  [ngClass]="{'dark-theme': themeService.isDarkTheme}" (click)="setPage.emit('home'); exit=true">
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}" (click)="setPage.emit('home'); exit=true">
     <mat-icon class="t2-back-arrow-icon">home</mat-icon>
   </button>
   <div class="t2-concept-title f-poppins t2-fade-down"
-  [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}">
     core concept
   </div>
   <div class="t2-concept-demo-container-bg t2-fade-down" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
   <div class="t2-concept-demo-container t2-fade-down" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
-    <ng-container *ngIf="showCarriages">
+    @if (showCarriages) {
       <div class="t2-nsl-line"></div>
       <div class="t2-nsl-station" (click)="goToURL('https://en.wikipedia.org/wiki/Yishun_MRT_station')"
       title="Yishun MRT Station">NS 13</div>
@@ -37,11 +37,11 @@
       <div class="t2-train-connector t2-train-connector-4" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
       <div class="t2-train-connector t2-train-connector-5" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div>
       <div class="t2-train-connector t2-train-connector-6" [ngClass]="{'dark-theme': themeService.isDarkTheme}"></div> -->
-    </ng-container>
+    }
   </div>
   <div class="t2-nav-button flex-row f-poppins t2-child-nav t2-fade-down"
-  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
-  (click)="setPage.emit('dynamic-stations'); exit=true">
+    [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+    (click)="setPage.emit('dynamic-stations'); exit=true">
     dynamic stations
   </div>
 </div>

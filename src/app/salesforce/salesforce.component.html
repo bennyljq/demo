@@ -6,7 +6,7 @@
     <mat-icon>arrow_back</mat-icon>
   </button>
   <button mat-flat-button
-  (click)="tabs=[0, 0, 0, 0, 0]; tabs[0] = 1" 
+    (click)="tabs=[0, 0, 0, 0, 0]; tabs[0] = 1"
   [ngStyle]="{
     'background-color': tabs[0] ? 'maroon' : 'DimGray',
     'color': 'white'
@@ -17,34 +17,34 @@
     'background-color': tabs[1]? 'DarkSlateBlue' : 'DimGray',
     'color': 'white'
   }"
-  (click)="tabs=[0, 0, 0, 0, 0]; tabs[1] = 1">
+    (click)="tabs=[0, 0, 0, 0, 0]; tabs[1] = 1">
     Hexagons
   </button>
   <button mat-flat-button [ngStyle]="{
     'background-color': tabs[2] ? 'OrangeRed' : 'DimGray',
     'color': 'white'
   }"
-  (click)="tabs=[0, 0, 0, 0, 0]; tabs[2] = 1; calcVertices(true);">
+    (click)="tabs=[0, 0, 0, 0, 0]; tabs[2] = 1; calcVertices(true);">
     Polygon
   </button>
   <button mat-flat-button [ngStyle]="{
     'background-color': tabs[3] ? 'pink' : 'DimGray',
     'color': tabs[3] ? 'black' : 'white'
   }"
-  (click)="tabs=[0, 0, 0, 0, 0]; tabs[3] = 1">
+    (click)="tabs=[0, 0, 0, 0, 0]; tabs[3] = 1">
     Responsive
   </button>
   <button mat-flat-button [ngStyle]="{
     'background-color': tabs[4] ? 'DarkGreen' : 'DimGray',
     'color': 'white'
   }"
-  (click)="tabs=[0, 0, 0, 0, 0]; tabs[4] = 1">
+    (click)="tabs=[0, 0, 0, 0, 0]; tabs[4] = 1">
     Whiteboard
   </button>
 </div>
 <div class="s-container">
-  <ng-container *ngIf="tabs[0]">
-    <ng-container *ngFor="let _ of [].constructor(5); index as i">
+  @if (tabs[0]) {
+    @for (_ of [].constructor(5); track _; let i = $index) {
       <div class="s-circle contains-text" id="circle-{{i}}"
       [ngStyle]="{
         'background-color': bgColor[i],
@@ -52,27 +52,31 @@
         'height': size[i],
         'animation-duration': animDuration[i],
         }" 
-      (click)="demoOnClick(i)"
-      title="circle-{{i}}">
+        (click)="demoOnClick(i)"
+        title="circle-{{i}}">
         {{animDuration[i]}} per rotation
       </div>
-    </ng-container>
-  </ng-container>
-  <div class="hexagon" *ngIf="tabs[1]">
-    <div class="trapezoid"></div>
-    <div class="trapezoid flip-vertical"></div>
-    <span class="hexagon-text contains-text">
-      I am a hexagon!
-    </span>
-  </div>
-  <div class="hexagon" *ngIf="tabs[1]">
-    <div class="triangle"></div>
-    <div class="rectangle contains-text">
-      I am a hexagon!
+    }
+  }
+  @if (tabs[1]) {
+    <div class="hexagon">
+      <div class="trapezoid"></div>
+      <div class="trapezoid flip-vertical"></div>
+      <span class="hexagon-text contains-text">
+        I am a hexagon!
+      </span>
     </div>
-    <div class="triangle flip-vertical"></div>
-  </div>
-  <ng-container *ngIf="tabs[2]">
+  }
+  @if (tabs[1]) {
+    <div class="hexagon">
+      <div class="triangle"></div>
+      <div class="rectangle contains-text">
+        I am a hexagon!
+      </div>
+      <div class="triangle flip-vertical"></div>
+    </div>
+  }
+  @if (tabs[2]) {
     <div style="position: absolute; transform: translateY(max(-350px, -65vw)); width: min(700px, 90vw);
     display: flex; flex-direction: column; align-items: stretch; gap: 36px;">
       <span style="text-align: center; font-size: 36px; font-weight: 500; line-height: 1.3;">
@@ -83,29 +87,32 @@
         <input matSliderThumb [(ngModel)]="sides">
       </mat-slider>
     </div>
-    <div class="n-gon-circle" *ngIf="showCircle"></div>
+    @if (showCircle) {
+      <div class="n-gon-circle"></div>
+    }
     <div class="n-gon"></div>
     <mat-slide-toggle style="text-align: center;" [(ngModel)]="showCircle"
-    style="position: absolute; transform: translateY(300px)">
+      style="position: absolute; transform: translateY(300px)">
       <span style="font-size: 24px; font-weight: 500; margin-left: 8px; line-height: 1;">
         Show circle
       </span>
     </mat-slide-toggle>
-  </ng-container>
-  <ng-container *ngIf="tabs[3]">
+  }
+  @if (tabs[3]) {
     <div style="width: 100%; padding: 2.5%; height: calc(100vh - 60px); overflow: auto;">
       <mat-grid-list [cols]="numCols" rowHeight="300px" gutterSize="12px">
-        <mat-grid-tile 
-        *ngFor="let _ of [].constructor(5); index as i"
-        style="background-color: pink; border: 2px solid maroon;">
-          {{i}}
-        </mat-grid-tile>
+        @for (_ of [].constructor(5); track _; let i = $index) {
+          <mat-grid-tile
+            style="background-color: pink; border: 2px solid maroon;">
+            {{i}}
+          </mat-grid-tile>
+        }
       </mat-grid-list>
     </div>
-  </ng-container>
-  <ng-container *ngIf="tabs[4]">
+  }
+  @if (tabs[4]) {
     <!-- Start coding here -->
     hello there
     <!-- End -->
-  </ng-container>
+  }
 </div>
