@@ -1,0 +1,8 @@
+<h2>Global keystrokes</h2>
+
+<p><strong>Last key:</strong> {{ keys[keys.length - 1] || '—' }}</p>
+
+<p><strong>Buffer ({{ keys.length }}):</strong></p>
+<pre>{{ keys.join(' ') }}</pre>
+
+<button type="button" (click)="clear()">Clear</button>
