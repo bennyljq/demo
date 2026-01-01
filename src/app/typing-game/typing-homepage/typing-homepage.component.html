@@ -1,8 +1,31 @@
-<h2>Global keystrokes</h2>
+<canvas #canvas class="fullpage-canvas" aria-label="Typing homepage canvas"></canvas>
 
-<p><strong>Last key:</strong> {{ keys[keys.length - 1] || '—' }}</p>
+<!-- Floating toggle button -->
+<button
+  type="button"
+  class="osk-toggle"
+  (click)="toggleKeyboard()"
+  aria-label="Toggle on-screen keyboard"
+>
+  <span class="material-symbols-outlined">
+    keyboard
+  </span>
+</button>
 
-<p><strong>Buffer ({{ keys.length }}):</strong></p>
-<pre>{{ keys.join(' ') }}</pre>
-
-<button type="button" (click)="clear()">Clear</button>
+@if (showKeyboard) {
+  <div class="osk" role="group" aria-label="On-screen keyboard">
+    @for (row of keyboardRows; track $index) {
+      <div class="osk-row">
+        @for (letter of row; track $index) {
+          <button
+            type="button"
+            class="osk-key"
+            (click)="pressKey(letter)"
+          >
+            {{ letter }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+}
