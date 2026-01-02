@@ -12,6 +12,18 @@
   </span>
 </button>
 
+<div class="keystroke-hud" [class.keyboard-open]="showKeyboard" aria-label="Latest keystrokes">
+  <div class="keystroke-hud__keys">
+    @if (keys.length === 0) {
+      <span class="keystroke-hud__key" style="opacity: 0;">-</span>
+    } @else {
+      @for (k of keys; track $index) {
+        <span class="keystroke-hud__key">{{ k }}</span>
+      }
+    }
+  </div>
+</div>
+
 @if (showKeyboard) {
   <div class="osk" role="group" aria-label="On-screen keyboard">
     @for (row of keyboardRows; track $index) {
@@ -27,5 +39,18 @@
         }
       </div>
     }
+
+    <!-- Spacebar row -->
+    <div class="osk-row">
+      <button
+        type="button"
+        class="osk-key osk-space"
+        (click)="pressSpace()"
+        aria-label="Space"
+      >
+        space
+      </button>
+    </div>
   </div>
 }
+

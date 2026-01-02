@@ -29,9 +29,9 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
   private cssHeight = 0;
   private dpr = 1;
 
-  // Keystroke buffer (render last 10)
-  private readonly maxKeysToRender = 10;
-  private keys: string[] = [];
+  // Keystroke buffer
+  public keys: string[] = [];
+  public readonly maxKeysToRender = 20;
 
   // On-screen keyboard state
   showKeyboard = this.isCoarsePointerDevice(); // auto-show on mobile; still toggle-able
@@ -70,15 +70,22 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
   onKeyDown(event: KeyboardEvent): void {
     if (event.repeat) return;
 
-    // Optional: ignore typing fields
     const target = event.target as HTMLElement | null;
     const tag = target?.tagName?.toLowerCase();
     const isTypingField =
       tag === 'input' || tag === 'textarea' || (target as any)?.isContentEditable;
     if (isTypingField) return;
 
+    // Space clears instead of being recorded
+    if (event.key === ' ') {
+      event.preventDefault();
+      this.clearKeys();
+      return;
+    }
+
     this.pushKey(this.formatKey(event));
   }
+
 
   // ---- UI actions ----
 
@@ -90,6 +97,14 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     // Always lowercase or uppercase – choose one.
     // For typing games, lowercase is usually cleaner.
     this.pushKey(letter);
+  }
+
+  pressSpace(): void {
+    this.clearKeys();
+  }
+
+  private clearKeys(): void {
+    this.keys = [];
   }
 
   // ---- Canvas ----
@@ -126,20 +141,6 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     // Background
     ctx.fillStyle = '#0b1020';
     ctx.fillRect(0, 0, this.cssWidth, this.cssHeight);
-
-    // Header
-    ctx.fillStyle = 'rgba(255,255,255,0.92)';
-    ctx.font = '16px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-    ctx.fillText('Global keystrokes (last 10):', 24, 36);
-
-    // Keystrokes
-    ctx.font =
-      '14px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
-
-    const lines = this.keys.length ? this.keys.slice().reverse() : ['—'];
-    for (let i = 0; i < lines.length; i++) {
-      ctx.fillText(lines[i], 24, 64 + i * 18);
-    }
   }
 
   // ---- Keystroke buffer / formatting ----
@@ -162,13 +163,6 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     if (key === 'Shift' || key === 'Control' || key === 'Alt' || key === 'Meta') return key;
 
     return mods.length ? `${mods.join('+')}+${key}` : key;
-  }
-
-  private formatSynthetic(key: string, mods: { shift?: boolean } = {}): string {
-    // Keep it consistent with physical formatting
-    const m = [mods.shift ? 'Shift' : null].filter(Boolean) as string[];
-    const k = key === ' ' ? 'Space' : key;
-    return m.length ? `${m.join('+')}+${k}` : k;
   }
 
   private isCoarsePointerDevice(): boolean {

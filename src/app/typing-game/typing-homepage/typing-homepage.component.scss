@@ -80,7 +80,66 @@ $key-width: calc((100vw - 20px - (9 * 6px)) / 10);
   transform: scale(1.1);
 }
 
+.osk-space {
+  width: calc(100vw - 20px);
+  max-width: 360px;
+  justify-self: center;
+  text-align: center;
+}
+
+.osk-space:active {
+  transform: scale(1) scaleX(1.05);
+}
+
 .material-symbols-outlined {
   font-size: 22px;
   line-height: 1;
+}
+
+.keystroke-hud {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 1050;
+
+  width: min(720px, calc(100vw - 12px));
+  padding: 6px 6px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(20, 20, 20, 0.55);
+  backdrop-filter: blur(10px);
+
+  color: rgba(255, 255, 255, 0.92);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.keystroke-hud.keyboard-open {
+  // pushes HUD above the on-screen keyboard overlay
+  bottom: calc(16px + env(safe-area-inset-bottom) + 223px);
+}
+
+.keystroke-hud__keys {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.keystroke-hud__key {
+  padding: 4px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  font: 600 13px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.keystroke-hud__empty {
+  color: rgba(255, 255, 255, 0.45);
 }
