@@ -1,4 +1,4 @@
-$key-width: calc((100vw - 20px - (9 * 6px)) / 10);
+$key-width: calc((100vw - 20px - (9 * 4px)) / 10);
 
 :host {
   display: block;
@@ -57,17 +57,17 @@ $key-width: calc((100vw - 20px - (9 * 6px)) / 10);
 .osk-row {
   display: flex;
   justify-content: center;
-  gap: 6px;
-  margin-bottom: 6px;
+  gap: 4px;
+  margin-bottom: 4px;
 }
 
 .osk-key {
-  height: 44px;
-  max-width: 36px;
+  height: 48px;
+  max-width: 40px;
   width: $key-width;
   padding: 0 10px;
 
-  border-radius: 12px;
+  border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.95);

@@ -276,7 +276,7 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
 
       // Secret word reveal
       ctx.font = '600 28px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
-      ctx.fillText(`the secret word was "${this.secretWord}"`, cx, cy + 10);
+      ctx.fillText(`secret word was "${this.secretWord}"`, cx, cy + 10);
 
       // Restart hint
       ctx.font = '500 22px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
