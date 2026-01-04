@@ -1,56 +1,50 @@
 <canvas #canvas class="fullpage-canvas" aria-label="Typing homepage canvas"></canvas>
 
 <!-- Floating toggle button -->
-<button
-  type="button"
-  class="osk-toggle"
-  (click)="toggleKeyboard()"
-  aria-label="Toggle on-screen keyboard"
->
+<button type="button" class="osk-toggle" (click)="toggleKeyboard()" aria-label="Toggle on-screen keyboard">
   <span class="material-symbols-outlined">
     keyboard
   </span>
 </button>
 
+<!-- Reset button -->
+
+@if (isGameStarted) {
+<button type="button" class="osk-toggle reset-button" (click)="restartGame()">
+  <span class="material-symbols-outlined">
+    refresh
+  </span>
+</button>}
+
 <div class="keystroke-hud" [class.keyboard-open]="showKeyboard" aria-label="Latest keystrokes">
   <div class="keystroke-hud__keys">
     @if (keys.length === 0) {
-      <span class="keystroke-hud__key" style="opacity: 0;">-</span>
+    <span class="keystroke-hud__key" style="opacity: 0;">-</span>
     } @else {
-      @for (k of keys; track $index) {
-        <span class="keystroke-hud__key">{{ k }}</span>
-      }
+    @for (k of keys; track $index) {
+    <span class="keystroke-hud__key">{{ k }}</span>
+    }
     }
   </div>
 </div>
 
 @if (showKeyboard) {
-  <div class="osk" role="group" aria-label="On-screen keyboard">
-    @for (row of keyboardRows; track $index) {
-      <div class="osk-row">
-        @for (letter of row; track $index) {
-          <button
-            type="button"
-            class="osk-key"
-            (click)="pressKey(letter)"
-          >
-            {{ letter }}
-          </button>
-        }
-      </div>
+<div class="osk" role="group" aria-label="On-screen keyboard">
+  @for (row of keyboardRows; track $index) {
+  <div class="osk-row">
+    @for (letter of row; track $index) {
+    <button type="button" class="osk-key" (click)="pressKey(letter)">
+      {{ letter }}
+    </button>
     }
-
-    <!-- Spacebar row -->
-    <div class="osk-row">
-      <button
-        type="button"
-        class="osk-key osk-space"
-        (click)="pressSpace()"
-        aria-label="Space"
-      >
-        space
-      </button>
-    </div>
   </div>
-}
+  }
 
+  <!-- Spacebar row -->
+  <div class="osk-row">
+    <button type="button" class="osk-key osk-space" (click)="pressSpace()" aria-label="Space">
+      space
+    </button>
+  </div>
+</div>
+}

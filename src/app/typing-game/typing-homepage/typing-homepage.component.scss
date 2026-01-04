@@ -32,6 +32,10 @@ $key-width: calc((100vw - 20px - (9 * 6px)) / 10);
   cursor: pointer;
 }
 
+.reset-button {
+  right: 64px;
+}
+
 /* Keyboard overlay */
 .osk {
   position: fixed;

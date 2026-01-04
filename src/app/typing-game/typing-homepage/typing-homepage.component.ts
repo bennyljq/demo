@@ -7,10 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-type KeyCap =
-  | { kind: 'char'; label: string; value: string }
-  | { kind: 'action'; label: string; action: 'shift' | 'backspace' | 'space' | 'enter' };
+import { THEMED_WORDS_BY_SECRET } from './word-dict'
 
 @Component({
   selector: 'app-typing-homepage',
@@ -43,6 +40,43 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     'asdfghjkl'.split(''),
     'zxcvbnm'.split(''),
   ];
+
+  // Game states
+  public isGameStarted = false;
+  private isGameOver = false;
+  private readonly startWord = 'start';
+  private wordBank = ['hello', 'there', 'general', 'kenobi'];
+  private isWin = false;
+  // --- Secret-word run config ---
+  private secretWord = ''; // chosen per run
+
+  // Minimal themed dictionary (extend later)
+  private readonly themedWordsBySecret = THEMED_WORDS_BY_SECRET
+
+  private currentWordIndex = 0;
+  private currentWord = this.wordBank[0];
+
+  private roundStartMs: number | null = null;
+  private readonly baseRoundMs = 10_000;   // start at 10s
+  private readonly minRoundMs = 2_000;     // never go below this
+  private readonly speedUp = 0.85;         // 10% faster each word
+
+  private getRoundMs(): number {
+    // word 0 => 10000ms, word 1 => 9000ms, word 2 => 8100ms, ...
+    const ms = this.baseRoundMs * Math.pow(this.speedUp, this.currentWordIndex);
+    return Math.max(this.minRoundMs, Math.round(ms));
+  }
+
+  private lastInputMs = 0;
+  private lastInputWasCorrect = true;
+
+  private readonly wrongFlashMs = 150;
+
+  private hintCount = 1;
+  private get totalHints(): number {
+    return this.wordBank.length;
+  }
+
 
   ngAfterViewInit(): void {
     const canvas = this.canvasRef.nativeElement;
@@ -79,13 +113,12 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     // Space clears instead of being recorded
     if (event.key === ' ') {
       event.preventDefault();
-      this.clearKeys();
+      this.pressSpace()
       return;
     }
 
     this.pushKey(this.formatKey(event));
   }
-
 
   // ---- UI actions ----
 
@@ -100,11 +133,26 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
   }
 
   pressSpace(): void {
-    this.clearKeys();
+    // this.clearKeys();
+    if (this.isGameOver || this.isWin) {
+      this.restartGame()
+    }
   }
 
   private clearKeys(): void {
     this.keys = [];
+  }
+
+  public restartGame(): void {
+    this.isWin = false;
+    this.isGameOver = false;
+    this.isGameStarted = false;
+    this.clearKeys();
+    this.currentWordIndex = 0;
+    this.currentWord = this.wordBank[0];
+    this.roundStartMs = null;
+    this.lastInputWasCorrect = true;
+    this.hintCount = 1;
   }
 
   // ---- Canvas ----
@@ -135,20 +183,329 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     tick();
   }
 
+  private getStartProgress(): number {
+    // How many of the last N keystrokes match "start" from the beginning.
+    // Examples:
+    // keys end with "s"     => 1
+    // keys end with "st"    => 2
+    // keys end with "sta"   => 3
+    // keys end with "xst"   => 0 (not in-order)
+    const joined = this.keys.join('');
+
+    for (let n = this.startWord.length; n >= 1; n--) {
+      if (joined.endsWith(this.startWord.slice(0, n))) return n;
+    }
+    return 0;
+  }
+  private renderStartWord(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number
+  ): void {
+    const word = 'start';
+    const progress = this.getStartProgress(); // 0..5
+
+    // Slight letter spacing for readability
+    const spacing = 32;
+
+    const startX = x - ((word.length - 1) * spacing) / 2;
+
+    ctx.save()
+    ctx.font = '700 56px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
+    for (let i = 0; i < word.length; i++) {
+      ctx.fillStyle = i < progress ? 'gold' : '#ffffff';
+      ctx.fillText(
+        word[i],
+        Math.round(startX + i * spacing),
+        y
+      );
+    }
+    ctx.restore();
+  }
+
   private render(): void {
     const ctx = this.ctx;
 
     // Background
-    ctx.fillStyle = '#0b1020';
+    ctx.fillStyle = 'CornflowerBlue';
     ctx.fillRect(0, 0, this.cssWidth, this.cssHeight);
+
+    const centerX = Math.round(this.cssWidth / 2);
+    const centerY = Math.round(this.cssHeight / 2);
+
+    if (!this.isGameStarted) {
+      ctx.save();
+
+      ctx.font = '600 32px Inter, system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      const lineHeight = 44;
+
+      ctx.fillStyle = 'MidnightBlue';
+      ctx.fillText('1. words are hints', centerX, centerY - 4 * lineHeight);
+      ctx.fillText('2. guess secret word', centerX, centerY - 3 * lineHeight);
+      ctx.fillText('type', centerX, centerY - lineHeight);
+
+      this.renderStartWord(ctx, centerX, centerY);
+
+      ctx.fillStyle = 'MidnightBlue';
+      ctx.fillText('to begin', centerX, centerY + lineHeight);
+
+      ctx.restore();
+      return;
+    }
+
+    if (this.isWin) {
+      ctx.save();
+
+      ctx.globalAlpha = 0.35;
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, this.cssWidth, this.cssHeight);
+      ctx.globalAlpha = 1;
+
+      const cx = Math.round(this.cssWidth / 2);
+      const cy = Math.round(this.cssHeight / 2);
+
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#fff';
+
+      ctx.font = '900 64px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
+      ctx.fillText('YOU WIN', cx, cy - 40);
+
+      // Secret word reveal
+      ctx.font = '600 28px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
+      ctx.fillText(`the secret word was "${this.secretWord}"`, cx, cy + 10);
+
+      // Restart hint
+      ctx.font = '500 22px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
+      ctx.fillText('press space to restart', cx, cy + 56);
+
+      ctx.restore();
+      return;
+    }
+
+    if (this.isGameOver) {
+      ctx.save();
+
+      // Dim overlay
+      ctx.globalAlpha = 0.35;
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, this.cssWidth, this.cssHeight);
+      ctx.globalAlpha = 1;
+
+      const cx = Math.round(this.cssWidth / 2);
+      const cy = Math.round(this.cssHeight / 2);
+
+      // Title
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#fff';
+      ctx.font = '800 64px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
+      ctx.fillText('GAME OVER', cx, cy - 24);
+
+      // Subtitle
+      ctx.font = '600 24px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
+      ctx.fillText('Press space to restart', cx, cy + 36);
+
+      ctx.restore();
+      return;
+    }
+
+    // ---- Game started: render current word + timer bar ----
+    if (this.roundStartMs == null) this.roundStartMs = performance.now();
+
+    const now = performance.now();
+    const elapsed = now - this.roundStartMs;
+    const roundMs = this.getRoundMs();
+    const t = Math.min(1, Math.max(0, elapsed / roundMs));
+    const remainingFrac = 1 - t;
+
+    if (elapsed >= roundMs && !this.isWin) {
+      this.isGameOver = true;
+    }
+
+    ctx.save();
+
+    // Word
+    ctx.font = '700 56px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#ffffff';
+    this.renderCurrentWord(ctx, centerX, centerY);
+
+    // Timer bar (below word)
+    const barWidth = Math.min(520, Math.round(this.cssWidth * 0.7));
+    const barHeight = 12;
+    const barY = centerY + 54; // tuned for 56px font; adjust if needed
+    const barX = Math.round(centerX - barWidth / 2);
+
+    // Track
+    ctx.globalAlpha = 0.35;
+    ctx.fillRect(barX, barY, barWidth, barHeight);
+
+    // Fill (remaining time)
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(barX, barY, Math.round(barWidth * remainingFrac), barHeight);
+
+    ctx.restore();
+
+    // Hint counter
+    ctx.save();
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '500 18px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
+
+    ctx.fillText(
+        `hints: ${this.hintCount}/${this.totalHints}`, centerX, centerY - 100
+    );
+
+    ctx.restore();
+
   }
 
   // ---- Keystroke buffer / formatting ----
 
+  private checkSecretWordWin(): void {
+    const len = this.secretWord.length;
+    const tail = this.keys.slice(-len).join('');
+
+    if (tail === this.secretWord) {
+      this.isWin = true;
+      this.isGameOver = false;     // ensure win overrides lose
+    }
+  }
+
   private pushKey(display: string): void {
+    if (this.isWin || this.isGameOver) return;
+
+    // Pre-game: buffer + check for "start"
+    if (!this.isGameStarted) {
+      this.keys.push(display);
+      if (this.keys.length > this.maxKeysToRender) this.keys.shift();
+
+      this.checkStrings();
+      return;
+    }
+
+    // --- Game started: expected-next-letter validation (before push) ---
+    const progress = this.getWordProgress();
+    const expected = (progress < this.currentWord.length) ? this.currentWord[progress] : null;
+
     this.keys.push(display);
     if (this.keys.length > this.maxKeysToRender) this.keys.shift();
+
+    // SILENT WIN CHECK (happens regardless of correctness for currentWord)
+    this.checkSecretWordWin();
+    if (this.isWin) return;
+
+    const isCorrect = expected !== null && display === expected;
+    this.lastInputMs = performance.now();
+    this.lastInputWasCorrect = isCorrect;
+
+    this.checkWordCompletion();
   }
+
+  private startNewRun(): void {
+    const secrets = Object.keys(this.themedWordsBySecret);
+    const i = Math.floor(Math.random() * secrets.length);
+    this.secretWord = secrets[i];
+
+    // DIRECT binding — no rebuild
+    this.wordBank = this.themedWordsBySecret[this.secretWord];
+
+    this.currentWordIndex = 0;
+    this.currentWord = this.wordBank[0];
+
+    this.isGameStarted = true;
+    this.isGameOver = false;
+    this.isWin = false;
+
+    this.clearKeys();
+    this.roundStartMs = performance.now();
+    this.lastInputWasCorrect = true;
+  }
+
+  private checkStrings(): void {
+    if (!this.isGameStarted && this.keys.slice(-5).join('') === 'start') {
+      this.startNewRun();
+    }
+  }
+
+  private getWordProgress(): number {
+    const len = this.currentWord.length;
+
+    // Only look at the last N keys (tail) instead of joining the whole buffer
+    const tail = this.keys.slice(-len).join('');
+
+    for (let n = len; n >= 1; n--) {
+      if (tail.endsWith(this.currentWord.slice(0, n))) return n;
+    }
+    return 0;
+  }
+
+  private checkWordCompletion(): void {
+    const len = this.currentWord.length;
+    const tail = this.keys.slice(-len).join('');
+
+    if (tail === this.currentWord) {
+      this.hintCount++;          // player typed a hint word
+      this.advanceToNextWord();
+    }
+  }
+
+  private advanceToNextWord(): void {
+    this.clearKeys();
+
+    this.currentWordIndex++;
+
+    // LOSE if we ran out of words
+    if (this.currentWordIndex >= this.wordBank.length) {
+      this.isGameOver = true;
+      return;
+    }
+
+    this.currentWord = this.wordBank[this.currentWordIndex];
+    this.roundStartMs = performance.now();
+    this.lastInputWasCorrect = true;
+  }
+
+  private renderCurrentWord(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number
+  ): void {
+    const word = this.currentWord;
+    const progress = this.getWordProgress(); // 0..word.length
+
+    const spacing = 32;
+    const startX = x - ((word.length - 1) * spacing) / 2;
+
+    const now = performance.now();
+
+    // SIMPLE FIX: flash only when the last keystroke was wrong
+    const flashWrong =
+      !this.lastInputWasCorrect &&
+      (now - this.lastInputMs) <= this.wrongFlashMs;
+
+    const nextIndex = Math.min(progress, word.length - 1);
+
+    for (let i = 0; i < word.length; i++) {
+      let colour = i < progress ? 'gold' : '#ffffff';
+
+      if (flashWrong && i === nextIndex) {
+        colour = 'tomato';
+      }
+
+      ctx.fillStyle = colour;
+      ctx.fillText(word[i], Math.round(startX + i * spacing), y);
+    }
+  }
+
 
   private formatKey(e: KeyboardEvent): string {
     const mods = [
