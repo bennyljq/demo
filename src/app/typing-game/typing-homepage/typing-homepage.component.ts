@@ -534,7 +534,7 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
 
     if (key === 'Shift' || key === 'Control' || key === 'Alt' || key === 'Meta') return key;
 
-    return mods.length ? `${mods.join('+')}+${key}` : key;
+    return mods.length ? `${mods.join('+')}+${key}` : key.toLowerCase();
   }
 
   private isCoarsePointerDevice(): boolean {
