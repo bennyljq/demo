@@ -236,15 +236,22 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     if (!this.isGameStarted) {
       ctx.save();
 
-      ctx.font = '600 32px Inter, system-ui, sans-serif';
+      ctx.font = '700 18px Inter, system-ui, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      const lineHeight = 44;
+      let lineHeight = 28;
 
+      ctx.fillStyle = 'black';
+      ctx.fillText('1. type the words before the timer runs out', centerX, centerY - 8 * lineHeight);
+      ctx.fillText('2. each word is a hint to a secret word', centerX, centerY - 7 * lineHeight);
+      ctx.fillText('3. to win, type the secret word', centerX, centerY - 6 * lineHeight);
+      ctx.fillText('WHILE the game is ongoing', centerX, centerY - 5 * lineHeight);
+      ctx.fillText('4. you lose if the hints run out', centerX, centerY - 4 * lineHeight);
+
+      ctx.font = '600 32px Inter, system-ui, sans-serif';
+      lineHeight = 44;
       ctx.fillStyle = 'MidnightBlue';
-      ctx.fillText('1. words are hints', centerX, centerY - 4 * lineHeight);
-      ctx.fillText('2. guess secret word', centerX, centerY - 3 * lineHeight);
       ctx.fillText('type', centerX, centerY - lineHeight);
 
       this.renderStartWord(ctx, centerX, centerY);
@@ -361,7 +368,7 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     ctx.font = '500 18px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
 
     ctx.fillText(
-        `hints: ${this.hintCount}/${this.totalHints}`, centerX, centerY - 100
+      `hints: ${this.hintCount}/${this.totalHints}`, centerX, centerY - 100
     );
 
     ctx.restore();
@@ -410,13 +417,21 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     this.checkWordCompletion();
   }
 
+  private shuffle<T>(arr: T[]): T[] {
+    const a = [...arr]; // copy – do NOT mutate dictionary
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
   private startNewRun(): void {
     const secrets = Object.keys(this.themedWordsBySecret);
     const i = Math.floor(Math.random() * secrets.length);
     this.secretWord = secrets[i];
 
-    // DIRECT binding — no rebuild
-    this.wordBank = this.themedWordsBySecret[this.secretWord];
+    this.wordBank = this.shuffle(this.themedWordsBySecret[this.secretWord]);
 
     this.currentWordIndex = 0;
     this.currentWord = this.wordBank[0];
