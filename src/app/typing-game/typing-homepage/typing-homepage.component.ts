@@ -18,6 +18,8 @@ import { THEMED_WORDS_BY_SECRET } from './word-dict'
 })
 export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('nativeInput', { static: true })
+  private nativeInput!: ElementRef<HTMLInputElement>;
 
   private ctx!: CanvasRenderingContext2D;
   private rafId: number | null = null;
@@ -29,17 +31,6 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
   // Keystroke buffer
   public keys: string[] = [];
   public readonly maxKeysToRender = 20;
-
-  // On-screen keyboard state
-  showKeyboard = this.isCoarsePointerDevice(); // auto-show on mobile; still toggle-able
-  shiftOn = false;
-
-  // Letters only (simple, predictable layout)
-  readonly keyboardRows: string[][] = [
-    'qwertyuiop'.split(''),
-    'asdfghjkl'.split(''),
-    'zxcvbnm'.split(''),
-  ];
 
   // Game states
   public isGameStarted = false;
@@ -77,6 +68,8 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     return this.wordBank.length;
   }
 
+  nativeKeyboardOn = false;
+
 
   ngAfterViewInit(): void {
     const canvas = this.canvasRef.nativeElement;
@@ -86,6 +79,34 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     this.ctx = ctx;
     this.resizeCanvas();
     this.startLoop();
+
+    // If you already have input wiring, keep it (with space routing)
+    const el = this.nativeInput.nativeElement;
+
+    el.addEventListener('input', () => {
+      const value = el.value;
+      if (!value) return;
+
+      for (const ch of value) {
+        if (ch === ' ') this.pressSpace();
+        else this.pushKey(ch.toLowerCase());
+      }
+      el.value = '';
+    });
+
+    // Recalculate on any viewport size changes (keyboard open/close, address bar, rotation)
+    window.addEventListener('resize', this.onViewportResize, { passive: true });
+
+    window.visualViewport?.addEventListener('resize', this.onViewportResize, { passive: true });
+    window.visualViewport?.addEventListener('scroll', this.onViewportResize, { passive: true });
+
+    // Initial sizing
+    this.recalculateCanvasSize();
+    const handler = () => this.recalculateCanvasSize();
+
+    window.addEventListener('resize', handler, { passive: true });
+    window.visualViewport?.addEventListener('resize', handler, { passive: true });
+    window.visualViewport?.addEventListener('scroll', handler, { passive: true }); // yes, scroll matters
   }
 
   ngOnDestroy(): void {
@@ -118,18 +139,6 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     }
 
     this.pushKey(this.formatKey(event));
-  }
-
-  // ---- UI actions ----
-
-  toggleKeyboard(): void {
-    this.showKeyboard = !this.showKeyboard;
-  }
-
-  pressKey(letter: string): void {
-    // Always lowercase or uppercase – choose one.
-    // For typing games, lowercase is usually cleaner.
-    this.pushKey(letter);
   }
 
   pressSpace(): void {
@@ -502,7 +511,6 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
 
     const now = performance.now();
 
-    // SIMPLE FIX: flash only when the last keystroke was wrong
     const flashWrong =
       !this.lastInputWasCorrect &&
       (now - this.lastInputMs) <= this.wrongFlashMs;
@@ -512,15 +520,14 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     for (let i = 0; i < word.length; i++) {
       let colour = i < progress ? 'gold' : '#ffffff';
 
-      if (flashWrong && i === nextIndex) {
-        colour = 'tomato';
-      }
+      // if (flashWrong && i === nextIndex) {
+      //   colour = 'tomato';
+      // }
 
       ctx.fillStyle = colour;
       ctx.fillText(word[i], Math.round(startX + i * spacing), y);
     }
   }
-
 
   private formatKey(e: KeyboardEvent): string {
     const mods = [
@@ -541,4 +548,65 @@ export class TypingHomepageComponent implements AfterViewInit, OnDestroy {
     if (typeof window === 'undefined') return false;
     return window.matchMedia?.('(pointer: coarse)').matches ?? false;
   }
+
+  toggleNativeKeyboard(): void {
+    this.nativeKeyboardOn = !this.nativeKeyboardOn;
+
+    const el = this.nativeInput.nativeElement;
+    if (this.nativeKeyboardOn) el.focus({ preventScroll: true });
+    else el.blur();
+
+    requestAnimationFrame(() => this.recalculateCanvasSize());
+    setTimeout(() => this.recalculateCanvasSize(), 150);
+    setTimeout(() => this.recalculateCanvasSize(), 350); // helps iOS Safari
+  }
+
+  private recalculateCanvasSize(): void {
+    const canvas = this.canvasRef.nativeElement;
+    const ctx = this.ctx;
+
+    const vv = window.visualViewport;
+
+    const width = Math.round(vv?.width ?? window.innerWidth);
+
+    const vvHeight = vv?.height ?? window.innerHeight;
+    const docHeight = document.documentElement.clientHeight; // often best on iOS keyboard
+    const innerH = window.innerHeight;
+
+    const height = Math.round(
+      this.isIOSSafari()
+        ? Math.min(docHeight, vvHeight, innerH)
+        : Math.min(vvHeight, innerH)
+    );
+
+    const left = Math.round(vv?.offsetLeft ?? 0);
+    const top = Math.round(vv?.offsetTop ?? 0);
+
+    canvas.style.position = 'fixed';
+    canvas.style.left = `${left}px`;
+    canvas.style.top = `${top}px`;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    this.cssWidth = width;
+    this.cssHeight = height;
+  }
+
+  private onViewportResize = (): void => {
+    this.recalculateCanvasSize();
+  };
+
+  private isIOSSafari(): boolean {
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua);
+    const isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
+    return isIOS && isSafari;
+  }
+
 }

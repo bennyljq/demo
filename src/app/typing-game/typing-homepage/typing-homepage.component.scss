@@ -6,20 +6,35 @@ $key-width: calc((100vw - 20px - (9 * 0px)) / 10);
   height: 100%;
 }
 
-.fullpage-canvas {
-  display: block;
-  width: 100vw;
-  height: 100vh;
-  touch-action: none;
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;          /* no scrolling */
+  overscroll-behavior: none; /* no bounce/overscroll */
 }
 
-/* Toggle button (floating above keyboard) */
-.osk-toggle {
+.fullpage-canvas {
   position: fixed;
-  right: 12px;
-  top: 12px;
-  z-index: 1100;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 100px;  /* placeholder; JS will overwrite */
+  height: 100px; /* placeholder; JS will overwrite */
+  touch-action: none;        /* disable panning/zoom gestures on the canvas */
+  overscroll-behavior: none;
+}
 
+
+.top-right-controls {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+}
+
+.floating-button {
   padding: 10px 12px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -30,69 +45,6 @@ $key-width: calc((100vw - 20px - (9 * 0px)) / 10);
   -webkit-tap-highlight-color: transparent;
 
   cursor: pointer;
-}
-
-.reset-button {
-  right: 64px;
-}
-
-/* Keyboard overlay */
-.osk {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
-
-  padding: 10px 10px calc(12px + env(safe-area-inset-bottom));
-  background: rgba(20, 20, 20, 0.92);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-
-  /* Prevent iOS double-tap zoom / selection oddities */
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.osk-row {
-  display: flex;
-  justify-content: center;
-  gap: 0px;
-  margin-bottom: 0px;
-}
-
-.osk-key {
-  height: 50px;
-  max-width: 40px;
-  width: $key-width;
-  padding: 0 10px;
-
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.95);
-
-  font: 600 16px system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  text-transform: lowercase;
-
-  -webkit-tap-highlight-color: transparent;
-
-  transition-duration: 0.1s;
-}
-
-.osk-key:active {
-  transform: scale(1.1);
-}
-
-.osk-space {
-  width: calc(100vw - 20px);
-  max-width: 360px;
-  justify-self: center;
-  text-align: center;
-}
-
-.osk-space:active {
-  transform: scale(1) scaleX(1.05);
 }
 
 .material-symbols-outlined {
@@ -146,4 +98,19 @@ $key-width: calc((100vw - 20px - (9 * 0px)) / 10);
 
 .keystroke-hud__empty {
   color: rgba(255, 255, 255, 0.45);
+}
+
+.native-kb-sink {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  width: 1px;
+  height: 1px;
+  opacity: 0.01;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  caret-color: transparent;
+  outline: none;
 }

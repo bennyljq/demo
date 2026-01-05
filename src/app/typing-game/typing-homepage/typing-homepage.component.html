@@ -1,22 +1,23 @@
 <canvas #canvas class="fullpage-canvas" aria-label="Typing homepage canvas"></canvas>
 
-<!-- Floating toggle button -->
-<button type="button" class="osk-toggle" (click)="toggleKeyboard()" aria-label="Toggle on-screen keyboard">
-  <span class="material-symbols-outlined">
-    keyboard
-  </span>
-</button>
+<input #nativeInput class="native-kb-sink" type="text" inputmode="text" autocomplete="off" autocapitalize="none"
+  autocorrect="off" spellcheck="false" />
 
-<!-- Reset button -->
+<div class="top-right-controls">
+  @if (isGameStarted) {
+  <button type="button" class="floating-button" (click)="restartGame()">
+    <span class="material-symbols-outlined">refresh</span>
+  </button>
+  }
 
-@if (isGameStarted) {
-<button type="button" class="osk-toggle reset-button" (click)="restartGame()">
-  <span class="material-symbols-outlined">
-    refresh
-  </span>
-</button>}
+  <button type="button" class="floating-button" (click)="toggleNativeKeyboard()">
+    <span class="material-symbols-outlined">
+      {{ nativeKeyboardOn ? 'keyboard_hide' : 'keyboard' }}
+    </span>
+  </button>
+</div>
 
-<div class="keystroke-hud" [class.keyboard-open]="showKeyboard" aria-label="Latest keystrokes">
+<div class="keystroke-hud" aria-label="Latest keystrokes">
   <div class="keystroke-hud__keys">
     @if (keys.length === 0) {
     <span class="keystroke-hud__key" style="opacity: 0;">-</span>
@@ -27,24 +28,3 @@
     }
   </div>
 </div>
-
-@if (showKeyboard) {
-<div class="osk" role="group" aria-label="On-screen keyboard">
-  @for (row of keyboardRows; track $index) {
-  <div class="osk-row">
-    @for (letter of row; track $index) {
-    <button type="button" class="osk-key" (click)="pressKey(letter)">
-      {{ letter }}
-    </button>
-    }
-  </div>
-  }
-
-  <!-- Spacebar row -->
-  <div class="osk-row">
-    <button type="button" class="osk-key osk-space" (click)="pressSpace()" aria-label="Space">
-      space
-    </button>
-  </div>
-</div>
-}
