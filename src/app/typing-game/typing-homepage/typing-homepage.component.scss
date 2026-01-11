@@ -24,7 +24,6 @@ html, body {
   overscroll-behavior: none;
 }
 
-
 .top-right-controls {
   position: fixed;
   top: 16px;
@@ -73,11 +72,6 @@ html, body {
   justify-content: center;
 }
 
-.keystroke-hud.keyboard-open {
-  // pushes HUD above the on-screen keyboard overlay
-  bottom: calc(16px + env(safe-area-inset-bottom) + 223px);
-}
-
 .keystroke-hud__keys {
   display: flex;
   flex-wrap: nowrap;
@@ -96,21 +90,168 @@ html, body {
   font: 600 13px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
-.keystroke-hud__empty {
-  color: rgba(255, 255, 255, 0.45);
+/* Page-level demo wrapper (optional) */
+.kbw-menu {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 10vh 0;
+  justify-content: flex-end;
 }
 
-.native-kb-sink {
-  position: fixed;
-  left: 12px;
-  bottom: 12px;
-  width: 1px;
-  height: 1px;
-  opacity: 0.01;
+/* ---------- Button core ---------- */
+
+.kbw-btn {
+  --outline: #2a1b2e;         /* deep purple-brown outline */
+  --outline2: #0f0713;        /* near-black for extra depth */
+  --paper: #f2cf8b;           /* parchment fill */
+  --paper2: #e5ad57;          /* darker parchment */
+  --accent: #67d7ff;          /* cyan glow */
+  --accent2: #1aa4d6;         /* deeper cyan */
+  --highlight: #fff3c9;       /* top highlight */
+  --shadow: rgba(0, 0, 0, 0.45);
+
+  appearance: none;
   border: 0;
   padding: 0;
-  margin: 0;
   background: transparent;
-  caret-color: transparent;
+  cursor: pointer;
+
+  /* Make it feel "pixel-snappy" */
+  image-rendering: pixelated;
+
+  /* Keep text crisp */
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Outer glow reminiscent of the title outline */
+  filter:
+    drop-shadow(0 10px 0 rgba(0, 0, 0, 0.28))
+    drop-shadow(0 0 16px rgba(103, 215, 255, 0.25));
+}
+
+.kbw-btn:focus-visible {
   outline: none;
+}
+
+/* The thick pixel-like frame is achieved with layered box-shadows */
+.kbw-btn__inner {
+  display: inline-grid;
+  place-items: center;
+  padding: 18px 30px;
+
+  background:
+    linear-gradient(180deg, var(--highlight) 0%, var(--paper) 35%, var(--paper2) 100%);
+  border-radius: 10px;
+
+  /* Pixel-ish frame using hard-edged shadow steps */
+  box-shadow:
+    /* inner bevel */
+    inset 0 2px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.18),
+
+    /* outline stack (chunky) */
+    0 0 0 3px var(--outline),
+    0 0 0 6px var(--outline2),
+
+    /* cyan rim glow like the logo */
+    0 0 0 9px rgba(103, 215, 255, 0.18),
+    0 0 18px rgba(103, 215, 255, 0.22);
+
+  transform: translateY(0);
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+}
+
+/* Text: bold, game-y, chunky */
+.kbw-btn__text {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  font-size: 28px;
+  line-height: 1;
+
+  /* Warm orange-red like the logo interior */
+  color: #e26a2c;
+
+  /* Multi-layer "pixel outline" effect */
+  text-shadow:
+    /* dark outline */
+    -2px 0 var(--outline),
+     2px 0 var(--outline),
+     0 -2px var(--outline),
+     0  2px var(--outline),
+
+    /* second darker outline */
+    -4px 0 var(--outline2),
+     4px 0 var(--outline2),
+     0 -4px var(--outline2),
+     0  4px var(--outline2),
+
+    /* subtle cyan edge like your title's glow */
+    0 0 10px rgba(103, 215, 255, 0.25);
+}
+
+/* Hover: slight lift + stronger glow */
+.kbw-btn:hover .kbw-btn__inner {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.18),
+    0 0 0 3px var(--outline),
+    0 0 0 6px var(--outline2),
+    0 0 0 9px rgba(103, 215, 255, 0.22),
+    0 0 26px rgba(103, 215, 255, 0.30);
+}
+
+/* Active: press down */
+.kbw-btn:active .kbw-btn__inner {
+  transform: translateY(4px);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.22),
+    0 0 0 3px var(--outline),
+    0 0 0 6px var(--outline2),
+    0 0 0 9px rgba(103, 215, 255, 0.12),
+    0 0 14px rgba(103, 215, 255, 0.20);
+}
+
+/* Focus ring that matches theme */
+.kbw-btn:focus-visible .kbw-btn__inner {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.18),
+    0 0 0 3px var(--outline),
+    0 0 0 6px var(--outline2),
+    0 0 0 10px rgba(103, 215, 255, 0.35),
+    0 0 30px rgba(103, 215, 255, 0.30);
+}
+
+/* Optional: subtle "sparkle" sheen, purely CSS */
+.kbw-btn__inner::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  width: 320px;
+  height: 80px;
+  transform: translate(-30px, -18px) rotate(-12deg);
+  opacity: 0.22;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+  filter: blur(0.2px);
+}
+
+.kbw-btn__inner {
+  position: relative;
+  overflow: hidden;
+}
+
+.kbw-btn:hover .kbw-btn__inner::before {
+  animation: kbw-sheen 900ms ease;
+}
+
+@keyframes kbw-sheen {
+  0% { transform: translate(-220px, -18px) rotate(-12deg); opacity: 0; }
+  20% { opacity: 0.25; }
+  100% { transform: translate(320px, -18px) rotate(-12deg); opacity: 0; }
 }

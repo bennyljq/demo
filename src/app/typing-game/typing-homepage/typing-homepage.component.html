@@ -1,22 +1,24 @@
 <canvas #canvas class="fullpage-canvas" aria-label="Typing homepage canvas"></canvas>
 
-<input #nativeInput class="native-kb-sink" type="text" inputmode="text" autocomplete="off" autocapitalize="none"
-  autocorrect="off" spellcheck="false" />
-
 <div class="top-right-controls">
   @if (isGameStarted) {
   <button type="button" class="floating-button" (click)="restartGame()">
     <span class="material-symbols-outlined">refresh</span>
   </button>
   }
+</div>
 
-  <button type="button" class="floating-button" (click)="toggleNativeKeyboard()">
-    <span class="material-symbols-outlined">
-      {{ nativeKeyboardOn ? 'keyboard_hide' : 'keyboard' }}
+@if (showSplashScreen) {
+<div class="kbw-menu">
+  <button type="button" class="kbw-btn" aria-label="Start a new game" (click)="showSplashScreen = false">
+    <span class="kbw-btn__inner">
+      <span class="kbw-btn__text">NEW GAME</span>
     </span>
   </button>
 </div>
+}
 
+@if (!showSplashScreen) {
 <div class="keystroke-hud" aria-label="Latest keystrokes">
   <div class="keystroke-hud__keys">
     @if (keys.length === 0) {
@@ -28,3 +30,4 @@
     }
   </div>
 </div>
+}

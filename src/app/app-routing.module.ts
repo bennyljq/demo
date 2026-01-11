@@ -42,7 +42,7 @@ const routes: Routes = [
   { path: '3body-2024', component: GravityGameComponent },
   { path: '3body', component: Gravity2025Component },
   { path: 'parallax', component: ParallaxComponent },
-  { path: 'type', component: TypingHomepageComponent },
+  { path: 'kbw', component: TypingHomepageComponent },
   { path: '**', redirectTo: '', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];
 
