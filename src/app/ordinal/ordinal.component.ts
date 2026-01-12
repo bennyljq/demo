@@ -63,7 +63,7 @@ export class OrdinalComponent implements OnInit {
   ngOnInit() {
     // Subscribe to query params to handle the URL link
     this.route.queryParams.subscribe(params => {
-      const sharedId = params['question']; // matches ?question=...
+      const sharedId = params['question'];
 
       if (sharedId) {
         this.loadLevelById(sharedId);
@@ -90,7 +90,6 @@ export class OrdinalComponent implements OnInit {
 
   private startLevel(level: GameLevel) {
     this.currentLevelId.set(level.id);
-    this.currentMetric.set(level.metric);
 
     const gameItems: OrdinalItem[] = level.data.map((d, i) => ({
       id: `${level.id}_${i}`,
@@ -108,24 +107,34 @@ export class OrdinalComponent implements OnInit {
     this.seenLevelIds.add(level.id);
 
     this.router.navigate([], {
-      queryParams: { question: level.id },
-      queryParamsHandling: 'merge', // Keeps other params if you ever add them
-      replaceUrl: true              // Prevents "Back" button spam (updates history in place)
+      queryParams: {
+        question: level.id,
+        category: this.route.snapshot.queryParams['category'] || null
+      },
+      replaceUrl: true
     });
   }
 
   loadRandomLevel() {
-    // Filter out levels we've already seen this session
-    const availableLevels = ALL_LEVELS.filter(l => !this.seenLevelIds.has(l.id));
+    // 1. Snag the current category from the URL snapshot
+    const currentCategory = this.route.snapshot.queryParams['category'];
 
-    // If we played everything, reset the history
+    let sourceBank = ALL_LEVELS;
+
+    // 2. Filter if category is set
+    if (currentCategory === 'health') {
+      sourceBank = QUESTION_BANK_HEALTH;
+    }
+
+    // 3. Apply no-repeat logic
+    const availableLevels = sourceBank.filter(l => !this.seenLevelIds.has(l.id));
+
     if (availableLevels.length === 0) {
       this.seenLevelIds.clear();
-      this.loadRandomLevel(); // Recursively call to restart
+      this.loadRandomLevel(); // Recurse
       return;
     }
 
-    // 1. Pick Random Level
     const randomIndex = Math.floor(Math.random() * availableLevels.length);
     const level = availableLevels[randomIndex];
 
