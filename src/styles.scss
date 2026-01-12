@@ -1,3 +1,35 @@
+/* Define your color palette as variables */
+:root {
+  --bg-color: #f5f5f5;
+  --text-color: #333;
+  --card-bg: #ffffff;
+  --header-text: #1a1a1a;
+  --secondary-text: #666;
+}
+
+/* Dark Mode Overrides */
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --card-bg: #1e1e1e;
+  --header-text: #ffffff;
+  --secondary-text: #a0a0a0;
+  
+  /* Material Design Overrides (Optional but recommended) */
+  .mat-mdc-card {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+  }
+}
+
+/* Apply variables to the body */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+}
+
 // Font //
 .f-poppins {
   font-family: 'Poppins', sans-serif;

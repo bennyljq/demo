@@ -1,0 +1,89 @@
+<div class="game-container">
+  <div class="header">
+    <div class="title-row">
+      <div class="title-group">
+        <h1 class="game-title">ORDINAL</h1>
+        <p class="game-subtitle">Create order from chaos</p>
+      </div>
+
+      <div class="streak-badge" [class.has-streak]="stats().currentStreak > 0" matTooltip="Current Win Streak">
+        <mat-icon>local_fire_department</mat-icon>
+        <span>{{ stats().currentStreak }}</span>
+      </div>
+
+      <div class="tooltip-container" tabindex="0">
+        <button mat-icon-button class="help-btn" aria-label="How to play">
+          <mat-icon>help_outline</mat-icon>
+        </button>
+
+        <div class="tooltip-content">
+          <div class="legend-row">
+            <span class="emoji">🟩</span> <span>Correct spot</span>
+          </div>
+          <div class="legend-row">
+            <span class="emoji">🟨</span> <span>Off by 1 spot</span>
+          </div>
+          <div class="legend-row">
+            <span class="emoji">⬜</span> <span>Way off</span>
+          </div>
+        </div>
+      </div>
+
+      <button mat-icon-button (click)="themeService.toggleTheme()">
+        <mat-icon>{{ themeService.theme() === 'light' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+      </button>
+
+    </div>
+
+    <div class="status-bar">
+      <span>Attempts: {{ attempts() }} / {{ MAX_ATTEMPTS }}</span>
+      <!-- <button mat-icon-button (click)="loadRandomLevel()">
+        <mat-icon>refresh</mat-icon>
+      </button> -->
+    </div>
+    
+
+    <p>Sort by: <strong>{{ currentMetric() }}</strong></p>
+  </div>
+
+  <div cdkDropList class="list-group" (cdkDropListDropped)="drop($event)">
+    @for (item of items(); track item.id) {
+    <div cdkDrag class="list-item" [ngClass]="item.state">
+      <mat-card class="content-card">
+        <mat-card-content class="flex-row">
+          <span class="label">{{ item.label }}</span>
+
+          <span class="spacer" style="flex: 1;"></span>
+
+          @if (isSubmitted()) {
+          <span class="value-reveal">{{ item.value }}</span>
+          }
+
+          @if (item.state === 'correct') { <mat-icon class="status-icon">check_circle</mat-icon> }
+          @if (item.state === 'close') { <mat-icon class="status-icon">import_export</mat-icon> }
+
+          @if (!isSubmitted()) {<mat-icon class="drag-handle">drag_indicator</mat-icon>}
+        </mat-card-content>
+      </mat-card>
+    </div>
+    }
+  </div>
+
+  <div class="actions">
+    @if (isSubmitted()) {
+    <button mat-raised-button color="accent" (click)="shareResults()">
+      <mat-icon>share</mat-icon>
+      Share
+    </button>
+
+    <button mat-raised-button color="primary" (click)="loadRandomLevel()">
+      New Game
+    </button>
+    } @else {
+    <button mat-raised-button color="primary" (click)="submitOrder()"
+      [disabled]="isSubmitted() || attempts() >= MAX_ATTEMPTS">
+      Submit Order
+    </button>
+    }
+  </div>
+</div>
