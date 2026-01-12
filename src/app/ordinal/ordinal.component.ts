@@ -10,7 +10,7 @@ import {
   moveItemInArray
 } from '@angular/cdk/drag-drop';
 import { OrdinalItem, FeedbackState, GameLevel } from './ordinal.types';
-import { QUESTION_BANK, QUESTION_BANK_EXTENDED, QUESTION_BANK_BATCH_3 } from './game-data';
+import { QUESTION_BANK, QUESTION_BANK_EXTENDED, QUESTION_BANK_BATCH_3, QUESTION_BANK_HEALTH } from './game-data';
 import { GameStatsService } from './game-stats.service'; // Import service
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ThemeService } from './theme.service';
@@ -19,7 +19,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Clipboard } from '@angular/cdk/clipboard'
 
-const ALL_LEVELS = [...QUESTION_BANK, ...QUESTION_BANK_EXTENDED, ...QUESTION_BANK_BATCH_3];
+const ALL_LEVELS = [...QUESTION_BANK, ...QUESTION_BANK_EXTENDED, ...QUESTION_BANK_BATCH_3, ...QUESTION_BANK_HEALTH];
 
 @Component({
   selector: 'app-ordinal',
