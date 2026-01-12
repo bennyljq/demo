@@ -90,6 +90,7 @@ export class OrdinalComponent implements OnInit {
 
   private startLevel(level: GameLevel) {
     this.currentLevelId.set(level.id);
+    this.currentMetric.set(level.metric);
 
     const gameItems: OrdinalItem[] = level.data.map((d, i) => ({
       id: `${level.id}_${i}`,
