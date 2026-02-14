@@ -8,7 +8,7 @@
 }
 .switch-container {
   width: 36px;
-  height: 20px;
+  // height: 20px;
   padding: 3px;
   border-radius: 10px;
   background-color: var(--switch-bg-color);
@@ -20,7 +20,7 @@
   background-color: var(--bg-color);
 }
 .switch-ball-active {
-  transform: translateX(16px);
+  transform: translateX(20px);
   animation: toggle .5s;
 }
 .switch-ball-inactive {
@@ -31,12 +31,12 @@
   from {
     transform: translateX(0);
   } to {
-    transform: translateX(16px);
+    transform: translateX(20px);
   }
 }
 @keyframes toggle2 {
   from {
-    transform: translateX(16px);
+    transform: translateX(20px);
   } to {
     transform: translateX(0);
   }
