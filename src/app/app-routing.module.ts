@@ -23,6 +23,7 @@ import { ParallaxComponent } from './parallax/parallax.component';
 import { Gravity2025Component } from './gravity2025/gravity2025.component';
 import { TypingHomepageComponent } from './typing-game/typing-homepage/typing-homepage.component';
 import { OrdinalComponent } from './ordinal/ordinal.component';
+import { ShapeBisectorComponent } from './shape-bisector/shape-bisector.component';
 
 const routes: Routes = [
   { path: '', component: HomepageV2Component },
@@ -45,6 +46,7 @@ const routes: Routes = [
   { path: 'parallax', component: ParallaxComponent },
   { path: 'kbw', component: TypingHomepageComponent },
   { path: 'ordinal', component: OrdinalComponent },
+  { path: 'chop', component: ShapeBisectorComponent },
   { path: '**', redirectTo: '', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];
 

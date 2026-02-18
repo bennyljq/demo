@@ -1,0 +1,95 @@
+<div class="game-environment">
+  
+  <header class="game-hud">
+    <div class="stat-badge">
+      <span class="label">LEVEL</span>
+      <span class="value">01</span>
+    </div>
+    <div class="stat-badge main-score">
+      <span class="label">LAST CUT</span>
+      <span class="value">--%</span>
+    </div>
+    <div class="stat-badge">
+      <span class="label">AVG SCORE</span>
+      <span class="value">--%</span>
+    </div>
+  </header>
+
+  <div class="canvas-wrapper">
+    
+    <svg 
+      #gameCanvas
+      [attr.viewBox]="'0 0 ' + VIEWBOX_SIZE + ' ' + VIEWBOX_SIZE"
+      preserveAspectRatio="xMidYMid meet"
+      class="game-canvas"
+      (pointerdown)="onPointerDown($event)"
+      (pointermove)="onPointerMove($event)"
+      (pointerup)="onPointerUp($event)"
+      (pointercancel)="onPointerUp($event)">
+      
+      <defs>
+        <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="15" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+
+        <filter id="laser-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="12" result="softGlow" />
+          <feGaussianBlur stdDeviation="3" in="SourceGraphic" result="hardGlow" />
+          <feMerge>
+            <feMergeNode in="softGlow" />
+            <feMergeNode in="hardGlow" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+
+        <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+          <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(129, 140, 248, 0.15)" stroke-width="1"/>
+        </pattern>
+      </defs>
+
+      <rect width="100%" height="100%" fill="url(#grid)" />
+
+      <polygon 
+        [attr.points]="pointsString()" 
+        [attr.key]="shapeId()"
+        class="target-shape animate-entrance" 
+        filter="url(#neon-glow)"
+      />
+
+      @if (startPoint() && currentPoint()) {
+        <g class="slash-layer">
+          <line 
+            [attr.x1]="startPoint()?.x" 
+            [attr.y1]="startPoint()?.y" 
+            [attr.x2]="currentPoint()?.x" 
+            [attr.y2]="currentPoint()?.y" 
+            class="laser-cut"
+            [class.drawing]="isDrawing()"
+            [class.completed]="cutCompleted()"
+            filter="url(#laser-glow)"
+          />
+          
+          @if (isDrawing()) {
+            <circle 
+              [attr.cx]="startPoint()?.x" 
+              [attr.cy]="startPoint()?.y" 
+              r="8" 
+              class="slash-reticle"
+            />
+          }
+        </g>
+      }
+    </svg>
+    </div>
+
+  <div class="controls">
+    <button class="action-btn" (click)="generateRandomShape()">
+      <span class="btn-text">INITIALIZE NEW SHAPE</span>
+    </button>
+  </div>
+  
+</div>

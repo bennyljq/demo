@@ -1,0 +1,208 @@
+/* shape-bisector.component.css */
+:host {
+  --bg-deep: #050511;           /* Almost black/indigo */
+  --surface-panel: rgba(15, 23, 42, 0.6);
+  --lavender-core: #e9d5ff;     /* Brighter lavender for the core */
+  --lavender-glow: #a855f7;     /* Deep purple for the glow */
+  --indigo-accent: #6366f1;
+  --text-muted: #94a3b8;
+  --text-bright: #f8fafc;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #111827 0%, var(--bg-deep) 100%);
+  color: var(--text-bright);
+  font-family: 'Inter', system-ui, sans-serif;
+  user-select: none;
+}
+
+.game-environment {
+  width: 95vw;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* --- HEADS UP DISPLAY (HUD) --- */
+.game-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: var(--surface-panel);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.stat-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.stat-badge .label {
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.stat-badge .value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--lavender-core);
+  text-shadow: 0 0 10px var(--lavender-glow);
+}
+
+.main-score .value {
+  font-size: 2.5rem;
+}
+
+/* --- CANVAS AREA --- */
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #020617; /* Very dark background for high contrast */
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 
+              inset 0 0 20px rgba(99, 102, 241, 0.1);
+  border: 2px solid rgba(99, 102, 241, 0.3);
+}
+
+.target-shape {
+  fill: rgba(233, 213, 255, 0.15); /* Translucent fill */
+  stroke: var(--lavender-core);
+  stroke-width: 4;
+  stroke-linejoin: round;
+  transform-origin: center;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-entrance {
+  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* --- BUTTONS --- */
+.controls {
+  display: flex;
+  justify-content: center;
+}
+
+.action-btn {
+  background: transparent;
+  color: var(--text-bright);
+  border: 1px solid var(--indigo-accent);
+  padding: 1rem 3rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.action-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, var(--indigo-accent), var(--lavender-glow));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.action-btn:hover::before {
+  opacity: 1;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(168, 85, 247, 0.4);
+  border-color: transparent;
+}
+
+.action-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Make sure the SVG accepts pointer events but prevents default touch actions like panning */
+.game-canvas {
+  width: 100%;
+  height: 100%;
+  touch-action: none; /* CRITICAL for mobile drawing */
+  cursor: crosshair;
+}
+
+/* --- THE LASER CUT --- */
+.laser-cut {
+  stroke: #22d3ee; /* Electric Cyan */
+  stroke-width: 6;
+  stroke-linecap: round;
+  /* Prevent the line itself from intercepting pointer events */
+  pointer-events: none; 
+}
+
+/* State: While dragging */
+.laser-cut.drawing {
+  stroke-opacity: 0.9;
+  animation: laserPulse 0.1s infinite alternate;
+}
+
+/* State: Cut Finished (Pointer Up) */
+.laser-cut.completed {
+  stroke: #ffffff; /* Flash hot white */
+  stroke-width: 8;
+  animation: cutFadeOut 0.8s ease-out forwards;
+}
+
+/* The little dot where they initially clicked */
+.slash-reticle {
+  fill: #ffffff;
+  filter: drop-shadow(0 0 5px #22d3ee);
+  pointer-events: none;
+  
+  /* --- THE FIX --- */
+  transform-box: fill-box;   /* Tells the transform to use the element's own box */
+  transform-origin: center;  /* Centers the scale animation on the circle */
+  /* --------------- */
+  
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* --- ANIMATIONS --- */
+@keyframes laserPulse {
+  0% { stroke-width: 5; opacity: 0.8; }
+  100% { stroke-width: 7; opacity: 1; }
+}
+
+@keyframes cutFadeOut {
+  0% { 
+    stroke-opacity: 1; 
+    filter: drop-shadow(0 0 20px #22d3ee);
+  }
+  20% {
+    stroke: #22d3ee;
+    stroke-width: 4;
+  }
+  100% { 
+    stroke-opacity: 0; 
+    stroke-width: 1;
+    stroke: #22d3ee;
+  }
+}
