@@ -1,4 +1,6 @@
-import { Component, signal, computed, ElementRef, viewChild } from '@angular/core';
+import { Component, signal, computed, ElementRef, viewChild, OnInit, Inject } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 
 interface Point {
   x: number;
@@ -11,7 +13,28 @@ interface Point {
   templateUrl: './shape-bisector.component.html',
   styleUrls: ['./shape-bisector.component.scss']
 })
-export class ShapeBisectorComponent {
+export class ShapeBisectorComponent implements OnInit {
+  
+  constructor(
+    private titleService: Title,
+    @Inject(DOCUMENT) private document: Document
+  ) {
+    this.loadStats(); // Load saved data when the game boots up
+    this.generateRandomShape();
+  }
+  
+  ngOnInit() {
+    // 1. Set the dynamic Tab Title
+    this.titleService.setTitle('POTONG');
+    
+    // 2. Swap the Favicon for this specific route
+    const favIcon = this.document.getElementById('app-favicon') as HTMLLinkElement;
+    if (favIcon) {
+      // Point this to wherever you keep your stylized icon
+      favIcon.href = 'assets/potong/katana-icon.png'; 
+    }
+  }
+  
   readonly VIEWBOX_SIZE = 1000;
   readonly polygonPoints = signal<Point[]>([]);
   
@@ -110,6 +133,14 @@ export class ShapeBisectorComponent {
     }
     this.showCelebration.set(false);
     this.particles.set([]);
+    
+    // --- 🚨 NEW: KILL ALL ACTIVE AUDIO 🚨 ---
+    this.activeSounds.forEach(sound => {
+      sound.pause();
+      sound.currentTime = 0; // Rewind it just to be safe
+    });
+    this.activeSounds = []; // Clear the registry
+    // ----------------------------------------
   }
   
   // --- Add these new properties at the top of your class ---
@@ -120,11 +151,6 @@ export class ShapeBisectorComponent {
   particles = signal<any[]>([]);
   celebrationText = signal<string>('');
   celebrationTier = signal<'great' | 'perfect' | null>(null);
-  
-  constructor() {
-    this.loadStats(); // Load saved data when the game boots up
-    this.generateRandomShape();
-  }
   
   // --- PERSISTENCE METHODS ---
   private loadStats() {
@@ -234,17 +260,21 @@ export class ShapeBisectorComponent {
   avgScore = signal<number | null>(null);
   private celebrationTimer: ReturnType<typeof setTimeout> | null = null;
   private sliceAudio = new Audio('assets/potong/shing.m4a');
+  private activeSounds: HTMLAudioElement[] = [];
   
   private playSliceSound() {
-    // We clone the audio node every time it plays.
-    // This allows multiple slash sounds to overlap perfectly 
-    // if the player resets and cuts extremely fast.
     const soundClone = this.sliceAudio.cloneNode() as HTMLAudioElement;
     
-    // Browsers block audio unless the user has interacted with the page,
-    // so we add a quick catch to prevent console errors on the very first load.
+    // Add it to our active registry
+    this.activeSounds.push(soundClone);
+    
+    // Remove it from the registry when it finishes naturally
+    soundClone.onended = () => {
+      this.activeSounds = this.activeSounds.filter(s => s !== soundClone);
+    };
+    
     soundClone.play().catch(err => {
-      console.warn("Browser blocked audio playback until user interaction.", err);
+      console.warn("Browser blocked audio playback.", err);
     });
   }
   
@@ -309,31 +339,33 @@ export class ShapeBisectorComponent {
     const result = this.splitPolygon(this.polygonPoints(), start, end);
     
     if (result) {
-      // 1. Calculate Area and Centroids for both new pieces
+      // 1. Math & Area Calculations
       const statsA = this.getPolygonAreaAndCentroid(result.pieceA);
       const statsB = this.getPolygonAreaAndCentroid(result.pieceB);
-      
       const totalArea = statsA.area + statsB.area;
       
-      // 2. Convert to exactly 1 decimal place (e.g., "50.1")
-      const percentA = ((statsA.area / totalArea) * 100).toFixed(1);
-      const percentB = ((statsB.area / totalArea) * 100).toFixed(1);
+      // Calculate raw numbers once. Subtracting from 100 guarantees no floating-point rounding drift.
+      const rawA = (statsA.area / totalArea) * 100;
+      const rawB = 100 - rawA;
+      const diff = Math.abs(50 - rawA);
       
-      // --- 🚨 NEW: PROCESS THE SCORE 🚨 ---
-      const score = this.calculateScore(parseFloat(percentA));
+      // Formatted strings for the SVG text overlay
+      const percentA = rawA.toFixed(1);
+      const percentB = rawB.toFixed(1);
+      
+      // 2. Score & Game State Updates
+      const score = this.calculateScore(rawA);
       
       this.roundsPlayed.update(r => r + 1);
-      this.lastCutText.set(`${percentA} / ${percentB}`); 
+      this.lastCutText.set(`${Math.min(rawA, rawB).toFixed(1)}/${Math.max(rawA, rawB).toFixed(1)}`); 
       this.lastScore.set(score);
       this.totalScore.update(t => t + score);
       this.avgScore.set(Math.round(this.totalScore() / this.roundsPlayed()));
-      
       this.saveStats(); 
+      
+      // 3. Physical Effects (Audio & Haptics)
       this.playSliceSound();
       
-      const diff = Math.abs(50 - parseFloat(percentA));
-      
-      // Trigger celebrations and specific haptic feedback
       if (diff <= 1) {
         this.triggerCelebration('perfect');
         this.triggerHaptics('perfect');
@@ -341,26 +373,25 @@ export class ShapeBisectorComponent {
         this.triggerCelebration('great');
         this.triggerHaptics('great');
       } else {
-        // Just a standard cut vibration
         this.triggerHaptics();
       }
-      // ------------------------------------
       
-      // 3. Save the stats to our signal
+      // 4. Setup Drift Animation
       this.pieceStats.set({
         pieceA: { percent: percentA, centroid: statsA.centroid },
         pieceB: { percent: percentB, centroid: statsB.centroid }
       });
       
-      // 4. Trigger the drift logic (same as before)
+      // Spawn new pieces at 0,0 offset
       this.driftOffsets.set({ offsetA: { x: 0, y: 0 }, offsetB: { x: 0, y: 0 } });
       this.splitPieces.set({ pieceA: result.pieceA, pieceB: result.pieceB });
       
+      // Wait for DOM paint, then trigger the CSS transition
       await this.waitForNextFrame(); 
+      this.driftOffsets.set(this.calculateDriftOffsets(start, end, -60));
       
-      const targetOffsets = this.calculateDriftOffsets(start, end, -60);
-      this.driftOffsets.set(targetOffsets);
     } else {
+      // Invalid cut: Reset interaction state
       this.startPoint.set(null);
       this.currentPoint.set(null);
       this.cutCompleted.set(false);

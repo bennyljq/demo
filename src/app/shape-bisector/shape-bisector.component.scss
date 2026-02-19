@@ -306,6 +306,56 @@
   animation: explode var(--duration) cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: -1rem;
+  margin-top: -1rem;
+}
+
+.sliced-logo {
+  position: relative;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: 3rem;
+  letter-spacing: 6px;
+  line-height: 1;
+  
+  /* Make the base text transparent so only the sliced pseudo-elements show */
+  color: transparent; 
+  margin: 0;
+}
+
+/* Both pseudo-elements inherit the exact same text and sizing */
+.sliced-logo::before,
+.sliced-logo::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* TOP SLICE */
+.sliced-logo::before {
+  /* Polygon cuts from top-left, to top-right, down to 45% right, up to 55% left */
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 55%);
+  color: #a855f7; /* Purple */
+  transform: translate(-2px, -2px); /* Shift up and left */
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+}
+
+/* BOTTOM SLICE */
+.sliced-logo::after {
+  /* Polygon cuts from 55% left, down to 45% right, to bottom-right, to bottom-left */
+  clip-path: polygon(0 55%, 100% 45%, 100% 100%, 0 100%);
+  color: #22d3ee; /* Cyan */
+  transform: translate(2px, 2px); /* Shift down and right */
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+}
+
 @keyframes explode {
   0% { 
     transform: translate(0, 0) rotate(0deg) scale(0); 
