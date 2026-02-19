@@ -2,94 +2,161 @@
   
   <header class="game-hud">
     <div class="stat-badge">
-      <span class="label">LEVEL</span>
-      <span class="value">01</span>
+      <span class="label">ROUNDS</span>
+      <span class="value">{{ roundsPlayed() }}</span>
     </div>
-    <div class="stat-badge main-score">
+    
+    <div class="stat-badge">
       <span class="label">LAST CUT</span>
-      <span class="value">--%</span>
+      <span class="value" style="font-size: 1rem;">{{ lastCutText() }}</span>
     </div>
+    
+    <div class="stat-badge">
+      <span class="label">SCORE</span>
+      <span class="value">{{ lastScore() !== null ? lastScore() : '--' }}</span>
+    </div>
+    
     <div class="stat-badge">
       <span class="label">AVG SCORE</span>
-      <span class="value">--%</span>
+      <span class="value">{{ avgScore() !== null ? avgScore() : '--' }}</span>
     </div>
   </header>
-
+  
   <div class="canvas-wrapper">
     
     <svg 
-      #gameCanvas
-      [attr.viewBox]="'0 0 ' + VIEWBOX_SIZE + ' ' + VIEWBOX_SIZE"
-      preserveAspectRatio="xMidYMid meet"
-      class="game-canvas"
-      (pointerdown)="onPointerDown($event)"
-      (pointermove)="onPointerMove($event)"
-      (pointerup)="onPointerUp($event)"
-      (pointercancel)="onPointerUp($event)">
+    #gameCanvas
+    [attr.viewBox]="'0 0 ' + VIEWBOX_SIZE + ' ' + VIEWBOX_SIZE"
+    preserveAspectRatio="xMidYMid meet"
+    class="game-canvas"
+    (pointerdown)="onPointerDown($event)"
+    (pointermove)="onPointerMove($event)"
+    (pointerup)="onPointerUp($event)"
+    (pointercancel)="onPointerUp($event)">
+    
+    <defs>
+      <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="15" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
       
-      <defs>
-        <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="15" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-
-        <filter id="laser-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="12" result="softGlow" />
-          <feGaussianBlur stdDeviation="3" in="SourceGraphic" result="hardGlow" />
-          <feMerge>
-            <feMergeNode in="softGlow" />
-            <feMergeNode in="hardGlow" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-
-        <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-          <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(129, 140, 248, 0.15)" stroke-width="1"/>
-        </pattern>
-      </defs>
-
-      <rect width="100%" height="100%" fill="url(#grid)" />
-
+      <filter id="laser-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="12" result="softGlow" />
+        <feGaussianBlur stdDeviation="3" in="SourceGraphic" result="hardGlow" />
+        <feMerge>
+          <feMergeNode in="softGlow" />
+          <feMergeNode in="hardGlow" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+      
+      <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+        <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(129, 140, 248, 0.15)" stroke-width="1"/>
+      </pattern>
+    </defs>
+    
+    <rect width="100%" height="100%" fill="url(#grid)" />
+    
+    @if (!splitPieces()) {
       <polygon 
-        [attr.points]="pointsString()" 
-        [attr.key]="shapeId()"
-        class="target-shape animate-entrance" 
-        filter="url(#neon-glow)"
+      [attr.points]="pointsString()" 
+      [attr.key]="shapeId()"
+      class="target-shape animate-entrance" 
+      filter="url(#neon-glow)"
       />
+    } @else if (splitPieces() && pieceStats()) {
+      <g class="split-group" filter="url(#neon-glow)">
+        
+        <g class="drift-group piece-a"
+        [style.transform]="'translate(' + driftOffsets().offsetA.x + 'px, ' + driftOffsets().offsetA.y + 'px)'">
+        
+        <polygon [attr.points]="getPointsString(splitPieces()!.pieceA)" class="target-shape" />
+        
+        <text 
+        [attr.x]="pieceStats()!.pieceA.centroid.x" 
+        [attr.y]="pieceStats()!.pieceA.centroid.y" 
+        class="score-text">
+        {{ pieceStats()!.pieceA.percent }}%
+      </text>
+    </g>
+    
+    <g class="drift-group piece-b"
+    [style.transform]="'translate(' + driftOffsets().offsetB.x + 'px, ' + driftOffsets().offsetB.y + 'px)'">
+    
+    <polygon [attr.points]="getPointsString(splitPieces()!.pieceB)" class="target-shape" />
+    
+    <text 
+    [attr.x]="pieceStats()!.pieceB.centroid.x" 
+    [attr.y]="pieceStats()!.pieceB.centroid.y" 
+    class="score-text">
+    {{ pieceStats()!.pieceB.percent }}%
+  </text>
+</g>
 
-      @if (startPoint() && currentPoint()) {
-        <g class="slash-layer">
-          <line 
-            [attr.x1]="startPoint()?.x" 
-            [attr.y1]="startPoint()?.y" 
-            [attr.x2]="currentPoint()?.x" 
-            [attr.y2]="currentPoint()?.y" 
-            class="laser-cut"
-            [class.drawing]="isDrawing()"
-            [class.completed]="cutCompleted()"
-            filter="url(#laser-glow)"
-          />
-          
-          @if (isDrawing()) {
-            <circle 
-              [attr.cx]="startPoint()?.x" 
-              [attr.cy]="startPoint()?.y" 
-              r="8" 
-              class="slash-reticle"
-            />
-          }
-        </g>
-      }
-    </svg>
+</g>
+}
+
+@if (startPoint() && currentPoint()) {
+  <g class="slash-layer">
+    <line 
+    [attr.x1]="startPoint()?.x" 
+    [attr.y1]="startPoint()?.y" 
+    [attr.x2]="currentPoint()?.x" 
+    [attr.y2]="currentPoint()?.y" 
+    class="laser-cut"
+    [class.drawing]="isDrawing()"
+    [class.completed]="cutCompleted()"
+    filter="url(#laser-glow)"
+    />
+    
+    @if (isDrawing()) {
+      <circle 
+      [attr.cx]="startPoint()?.x" 
+      [attr.cy]="startPoint()?.y" 
+      r="8" 
+      class="slash-reticle"
+      />
+    }
+  </g>
+}
+</svg>
+</div>
+
+@if (showCelebration()) {
+  <div class="celebration-overlay">
+    
+    <div class="celebration-text" [class.is-perfect]="celebrationTier() === 'perfect'">
+      {{ celebrationText() }}
     </div>
+    
+    @for (p of particles(); track $index) {
+      <div class="confetti" 
+      [style.--tx]="p.tx + 'px'" 
+      [style.--ty]="p.ty + 'px'" 
+      [style.--rot]="p.rot + 'deg'"
+      [style.--scale]="p.scale"
+      [style.--duration]="p.duration + 's'"
+      [style.background]="p.color"
+      [style.animation-delay]="p.delay + 's'">
+    </div>
+  }
+</div>
+}
 
-  <div class="controls">
-    <button class="action-btn" (click)="generateRandomShape()">
-      <span class="btn-text">INITIALIZE NEW SHAPE</span>
-    </button>
-  </div>
-  
+<div class="controls">
+  <button 
+  #initBtn 
+  class="action-btn" 
+  (click)="generateRandomShape(); initBtn.blur()">
+  <span class="btn-text">INITIALIZE NEW SHAPE</span>
+</button>
+
+<button class="reset-btn" (click)="resetStats()">
+  RESET STATS
+</button>
+</div>
+
 </div>

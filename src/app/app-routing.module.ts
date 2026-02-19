@@ -46,7 +46,7 @@ const routes: Routes = [
   { path: 'parallax', component: ParallaxComponent },
   { path: 'kbw', component: TypingHomepageComponent },
   { path: 'ordinal', component: OrdinalComponent },
-  { path: 'chop', component: ShapeBisectorComponent },
+  { path: 'potong', component: ShapeBisectorComponent },
   { path: '**', redirectTo: '', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];
 

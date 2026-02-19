@@ -7,6 +7,9 @@
   --indigo-accent: #6366f1;
   --text-muted: #94a3b8;
   --text-bright: #f8fafc;
+
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
   
   display: flex;
   justify-content: center;
@@ -31,7 +34,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 1rem;
   background: var(--surface-panel);
   border: 1px solid rgba(99, 102, 241, 0.2);
   border-radius: 16px;
@@ -59,10 +62,6 @@
   text-shadow: 0 0 10px var(--lavender-glow);
 }
 
-.main-score .value {
-  font-size: 2.5rem;
-}
-
 /* --- CANVAS AREA --- */
 .canvas-wrapper {
   position: relative;
@@ -72,7 +71,7 @@
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 
-              inset 0 0 20px rgba(99, 102, 241, 0.1);
+  inset 0 0 20px rgba(99, 102, 241, 0.1);
   border: 2px solid rgba(99, 102, 241, 0.3);
 }
 
@@ -98,7 +97,9 @@
 /* --- BUTTONS --- */
 .controls {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 .action-btn {
@@ -131,10 +132,16 @@
   opacity: 1;
 }
 
-.action-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(168, 85, 247, 0.4);
-  border-color: transparent;
+@media (hover: hover) {
+  .action-btn:hover::before {
+    opacity: 1;
+  }
+
+  .action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(168, 85, 247, 0.4);
+    border-color: transparent;
+  }
 }
 
 .action-btn:active {
@@ -183,6 +190,146 @@
   /* --------------- */
   
   animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.piece-a, .piece-b {
+  /* Inherits the look of the target-shape, but adds a smooth transition for the drift */
+  transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+  transform-origin: center;
+}
+
+.piece-a .target-shape { 
+  stroke: #a855f7; /* Deeper purple for piece A */
+}
+
+.piece-b .target-shape { 
+  stroke: #d8b4fe; /* Brighter lavender for piece B */
+}
+
+.drift-group {
+  /* Move the transition from the polygon to the entire group */
+  transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+  transform-origin: center;
+}
+
+.score-text {
+  fill: #ffffff;
+  font-size: 42px;
+  font-weight: 800;
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: -1px;
+  
+  text-anchor: middle; 
+  dominant-baseline: middle;
+  filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.8));
+  
+  /* --- THE FIX --- */
+  transform-box: fill-box;
+  transform-origin: center;
+  /* --------------- */
+  
+  /* I swapped this to a slightly bouncier easing curve to match the reticle! */
+  animation: scoreFadeIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.reset-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-decoration: underline;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.reset-btn:hover {
+  opacity: 1;
+  color: #ef4444; /* Subtle red hover to indicate a destructive action */
+}
+
+/* --- CELEBRATION OVERLAY --- */
+.celebration-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* Lets the user still interact with the canvas underneath */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  overflow: hidden;
+}
+
+.celebration-text {
+  position: absolute;
+  font-size: 2.5rem;
+  line-height: 1;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 2px;
+  text-align: center;
+  text-shadow: 0 0 15px #a855f7;
+  transform-origin: center;
+  animation: popText 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  z-index: 51;
+}
+
+/* --- THE PERFECT UPGRADE --- */
+.celebration-text.is-perfect {
+  font-size: 4rem;
+  font-weight: 900;
+  text-shadow: 0 0 20px #fbbf24, 0 0 40px #f59e0b; /* Hot Gold glow */
+  animation: popTextPerfect 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+             pulseGold 1.5s infinite alternate ease-in-out;
+}
+
+/* Bouncier, heavier entrance for Perfect */
+@keyframes popTextPerfect {
+  0% { transform: scale(0.3) translateY(50px); opacity: 0; }
+  60% { transform: scale(1.1) translateY(-10px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes pulseGold {
+  from { filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.6)); }
+  to { filter: drop-shadow(0 0 35px rgba(245, 158, 11, 1)); }
+}
+
+.confetti {
+  position: absolute;
+  width: 12px;
+  height: 24px;
+  border-radius: 4px;
+  opacity: 0;
+  /* Bind the duration variable injected by Angular */
+  animation: explode var(--duration) cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes explode {
+  0% { 
+    transform: translate(0, 0) rotate(0deg) scale(0); 
+    opacity: 1; 
+  }
+  60% {
+    opacity: 1; /* Keep them visible longer before fading */
+  }
+  100% { 
+    /* Adding a +300px drop to the Y axis creates a simulated gravity arc */
+    transform: translate(var(--tx), calc(var(--ty) + 300px)) rotate(var(--rot)) scale(var(--scale)); 
+    opacity: 0; 
+  }
+}
+
+/* --- ANIMATIONS --- */
+@keyframes popText {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes scoreFadeIn {
+  0% { opacity: 0; transform: scale(0.5); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 /* --- ANIMATIONS --- */
