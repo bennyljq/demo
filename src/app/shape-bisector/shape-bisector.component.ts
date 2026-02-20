@@ -278,6 +278,7 @@ export class ShapeBisectorComponent implements OnInit {
   avgScore = signal<number | null>(null);
   private celebrationTimer: ReturnType<typeof setTimeout> | null = null;
   private sliceAudio = new Audio('assets/potong/shing.m4a');
+  private perfektAudio = new Audio('assets/potong/perfekt.m4a');
   private activeSounds: HTMLAudioElement[] = [];
   
   private playSliceSound() {
@@ -296,6 +297,21 @@ export class ShapeBisectorComponent implements OnInit {
     });
   }
   
+  private playPerfektSound() {
+    const soundClone = this.perfektAudio.cloneNode() as HTMLAudioElement;
+    
+    // Add it to our active registry
+    this.activeSounds.push(soundClone);
+    
+    // Remove it from the registry when it finishes naturally
+    soundClone.onended = () => {
+      this.activeSounds = this.activeSounds.filter(s => s !== soundClone);
+    };
+    
+    soundClone.play().catch(err => {
+      console.warn("Browser blocked audio playback.", err);
+    });
+  }
   
   // --- Pointer Event Handlers ---
   
@@ -398,6 +414,9 @@ export class ShapeBisectorComponent implements OnInit {
         this.triggerHaptics(currentTier);
       } else {
         this.triggerHaptics();
+      }
+      if (currentTier == 'perfect') {
+        this.playPerfektSound();
       }
       
       // 4. Setup Drift Animation
