@@ -10,9 +10,14 @@
       <span class="value">{{ roundsPlayed() }}</span>
     </div>
     
-    <div class="stat-badge">
+    <!-- <div class="stat-badge">
       <span class="label">LAST CUT</span>
-      <span class="value" style="font-size: 1.2rem;">{{ lastCutText() }}</span>
+      <span class="value">{{ lastCutText() }}</span>
+    </div> -->
+    
+    <div class="stat-badge">
+      <span class="label">BEST CUT</span>
+      <span class="value highlight-gold">{{ bestCutText() }}</span>
     </div>
     
     <div class="stat-badge">
@@ -21,7 +26,7 @@
     </div>
     
     <div class="stat-badge">
-      <span class="label">AVG SCORE</span>
+      <span class="label">AVG</span>
       <span class="value">{{ avgScore() !== null ? avgScore() : '--' }}</span>
     </div>
   </header>
@@ -74,33 +79,31 @@
     } @else if (splitPieces() && pieceStats()) {
       <g class="split-group" filter="url(#neon-glow)">
         
-        <g class="drift-group piece-a"
-        [style.transform]="'translate(' + driftOffsets().offsetA.x + 'px, ' + driftOffsets().offsetA.y + 'px)'">
+        <g class="drift-group piece-a" [class.is-drifting]="isDrifting()" [style.transform]="'translate(' + driftOffsets().offsetA.x + 'px, ' + driftOffsets().offsetA.y + 'px)'">
+          
+          <polygon [attr.points]="getPointsString(splitPieces()!.pieceA)" class="target-shape" />
+          
+          <text 
+          [attr.x]="pieceStats()!.pieceA.centroid.x" 
+          [attr.y]="pieceStats()!.pieceA.centroid.y" 
+          class="score-text">
+          {{ pieceStats()!.pieceA.percent }}%
+        </text>
+      </g>
+      
+      <g class="drift-group piece-b" [class.is-drifting]="isDrifting()" [style.transform]="'translate(' + driftOffsets().offsetB.x + 'px, ' + driftOffsets().offsetB.y + 'px)'">
         
-        <polygon [attr.points]="getPointsString(splitPieces()!.pieceA)" class="target-shape" />
+        <polygon [attr.points]="getPointsString(splitPieces()!.pieceB)" class="target-shape" />
         
         <text 
-        [attr.x]="pieceStats()!.pieceA.centroid.x" 
-        [attr.y]="pieceStats()!.pieceA.centroid.y" 
+        [attr.x]="pieceStats()!.pieceB.centroid.x" 
+        [attr.y]="pieceStats()!.pieceB.centroid.y" 
         class="score-text">
-        {{ pieceStats()!.pieceA.percent }}%
+        {{ pieceStats()!.pieceB.percent }}%
       </text>
     </g>
     
-    <g class="drift-group piece-b"
-    [style.transform]="'translate(' + driftOffsets().offsetB.x + 'px, ' + driftOffsets().offsetB.y + 'px)'">
-    
-    <polygon [attr.points]="getPointsString(splitPieces()!.pieceB)" class="target-shape" />
-    
-    <text 
-    [attr.x]="pieceStats()!.pieceB.centroid.x" 
-    [attr.y]="pieceStats()!.pieceB.centroid.y" 
-    class="score-text">
-    {{ pieceStats()!.pieceB.percent }}%
-  </text>
-</g>
-
-</g>
+  </g>
 }
 
 @if (startPoint() && currentPoint()) {
@@ -134,19 +137,24 @@
     
     <div class="celebration-text" 
     [class.is-perfect]="celebrationTier() === 'perfect'"
-    [class.is-almost]="celebrationTier() === 'almost'">
+    [class.is-almost]="celebrationTier() === 'almost'"
+    [class.is-clown]="celebrationTier() === 'standard'">
     {{ celebrationText() }}
   </div>
   
-  @for (p of particles(); track $index) {
-    <div class="confetti" 
-    [style.--tx]="p.tx + 'px'" 
-    [style.--ty]="p.ty + 'px'" 
+  @for (p of particles(); track p.id) {
+    <div class="particle"
+    [style.background-color]="p.emoji ? 'transparent' : p.color"
+    [style.--tx]="p.tx + 'px'"
+    [style.--ty]="p.ty + 'px'"
     [style.--rot]="p.rot + 'deg'"
     [style.--scale]="p.scale"
-    [style.--duration]="p.duration + 's'"
-    [style.background]="p.color"
-    [style.animation-delay]="p.delay + 's'">
+    [style.animation-duration.s]="p.duration"
+    [style.animation-delay.s]="p.delay">
+    
+    @if (p.emoji) {
+      <span class="particle-emoji">{{ p.emoji }}</span>
+    }
   </div>
 }
 </div>
@@ -156,26 +164,26 @@
   <div class="primary-actions"> 
     
     <button 
-      class="auto-next-btn" 
-      [class.active]="isAutoNext()"
-      (click)="toggleAutoNext()">
-      <span class="toggle-label">AUTO NEXT</span>
-    </button>
+    class="auto-next-btn" 
+    [class.active]="isAutoNext()"
+    (click)="toggleAutoNext()">
+    <span class="toggle-label">AUTO NEXT</span>
+  </button>
+  
+  <button 
+  #initBtn 
+  class="action-btn" 
+  [disabled]="!cutCompleted() || isAutoNext()"
+  [class.ready-pulse]="cutCompleted() && !isAutoNext()" 
+  (click)="generateRandomShape(); initBtn.blur()">
+  <span class="btn-text">NEXT SHAPE</span>
+</button>
 
-    <button 
-      #initBtn 
-      class="action-btn" 
-      [disabled]="!cutCompleted() || isAutoNext()"
-      [class.ready-pulse]="cutCompleted() && !isAutoNext()" 
-      (click)="generateRandomShape(); initBtn.blur()">
-      <span class="btn-text">NEXT SHAPE</span>
-    </button>
-    
-  </div>
+</div>
 
-  <!-- <button class="reset-btn" (click)="resetStats()">
-    RESET STATS
-  </button> -->
+<!-- <button class="reset-btn" (click)="resetStats()">
+  RESET STATS
+</button> -->
 </div>
 
 </div>

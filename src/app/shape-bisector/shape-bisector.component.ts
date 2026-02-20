@@ -33,19 +33,51 @@ export class ShapeBisectorComponent implements OnInit {
       // Point this to wherever you keep your stylized icon
       favIcon.href = 'assets/potong/katana-icon.png'; 
     }
+    
+    this.loadPersistedData();
+  }
+  
+  private loadPersistedData() {
+    // Load Auto-Next Preference
+    const savedAutoNext = localStorage.getItem('potong_auto_next');
+    if (savedAutoNext !== null) {
+      this.isAutoNext.set(savedAutoNext === 'true');
+    }
+    
+    // Load High Score
+    const savedBestText = localStorage.getItem('potong_best_text');
+    const savedBestDiff = localStorage.getItem('potong_best_diff');
+    
+    if (savedBestText && savedBestDiff !== null) {
+      this.bestCutText.set(savedBestText);
+      this.bestCutDiff.set(parseFloat(savedBestDiff));
+    }
   }
   
   readonly VIEWBOX_SIZE = 1000;
   readonly polygonPoints = signal<Point[]>([]);
+  bestCutText = signal<string>('--/--');
+  bestCutDiff = signal<number>(50.0);
   
   // We use this to force Angular to re-render the element and re-trigger CSS animations
   readonly shapeId = signal<number>(0);
+  private currentPerfektSound: HTMLAudioElement | null = null;
   
   ngAfterViewInit() {
     this.generateRandomShape();
   }
   
   generateRandomShape() {
+    this.showCelebration.set(false);
+    if (this.celebrationTimer) clearTimeout(this.celebrationTimer);
+    if (this.streamInterval) clearInterval(this.streamInterval);
+    
+    if (this.currentPerfektSound) {
+      this.currentPerfektSound.pause();
+      this.currentPerfektSound.currentTime = 0;
+      this.currentPerfektSound = null;
+    }
+    
     const points: Point[] = [];
     const numPoints = 150; // Increased for even smoother warping
     const center = { x: 500, y: 500 };
@@ -150,15 +182,52 @@ export class ShapeBisectorComponent implements OnInit {
   showCelebration = signal(false);
   particles = signal<any[]>([]);
   celebrationText = signal<string>('');
-  celebrationTier = signal<'great' | 'almost' | 'perfect' | null>(null);
+  celebrationTier = signal<'great' | 'almost' | 'perfect' | 'standard' | null>(null);
   private readonly TIER_DELAYS = {
     perfect: 5000,
-    almost: 3000,
-    great: 2000,
-    standard: 1200 // The default auto-next speed for a normal cut
+    almost: 2000,
+    great: 1500,
+    standard: 1500
+  };
+  private readonly TIER_CONFIGS = {
+    standard: {
+      text: 'try harder',
+      particleCount: 50, // Just enough clowns to be annoying, not screen-filling
+      spreadMultiplier: 0.6,
+      duration: 1.5,
+      colors: [], // Colors don't matter because it's an emoji
+      emoji: '🤡'
+    },
+    great: {
+      text: 'not bad 🥱',
+      particleCount: 50,
+      spreadMultiplier: 0.7,
+      duration: 1.5,
+      colors: ['#22d3ee', '#a855f7', '#d8b4fe', '#ffffff'],
+      emoji: null
+    },
+    almost: {
+      text: 'ALMOST PERFECT 👍',
+      particleCount: 500,
+      spreadMultiplier: 0.9,
+      duration: 1.5,
+      // Base colors + Hot Pink
+      colors: ['#22d3ee', '#a855f7', '#d8b4fe', '#ffffff', '#ec4899', '#f472b6'],
+      emoji: null
+    },
+    perfect: {
+      text: 'PERFECT POTONG!',
+      particleCount: 1000,
+      spreadMultiplier: 1.2,
+      duration: 1.2,
+      // Base colors + Legendary Gold
+      colors: ['#22d3ee', '#a855f7', '#d8b4fe', '#ffffff', '#fbbf24', '#f59e0b', '#fb923c'],
+      emoji: null
+    }
   };
   
   isAutoNext = signal<boolean>(false);
+  isDrifting = signal<boolean>(false);
   
   
   // --- PERSISTENCE METHODS ---
@@ -191,64 +260,53 @@ export class ShapeBisectorComponent implements OnInit {
     this.roundsPlayed.set(0);
     this.totalScore.set(0);
     this.avgScore.set(null);
-    this.lastCutText.set('--');
+    this.lastCutText.set('--/--');
     this.lastScore.set(null);
   }
   
   // --- CELEBRATION METHOD ---
-  private triggerCelebration(tier: 'great' | 'almost' | 'perfect') {
-    if (this.celebrationTimer) {
-      clearTimeout(this.celebrationTimer);
-    }
+  private triggerCelebration(tier: 'great' | 'almost' | 'perfect' | 'standard') {
+    if (this.celebrationTimer) clearTimeout(this.celebrationTimer);
+    if (this.streamInterval) clearInterval(this.streamInterval); // Clear old streams
     
     this.celebrationTier.set(tier);
     
-    // Set the text dynamically
-    let text = 'GREAT CUT!';
-    if (tier === 'almost') text = 'ALMOST PERFECT!';
-    if (tier === 'perfect') text = 'PERFECT POTONG!';
-    this.celebrationText.set(text);
+    const config = this.TIER_CONFIGS[tier];
+    this.celebrationText.set(config.text);
     
-    // Scale the explosion based on the tier
-    const isPerfect = tier === 'perfect';
-    const isAlmost = tier === 'almost';
+    const timeoutMs = this.TIER_DELAYS[tier] || 1500; 
+    const maxSeconds = timeoutMs / 1000; 
+    const maxDelay = Math.max(0, maxSeconds - config.duration);
     
-    const particleCount = isPerfect ? 150 : (isAlmost ? 80 : 40);
-    const spread = isPerfect ? 1500 : (isAlmost ? 1000 : 800);
-    
-    const newParticles = Array.from({ length: particleCount }).map(() => {
-      const tx = (Math.random() - 0.5) * spread; 
-      const ty = (Math.random() - 0.5) * spread - (tier !== 'great' ? 400 : 200); 
-      const rot = Math.random() * 1080; 
-      const scale = Math.random() * 0.8 + 0.4;
-      
-      // Base colors
-      const colors = ['#22d3ee', '#a855f7', '#d8b4fe', '#ffffff'];
-      
-      // Inject tier-specific colors
-      if (isPerfect) {
-        colors.push('#fbbf24', '#f59e0b', '#fb923c'); // Reserved Gold!
-      } else if (isAlmost) {
-        colors.push('#ec4899', '#f472b6'); // Hot Pink for Almost Perfect
-      }
-      
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const duration = (isPerfect ? 1.2 : (isAlmost ? 1.5 : 2.0)) + Math.random() * 1.5; 
-      
-      return { 
-        tx, ty, rot, scale, color, 
-        delay: Math.random() * (isPerfect ? 0.05 : 0.15), 
-        duration 
-      };
-    });
-    
-    this.particles.set(newParticles);
+    // 1. Fire the initial massive blast
+    const initialBlast = this.createParticles(config.particleCount, config, maxDelay);
+    this.particles.set(initialBlast);
     this.showCelebration.set(true);
     
-    const timeoutMs = this.TIER_DELAYS[tier];
-    this.celebrationTimer = setTimeout(() => {
-      this.showCelebration.set(false);
-    }, timeoutMs);
+    // 2. Handle the Infinite Stream vs Standard Timeout
+    if (tier === 'perfect') {
+      
+      // Fire 15 new particles every 300ms
+      this.streamInterval = setInterval(() => {
+        // Give them a max delay of 0.3s so they spawn evenly between interval ticks
+        const streamBlast = this.createParticles(66, config, 0.3, true);
+        
+        // Append them to the active DOM
+        this.particles.update(p => [...p, ...streamBlast]);
+        
+        // 🚨 GARBAGE COLLECTION: Silently remove them 2 seconds later when their CSS animation finishes
+        setTimeout(() => {
+          this.particles.update(p => p.filter(x => !streamBlast.includes(x)));
+        }, 2000);
+        
+      }, 300);
+      
+    } else {
+      // Not perfect? Just set the normal timeout to hide the UI.
+      this.celebrationTimer = setTimeout(() => {
+        this.showCelebration.set(false);
+      }, timeoutMs);
+    }
   }
   
   pointsString = computed(() => {
@@ -272,7 +330,7 @@ export class ShapeBisectorComponent implements OnInit {
   } | null>(null);
   
   roundsPlayed = signal<number>(0);
-  lastCutText = signal<string>('--');
+  lastCutText = signal<string>('--/--');
   lastScore = signal<number | null>(null);
   totalScore = signal<number>(0);
   avgScore = signal<number | null>(null);
@@ -283,6 +341,7 @@ export class ShapeBisectorComponent implements OnInit {
   
   private playSliceSound() {
     const soundClone = this.sliceAudio.cloneNode() as HTMLAudioElement;
+    soundClone.volume = 0.666;
     
     // Add it to our active registry
     this.activeSounds.push(soundClone);
@@ -298,24 +357,37 @@ export class ShapeBisectorComponent implements OnInit {
   }
   
   private playPerfektSound() {
+    // If one is already playing for some reason, stop it
+    if (this.currentPerfektSound) {
+      this.currentPerfektSound.pause();
+      this.currentPerfektSound.currentTime = 0;
+    }
+    
     const soundClone = this.perfektAudio.cloneNode() as HTMLAudioElement;
+    soundClone.volume = 1.0;
     
-    // Add it to our active registry
-    this.activeSounds.push(soundClone);
+    // --- 🚨 THE FIX: Native HTML5 Audio looping ---
+    soundClone.loop = true; 
     
-    // Remove it from the registry when it finishes naturally
-    soundClone.onended = () => {
-      this.activeSounds = this.activeSounds.filter(s => s !== soundClone);
-    };
+    // Save it to our tracking variable
+    this.currentPerfektSound = soundClone;
     
     soundClone.play().catch(err => {
       console.warn("Browser blocked audio playback.", err);
     });
+    
   }
   
+  private audioUnlocked = false;
   // --- Pointer Event Handlers ---
   
   onPointerDown(event: PointerEvent) {
+    if (!this.audioUnlocked) {
+      this.sliceAudio.play().then(() => this.sliceAudio.pause()).catch(() => {});
+      this.perfektAudio.play().then(() => this.perfektAudio.pause()).catch(() => {});
+      this.audioUnlocked = true;
+    }
+    
     if (this.splitPieces()) return;
     
     // Capture the mouse/touch so it doesn't get interrupted if they drag outside slightly
@@ -373,6 +445,9 @@ export class ShapeBisectorComponent implements OnInit {
     const result = this.splitPolygon(this.polygonPoints(), start, end);
     
     if (result) {
+      // 3. Physical Effects (Audio & Haptics)
+      this.playSliceSound();
+      
       // 1. Math & Area Calculations
       const statsA = this.getPolygonAreaAndCentroid(result.pieceA);
       const statsB = this.getPolygonAreaAndCentroid(result.pieceB);
@@ -384,13 +459,21 @@ export class ShapeBisectorComponent implements OnInit {
       const rawB = 100 - rawA;
       const diff = Math.abs(50 - rawA);
       
+      const currentCutText = `${Math.min(rawA, rawB).toFixed(1)}/${Math.max(rawA, rawB).toFixed(1)}`;
+      if (diff < this.bestCutDiff()) {
+        this.bestCutDiff.set(diff);
+        this.bestCutText.set(currentCutText);
+        
+        localStorage.setItem('potong_best_diff', diff.toString());
+        localStorage.setItem('potong_best_text', currentCutText);
+      }
+      
       // Formatted strings for the SVG text overlay
       const percentA = rawA.toFixed(1);
       const percentB = rawB.toFixed(1);
       
       // 2. Score & Game State Updates
       const score = this.calculateScore(rawA);
-      
       this.roundsPlayed.update(r => r + 1);
       this.lastCutText.set(`${Math.min(rawA, rawB).toFixed(1)}/${Math.max(rawA, rawB).toFixed(1)}`); 
       this.lastScore.set(score);
@@ -398,19 +481,21 @@ export class ShapeBisectorComponent implements OnInit {
       this.avgScore.set(Math.round(this.totalScore() / this.roundsPlayed()));
       this.saveStats(); 
       
-      // 3. Physical Effects (Audio & Haptics)
-      this.playSliceSound();
-      
       // 1. Determine the exact tier once
       let currentTier: 'perfect' | 'almost' | 'great' | 'standard' = 'standard';
       
-      if (diff < 0.05) currentTier = 'perfect';
+      if (diff < 0.5) currentTier = 'perfect';
       else if (diff <= 1) currentTier = 'almost';
       else if (diff <= 5) currentTier = 'great';
       
+      if (currentTier === 'perfect' && this.isAutoNext()) {
+        this.isAutoNext.set(false);
+        localStorage.setItem('potong_auto_next', 'false'); // Persist the forced override
+      }
+      
       // 2. Fire Haptics and Celebrations based on that tier
+      this.triggerCelebration(currentTier);
       if (currentTier !== 'standard') {
-        this.triggerCelebration(currentTier);
         this.triggerHaptics(currentTier);
       } else {
         this.triggerHaptics();
@@ -418,6 +503,8 @@ export class ShapeBisectorComponent implements OnInit {
       if (currentTier == 'perfect') {
         this.playPerfektSound();
       }
+      
+      this.isDrifting.set(false);
       
       // 4. Setup Drift Animation
       this.pieceStats.set({
@@ -431,14 +518,11 @@ export class ShapeBisectorComponent implements OnInit {
       
       // Wait for DOM paint, then trigger the CSS transition
       await this.waitForNextFrame(); 
+      this.isDrifting.set(true);
       this.driftOffsets.set(this.calculateDriftOffsets(start, end, -60));
       
       if (this.isAutoNext()) {
-        let delayMs = this.TIER_DELAYS[currentTier] / 2;
-        if (currentTier == 'perfect') {
-          delayMs = this.TIER_DELAYS[currentTier]
-        }
-        
+        const delayMs = this.TIER_DELAYS[currentTier];
         setTimeout(() => {
           if (this.cutCompleted()) {
             this.generateRandomShape();
@@ -710,12 +794,48 @@ export class ShapeBisectorComponent implements OnInit {
   }
   
   toggleAutoNext() {
-    // Flip the signal
-    this.isAutoNext.update(state => !state);
+    // Update the signal and save to localStorage simultaneously
+    this.isAutoNext.update(state => {
+      const newState = !state;
+      localStorage.setItem('potong_auto_next', String(newState));
+      return newState;
+    });
     
-    // If it was just turned ON, and we are sitting at a finished cut, go next instantly!
+    // If it was just turned ON, and we are sitting at a finished cut, go next!
     if (this.isAutoNext() && this.cutCompleted()) {
       this.generateRandomShape();
     }
+  }
+  
+  // --- NEW: Class variable for the stream ---
+  private streamInterval: any;
+  
+  // --- NEW: Clean helper method for generating particles ---
+  private createParticles(count: number, config: any, maxDelay: number, isStream = false) {
+    const screenSize = Math.max(window.innerWidth, window.innerHeight);
+    // Make the continuous stream slightly more compact than the initial blast
+    const spread = screenSize * config.spreadMultiplier * (isStream ? 0.8 : 1); 
+    
+    return Array.from({ length: count }).map(() => {
+      const tx = (Math.random() - 0.5) * spread; 
+      const ty = (Math.random() - 0.5) * spread; 
+      const rot = Math.random() * 1080; 
+      const scale = Math.random() * 0.8 + 0.4;
+      
+      let color = '';
+      if (config.colors && config.colors.length > 0) {
+        color = config.colors[Math.floor(Math.random() * config.colors.length)];
+      }
+      
+      // Streams use a simple linear delay, the initial blast uses the heavy front-loaded curve
+      const delay = isStream ? Math.random() * maxDelay : Math.pow(Math.random(), 2) * maxDelay; 
+      
+      return { 
+        id: Math.random().toString(36).substring(2, 11), // 🚨 Unique ID for Angular DOM tracking
+        tx, ty, rot, scale, color, delay, 
+        duration: config.duration, 
+        emoji: config.emoji 
+      };
+    });
   }
 }
