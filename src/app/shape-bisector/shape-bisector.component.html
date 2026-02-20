@@ -132,35 +132,50 @@
 @if (showCelebration()) {
   <div class="celebration-overlay">
     
-    <div class="celebration-text" [class.is-perfect]="celebrationTier() === 'perfect'">
-      {{ celebrationText() }}
-    </div>
-    
-    @for (p of particles(); track $index) {
-      <div class="confetti" 
-      [style.--tx]="p.tx + 'px'" 
-      [style.--ty]="p.ty + 'px'" 
-      [style.--rot]="p.rot + 'deg'"
-      [style.--scale]="p.scale"
-      [style.--duration]="p.duration + 's'"
-      [style.background]="p.color"
-      [style.animation-delay]="p.delay + 's'">
-    </div>
-  }
+    <div class="celebration-text" 
+    [class.is-perfect]="celebrationTier() === 'perfect'"
+    [class.is-almost]="celebrationTier() === 'almost'">
+    {{ celebrationText() }}
+  </div>
+  
+  @for (p of particles(); track $index) {
+    <div class="confetti" 
+    [style.--tx]="p.tx + 'px'" 
+    [style.--ty]="p.ty + 'px'" 
+    [style.--rot]="p.rot + 'deg'"
+    [style.--scale]="p.scale"
+    [style.--duration]="p.duration + 's'"
+    [style.background]="p.color"
+    [style.animation-delay]="p.delay + 's'">
+  </div>
+}
 </div>
 }
 
 <div class="controls">
-  <button 
-  #initBtn 
-  class="action-btn" 
-  (click)="generateRandomShape(); initBtn.blur()">
-  <span class="btn-text">INITIALIZE NEW SHAPE</span>
-</button>
+  <div class="primary-actions"> 
+    
+    <button 
+      class="auto-next-btn" 
+      [class.active]="isAutoNext()"
+      (click)="toggleAutoNext()">
+      <span class="toggle-label">AUTO NEXT</span>
+    </button>
 
-<button class="reset-btn" (click)="resetStats()">
-  RESET STATS
-</button>
+    <button 
+      #initBtn 
+      class="action-btn" 
+      [disabled]="!cutCompleted() || isAutoNext()"
+      [class.ready-pulse]="cutCompleted() && !isAutoNext()" 
+      (click)="generateRandomShape(); initBtn.blur()">
+      <span class="btn-text">NEXT SHAPE</span>
+    </button>
+    
+  </div>
+
+  <!-- <button class="reset-btn" (click)="resetStats()">
+    RESET STATS
+  </button> -->
 </div>
 
 </div>

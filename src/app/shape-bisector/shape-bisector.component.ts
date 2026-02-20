@@ -150,7 +150,16 @@ export class ShapeBisectorComponent implements OnInit {
   showCelebration = signal(false);
   particles = signal<any[]>([]);
   celebrationText = signal<string>('');
-  celebrationTier = signal<'great' | 'perfect' | null>(null);
+  celebrationTier = signal<'great' | 'almost' | 'perfect' | null>(null);
+  private readonly TIER_DELAYS = {
+    perfect: 5000,
+    almost: 3000,
+    great: 2000,
+    standard: 1200 // The default auto-next speed for a normal cut
+  };
+  
+  isAutoNext = signal<boolean>(false);
+  
   
   // --- PERSISTENCE METHODS ---
   private loadStats() {
@@ -187,40 +196,48 @@ export class ShapeBisectorComponent implements OnInit {
   }
   
   // --- CELEBRATION METHOD ---
-  private triggerCelebration(tier: 'great' | 'perfect') {
+  private triggerCelebration(tier: 'great' | 'almost' | 'perfect') {
     if (this.celebrationTimer) {
       clearTimeout(this.celebrationTimer);
     }
     
     this.celebrationTier.set(tier);
-    this.celebrationText.set(tier === 'perfect' ? 'PERFECT POTONG!' : 'GREAT POTONG!');
     
+    // Set the text dynamically
+    let text = 'GREAT CUT!';
+    if (tier === 'almost') text = 'ALMOST PERFECT!';
+    if (tier === 'perfect') text = 'PERFECT POTONG!';
+    this.celebrationText.set(text);
+    
+    // Scale the explosion based on the tier
     const isPerfect = tier === 'perfect';
-    const particleCount = isPerfect ? 140 : 40; // Massive burst for perfect
+    const isAlmost = tier === 'almost';
+    
+    const particleCount = isPerfect ? 150 : (isAlmost ? 80 : 40);
+    const spread = isPerfect ? 1500 : (isAlmost ? 1000 : 800);
     
     const newParticles = Array.from({ length: particleCount }).map(() => {
-      // VIGOROUS UPGRADE: Double the spread distance if perfect
-      const spread = isPerfect ? 1500 : 800; 
-      
       const tx = (Math.random() - 0.5) * spread; 
-      const ty = (Math.random() - 0.5) * spread - (isPerfect ? 400 : 200); 
-      
-      const rot = Math.random() * 1080; // More violent tumbling
+      const ty = (Math.random() - 0.5) * spread - (tier !== 'great' ? 400 : 200); 
+      const rot = Math.random() * 1080; 
       const scale = Math.random() * 0.8 + 0.4;
       
+      // Base colors
       const colors = ['#22d3ee', '#a855f7', '#d8b4fe', '#ffffff'];
+      
+      // Inject tier-specific colors
       if (isPerfect) {
-        colors.push('#fbbf24', '#f59e0b', '#fb923c'); // Add hot orange/gold
+        colors.push('#fbbf24', '#f59e0b', '#fb923c'); // Reserved Gold!
+      } else if (isAlmost) {
+        colors.push('#ec4899', '#f472b6'); // Hot Pink for Almost Perfect
       }
       
       const color = colors[Math.floor(Math.random() * colors.length)];
-      
-      // Perfect particles fly faster and more aggressively
-      const duration = isPerfect ? (1.2 + Math.random() * 1.5) : 2.5; 
+      const duration = (isPerfect ? 1.2 : (isAlmost ? 1.5 : 2.0)) + Math.random() * 1.5; 
       
       return { 
         tx, ty, rot, scale, color, 
-        delay: Math.random() * (isPerfect ? 0.05 : 0.2), // Near-instant explosion
+        delay: Math.random() * (isPerfect ? 0.05 : 0.15), 
         duration 
       };
     });
@@ -228,9 +245,10 @@ export class ShapeBisectorComponent implements OnInit {
     this.particles.set(newParticles);
     this.showCelebration.set(true);
     
+    const timeoutMs = this.TIER_DELAYS[tier];
     this.celebrationTimer = setTimeout(() => {
       this.showCelebration.set(false);
-    }, isPerfect ? 3500 : 2500);
+    }, timeoutMs);
   }
   
   pointsString = computed(() => {
@@ -346,6 +364,7 @@ export class ShapeBisectorComponent implements OnInit {
       
       // Calculate raw numbers once. Subtracting from 100 guarantees no floating-point rounding drift.
       const rawA = (statsA.area / totalArea) * 100;
+      // const rawA = 50;
       const rawB = 100 - rawA;
       const diff = Math.abs(50 - rawA);
       
@@ -366,12 +385,17 @@ export class ShapeBisectorComponent implements OnInit {
       // 3. Physical Effects (Audio & Haptics)
       this.playSliceSound();
       
-      if (diff <= 1) {
-        this.triggerCelebration('perfect');
-        this.triggerHaptics('perfect');
-      } else if (diff <= 5) {
-        this.triggerCelebration('great');
-        this.triggerHaptics('great');
+      // 1. Determine the exact tier once
+      let currentTier: 'perfect' | 'almost' | 'great' | 'standard' = 'standard';
+      
+      if (diff < 0.05) currentTier = 'perfect';
+      else if (diff <= 1) currentTier = 'almost';
+      else if (diff <= 5) currentTier = 'great';
+      
+      // 2. Fire Haptics and Celebrations based on that tier
+      if (currentTier !== 'standard') {
+        this.triggerCelebration(currentTier);
+        this.triggerHaptics(currentTier);
       } else {
         this.triggerHaptics();
       }
@@ -389,6 +413,19 @@ export class ShapeBisectorComponent implements OnInit {
       // Wait for DOM paint, then trigger the CSS transition
       await this.waitForNextFrame(); 
       this.driftOffsets.set(this.calculateDriftOffsets(start, end, -60));
+      
+      if (this.isAutoNext()) {
+        let delayMs = this.TIER_DELAYS[currentTier] / 2;
+        if (currentTier == 'perfect') {
+          delayMs = this.TIER_DELAYS[currentTier]
+        }
+        
+        setTimeout(() => {
+          if (this.cutCompleted()) {
+            this.generateRandomShape();
+          }
+        }, delayMs);
+      }
       
     } else {
       // Invalid cut: Reset interaction state
@@ -623,17 +660,20 @@ export class ShapeBisectorComponent implements OnInit {
     return Math.max(0, Math.round(rawScore));
   }
   
-  private triggerHaptics(tier?: 'great' | 'perfect') {
-    // Check if the device supports physical vibration
+  private triggerHaptics(tier?: 'great' | 'almost' | 'perfect') {
     if (!navigator.vibrate) return;
     
     if (tier === 'perfect') {
-      // A celebratory double-pulse: vibrate 50ms, pause 50ms, vibrate 100ms
-      navigator.vibrate([50, 50, 100]); 
+      // Epic heartbeat for true perfection
+      navigator.vibrate([50, 50, 100, 50, 150]); 
+    } else if (tier === 'almost') {
+      // Strong double pulse
+      navigator.vibrate([40, 50, 80]); 
     } else if (tier === 'great') {
-      navigator.vibrate([40, 30, 40]);
+      // Quick double tap
+      navigator.vibrate([40, 30, 40]); 
     } else {
-      // A single, sharp snap for a normal cut
+      // Standard snap
       navigator.vibrate(40);
     }
   }
@@ -648,5 +688,15 @@ export class ShapeBisectorComponent implements OnInit {
         requestAnimationFrame(() => resolve());
       });
     });
+  }
+  
+  toggleAutoNext() {
+    // Flip the signal
+    this.isAutoNext.update(state => !state);
+    
+    // If it was just turned ON, and we are sitting at a finished cut, go next instantly!
+    if (this.isAutoNext() && this.cutCompleted()) {
+      this.generateRandomShape();
+    }
   }
 }
