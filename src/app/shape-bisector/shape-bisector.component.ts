@@ -1,4 +1,4 @@
-import { Component, signal, computed, ElementRef, viewChild, OnInit, Inject, input } from '@angular/core';
+import { Component, signal, computed, ElementRef, viewChild, OnInit, Inject, input, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { Point, generateRandomBlob, splitPolygon, isPointInPolygon, doesCutIntersectShape, getPolygonAreaAndCentroid, calculateDriftOffsets, createPRNG, getSingaporeDateString } from './geometry.util';
@@ -14,7 +14,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
   templateUrl: './shape-bisector.component.html',
   styleUrls: ['./shape-bisector.component.scss']
 })
-export class ShapeBisectorComponent implements OnInit {
+export class ShapeBisectorComponent implements OnInit, OnDestroy {
   
   mode = signal<'daily' | 'sandbox'>('sandbox');
   
@@ -61,12 +61,52 @@ export class ShapeBisectorComponent implements OnInit {
     
     return `POTONG Daily ${this.dailyDate()}\n${emoji} Cut: ${this.dailyCutText()}\n💯 Score: ${this.dailyScore()}\n\nCan you beat my slice?\nbennyl.im/potong`;
   });
+  timeUntilNextDaily = signal<string>('--:--:--');
+  private countdownInterval: any;
   
   ngOnInit() {
     const favIcon = this.document.getElementById('app-favicon') as HTMLLinkElement;
     if (favIcon) favIcon.href = 'assets/potong/katana-icon.png'; 
     this.loadPersistedData();
     this.checkFirstVisit();
+  }
+
+  ngOnDestroy() {
+    this.stopDailyCountdown();
+    this.audioService.stopAll();
+    this.celebrationService.clear();
+  }
+
+  private startDailyCountdown() {
+    this.updateCountdown(); // Run immediately so it doesn't wait 1s to paint
+    this.countdownInterval = setInterval(() => this.updateCountdown(), 1000);
+  }
+
+  private stopDailyCountdown() {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+      this.countdownInterval = undefined;
+    }
+  }
+
+  private updateCountdown() {
+    const now = new Date();
+    // Translate their local time strictly into Singapore Time
+    const sgtString = now.toLocaleString("en-US", { timeZone: "Asia/Singapore" });
+    const sgtNow = new Date(sgtString);
+
+    // Create a target date for 12:00:00 AM SGT tonight
+    const sgtMidnight = new Date(sgtNow);
+    sgtMidnight.setHours(24, 0, 0, 0); 
+
+    const diffMs = sgtMidnight.getTime() - sgtNow.getTime();
+
+    const h = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diffMs / 1000 / 60) % 60);
+    const s = Math.floor((diffMs / 1000) % 60);
+
+    const pad = (num: number) => num.toString().padStart(2, '0');
+    this.timeUntilNextDaily.set(`${pad(h)}:${pad(m)}:${pad(s)}`);
   }
   
   private loadPersistedData() {
@@ -137,11 +177,13 @@ export class ShapeBisectorComponent implements OnInit {
           setTimeout(() => this.isDrifting.set(true), 50);
         }
       }
+      this.startDailyCountdown(); // 🚨 NEW
     } else {
       this.titleService.setTitle('POTONG Sandbox');
       const savedAutoNext = localStorage.getItem('potong_auto_next');
       this.isAutoNext.set(savedAutoNext === 'true');
       this.generateRandomShape(); 
+      this.stopDailyCountdown(); // 🚨 NEW
     }
   }
   

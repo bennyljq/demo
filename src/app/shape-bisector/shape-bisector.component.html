@@ -52,6 +52,9 @@
 
 <div class="logo-container">
   <h1 class="sliced-logo" data-text="POTONG">POTONG</h1>
+  <div class="mode-subtitle" [class.is-daily]="mode() === 'daily'">
+    {{ mode() === 'daily' ? 'DAILY' : 'SANDBOX' }}
+  </div>
 </div>
 
 <header class="game-hud">
@@ -205,6 +208,9 @@
   [style.--duration]="autoNextProgressDuration() + 'ms'">
 </div>
 }
+@if (cutCompleted() && mode() == 'daily') {
+  <div class="countdown-text">NEXT SHAPE IN {{ timeUntilNextDaily() }}</div>
+}
 </div>
 
 @if (showCelebration()) {
@@ -249,8 +255,13 @@
     </button>
   </div>
 } @else {
-  @if (cutCompleted()) {
-    <div class="primary-actions">
+  @if (cutCompleted() && mode() === 'daily') {
+    <div class="primary-actions daily-actions-wrapper">
+    
+      <button class="action-btn secondary-btn" routerLink="/potong/sandbox">
+        <span class="btn-text">PRACTICE IN SANDBOX</span>
+      </button>
+      
       <button class="action-btn" 
       [class.copied-state]="shareCopied()" 
       [class.ready-pulse]="!shareCopied()"
@@ -258,6 +269,7 @@
       (cdkCopyToClipboardCopied)="onShareCopied($event)">
       <span class="btn-text">{{ shareText() }}</span>
     </button>
+    
   </div>
 }
 }
