@@ -1,0 +1,73 @@
+:host { 
+  display: block; 
+  width: 100vw; 
+  height: 100vh; 
+  background-color: #050505; 
+  overflow: hidden; 
+}
+
+canvas { 
+  display: block; 
+  width: 100%; 
+  height: 100%; 
+  touch-action: none; 
+  -webkit-user-select: none;     /* Prevents text selection on hold */
+  -webkit-touch-callout: none;   /* Prevents iOS context menus on hold */
+}
+
+.charge-ui {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  
+  /* Crucial: Allows pointer events to pass through to the canvas */
+  pointer-events: none; 
+  
+  font-family: monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #00f3ff;
+  
+  /* Start hidden */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.charge-ui.active {
+  opacity: 1;
+}
+
+.charge-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.charge-fill {
+  width: 100%;
+  height: 100%;
+  /* Current default cyan */
+  background: #00f3ff;
+  box-shadow: 0 0 8px #00f3ff;
+  
+  transform-origin: left center; 
+  transform: scaleX(0); 
+  will-change: transform;
+  
+  /* Smooth color transition */
+  transition: background 0.2s linear, box-shadow 0.2s linear;
+}
+
+/* Add this class to flash hot-white when maxed */
+.charge-fill.maxed {
+  background: gold !important;
+  box-shadow: 0 0 20px gold !important;
+}
