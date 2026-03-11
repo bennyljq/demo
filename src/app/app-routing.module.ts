@@ -25,6 +25,7 @@ import { TypingHomepageComponent } from './typing-game/typing-homepage/typing-ho
 import { OrdinalComponent } from './ordinal/ordinal.component';
 import { ShapeBisectorComponent } from './shape-bisector/shape-bisector.component';
 import { Gravity2026Component } from './gravity-2026/gravity-2026.component';
+import { LiftSimulatorComponent } from './lift-simulator/lift-simulator.component';
 
 const routes: Routes = [
   { path: '', component: HomepageV2Component },
@@ -56,6 +57,7 @@ const routes: Routes = [
     ]
   },
   { path: 'gravity-2026', component: Gravity2026Component },
+  { path: 'lift', component: LiftSimulatorComponent },
   { path: '**', redirectTo: '', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];
 
