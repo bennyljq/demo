@@ -26,7 +26,7 @@
     </div>
   </div>
   <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
-    Potong is a minimalist geometry puzzle game that tests your spatial awareness. The core mechanic is straightforward but deceptively difficult. You get an irregular, procedurally generated shape and have exactly one opportunity to draw a single straight line to slice it perfectly in half. The game then calculates the exact surface area of both resulting pieces and scores your precision.
+    <a href="https://potong.io" target="_blank">potong.io</a> is a minimalist geometry puzzle game that tests your spatial awareness. The core mechanic is straightforward but deceptively difficult. You get an irregular, procedurally generated shape and have exactly one opportunity to draw a single straight line to slice it perfectly in half. The game then calculates the exact surface area of both resulting pieces and scores your precision.
     <br><br>
     I built this from scratch using Angular 21 to keep the experience lightweight and responsive. Under the hood, it uses a custom Mulberry32 PRNG engine to ensure every shape is deterministic. There is no backend, no ads, and no database.
   </div>
@@ -86,11 +86,11 @@
   <div class="logo-container"
   (mouseenter)="hover4=true"
   (mouseleave)="hover4=false"
-  routerLink="/3body-2024">
+  routerLink="/3body">
   <div class="logo-title f-poppins" [ngClass]="hover4 ? 'logo-title-hover' : ''">
     <div style="transform: skew(15deg)">
       Three Body Problem<br>
-      <span class="logo-subtitle">2024</span>
+      <span class="logo-subtitle">2026</span>
     </div>
   </div>
   <img src="assets/3body.gif" class="logo" style="aspect-ratio: 1;"

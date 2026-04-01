@@ -7,6 +7,7 @@ import { Gravity2025DialogComponent } from '../gravity2025-dialog/gravity2025-di
 import { Gravity2025DialogEditComponent } from '../gravity2025-dialog-edit/gravity2025-dialog-edit.component';
 import { Gravity2025DialogGalleryComponent } from '../gravity2025-dialog-gallery/gravity2025-dialog-gallery.component';
 import { Gravity2025DialogVelocityComponent } from '../gravity2025-dialog-velocity/gravity2025-dialog-velocity.component';
+import { lastValueFrom, timer } from 'rxjs';
 
 @Component({
     selector: 'app-gravity2025',
@@ -76,7 +77,9 @@ export class Gravity2025Component {
 
   ngAfterViewInit() {
     // this.initMaster(true)
-    this.initRandom()
+    // this.initRandom()
+    this.preset = 0
+    this.initPreset()
   }
 
   @HostListener('window:resize', ['$event'])
@@ -459,6 +462,7 @@ export class Gravity2025Component {
     this.currentFrame = 0
     this.framesRendered = this.maxFramesRendered
     this.initCanvas()
+    this.initBackgroundStars(this.numStars)
     this.initCelestialBodies()
     this.showControls = true
     this.modeGallery = true
