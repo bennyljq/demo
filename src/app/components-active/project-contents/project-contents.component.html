@@ -1,303 +1,137 @@
-@if (showScrollButton) {
+@if (showScrollButton()) {
   <button mat-icon-button class="scroll-top-button" (click)="scrollToTop()">
     <mat-icon>arrow_upward</mat-icon>
   </button>
 }
 
-<div class="history-container" (scroll)="onScroll($event)">
+<div #historyContainer class="history-container" (scroll)="onScroll($event)">
   
-  <div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
+  <!-- We add "let isOdd = $odd" to the @for statement -->
+  @for (project of projects; track project.id; let isOdd = $odd) {
+    
+    <!-- We replace project.reverseLayout with isOdd -->
+    <div class="history-item" 
+    [ngClass]="isLargeScreen() ? (isOdd ? 'flex-row flex-row-reverse' : 'flex-row') : 'flex-col'">
+    
+    <!-- Action/Logo Block -->
     <div class="logo-container"
-    (mouseenter)="hoverPotong=true"
-    (mouseleave)="hoverPotong=false"
-    (click)="go_to_link('https://potong.io')">
-    <div class="logo-title f-poppins" [ngClass]="hoverPotong ? 'logo-title-hover' : ''">
+    (mouseenter)="project.isHovered = true"
+    (mouseleave)="project.isHovered = false"
+    [routerLink]="project.actionType === 'route' ? project.actionTarget : null"
+    (click)="project.actionType !== 'route' ? handleAction(project) : null">
+    
+    <div class="logo-title f-poppins" [class.logo-title-hover]="project.isHovered">
       <div style="transform: skew(15deg)">
-        potong.io<br>
-        <span class="logo-subtitle">2026</span>
+        <span [innerHTML]="project.titleHtml"></span><br>
+        <span class="logo-subtitle">{{ project.subtitle }}</span>
       </div>
     </div>
-    <img src="assets/potong/potong.gif" class="logo"
-    [ngClass]="hoverPotong ? 'logo-hover' : ''">
-    <div class="logo-link f-poppins" [ngClass]="hoverPotong ? 'logo-link-hover' : ''">
-      <div style="transform: skew(15deg)">
-        Play POTONG <span class="f-hino" style="font-weight: bold;">→</span>
+    
+    @if (project.id === 'snowpiercer') {
+      <div class="logo" [ngStyle]="project.customLogoStyles">
+        <img [src]="project.imgSrc" [class]="project.imgClass" [class.logo-hover]="project.isHovered">
       </div>
+    } @else {
+      <img [src]="project.imgSrc" [class]="project.imgClass" [ngStyle]="project.customLogoStyles" [class.logo-hover]="project.isHovered">
+    }
+    
+    <div class="logo-link f-poppins" [class.logo-link-hover]="project.isHovered">
+      <div style="transform: skew(15deg)">
+        {{ project.linkText }} 
+        <span class="f-hino" style="font-weight: bold;" 
+        [style.border-bottom]="project.actionType === 'download' ? '1px solid white' : 'none'">
+        {{ project.linkIcon }}
+      </span>
     </div>
-  </div>
-  <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
-    <a href="https://potong.io" target="_blank">potong.io</a> is a minimalist geometry puzzle game that tests your spatial awareness. The core mechanic is straightforward but deceptively difficult. You get an irregular, procedurally generated shape and have exactly one opportunity to draw a single straight line to slice it perfectly in half. The game then calculates the exact surface area of both resulting pieces and scores your precision.
-    <br><br>
-    I built this from scratch using Angular 21 to keep the experience lightweight and responsive. Under the hood, it uses a custom Mulberry32 PRNG engine to ensure every shape is deterministic. There is no backend, no ads, and no database.
   </div>
 </div>
 
-<div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row flex-row-reverse' : 'flex-col'">
-  <div class="logo-container"
-  (mouseenter)="hover1=true"
-  (mouseleave)="hover1=false"
-  routerLink="/enterprise">
-  <div class="logo-title f-poppins" [ngClass]="hover1 ? 'logo-title-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Enterprise Component Library<br>
-      <span class="logo-subtitle">2021 - 2024</span>
-    </div>
-  </div>
-  <img src="assets/enterprise-lib.png" class="logo"
-  [ngClass]="hover1 ? 'logo-hover' : ''">
-  <div class="logo-link f-poppins" [ngClass]="hover1 ? 'logo-link-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Browse Library <span class="f-hino" style="font-weight: bold;">→</span>
-    </div>
-  </div>
+<!-- Description Text Injection -->
+<div class="f-poppins" [ngClass]="isLargeScreen() ? (isOdd ? 'history-text' : 'history-text-alt') : 'history-text-small'">
+  <ng-container *ngTemplateOutlet="getTemplateForId(project.id)"></ng-container>
 </div>
-<div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
+
+</div>
+}
+
+<div style="height: 25vh; width: 100%;"></div>
+</div>
+
+<!-- ============================================== -->
+<!-- TEXT CONTENT TEMPLATES                         -->
+<!-- ============================================== -->
+
+<ng-template #desc_potong>
+  <a href="https://potong.io" target="_blank">potong.io</a> is a minimalist geometry puzzle game that tests your spatial awareness...
+  <br><br>
+  I built this from scratch using Angular 21 to keep the experience lightweight and responsive. Under the hood, it uses a custom Mulberry32 PRNG engine to ensure every shape is deterministic. There is no backend, no ads, and no database.
+</ng-template>
+
+<ng-template #desc_switchyon>
+  Architected and developed a high-performance, serverless portfolio website for my talented friend, <strong>Masami</strong>, who's a Japanese actress and DJ. Focused on advanced motion design, stateless architecture, and long-term maintainability.
+  <br><br>
+  It was also a fun break from corporate life 🤪
+</ng-template>
+
+<ng-template #desc_enterprise>
   A snippet of the bank-wide Angular component library of which I was the principal developer at DBS Bank.
-</div>
-</div>
+</ng-template>
 
-<div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
-  <div class="logo-container"
-  (mouseenter)="hover2=true"
-  (mouseleave)="hover2=false"
-  (click)="go_to_link('https://www.parabola.unsw.edu.au/sites/default/files/2024-03/vol54_no3_4.pdf')">
-  <div class="logo-title f-poppins" [ngClass]="hover2 ? 'logo-title-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Prime Numbers Generated From <br> Highly Composite Numbers<br>
-      <span class="logo-subtitle">2018</span>
-    </div>
-  </div>
-  <img src="assets/parabola.png" class="logo"
-  [ngClass]="hover2 ? 'logo-hover' : ''">
-  <div class="logo-link f-poppins" [ngClass]="hover2 ? 'logo-link-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Read Paper <span class="f-hino" style="font-weight: bold;">→</span>
-    </div>
-  </div>
-</div>
-  <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
+<ng-template #desc_parabola>
   Parabola is a recreational math magazine published by the University of New South Wales since 1964.
   <br><br>
   <strong>Prime Numbers Generated From Highly Composite Numbers</strong> is a Number Theory article of mine which Parabola had graciously published in December 2018.
-</div>
-</div>
+</ng-template>
 
-<div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row flex-row-reverse' : 'flex-col'">
-  <div class="logo-container"
-  (mouseenter)="hover4=true"
-  (mouseleave)="hover4=false"
-  routerLink="/3body">
-  <div class="logo-title f-poppins" [ngClass]="hover4 ? 'logo-title-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Three Body Problem<br>
-      <span class="logo-subtitle">2026</span>
-    </div>
-  </div>
-  <img src="assets/3body.gif" class="logo" style="aspect-ratio: 1;"
-  [ngClass]="hover4 ? 'logo-hover' : ''">
-  <div class="logo-link f-poppins" [ngClass]="hover4 ? 'logo-link-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Play with Gravity <span class="f-hino" style="font-weight: bold;">→</span>
-    </div>
-  </div>
-</div>
-<div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
-  A refinement of the <b>Gravity Simulator 2023</b> project, built in HTML Canvas.
+<ng-template #desc_3body>
+  A refinement of the <b>Gravity Simulator 2023</b> project, built in HTML Canvas within Angular 21.
   <br><br>
   This canvas presents five quasi-stable three-body configurations interacting gravitationally.
   <br><br>
-  I plan to turn this into a fun little game in the near future 🤪
-</div>
-</div>
+  I plan to turn this into a fun little game in the near future.
+</ng-template>
 
-<div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
-  <div class="logo-container"
-  (mouseenter)="hover3=true"
-  (mouseleave)="hover3=false"
-  routerLink="/physics">
-  <div class="logo-title f-poppins" [ngClass]="hover3 ? 'logo-title-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Everyday Electricity<br>
-      <span class="logo-subtitle">2023</span>
-    </div>
-  </div>
-  <img src="assets/electric.png" class="logo"
-  [ngClass]="hover3 ? 'logo-hover' : ''">
-  <div class="logo-link f-poppins" [ngClass]="hover3 ? 'logo-link-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Start Lesson <span class="f-hino" style="font-weight: bold;">→</span>
-    </div>
-  </div>
-</div>
-  <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
+<ng-template #desc_physics>
   An interactive Physics lesson on electricity in our everyday lives.
   <br><br>
-  This project showcases storytelling, scientific knowledge, and technical depth in UI/UX engineering.
-  It is also a step towards my goal of building a career in Educational Technology.
+  This project showcases storytelling, scientific knowledge, and technical depth in UI/UX engineering. It is also a step towards my goal of building a career in Educational Technology.
   <br><br>
   Do give the lesson a shot - I hope you learn something from it! 🙃
-</div>
-</div>
+</ng-template>
 
-<div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row flex-row-reverse' : 'flex-col'">
-  <div class="logo-container"
-  (mouseenter)="hover5=true"
-  (mouseleave)="hover5=false"
-  routerLink="/gravity-sim">
-  <div class="logo-title f-poppins" [ngClass]="hover5 ? 'logo-title-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Gravity Simulator<br>
-      <span class="logo-subtitle">2023</span>
-    </div>
-  </div>
-  <img src="assets/grav-sim.gif" class="logo" style="aspect-ratio: 1;"
-  [ngClass]="hover5 ? 'logo-hover' : ''">
-  <div class="logo-link f-poppins" [ngClass]="hover5 ? 'logo-link-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Play with Gravity <span class="f-hino" style="font-weight: bold;">→</span>
-    </div>
-  </div>
-</div>
-<div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
+<ng-template #desc_gravity>
   A gravity simulator which is built entirely in TypeScript and within the Angular framework.
   <br><br>
   This project showcases the building of a physics engine from scratch, and demonstrates technical competency in scripting and optimisation.
-</div>
-</div>
+</ng-template>
 
-<div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
-  <div class="logo-container"
-  (mouseenter)="hover6=true"
-  (mouseleave)="hover6=false"
-  routerLink="/brownian-motion2">
-  <div class="logo-title f-poppins" [ngClass]="hover6 ? 'logo-title-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Brownian Motion v2<br>
-      <span class="logo-subtitle">2024</span>
-    </div>
-  </div>
-  <img src="assets/brownian-motion2.gif" class="logo" style="aspect-ratio: 1;"
-  [ngClass]="hover6 ? 'logo-hover' : ''">
-  <div class="logo-link f-poppins" [ngClass]="hover6 ? 'logo-link-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Play with Particles <span class="f-hino" style="font-weight: bold;">→</span>
-    </div>
-  </div>
-</div>
-  <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
+<ng-template #desc_brownian2>
   A refinement of the <b>Brownian Motion</b> project, also built in HTML Canvas.
   <br><br>
   Particles here collide and observe viscosity and gravity.
-</div>
-</div>
+</ng-template>
 
-<div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row flex-row-reverse' : 'flex-col'">
-  <div class="logo-container"
-  (mouseenter)="hover7=true"
-  (mouseleave)="hover7=false"
-  routerLink="/brownian-motion">
-  <div class="logo-title f-poppins" [ngClass]="hover7 ? 'logo-title-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Brownian Motion<br>
-      <span class="logo-subtitle">2024</span>
-    </div>
-  </div>
-  <img src="assets/brownian-motion.gif" class="logo" style="aspect-ratio: 1;"
-  [ngClass]="hover7 ? 'logo-hover' : ''">
-  <div class="logo-link f-poppins" [ngClass]="hover7 ? 'logo-link-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Play with Particles <span class="f-hino" style="font-weight: bold;">→</span>
-    </div>
-  </div>
-</div>
-<div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
+<ng-template #desc_brownian1>
   A particle simulator built in HTML Canvas.
   <br><br>
-  Particles here are "repelled" by the cursor and on touch.
-  My two-year-old goddaughter has taken a liking to this.
+  Particles here are "repelled" by the cursor and on touch. My two-year-old goddaughter has taken a liking to this.
   <br><br>
-  <strong>2026 update</strong>: I'm working on another <a routerLink="/gravity-2026">satisfying particle simulator</a> which attracts on touch (or click), and explodes on release.
-  My now four-year-old goddaughter is also quite tickled by this.
-</div>
-</div>
+  <strong>2026 update</strong>: I'm working on another <a routerLink="/gravity-2026">satisfying particle simulator</a> which attracts on touch (or click), and explodes on release. My now four-year-old goddaughter is also quite tickled by this.
+</ng-template>
 
-<div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
-  <div class="logo-container"
-  (mouseenter)="hover8=true"
-  (mouseleave)="hover8=false"
-  (click)="download_article()">
-  <div class="logo-title f-poppins" [ngClass]="hover8 ? 'logo-title-hover' : ''">
-    <div style="transform: skew(15deg)">
-      On the Infinitude of Twin Primes<br>
-      <span class="logo-subtitle">2023 - Present</span>
-    </div>
-  </div>
-  <img src="assets/twin-primes-draft.png" class="logo"
-  [ngClass]="hover8 ? 'logo-hover' : ''">
-  <div class="logo-link f-poppins" [ngClass]="hover8 ? 'logo-link-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Download Article <span class="f-hino" style="font-weight: bold; border-bottom: 1px solid white;">↓</span>
-    </div>
-  </div>
-</div>
-  <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
+<ng-template #desc_twinprimes>
   <strong>On the Infinitude of Twin Primes</strong> is another Number Theory paper I'm currently working on.
   <br><br>
   I have since received positive reviews, hence I plan to submit this paper for publishing in the near future.
   <br><br>
   Any interested readers are welcome to download the latest draft.
-</div>
-</div>
+</ng-template>
 
-<div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row flex-row-reverse' : 'flex-col'">
-  <div class="logo-container"
-  (mouseenter)="hover9=true"
-  (mouseleave)="hover9=false"
-  routerLink="/snowpiercer">
-  <div class="logo-title f-poppins" [ngClass]="hover9 ? 'logo-title-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Project Snowpiercer<br>
-      <span class="logo-subtitle">2024 - Present</span>
-    </div>
-  </div>
-  <div class="logo" style="background-color: lavender; width: 
-  clamp(300px, 80vw, 500px); height: clamp(300px, 80vw, 500px);
-  display: flex; align-items: center; justify-content: center;">
-  <img src="assets/snowflake-2.png" class="snowflake"
-  [ngClass]="hover9 ? 'logo-hover' : ''">
-</div>
-<div class="logo-link f-poppins" [ngClass]="hover9 ? 'logo-link-hover' : ''">
-  <div style="transform: skew(15deg)">
-    Choo Choo <span class="f-hino" style="font-weight: bold;">→</span>
-  </div>
-</div>
-</div>
-<div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text' : 'history-text-small'">
-  Supporting material for an ongoing civil engineering project.
-  See the following project <b>Train Simulator 2023</b> for additional context.
-</div>
-</div>
+<ng-template #desc_snowpiercer>
+  Supporting material for an ongoing civil engineering project. See the following project <b>Train Simulator 2023</b> for additional context.
+</ng-template>
 
-<div class="history-item" [ngClass]="innerWidth >= 1200 ? 'flex-row' : 'flex-col'">
-  <div class="logo-container"
-  (mouseenter)="hover10=true"
-  (mouseleave)="hover10=false"
-  routerLink="/train">
-  <div class="logo-title f-poppins" [ngClass]="hover10 ? 'logo-title-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Train Simulator<br>
-      <span class="logo-subtitle">2023</span>
-    </div>
-  </div>
-  <img src="assets/train-sim.png" class="logo"
-  [ngClass]="hover10 ? 'logo-hover' : ''">
-  <div class="logo-link f-poppins" [ngClass]="hover10 ? 'logo-link-hover' : ''">
-    <div style="transform: skew(15deg)">
-      Choo Choo <span class="f-hino" style="font-weight: bold;">→</span>
-    </div>
-  </div>
-</div>
-  <div class="f-poppins" [ngClass]="innerWidth >= 1200 ? 'history-text-alt' : 'history-text-small'">
+<ng-template #desc_train>
   A simulation of a novel, self-designed train management system.
   <br><br>
   I have since discovered that professional engineers at <a href="https://ethz.ch/en.html" target="_blank">ETH Zurich</a> are working on something
@@ -305,8 +139,4 @@
   <br><br>
   In hopes of a possible collaboration in the near future, I plan to furnish this simulation with
   <strong>rigorous statistical analysis</strong> along with <strong>beautiful animations and data visualisation</strong>.
-</div>
-</div>
-
-<div style="height: 25vh; width: 100%;"></div>
-</div>
+</ng-template>
