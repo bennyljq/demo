@@ -27,6 +27,8 @@ import { ShapeBisectorComponent } from './shape-bisector/shape-bisector.componen
 import { Gravity2026Component } from './gravity-2026/gravity-2026.component';
 import { LiftSimulatorComponent } from './lift-simulator/lift-simulator.component';
 import { KeyboardWizardComponent } from './keyboard-wizard/keyboard-wizard.component';
+import { RockStackerComponent } from './rock-stacker/rock-stacker.component';
+import { PachinkoComponent } from './pachinko/pachinko.component';
 
 const routes: Routes = [
   { path: '', component: HomepageV2Component },
@@ -60,6 +62,8 @@ const routes: Routes = [
   { path: 'gravity-2026', component: Gravity2026Component },
   { path: 'lift', component: LiftSimulatorComponent },
   { path: 'keyboard-wizard', component: KeyboardWizardComponent },
+  { path: 'rock', component: RockStackerComponent },
+  { path: 'pachinko', component: PachinkoComponent },
   { path: '**', redirectTo: '', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];
 

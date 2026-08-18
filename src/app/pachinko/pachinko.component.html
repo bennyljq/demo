@@ -1,0 +1,28 @@
+<div class="game-container">
+  <canvas #gameCanvas 
+          (pointerdown)="onPointerDown($event)" 
+          (pointermove)="onPointerMove($event)"></canvas>
+  
+  <div class="hud">
+    <div class="header">
+      <h1>NEON PACHINKO</h1>
+      <button class="reset-btn" (click)="engine.reset()">RESET</button>
+    </div>
+    
+    <div class="stats">
+      <p>SCORE: <span>{{ engine.score() }}</span></p>
+      <p>DROPS: <span>{{ engine.ballsDropped() }}</span></p>
+    </div>
+    <!-- <div class="instructions">Hold to drop continuously</div> -->
+  </div>
+
+  <div class="score-zones">
+    <div class="sz-outer">10</div>
+    <div class="sz-inner">50</div>
+    <div class="sz-inner">100</div>
+    <div class="sz-inner jackpot">500</div>
+    <div class="sz-inner">100</div>
+    <div class="sz-inner">50</div>
+    <div class="sz-outer">10</div>
+  </div>
+</div>
