@@ -11,8 +11,8 @@ export class ContactContentsComponent {
   download_resume() {
     // window.open("/assets/Bennys Resume - November 2023.pdf", '_blank');
     let link = document.createElement("a");
-    link.download = "Benny's Resume - February 2026.pdf";
-    link.href = "assets/Benny's Resume - February 2026.pdf";
+    link.download = "Benny's Resume - 2026.pdf";
+    link.href = "assets/Benny's Resume - 2026.pdf";
     link.click();
   }
 
