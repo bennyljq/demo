@@ -135,7 +135,7 @@ $desc: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;
     animation: fade-in 2s ease-out #{$delay}s;
     color: rgb(0, 0, 0, $alpha);
     font-size: calc($desc-font-size*$alpha);
-    font-weight: if($bold, 700, 400)
+    font-weight: if(sass($bold): 700; else: 400)
   }
 }
 // #about {

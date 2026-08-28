@@ -4,7 +4,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { HammerModule } from '@angular/platform-browser';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
@@ -85,7 +84,6 @@ import { Gravity2025DialogVelocityComponent } from './gravity2025-dialog-velocit
     History2Component,
     EnterpriseComponent,
     ButtonComponent,
-    // TableComponent,
     ContactComponent,
     ContactContentsComponent,
     PhysicsHomeComponent,
@@ -118,7 +116,7 @@ import { Gravity2025DialogVelocityComponent } from './gravity2025-dialog-velocit
     Gravity2025DialogComponent,
     Gravity2025DialogEditComponent,
     Gravity2025DialogGalleryComponent,
-    Gravity2025DialogVelocityComponent
+    Gravity2025DialogVelocityComponent,
   ],
   imports: [
     BrowserModule,

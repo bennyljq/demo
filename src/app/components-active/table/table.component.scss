@@ -1,29 +1,107 @@
-.actions-col {
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+
+.native-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: 'Poppins', sans-serif; /* Matching your enterprise theme */
+  
+  th, td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+    user-select: none;
+  }
+}
+
+.sortable-header {
+  cursor: pointer;
+  &:hover {
+    background-color: #e9ecef;
+  }
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sort-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: rgba(0,0,0,0.4);
+}
+
+/* Sticky Actions Column */
+.actions-col-header, .actions-col {
   position: sticky;
   right: 0;
-  border-left: 1px solid lightgrey;
-  height: 79px;
-  padding: 8px;
+  // Remove the border-left property entirely
+  // border-left: 1px solid #e0e0e0;
+  
+  // Use a box-shadow to draw a hard 1px line on the left edge
+  box-shadow: -1px 0 0 0 #e0e0e0; 
+  
   text-align: center;
+  z-index: 1;
+  width: 120px; 
+  min-width: 120px;
 }
-::ng-deep * {
-  &::-webkit-scrollbar {
-    width: 8px !important;
-    min-width: 0 !important;
-  }
-  &::-webkit-scrollbar-track {
-    opacity: 0;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: lightgrey;
-    border-radius: 4px;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: grey;
-  }
+
+.actions-col-header {
+  background-color: #f8f9fa;
 }
-.edit-line {
+
+.actions-col {
+  /* Inherit allows the sticky column to turn grey during edit mode */
+  background-color: inherit; 
+  padding: 0; /* Remove padding here so the inner div handles the height */
+}
+
+.actions-flex-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  height: 2px;
-  background-color: pink;
+  height: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.native-input {
+  width: 100%;
+  min-width: 100px; /* Prevents inputs from collapsing too much */
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: lightgrey;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: grey;
 }

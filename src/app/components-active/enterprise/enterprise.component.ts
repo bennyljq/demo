@@ -8,7 +8,7 @@ import {Location} from '@angular/common';
     templateUrl: './enterprise.component.html',
     styleUrls: ['./enterprise.component.scss'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    standalone: false,
 })
 export class EnterpriseComponent implements OnInit {
 

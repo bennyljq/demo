@@ -5,6 +5,7 @@
   background-color: azure;
   padding: calc($home-font-size * 4) min(2vw, 24px);
   padding-bottom: min(calc($home-font-size * 4), 24px);
+  box-sizing: border-box; /* Added */
 }
 #sand-background {
   position: fixed;
@@ -31,6 +32,7 @@
   border: 2px solid Silver;
   background-color: white;
   animation: fade-down 1s ease-out 0.5s;
+  box-sizing: border-box; /* Added */
 }
 #ent-toolbar {
   background-color: white;
@@ -52,6 +54,7 @@
   padding: 20px;
   height: calc(100% - 64px);
   overflow: auto;
+  box-sizing: border-box; /* Added */
 
   &::-webkit-scrollbar {
     width: 8px;
