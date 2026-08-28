@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { ThemeService } from '../theme.service';
 
 @Component({
     selector: 'app-physics-intro',
     templateUrl: './physics-intro.component.html',
     styleUrls: ['./physics-intro.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class PhysicsIntroComponent {

@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ThemeService } from '../theme.service';
 
 @Component({
     selector: 'app-physics-home',
     templateUrl: './physics-home.component.html',
     styleUrls: ['./physics-home.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class PhysicsHomeComponent implements OnInit {

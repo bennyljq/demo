@@ -1,11 +1,12 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Output, ViewChild, Inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Output, ViewChild, Inject, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     selector: 'app-gravity2025-dialog-velocity',
     templateUrl: './gravity2025-dialog-velocity.component.html',
     styleUrls: ['./gravity2025-dialog-velocity.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class Gravity2025DialogVelocityComponent {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { ThemeService } from 'src/app/physics/theme.service';
 import {Location} from '@angular/common';
 import { lastValueFrom, timer } from 'rxjs';
@@ -7,6 +7,7 @@ import { lastValueFrom, timer } from 'rxjs';
     selector: 'app-train2-prelim-concept',
     templateUrl: './train2-prelim-concept.component.html',
     styleUrls: ['./train2-prelim-concept.component.scss', '../train2-home/train2-home.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class Train2PrelimConceptComponent {

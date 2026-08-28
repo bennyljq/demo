@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as eq from '../grav-equations'
 import { lastValueFrom, timer } from 'rxjs';
@@ -7,6 +7,7 @@ import { lastValueFrom, timer } from 'rxjs';
     selector: 'app-grav-dialog',
     templateUrl: './grav-dialog.component.html',
     styleUrls: ['./grav-dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class GravDialogComponent {

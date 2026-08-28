@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PachinkoEngineService } from './pachinko-engine.service';
 import * as THREE from 'three';
@@ -8,6 +8,7 @@ import * as THREE from 'three';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './pachinko.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './pachinko.component.css'
 })
 export class PachinkoComponent implements AfterViewInit, OnDestroy {

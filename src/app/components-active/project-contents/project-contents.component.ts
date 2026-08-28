@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild, signal, computed, TemplateRef } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild, signal, computed, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
 
 interface Project {
   id: string;
@@ -18,6 +18,7 @@ interface Project {
   selector: 'app-project-contents',
   templateUrl: './project-contents.component.html',
   styleUrls: ['./project-contents.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class ProjectContentsComponent implements OnInit {

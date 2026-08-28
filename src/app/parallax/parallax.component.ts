@@ -1,9 +1,10 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     selector: 'app-parallax',
     templateUrl: './parallax.component.html',
     styleUrls: ['./parallax.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ParallaxComponent {

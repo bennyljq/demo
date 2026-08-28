@@ -1,4 +1,4 @@
-import { Component, signal, computed, ElementRef, viewChild, OnInit, Inject, input, OnDestroy } from '@angular/core';
+import { Component, signal, computed, ElementRef, viewChild, OnInit, Inject, input, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { Point, generateRandomBlob, splitPolygon, isPointInPolygon, doesCutIntersectShape, getPolygonAreaAndCentroid, calculateDriftOffsets, createPRNG, getSingaporeDateString } from './geometry.util';
@@ -12,6 +12,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
   standalone: true,
   imports: [RouterLink, RouterLinkActive, ClipboardModule],
   templateUrl: './shape-bisector.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./shape-bisector.component.scss']
 })
 export class ShapeBisectorComponent implements OnInit, OnDestroy {

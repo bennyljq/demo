@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
@@ -7,6 +7,7 @@ import { lastValueFrom, timer } from 'rxjs';
     selector: 'app-projects',
     templateUrl: './projects.component.html',
     styleUrls: ['./projects.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ProjectsComponent {

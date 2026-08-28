@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, WritableSignal, inject } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -36,6 +36,7 @@ const ALL_LEVELS = [...QUESTION_BANK, ...QUESTION_BANK_EXTENDED, ...QUESTION_BAN
     MatSnackBarModule
   ],
   templateUrl: './ordinal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./ordinal.component.scss']
 })
 export class OrdinalComponent implements OnInit {

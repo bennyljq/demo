@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { ThemeService } from '../theme.service';
 
 @Component({
   selector: 'app-switch',
   templateUrl: './switch.component.html',
   styleUrls: ['./switch.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class SwitchComponent {

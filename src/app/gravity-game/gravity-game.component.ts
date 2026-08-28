@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { BackgroundStar, celestialBodyPreset1, celestialBodyPreset2, celestialBodyPreset3, celestialBodyPreset4, celestialBodyPreset5 } from './gravity-game.objects';
 import * as eq from '../gravity/grav-equations'
@@ -7,6 +7,7 @@ import * as eq from '../gravity/grav-equations'
     selector: 'app-gravity-game',
     templateUrl: './gravity-game.component.html',
     styleUrls: ['./gravity-game.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class GravityGameComponent {

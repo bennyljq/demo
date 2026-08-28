@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     selector: 'app-contact-contents',
     templateUrl: './contact-contents.component.html',
     styleUrls: ['./contact-contents.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ContactContentsComponent {

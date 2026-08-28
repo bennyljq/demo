@@ -1,9 +1,10 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, HostListener, NgZone, OnDestroy } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, HostListener, NgZone, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-gravity2026',
   standalone: true,
   templateUrl: './gravity-2026.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './gravity-2026.component.scss'
 })
 export class Gravity2026Component implements AfterViewInit, OnDestroy {

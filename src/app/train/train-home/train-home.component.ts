@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { lastValueFrom, timer } from 'rxjs';
 import { ThemeService } from 'src/app/physics/theme.service';
@@ -8,6 +8,7 @@ import { TrainDialogComponent } from '../train-dialog/train-dialog.component';
     selector: 'app-train-home',
     templateUrl: './train-home.component.html',
     styleUrls: ['./train-home.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TrainHomeComponent {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
@@ -7,6 +7,7 @@ import { lastValueFrom, timer } from 'rxjs';
     selector: 'app-about2',
     templateUrl: './about2.component.html',
     styleUrls: ['./about2.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class About2Component {

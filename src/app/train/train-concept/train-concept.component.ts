@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { lastValueFrom, timer } from 'rxjs';
 import { ThemeService } from 'src/app/physics/theme.service';
 
@@ -6,6 +6,7 @@ import { ThemeService } from 'src/app/physics/theme.service';
     selector: 'app-train-concept',
     templateUrl: './train-concept.component.html',
     styleUrls: ['./train-concept.component.scss', '../train-home/train-home.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TrainConceptComponent {

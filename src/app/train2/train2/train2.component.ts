@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
@@ -8,6 +8,7 @@ import { ThemeService } from 'src/app/physics/theme.service';
     selector: 'app-train2',
     templateUrl: './train2.component.html',
     styleUrls: ['./train2.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class Train2Component {

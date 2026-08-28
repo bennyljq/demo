@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Ball } from './brownian-motion2.objects';
 import { BackgroundStar } from '../gravity-game/gravity-game.objects';
@@ -7,6 +7,7 @@ import { BackgroundStar } from '../gravity-game/gravity-game.objects';
     selector: 'app-brownian-motion2',
     templateUrl: './brownian-motion2.component.html',
     styleUrls: ['./brownian-motion2.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

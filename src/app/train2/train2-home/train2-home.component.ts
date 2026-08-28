@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { ThemeService } from 'src/app/physics/theme.service';
 import {Location} from '@angular/common';
 
@@ -6,6 +6,7 @@ import {Location} from '@angular/common';
     selector: 'app-train2-home',
     templateUrl: './train2-home.component.html',
     styleUrls: ['./train2-home.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class Train2HomeComponent {

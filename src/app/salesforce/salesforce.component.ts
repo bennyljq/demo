@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import moment from 'moment';
 import { lastValueFrom, timer } from 'rxjs';
 
@@ -6,6 +6,7 @@ import { lastValueFrom, timer } from 'rxjs';
     selector: 'app-salesforce',
     templateUrl: './salesforce.component.html',
     styleUrls: ['./salesforce.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SalesforceComponent {

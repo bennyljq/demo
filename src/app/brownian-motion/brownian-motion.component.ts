@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Ball } from './brownian-motion.objects';
 
@@ -6,6 +6,7 @@ import { Ball } from './brownian-motion.objects';
     selector: 'app-brownian-motion',
     templateUrl: './brownian-motion.component.html',
     styleUrls: ['./brownian-motion.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BrownianMotionComponent {

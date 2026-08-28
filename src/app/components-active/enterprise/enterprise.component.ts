@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
 import {Location} from '@angular/common';
@@ -7,6 +7,7 @@ import {Location} from '@angular/common';
     selector: 'app-enterprise',
     templateUrl: './enterprise.component.html',
     styleUrls: ['./enterprise.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EnterpriseComponent implements OnInit {

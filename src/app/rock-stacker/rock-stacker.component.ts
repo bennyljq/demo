@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameEngineService } from './game-engine.service';
 
@@ -7,6 +7,7 @@ import { GameEngineService } from './game-engine.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './rock-stacker.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './rock-stacker.component.css' // Angular 17+ uses styleUrl (singular)
 })
 export class RockStackerComponent implements AfterViewInit, OnDestroy {

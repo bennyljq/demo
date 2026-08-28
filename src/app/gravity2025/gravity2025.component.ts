@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import * as eq from './gravity2025-equations';
 import * as dec from './gravity2025-decorations';
@@ -13,6 +13,7 @@ import { lastValueFrom, timer } from 'rxjs';
     selector: 'app-gravity2025',
     templateUrl: './gravity2025.component.html',
     styleUrls: ['./gravity2025.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class Gravity2025Component {

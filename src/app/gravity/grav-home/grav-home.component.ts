@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { ThemeService } from 'src/app/physics/theme.service';
 import * as eq from '../grav-equations'
 import { lastValueFrom, timer } from 'rxjs';
@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
     selector: 'app-grav-home',
     templateUrl: './grav-home.component.html',
     styleUrls: ['./grav-home.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class GravHomeComponent {

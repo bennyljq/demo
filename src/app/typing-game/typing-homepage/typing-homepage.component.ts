@@ -5,6 +5,7 @@ import {
   HostListener,
   OnDestroy,
   ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { THEMED_WORDS_BY_SECRET } from '../word-dict';
@@ -15,6 +16,7 @@ import { renderSplashScreen } from '../splash-screen';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './typing-homepage.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './typing-homepage.component.scss',
 })
 export class TypingHomepageComponent implements AfterViewInit, OnDestroy {

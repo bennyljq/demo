@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
 
@@ -6,6 +6,7 @@ import { lastValueFrom, timer } from 'rxjs';
     selector: 'app-experimental',
     templateUrl: './experimental.component.html',
     styleUrls: ['./experimental.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ExperimentalComponent {

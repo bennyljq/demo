@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Output, ChangeDetectionStrategy } from '@angular/core';
 import { lastValueFrom, timer } from 'rxjs';
 import { ThemeService } from 'src/app/physics/theme.service';
 
@@ -6,6 +6,7 @@ import { ThemeService } from 'src/app/physics/theme.service';
     selector: 'app-train2-dynamic-station',
     templateUrl: './train2-dynamic-station.component.html',
     styleUrls: ['./train2-dynamic-station.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class Train2DynamicStationComponent {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { ThemeService } from '../theme.service';
 import { lastValueFrom, timer, timestamp } from 'rxjs';
 
@@ -6,6 +6,7 @@ import { lastValueFrom, timer, timestamp } from 'rxjs';
     selector: 'app-physics-power',
     templateUrl: './physics-power.component.html',
     styleUrls: ['./physics-power.component.scss', '../physics-intro/physics-intro.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class PhysicsPowerComponent {

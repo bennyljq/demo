@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ElevatorService } from './elevator.service';
 import { CommonModule } from '@angular/common';
 
@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './lift-simulator.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './lift-simulator.component.scss'
 })
 export class LiftSimulatorComponent {

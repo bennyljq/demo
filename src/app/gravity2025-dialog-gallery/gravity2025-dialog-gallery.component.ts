@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 
@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
     selector: 'app-gravity2025-dialog-gallery',
     templateUrl: './gravity2025-dialog-gallery.component.html',
     styleUrls: ['./gravity2025-dialog-gallery.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class Gravity2025DialogGalleryComponent {
