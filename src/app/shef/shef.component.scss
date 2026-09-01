@@ -1,0 +1,833 @@
+/* --- IMPORT HUMAN-CRAFTED TYPOGRAPHY --- */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap');
+
+/* --- CRITICAL SCROLL FIX: HOST LOCK --- */
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* --- ARTISANAL DESIGN TOKENS --- */
+:root, .shef-viewport {
+  /* Subtractive Oklch Palette */
+  --ink-black: oklch(0.22 0.03 260);    
+  --alabaster: oklch(0.96 0.01 85);     
+  --surface-dark: oklch(0.26 0.03 260); 
+  
+  /* Chroma Capped Interactive Colors (C_max <= 0.18) */
+  --primary-pigment: oklch(0.65 0.16 45); 
+  --primary-hover: oklch(0.55 0.16 45);
+  --success-ink: oklch(0.65 0.12 145);
+  --locked-ink: oklch(0.45 0.05 15);
+  
+  /* Global Illuminant Shadow Tint */
+  --shadow-tint: oklch(0.12 0.04 260 / 0.85);
+  
+  /* Geometric Spacing Scale (S_0 = 0.5rem) */
+  --s-0: 0.5rem;  
+  --s-1: 1rem;    
+  --s-2: 2rem;    
+  --s-3: 4rem;    
+  
+  /* Kinematic Spring Physics */
+  --spring-snappy: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --spring-heavy: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* --- BASE VIEWPORT --- */
+.shef-viewport {
+  width: 100vw;
+  
+  /* CRITICAL SCROLL FIX: Strict height for deterministic boundaries */
+  height: 100dvh; 
+  
+  background-color: var(--ink-black); 
+  color: var(--alabaster);
+  display: flex;
+  align-items: flex-start; 
+  justify-content: center;
+  
+  /* Typographic Craft: Sourced typefaces */
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-kerning: normal;
+  
+  overflow-x: hidden;
+  overflow-y: auto; 
+  position: relative;
+  z-index: 1;
+  -webkit-user-select: none; 
+  user-select: none; 
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-x pan-y;
+}
+
+/* --- AMBIENT OCCLUSION VIGNETTE --- */
+.vignette-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 80%, oklch(0.12 0.04 260 / 0.85) 150%);
+  z-index: 9998;
+}
+
+/* --- TACTILE WABI-SABI GRAIN --- */
+.tactile-grain {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999; /* Layer physically over the entire UI */
+  pointer-events: none; /* Allows physical clicks to pass through */
+  mix-blend-mode: overlay; /* Dynamically reacts to the vignette */
+  opacity: 0.45; /* Raised substantially to ensure physical tooth is visible */
+}
+
+/* --- Z-AXIS REALISM: LAYER 1 --- */
+.layer-1 {
+  background-color: var(--surface-dark);
+  /* Tight, highly opaque shadow indicating physical proximity */
+  box-shadow: 0 2px 4px var(--shadow-tint), 0 1px 2px var(--shadow-tint);
+  border: 1px solid oklch(0.35 0.03 260); /* Subtle structural line */
+  /* Intentional Wabi-Sabi asymmetry in the cut of the card */
+  border-radius: 3px 5px 4px 2px; 
+}
+
+/* --- Z-AXIS REALISM: LAYER 2 (MODALS) --- */
+.layer-2 {
+  background-color: var(--surface-dark);
+  /* Soft, expansive shadow indicating significant elevation */
+  box-shadow: 0 16px 48px rgba(0,0,0,0.8), 0 4px 12px var(--shadow-tint);
+  border: 1px solid oklch(0.40 0.03 260); 
+  border-radius: 4px 5px 3px 4px; /* Human Jitter */
+}
+
+/* --- LANDING SCREEN --- */
+.landing-screen {
+  margin: auto; 
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-2);
+  
+  .landing-hero-frame {
+    width: clamp(200px, 75vw, 600px);
+    aspect-ratio: 4 / 3;
+    margin: var(--s-1) auto;
+    /* Asymmetrical padding to mimic a physical instant photo print */
+    padding: 6px 6px 1.5rem 6px; 
+    background: var(--alabaster);
+    border-radius: 2px;
+    
+    /* Strict Oklch shadows for physical depth */
+    box-shadow: inset 0 0 4px oklch(0.12 0.04 260 / 0.2), 0 8px 16px var(--shadow-tint);
+    
+    /* Human jitter & Kinematic momentum */
+    transform: rotate(-2deg); 
+    transition: transform 300ms var(--spring-snappy), box-shadow 300ms ease;
+    cursor: pointer;
+    
+    &:hover {
+      transform: rotate(1deg) scale(1.02);
+      box-shadow: inset 0 0 4px oklch(0.12 0.04 260 / 0.2), 0 12px 24px oklch(0.12 0.04 260 / 0.9);
+    }
+    
+    .hero-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 1px;
+      /* Physical print grading to harmonize with the dark background */
+      filter: sepia(0.15) contrast(1.1); 
+    }
+  }
+  
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-0);
+  }
+  
+  .game-title {
+    font-family: 'Newsreader', serif;
+    font-size: clamp(3.5rem, 15vw, 7rem);
+    font-weight: 700; 
+    font-style: italic;
+    
+    /* Optical kerning for large display text */
+    letter-spacing: -0.04em; 
+    margin: 0;
+    color: var(--primary-pigment);
+    line-height: 0.6;
+    padding-bottom: 0.1em; 
+  }
+  
+  .subtitle {
+    font-size: clamp(0.9rem, 3vw, 1.2rem);
+    letter-spacing: 0.15em;
+    opacity: 0.85;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin: 0;
+  }
+  
+  .action-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+    align-items: center;
+  }
+}
+
+/* --- ARTISANAL BUTTONS --- */
+.artisanal-btn {
+  padding: var(--s-1) var(--s-2);
+  font-size: 1.15rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  border-radius: 2px 4px 3px 2px; /* Human jitter */
+  cursor: pointer;
+  
+  /* Physical momentum transition (150ms-300ms) */
+  transition: transform 250ms var(--spring-snappy), background-color 200ms ease, box-shadow 200ms ease;
+  
+  &.primary {
+    color: var(--ink-black);
+    background-color: var(--primary-pigment);
+    border: none;
+    box-shadow: 0 4px 0 var(--primary-hover); /* Physical 3D extrusion, no blur */
+    
+    &:hover {
+      background-color: oklch(0.70 0.16 45); /* Lighten slightly */
+    }
+    
+    &:active {
+      /* Simulating mass depression */
+      transform: translateY(4px);
+      box-shadow: 0 0 0 var(--primary-hover);
+    }
+  }
+  
+  &.secondary {
+    color: var(--alabaster);
+    background-color: transparent;
+    border: 1px solid var(--alabaster);
+    font-size: 0.95rem; /* Slightly smaller in hierarchy */
+    padding: var(--s-0) var(--s-2);
+    
+    &:hover {
+      background-color: oklch(0.96 0.01 85 / 0.08); /* Replaced rgba */
+    }
+    
+    &:active {
+      transform: translateY(2px);
+    }
+  }
+  
+  &:disabled, &[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    
+    /* Subtractive disabled state: desaturated slate */
+    background-color: oklch(0.30 0.03 260); 
+    color: oklch(0.50 0.03 260); 
+    border-color: transparent;
+    
+    /* Eradicate the 3D hover extrusion to show it cannot be pressed */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4); 
+    transform: translateY(2px); /* Physically sunk/locked state */
+  }
+  
+  /* Prevent kinematic hover effects when locked */
+  @media (hover: hover) {
+    &:disabled:hover, &[disabled]:hover {
+      transform: translateY(2px); 
+      background-color: oklch(0.30 0.03 260);
+    }
+  }
+}
+
+/* --- SELECTION SCREEN --- */
+.selection-screen {
+  width: 92%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  margin: var(--s-2) auto;
+  
+  .selection-header {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    gap: var(--s-1);
+    position: relative;
+    justify-content: center;
+    
+    .back-btn {
+      /* Flexbox ensures flawless vertical centering of the vector and text */
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      align-self: flex-start;
+      padding: 0.5rem var(--s-1);
+      
+      .icon-micro {
+        width: 1.1rem;
+        height: 1.1rem;
+      }
+      
+      @media (hover: hover) {
+        &:hover {
+          transform: translateX(-4px); /* Spatial shift out of the grid */
+        }
+      }
+    }
+    
+    .selection-title {
+      font-family: 'Newsreader', serif;
+      font-style: italic;
+      font-size: clamp(1.8rem, 6vw, 2.5rem);
+      font-weight: 500;
+      margin: 0;
+      text-align: center;
+    }
+  }
+  
+  .roster-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+  }
+  
+  .shef-card {
+    padding: var(--s-2);
+    cursor: pointer;
+    transition: transform 300ms var(--spring-heavy), border-color 200ms ease;
+    position: relative;
+    text-align: center;
+    
+    display: flex;
+    flex-direction: column;
+    
+    &:hover:not(.locked) {
+      transform: translateY(-4px); /* Spatial Z-axis shift */
+      border-color: var(--primary-pigment);
+    }
+    
+    &.locked {
+      opacity: 0.6;
+      cursor: not-allowed;
+      filter: grayscale(100%) contrast(1.2); /* Harsh physical desaturation */
+    }
+    
+    .avatar-frame {
+      width: clamp(90px, 25vw, 120px);
+      height: clamp(90px, 25vw, 120px);
+      margin: 0 auto var(--s-1);
+      padding: 4px;
+      background: var(--alabaster); /* Print style frame */
+      box-shadow: inset 0 0 4px rgba(0,0,0,0.5);
+      border-radius: 2px;
+      transform: rotate(-1deg); /* Human jitter */
+      transition: transform 300ms var(--spring-snappy);
+    }
+    
+    &:hover:not(.locked) .avatar-frame {
+      transform: rotate(1deg) scale(1.03);
+    }
+    
+    .shef-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 1px;
+    }
+    
+    h3 { 
+      font-family: 'Newsreader', serif;
+      margin-top: 0; 
+      font-size: 1.7rem; 
+      letter-spacing: -0.02em; 
+      margin-bottom: var(--s-1);
+      font-weight: 700;
+    }
+    
+    p { 
+      font-size: 0.95rem; 
+      opacity: 0.85; 
+      line-height: 2; 
+      margin-bottom: 0;
+    }
+    
+    .badge {
+      margin-top: 1.5rem;
+      display: inline-block;
+      align-self: center; 
+      
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 2px;
+      
+      &.locked-badge { 
+        background: transparent; 
+        color: var(--locked-ink); 
+        border: 1px solid var(--locked-ink); 
+      }
+      
+      &.available-badge { 
+        background: transparent; 
+        color: var(--success-ink); 
+        border: 1px solid var(--success-ink); 
+      }
+    }
+    
+    .loadout-info {
+      margin-top: var(--s-1);
+      padding-top: var(--s-1);
+      border-top: 1px dashed oklch(0.38 0.03 260);
+      text-align: center;
+      flex-grow: 1;
+      
+      .tray-label {
+        margin: 0;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: oklch(0.6 0.02 260);
+        margin-bottom: var(--s-0);
+      }
+      
+      .tray-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        justify-content: center; 
+      }
+    }
+  }
+}
+
+/* --- TABLET & DESKTOP RESPONSIVENESS --- */
+@media (min-width: 768px) {
+  .selection-screen {
+    .selection-header {
+      flex-direction: row; 
+      
+      .back-btn {
+        position: absolute;
+        left: 0;
+        align-self: auto;
+      }
+    }
+    
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--s-2);
+      margin-top: var(--s-2);
+    }
+  }
+}
+
+/* --- SQUIRCLES AND BADGES --- */
+.squircle-counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 0.4rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  color: var(--alabaster);
+  line-height: 1;
+  
+  border-radius: 4px 5px 3px 4px; 
+  box-shadow: inset 0 1px 1px oklch(0.96 0.01 85 / 0.15), 0 1px 2px var(--shadow-tint);
+  
+  &.positive {
+    background-color: var(--success-ink);
+    font-size: 1.5rem;
+    padding: 0.2rem 0.6rem;
+  }
+  
+  &.negative {
+    background-color: oklch(0.55 0.16 25); 
+    font-size: 0.85rem;
+    margin-left: 0.25rem;
+  }
+  
+  &.neutral {
+    background-color: oklch(0.35 0.03 260); 
+    font-size: 0.85rem;
+    margin-left: 0.25rem;
+  }
+  
+  &.uses-counter {
+    min-width: 1.2rem;
+    height: 1.2rem;
+    padding: 0 0.3rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Reused Artisanal Draft Badge */
+.draft-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--surface-dark);
+  padding: 0.25rem 0.5rem;
+  border-radius: 2px;
+  border: 1px solid oklch(0.35 0.03 260);
+  box-shadow: 0 1px 2px var(--shadow-tint);
+  
+  /* --- DEFAULT INGREDIENT/SPICE (Subtractive Left Border) --- */
+  &.rarity-common { 
+    border-left: 3px solid oklch(0.65 0.02 260); 
+    .uses-counter { background-color: oklch(0.65 0.02 260); color: var(--ink-black); }
+  }
+  &.rarity-rare { 
+    border-left: 3px solid oklch(0.55 0.12 250); 
+    .uses-counter { background-color: oklch(0.55 0.12 250); color: var(--ink-black); }
+  }
+  &.rarity-legendary { 
+    border-left: 3px solid oklch(0.75 0.14 75); 
+    .uses-counter { background-color: oklch(0.75 0.14 75); color: var(--ink-black); }
+  }
+  
+  /* --- HEAVY COOKWARE MODIFIER (Solid Pigment Background) --- */
+  &.type-cookware {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.6); 
+    
+    /* Invert text/icons for contrast against bright solid pigments */
+    .draft-name { color: var(--ink-black); font-weight: 700; }
+    .svg-micro { color: var(--ink-black); }
+    
+    /* Dynamically map background to rarity */
+    &.rarity-common {
+      background-color: oklch(0.65 0.02 260); border-color: oklch(0.65 0.02 260);
+      .uses-counter { background-color: var(--ink-black); color: oklch(0.65 0.02 260); }
+    }
+    &.rarity-rare {
+      background-color: oklch(0.55 0.12 250); border-color: oklch(0.55 0.12 250);
+      .uses-counter { background-color: var(--ink-black); color: oklch(0.55 0.12 250); }
+    }
+    &.rarity-legendary {
+      background-color: oklch(0.75 0.14 75); border-color: oklch(0.75 0.14 75);
+      .uses-counter { background-color: var(--ink-black); color: oklch(0.75 0.14 75); }
+    }
+  }
+  
+  .emoji-micro { font-size: 1.2rem; line-height: 1; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5)); }
+  .svg-micro {
+    width: 1.2rem;
+    height: 1.2rem;
+    color: var(--primary-pigment);
+    display: flex;
+    ::ng-deep svg { width: 100%; height: 100%; stroke-width: 2px; }
+  }
+  
+  .draft-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--alabaster);
+  }
+  
+  .uses-counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.2rem;
+    height: 1.2rem;
+    padding: 0 0.3rem;
+    margin-left: auto; 
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 4px 5px 4px 4px; 
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* --- TRANSITION SCREEN --- */
+.transition-screen {
+  margin: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  
+  /* Enforce Z-Axis Realism: Create a physical 3D stage */
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  
+  .transition-title {
+    font-family: 'Newsreader', serif;
+    font-size: clamp(3rem, 10vw, 5rem);
+    color: var(--primary-pigment);
+    margin: 0;
+    font-style: italic;
+    line-height: 1; 
+    
+    /* Stagger 1: Base timing */
+    animation: cinematicEpic 2.7s var(--spring-heavy) both 0ms;
+  }
+  
+  /* --- NEW: TACTILE POLAROID FRAME --- */
+  .scene-frame {
+    width: clamp(220px, 75vw, 600px);
+    aspect-ratio: 4 / 3;
+    margin: 0 auto;
+    padding: 6px 6px 1.5rem 6px; 
+    background: var(--alabaster);
+    box-shadow: inset 0 0 4px rgba(0,0,0,0.3), 0 12px 24px rgba(0,0,0,0.7);
+    border-radius: 2px;
+    transform: rotate(2deg);
+    cursor: pointer;
+    animation: cinematicEpic 3s var(--spring-heavy) both 100ms;
+    transition: transform 300ms var(--spring-snappy), box-shadow 300ms ease;
+    
+    .scene-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 1px;
+      filter: sepia(0.15) contrast(1.1); 
+    }
+  }
+  
+  .transition-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-0); 
+    align-items: center;
+  }
+  
+  .transition-subtitle {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.2rem;
+    color: var(--alabaster);
+    opacity: 0.85;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0;
+    
+    /* Stagger 3: Wait 200ms */
+    animation: cinematicEpic 2.7s var(--spring-heavy) both 200ms;
+  }
+  
+  .transition-location {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    color: oklch(0.7 0.02 260); 
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    
+    /* Stagger 4: Wait 300ms. 2.7s duration + 300ms delay = Exactly 3000ms. */
+    animation: cinematicEpic 2.7s var(--spring-heavy) both 300ms;
+    
+    .map-pin {
+      width: 1.2rem;
+      height: 1.2rem;
+      color: var(--primary-pigment);
+    }
+  }
+}
+
+/* --- CINEMATIC EPIC ANIMATION --- */
+/* Maximum runtime: 2.7s duration + 300ms delay = exactly 3s before component destruction */
+@keyframes cinematicEpic {
+  0% {
+    opacity: 0;
+    /* Hinge back and drop down to simulate physical weight */
+    transform: translate3d(0, 40px, -40px) rotateX(-15deg);
+  }
+  15% {
+    opacity: 1;
+    /* Snaps tightly into focal plane */
+    transform: translate3d(0, 0, 0) rotateX(0deg);
+  }
+  85% {
+    opacity: 1;
+    /* Slow, continuous physical drift forward through the Z-axis */
+    transform: translate3d(0, 0, 20px) rotateX(0deg);
+  }
+  100% {
+    opacity: 0;
+    /* Rapid exit punch up and towards the camera */
+    transform: translate3d(0, -40px, 60px) rotateX(10deg);
+  }
+}
+
+/* --- GLOBAL NAV BAR --- */
+.global-nav {
+  width: 92%;
+  max-width: 1200px;
+  margin: var(--s-1) auto 0;
+  padding: var(--s-0) var(--s-1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  /* Z-Axis Realism */
+  position: sticky;
+  top: var(--s-0);
+  z-index: 200;
+  gap: 8px;
+  
+  .nav-shef-info {
+    display: flex;
+    align-items: center;
+    gap: var(--s-0);
+    
+    .nav-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 2px;
+      border: 1px solid oklch(0.35 0.03 260);
+      object-fit: cover;
+    }
+    .nav-name {
+      font-family: 'Newsreader', serif;
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--alabaster);
+    }
+  }
+  
+  .nav-actions {
+    display: flex;
+    gap: var(--s-0);
+    
+    .micro-btn {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+/* --- LAYER 2: GLOBAL PANTRY MODAL --- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background-color: oklch(0.12 0.04 260 / 0.6); /* Replaced rgba */
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-1);
+}
+
+.pantry-modal {
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--s-1) var(--s-2);
+    border-bottom: 1px dashed oklch(0.35 0.03 260);
+    
+    .modal-title {
+      margin: 0;
+      font-family: 'Newsreader', serif;
+      font-size: 1.8rem;
+      font-style: italic;
+      color: var(--primary-pigment);
+    }
+    
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: var(--alabaster);
+      font-size: 2rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: transform 150ms var(--spring-snappy), color 150ms ease;
+      
+      @media (hover: hover) {
+        &:hover { color: var(--primary-hover); transform: scale(1.1); }
+      }
+      &:active { transform: scale(0.9); }
+    }
+  }
+  
+  .modal-content {
+    padding: var(--s-2);
+    overflow-y: auto;
+  }
+}
+
+/* --- KINEMATIC ANIMATIONS --- */
+.animate-spring-up { 
+  animation: springUp 400ms var(--spring-heavy) forwards; 
+}
+
+.animate-fade { 
+  animation: fadeIn 300ms ease forwards; 
+}
+
+@keyframes springUp {
+  0% { 
+    opacity: 0; 
+    transform: translateY(16px) scale(0.98); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* --- STICKY ACTION FOOTER --- */
+.button-footer {
+  position: sticky;
+  bottom: var(--s-1); /* Anchors to bottom ONLY when space runs out */
+  z-index: 100;
+  padding: var(--s-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+  
+  > button {
+    flex: 1;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .secondary[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: oklch(0.5 0 0);
+    color: oklch(0.5 0 0);
+    &:active { transform: none; box-shadow: none; }
+  }
+}

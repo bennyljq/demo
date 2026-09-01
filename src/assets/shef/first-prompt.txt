@@ -1,0 +1,31 @@
+I have uploaded an old GDD that I've compiled months ago. I am now revisiting this project hoping to start fresh. So use the old GDD only as a vague reference, putting much more weight in what's being discussed now.
+
+Objective: I want to build a web based (Angular 22) cooking rogue-like game called Shef. The aim of this chat is to create the new GDD in markdown that will guide future development. For now, I aim to host it as a path on my personal site for play-testing. 
+
+Architecture: Pure Angular 22 (serverless), using localStorage or cookies to preserve play state. We can explore more complex architecture if this is successful and we wrap it in Electron and publish on Steam. For now, strictly Angular only. Ensure that this game is mobile-friendly, or even mobile-first.
+
+Game loop (one run of the roguelike): This is the part where the vision is most underdeveloped, as it should be. On fresh start, players choose from a handful of chefs (Slay the Spire inspired). They are Mathew Wok (Hong Kong da pai dang extraordinaire), Balaji Krishnan (Indian food master), Roberto Carlost (Mexican chef). For now, I only want to develop recipes and ingredients for Mathew Wok. Each of these chefs start with their signature cookware (no points for guessing Mathew's) and preset ingredients.
+
+Once selected, chef/player is thrown into a kitchen where they have access to their cookware (wok for Mathew), preset ingredients (e.g. rice, egg, pork, scallions), and some money. This money represents the in-run currency, and will not affect the meta-currency which we will discuss later. 
+
+Using this money, the chef will head to the market where the selection is cultural and a bit of a dice roll; ingredients are of differing prices and rarity. On extended play, one may even unlock cross-cultural ingredients that enable fusion foods. The fun/challenging part here is figuring out what ingredients are coherent, while staying under budget. Let's say Mathew buys shrimp and carrots, preparing to make yang zhou fried rice as his first dish. 
+
+He goes back to the kitchen with the new ingredients where he will select all the ingredients which is required in this dish, along with the cooking vessel. The game keeps a hidden recipe list which will validate ingredients and equipment. Upon a match, it will recognise the dish and present a "new dish discovered!" pop-up if never seen before. In this case, "Yang Zhou Fried Rice discovered!".
+
+Scoring and progression: I am heavily leaning towards Balatro's Base x Multiplier system. The base will comprise mainly (or exclusively) of the recipe's score. Scoring this way instead of tying base to ingredients will punish nonsense recipes that simply spam expensive ingredients creating goop; something like saffron wagyu cooked in a iberico pork broth in a rice cooker. Goops might be punished with a base of 1. Let's say YZ fried rice bases at 100. Next comes the multiplier which will come with run or metagame progression. As noted in remarks below, YZ fried rice uses salt, white pepper, light soy sauce, shaoxing rice wine, sesame oil. All these may be acquired the same way as other ingredients, just categorized as spices and tossed on the spice rack. If used appropriately, these will help boost multipler. However if used wrongly, some spices are more punishing than others. Sugar is more forgiving than chilli padi when added to the wrong dish. So the negative multiplier scale this way. This is a first draft of using spices, room for improvement. 
+
+Metagame progression such as the number of Wok dishes made could upgrade wok mastery, increasing its multiplier.
+
+What are they scoring? Before heading to market, chef is presented with the customer's preferences and dietary restrictions (if any), along with a score to meet, call this the tasty-meter. Upon meeting this score, the customer pays for the dish. This price should vary based on the score. Perhaps the setting of the restaurant can incur a multiplier here, see below. 
+
+Acts within a run: All chefs start as a lowly hawker or in a small restaurant or food truck -- not glamourous. Each act comprises perhaps 3 normal customers, then a food critique (boss). Passing this boss elevates the setting to a fine-dining restaurant (equivalent to bib gourmand), scaling up the tasty-meter requirements, dish price multiplier, and quality and rarity of market. To win a run, chef must earn a 3-star rating for his restaurant, which gives us 4 rounds of play -- small restaurant, bib gourmand (or paraphrase because Michelin copyright), 1-star, 2-star, 3-star (win).
+
+Codex and recipes: We expose the codex to players in the metagame, outside the run. This categorises the discovered and undiscovered ingredients, spices, recipes, and cookwares. This may also serve as the mastery menu. Recipe base scores can be increased with ingredient mastery, along with number of times recipe has been cooked. 
+
+Remarks: This is mainly things I haven't figured out. How do we progress tasty-meter requirement from linear to exponential? There's currently no crazy Joker-stacking strategies as there is in Balatro. Perhaps this is not required, and we can simply follow Slay the Spire's more linear scaling. 
+
+We haven't explored rewards after each customer pays. Of course the money received is good reward, but something here to help with the scaling and progression is good too. To brainstorm on this. 
+
+I haven't figured out how to drop or reward new cookware. These should be quite rare. Perhaps upon beating a boss, or highly priced in the market. 
+
+Don't start on the markdown file yet. I'm sure there are poignant questions unanswered. Pls ask away so we can fill these gaps.  

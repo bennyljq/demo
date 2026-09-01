@@ -1,0 +1,254 @@
+<nav class="global-nav unified-dossier layer-1 animate-spring-up">
+  <!-- Top Row: Vital Actions -->
+  <div class="nav-top-row">
+    <div class="nav-shef-info">
+      <img class="nav-avatar" [src]="shef().avatar" alt="Shef Avatar">
+      <span class="nav-name">{{ shef().name }}</span>
+    </div>
+    <div class="nav-actions">
+      <button class="artisanal-btn secondary micro-btn" (click)="playClick(); toggleGlobalPantry()">Pantry</button>
+      <button class="artisanal-btn secondary micro-btn icon-btn" aria-label="Home" (click)="playClick(); onRunEnd.emit()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Bottom Row: Run Context -->
+  <div class="nav-meta-row">
+    <div class="meta-pills">
+      <span class="squircle-counter neutral">Day 1</span>
+      <span class="squircle-counter neutral">Hawker Tier</span>
+      <span class="squircle-counter phase-badge">
+        @if (currentPhase() === 'customer_reveal') { Customer }
+        @else if (currentPhase() === 'market') { Market }
+        @else if (currentPhase() === 'service') { Prep }
+      </span>
+    </div>
+    <div class="currency-tracker">
+      <span class="squircle-counter positive">${{ runCurrency() }}</span>
+    </div>
+  </div>
+</nav>
+
+@if (currentPhase() === 'customer_reveal') {
+  <section class="phase-container animate-spring-up">
+    
+    <div class="customer-card layer-1">
+      <div class="docket-clip"></div>
+      
+      <!-- COMPACT DOSSIER LAYOUT -->
+      <div class="dossier-layout">
+        <!-- Left Column: Physical Polaroid -->
+        <div class="avatar-frame">
+          <span class="emoji-avatar">{{ currentCustomer().avatar }}</span>
+        </div>
+        
+        <!-- Right Column: Vital Data -->
+        <div class="vital-info">
+          <h2 class="customer-name">{{ currentCustomer().name }}</h2>
+          
+          <div class="requirements-grid">
+            <div class="req-box target-box layer-minus-1">
+              <span class="box-label">Target</span>
+              <span class="target-score">{{ currentCustomer().tastyMeterTarget }}</span>
+            </div>
+            
+            <div class="req-box restrictions-box layer-minus-1">
+              <span class="box-label">Notes</span>
+              <div class="badge-group">
+                @for (restriction of currentCustomer().restrictions; track restriction) {
+                  <span class="badge restriction-badge">{{ restriction }}</span>
+                }
+                @for (preference of currentCustomer().preferences; track preference) {
+                  <span class="badge preference-badge">{{ preference }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recessed physical quote block at the bottom -->
+      <blockquote class="customer-dialogue">
+        "{{ currentCustomer().dialogue }}"
+      </blockquote>
+    </div>
+    
+    <footer class="button-footer layer-1">
+      <button 
+      class="artisanal-btn secondary"
+      [disabled]="runCurrency() < currentCustomer().compCost"
+      (click)="playClick(); compCustomer()">
+      Turn Away <span class="squircle-counter negative">-${{ currentCustomer().compCost }}</span>
+    </button>
+    <button class="artisanal-btn primary" (click)="playClick(); goToMarket()">
+      Head to Market →
+    </button>
+  </footer>
+</section>
+}
+
+@if (currentPhase() === 'market') {
+  <app-market 
+  [(runCurrency)]="runCurrency"
+  (onItemPurchased)="handleItemPurchased($event)"
+  (onLeaveMarket)="goToService()">
+</app-market>
+}
+
+@if (currentPhase() === 'service') {
+  <section class="phase-container animate-spring-up">
+    
+    <!-- Recycled Customer Dossier Design for the Prep Station HUD -->
+    <header class="customer-card layer-1" style="padding: var(--s-0); margin-bottom: 0;">
+      
+      <div class="requirements-grid">
+        <div class="req-box target-box layer-minus-1">
+          <span class="box-label">Target</span>
+          <span class="target-score">{{ currentCustomer().tastyMeterTarget }}</span>
+        </div>
+        
+        <div class="req-box restrictions-box layer-minus-1">
+          <span class="box-label">Notes</span>
+          <div class="badge-group">
+            @for (restriction of currentCustomer().restrictions; track restriction) {
+              <span class="badge restriction-badge">{{ restriction }}</span>
+            }
+            @for (preference of currentCustomer().preferences; track preference) {
+              <span class="badge preference-badge">{{ preference }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Categorized Physical Trays -->
+    <div class="pantry-sections">
+      
+      @if (cookware().length > 0) {
+        <section class="category-section">
+          <h3 class="category-title">Cookware</h3>
+          <div class="pantry-grid">
+            @for (item of cookware(); track item.id) {
+              <div class="draft-badge pantry-item type-cookware"
+              [class]="'rarity-' + item.rarity"
+              [class.selected]="selectedItems().includes(item)"
+              (click)="playDrip(); toggleItem(item)">
+              <span class="emoji-micro">{{ item.icon }}</span>
+              <span class="draft-name">{{ item.name }}</span>
+              @if (item.uses !== '∞') { <span class="squircle-counter uses-counter">{{ item.uses }}</span> }
+            </div>
+          }
+        </div>
+      </section>
+    }
+    
+    @if (ingredients().length > 0) {
+      <section class="category-section">
+        <h3 class="category-title">Ingredients</h3>
+        <div class="pantry-grid">
+          @for (item of ingredients(); track item.id) {
+            <div class="draft-badge pantry-item"
+            [class]="'rarity-' + item.rarity"
+            [class.selected]="selectedItems().includes(item)"
+            (click)="playDrip(); toggleItem(item)">
+            <span class="emoji-micro">{{ item.icon }}</span>
+            <span class="draft-name">{{ item.name }}</span>
+            @if (item.uses !== '∞') { <span class="squircle-counter uses-counter">{{ item.uses }}</span> }
+          </div>
+        }
+      </div>
+    </section>
+  }
+  
+  @if (spices().length > 0) {
+    <section class="category-section">
+      <h3 class="category-title">Spices</h3>
+      <div class="pantry-grid">
+        @for (item of spices(); track item.id) {
+          <div class="draft-badge pantry-item"
+          [class]="'rarity-' + item.rarity"
+          [class.selected]="selectedItems().includes(item)"
+          (click)="playDrip(); toggleItem(item)">
+          <span class="emoji-micro">{{ item.icon }}</span>
+          <span class="draft-name">{{ item.name }}</span>
+          @if (item.uses !== '∞') { <span class="squircle-counter uses-counter">{{ item.uses }}</span> }
+        </div>
+      }
+    </div>
+  </section>
+}
+
+</div>
+
+<footer class="button-footer layer-1">
+  <button 
+  class="artisanal-btn primary" 
+  style="width: 100%;"
+  [disabled]="!canCook()"
+  (click)="playClick(); cookDish()">
+  Cook Dish 🔥
+</button>
+</footer>
+
+</section>
+}
+
+<!-- LAYER 2: RUN PANTRY MODAL -->
+@if (showGlobalPantry()) {
+  <div class="modal-backdrop animate-fade" (click)="toggleGlobalPantry()">
+    <aside class="pantry-modal layer-2 animate-spring-up" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <h2 class="modal-title">Pantry</h2>
+        <button class="close-btn" (click)="playClick(); toggleGlobalPantry()">×</button>
+      </header>
+      
+      <div class="modal-content">
+        @if (cookware().length > 0) {
+          <section class="category-section">
+            <h3 class="category-title">Cookware</h3>
+            <div class="tray-items">
+              @for (item of cookware(); track item.id) {
+                <div class="draft-badge type-cookware" [class]="'rarity-' + item.rarity">
+                  <span class="emoji-micro">{{ item.icon }}</span>
+                  <span class="draft-name">{{ item.name }}</span>
+                </div>
+              }
+            </div>
+          </section>
+        }
+        
+        @if (ingredients().length > 0) {
+          <section class="category-section">
+            <h3 class="category-title">Ingredients</h3>
+            <div class="tray-items">
+              @for (item of ingredients(); track item.id) {
+                <div class="draft-badge" [class]="'rarity-' + item.rarity">
+                  <span class="emoji-micro">{{ item.icon }}</span>
+                  <span class="draft-name">{{ item.name }}</span>
+                </div>
+              }
+            </div>
+          </section>
+        }
+        
+        @if (spices().length > 0) {
+          <section class="category-section">
+            <h3 class="category-title">Spices</h3>
+            <div class="tray-items">
+              @for (item of spices(); track item.id) {
+                <div class="draft-badge" [class]="'rarity-' + item.rarity">
+                  <span class="emoji-micro">{{ item.icon }}</span>
+                  <span class="draft-name">{{ item.name }}</span>
+                </div>
+              }
+            </div>
+          </section>
+        }
+      </div>
+    </aside>
+  </div>
+}

@@ -29,6 +29,7 @@ import { LiftSimulatorComponent } from './lift-simulator/lift-simulator.componen
 import { KeyboardWizardComponent } from './keyboard-wizard/keyboard-wizard.component';
 import { RockStackerComponent } from './rock-stacker/rock-stacker.component';
 import { PachinkoComponent } from './pachinko/pachinko.component';
+import { ShefComponent } from './shef/shef.component';
 
 const routes: Routes = [
   { path: '', component: HomepageV2Component },
@@ -64,6 +65,7 @@ const routes: Routes = [
   { path: 'keyboard-wizard', component: KeyboardWizardComponent },
   { path: 'rock', component: RockStackerComponent },
   { path: 'pachinko', component: PachinkoComponent },
+  { path: 'shef', component: ShefComponent },
   { path: '**', redirectTo: '', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];
 

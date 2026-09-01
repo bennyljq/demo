@@ -1,0 +1,91 @@
+<section class="market-container animate-spring-up">
+  
+  <!-- Procured Goods Tray (Recessed physical well) -->
+  @if (draftedItems().length > 0) {
+    <div class="procured-tray animate-tray-reveal">
+      <h3 class="tray-label">Procured Goods</h3>
+      <div class="tray-items">
+        @for (draft of draftedItems(); track draft.id) {
+          <div class="draft-badge animate-pop-in" 
+          [class]="'rarity-' + draft.rarity" 
+          [class.type-cookware]="draft.type === 'cookware'">
+          @if (draft.isSvg) {
+            <div class="svg-micro" [innerHTML]="draft.icon"></div>
+          } @else {
+            <span class="emoji-micro">{{ draft.icon }}</span>
+          }
+          <span class="draft-name">{{ draft.name }}</span>
+          @if (draft.uses !== '∞') {
+            <span class="squircle-counter uses-counter">{{ draft.uses }}</span>
+          }
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- SHOP GRID -->
+<div class="shop-grid">
+  @for (item of shopItems(); track item.id) {
+    <div 
+    class="market-card layer-1" 
+    [class]="'rarity-' + item.rarity"
+    [class.affordable]="runCurrency() >= item.price"
+    [class.unaffordable]="runCurrency() < item.price">
+
+      <span class="rarity-label">{{ item.rarity }}</span>
+
+      <div class="card-top">
+        <span class="type-badge">{{ item.type }}</span>
+        <span class="uses-badge" [class.limited]="item.uses !== '∞'">
+          @if (item.uses === '∞') {
+            <span class="infinity">∞</span>
+          } @else if (item.uses === 1) {
+            {{ item.uses }} Use
+          } @else {
+            {{ item.uses }} Uses
+          }
+        </span>
+      </div>
+
+      <div class="icon-container">
+        @if (item.isSvg) {
+          <div class="svg-icon" [innerHTML]="item.icon"></div>
+        } @else {
+          <div class="emoji-icon">{{ item.icon }}</div>
+        }
+      </div>
+
+      <div class="text-container">
+        <h3 class="item-name">{{ item.name }}</h3>
+
+        @if (item.type === 'bundle' && item.bundleItems) {
+          <p class="bundle-contents">
+            Contains: <strong>{{ getBundleContentsText(item.bundleItems) }}</strong>
+          </p>
+        }
+      </div>
+
+      <button 
+      class="price-tag" 
+      [disabled]="runCurrency() < item.price"
+      (click)="buyItem(item)">
+      ${{ item.price }}
+    </button>
+  </div>
+  }
+</div>
+
+<footer class="button-footer layer-1">
+  <button 
+  class="artisanal-btn secondary" 
+  [disabled]="runCurrency() < bribeCost()"
+  (click)="playClick(); bribeShopkeep()">
+  Reroll <span class="squircle-counter negative">-${{ bribeCost() }}</span>
+</button>
+<button class="artisanal-btn primary" (click)="playClick(); headToKitchen()">
+  Back To Kitchen →
+</button>
+</footer>
+
+</section>

@@ -1,0 +1,134 @@
+<main class="shef-viewport">
+  <!-- Spatial Realism: Physical Vignette for ambient occlusion -->
+  <div class="vignette-overlay"></div>
+  
+  <!-- Wabi-Sabi Physical Grain Overlay -->
+  <!-- FIX: Drastically increased alpha output in the color matrix to make the grain pop -->
+  <svg class="tactile-grain" xmlns="http://www.w3.org/2000/svg">
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 0.18 0" />
+    </filter>
+    <rect width="100%" height="100%" filter="url(#noise)"/>
+  </svg>
+  
+  @if (currentScreen() === 'landing') {
+    <section class="landing-screen animate-spring-up">
+      <div class="title-container">
+        <!-- Optical kerning applied in CSS -->
+        <h1 class="game-title">SHEF</h1>
+        <p class="subtitle">A Culinary Roguelike</p>
+      </div>
+      
+      <!-- Tactile Polaroid Frame -->
+      <div class="landing-hero-frame" (click)="playClick(); startService()">
+        <img src="assets/shef/shef.jpg" alt="A bustling kitchen scene" class="hero-photo">
+      </div>
+      
+      <div class="action-group">
+        <button class="artisanal-btn primary" (click)="playClick(); startService()">
+          Start Service
+        </button>
+        <!-- The Codex Replacement -->
+        <button class="artisanal-btn secondary" (click)="playClick(); openAlmanac()">
+          Almanac
+        </button>
+      </div>
+    </section>
+  }
+  
+  @if (currentScreen() === 'selection') {
+    <section class="selection-screen animate-spring-up">
+      <header class="selection-header">
+        <button class="artisanal-btn secondary back-btn" (click)="playClick(); goBack()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-micro">
+            <path d="m12 19-7-7 7-7"></path>
+            <path d="M19 12H5"></path>
+          </svg>
+          <span>Back</span>
+        </button>
+        <h2 class="selection-title">Select Your Shef</h2>
+      </header>
+      
+      <div class="roster-grid">
+        @for (shef of shefRoster(); track shef.id) {
+          <div 
+          class="shef-card layer-1" 
+          [class.locked]="!shef.available"
+          (click)="playClick(); selectShef(shef)">
+          
+          <div class="avatar-frame">
+            <img 
+            class="shef-avatar" 
+            [src]="shef.avatar" 
+            alt="{{ shef.name }} Avatar">
+          </div>
+          
+          <h3>{{ shef.name }}</h3>
+          <p>{{ shef.description }}</p>
+          
+          <!-- Starting Loadout Details -->
+          <div class="loadout-info">
+            <h4 class="tray-label">Starting Loadout</h4>
+            
+            <div class="tray-items">
+              <div class="draft-badge rarity-legendary type-cookware">
+                <span class="emoji-micro">🍳</span>
+                <span class="draft-name">{{ shef.startingCookware }}</span>
+              </div>
+              
+              <!-- Common Ingredients Array -->
+              @for (ing of shef.startingIngredients; track ing) {
+                <div class="draft-badge rarity-common">
+                  <span class="draft-name">{{ ing }}</span>
+                </div>
+              }
+            </div>
+          </div>
+          
+          @if (!shef.available) {
+            <span class="badge locked-badge">Sleeping</span>
+          } @else {
+            <span class="badge available-badge">Ready</span>
+          }
+        </div>
+      }
+    </div>
+  </section>
+}
+
+@if (currentScreen() === 'transition') {
+  <section class="transition-screen">
+    <h2 class="transition-title">Day 1</h2>
+    
+    <!-- Physical Polaroid Scene Frame -->
+    @if (selectedShef()?.restaurantImages?.length) {
+      <div class="scene-frame" (click)="playClick(); skipTransition()">
+        <img [src]="selectedShef()?.restaurantImages?.[0]" alt="Restaurant Scene" class="scene-photo">
+      </div>
+    }
+    
+    <div class="transition-details">
+      <p class="transition-subtitle">Service in {{ selectedShef()?.name }}'s stall</p>
+      
+      <p class="transition-location">
+        <svg class="map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        Hong Kong
+      </p>
+    </div>
+  </section>
+}
+
+@if (currentScreen() === 'kitchen') {
+  <!-- Removed animate-spring-up from host to prevent viewport breach -->
+  <app-kitchen 
+  style="width: 100%; height: 100%;"
+  [shef]="selectedShef()!"
+  (onOpenAlmanac)="openAlmanac()"
+  (onRunEnd)="endRun()">
+</app-kitchen>
+}
+</main>

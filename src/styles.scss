@@ -81,19 +81,24 @@ body, html {
 }
 
 .container {
-  height: 100vh;
+  height: 100dvh; /* Changed from 100vh */
   width: 100vw;
   background-image: url("./assets/sand-wallpaper.jpeg");
   background-size: cover;
   background-position: min(0px, calc(100vw - 1470px/2)) 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* Changed from overflow-y: hidden to clip both axes */
+  position: relative; /* ADDED: Forces the absolute .circle to be clipped by this container */
 }
+
 .content {
-  height: 100vh;
+  height: 100dvh; /* Changed from 100vh */
   width: 100vw;
   display: flex;
   flex-direction: column;
+  position: relative; /* ADDED: Keeps content layering above the circle if needed */
+  z-index: 1; /* ADDED: Ensures content stays clickable over the circle */
 }
 $intro-font-size: 5vh;
 .intro {
@@ -190,12 +195,12 @@ $link-font-size: 4vh;
   right: 12px;
   text-shadow: 2px 2px 3px black;
 }
-$circle-radius: max(100vw*1.5, 100vh*1.5);
+$circle-radius: max(100vw*1.5, 100dvh*1.5); /* Changed vh to dvh */
 .circle {
   background-color: Ivory;
   border-radius: 50%;
   position: absolute;
-  top: calc(50vh - $circle-radius/2);
+  top: calc(50dvh - $circle-radius/2); /* Changed vh to dvh */
   left: calc(50vw - $circle-radius/2);
   height: $circle-radius;
   width: $circle-radius;
@@ -203,6 +208,7 @@ $circle-radius: max(100vw*1.5, 100vh*1.5);
   animation: circle-shrink 1.2s ease-out;
   box-shadow: 0 0 100px 100px gold;
   opacity: 50%;
+  z-index: 0; /* ADDED: Keeps the circle safely behind the content */
 }
 .fade-out-left {
   animation: fade-out-left 0.666s ease-out;
