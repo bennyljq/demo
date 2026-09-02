@@ -7,6 +7,7 @@
     </div>
     <div class="nav-actions">
       <button class="artisanal-btn secondary micro-btn" (click)="playClick(); toggleGlobalPantry()">Pantry</button>
+      <button class="artisanal-btn secondary micro-btn" (click)="playClick(); openCookBook()">📕</button>
       <button class="artisanal-btn secondary micro-btn icon-btn" aria-label="Home" (click)="playClick(); onRunEnd.emit()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -25,6 +26,8 @@
         @if (currentPhase() === 'customer_reveal') { Customer }
         @else if (currentPhase() === 'market') { Market }
         @else if (currentPhase() === 'service') { Prep }
+        @else if (currentPhase() === 'cooking') { Cooking }
+        @else if (currentPhase() === 'result') { Service }
       </span>
     </div>
     <div class="currency-tracker">
@@ -94,6 +97,7 @@
 @if (currentPhase() === 'market') {
   <app-market 
   [(runCurrency)]="runCurrency"
+  [pantryItems]="pantry()"
   (onItemPurchased)="handleItemPurchased($event)"
   (onLeaveMarket)="goToService()">
 </app-market>
@@ -181,13 +185,10 @@
     </div>
   </section>
 }
-
 </div>
 
 <footer class="button-footer layer-1">
-  <button 
-  class="artisanal-btn primary" 
-  style="width: 100%;"
+  <button class="artisanal-btn primary" style="width: 100%;" 
   [disabled]="!canCook()"
   (click)="playClick(); cookDish()">
   Cook Dish 🔥
@@ -251,4 +252,118 @@
       </div>
     </aside>
   </div>
+}
+
+@if (isCookBookOpen()) {
+  <app-cook-book 
+  (onClose)="closeCookBook()">
+</app-cook-book>
+}
+
+<!-- THE CINEMATIC TRANSITION -->
+@if (currentPhase() === 'cooking') {
+  <section class="phase-container animate-fade-in" style="justify-content: center; min-height: 50vh;">
+    <div class="swirl-stage">
+      <div class="pot-center">🔥</div>
+      @for (item of selectedItems(); track item.id; let i = $index) {
+        <div class="swirling-icon" [style.animation-delay.ms]="i * -300">
+          {{ item.icon }}
+        </div>
+      }
+    </div>
+    <h3 style="text-align: center; font-family: 'DM Sans', sans-serif; opacity: 0.7;">Tossing the wok...</h3>
+  </section>
+}
+
+<!-- THE REVEAL -->
+@if (currentPhase() === 'result' && dishResult()) {
+  <section class="phase-container animate-spring-up">
+    <div class="result-card layer-1" [class.is-goop]="dishResult()?.isGoop">
+      
+      <!-- Left Column: Tactile Photography or Goop -->
+      <div class="result-media">
+        @if (dishResult()?.image) {
+          <div class="recipe-image-frame">
+            <img [src]="dishResult()?.image" alt="Dish" class="recipe-photo" onerror="this.style.display='none'">
+
+            <!-- EPIC VISUAL CELEBRATIONS (PHYSICAL STAMPS) -->
+            @if (dishResult()?.absolutePerfection) {
+              <div class="physical-stamp stamp-legendary animate-stamp">FLAWLESS<br>EXECUTION</div>
+            } @else {
+              @if (dishResult()?.perfectIngredients) {
+                <div class="physical-stamp stamp-success animate-stamp">PERFECT<br>INGREDIENTS</div>
+              }
+              @if (dishResult()?.perfectSpices) {
+                <div class="physical-stamp stamp-success animate-stamp" [style.animation-delay.ms]="200">MASTERFUL<br>SPICING</div>
+              }
+            }
+          </div>
+        } @else {
+          <div class="goop-icon">🤢</div>
+        }
+      </div>
+      
+      <!-- Right Column: Data and Actions -->
+      <div class="result-content">
+        <div class="title-and-score">
+          <h2 class="dish-title">{{ dishResult()?.name }}</h2>
+          <div class="score-showcase">
+            <span class="score-label">Final Score</span>
+            <div class="juicy-tally" [class.goop-score]="dishResult()?.isGoop">
+              {{ dishResult()?.score }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- THE POST-COOK ANALYSIS GRID -->
+        <div class="recipe-requirements analysis-grid">
+          @if (dishResult()?.analysis?.cookware?.length) {
+            <div class="req-section">
+              <h4>Cookware</h4>
+              <div class="badge-list">
+                @for (entry of dishResult()?.analysis?.cookware; track entry.item.id) {
+                  <div class="draft-badge" [class]="'status-' + entry.status">
+                    <span class="emoji-micro">{{ entry.item.icon }}</span>
+                    <span class="draft-name">{{ entry.item.name }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+          
+          @if (dishResult()?.analysis?.ingredients?.length) {
+            <div class="req-section">
+              <h4>Ingredients</h4>
+              <div class="badge-list">
+                @for (entry of dishResult()?.analysis?.ingredients; track entry.item.id) {
+                  <div class="draft-badge" [class]="'status-' + entry.status">
+                    <span class="emoji-micro">{{ entry.item.icon }}</span>
+                    <span class="draft-name">{{ entry.item.name }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+          
+          @if (dishResult()?.analysis?.spices?.length) {
+            <div class="req-section">
+              <h4>Spices</h4>
+              <div class="badge-list">
+                @for (entry of dishResult()?.analysis?.spices; track entry.item.id) {
+                  <div class="draft-badge" [class]="'status-' + entry.status">
+                    <span class="emoji-micro">{{ entry.item.icon }}</span>
+                    <span class="draft-name">{{ entry.item.name }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+        
+        <button class="artisanal-btn primary serve-btn" (click)="playClick(); serveCustomer()">
+          Serve to Customer 🛎️
+        </button>
+      </div>
+    </div>
+  </section>
 }

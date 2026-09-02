@@ -83,18 +83,18 @@
   align-items: center;
   transition: transform 300ms var(--spring-heavy), box-shadow 300ms ease;
   position: relative;
-
+  
   &.unaffordable {
     opacity: 0.6;
     filter: grayscale(100%);
     .price-tag { cursor: not-allowed; opacity: 0.5; }
   }
-
+  
   &.affordable:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 16px var(--shadow-tint);
   }
-
+  
   .rarity-label {
     position: absolute;
     top: 0;
@@ -112,45 +112,45 @@
     pointer-events: none;
     line-height: 1.5;
   }
-
+  
   &.rarity-common { 
     border-top: 4px solid oklch(0.65 0.02 260); 
-    .rarity-label { background: oklch(0.65 0.02 260); color: var(--alabaster); }
+    .rarity-label { background: oklch(0.65 0.02 260); color: var(--ink-black); }
   }
-
+  
   &.rarity-rare { 
     border-top: 4px solid oklch(0.55 0.12 250); 
-    .rarity-label { background: oklch(0.55 0.12 250); color: var(--alabaster); }
+    .rarity-label { background: oklch(0.55 0.12 250); color: var(--ink-black); }
   }
-
+  
   &.rarity-legendary { 
     border-top: 4px solid oklch(0.75 0.14 75); 
     animation: legendary-pulse 4s ease-in-out infinite;
-
+    
     &::before {
       content: '';
       position: absolute;
       inset: 0;
       border-radius: inherit;
       background-image: linear-gradient(
-        110deg,
-        transparent 30%,
-        oklch(0.85 0.16 75 / 0.15) 50%,
-        transparent 70%
+      110deg,
+      transparent 30%,
+      oklch(0.85 0.16 75 / 0.15) 50%,
+      transparent 70%
       );
       background-size: 200% 100%;
       animation: legendary-shimmer 3s linear infinite;
       pointer-events: none;
       z-index: 0;
     }
-
+    
     .rarity-label { 
       background: oklch(0.75 0.14 75); 
       color: var(--ink-black); 
       box-shadow: 0 0 8px oklch(0.75 0.14 75 / 0.5);
     }
   }
-
+  
   .card-top {
     width: 100%;
     display: flex;
@@ -163,26 +163,26 @@
     letter-spacing: 0.05em;
     margin-top: 4px;
     z-index: 1;
-
+    
     .type-badge { opacity: 0.6; }
-
+    
     .uses-badge { 
       font-size: 0.9rem;
       opacity: 0.7;
       display: flex;
       align-items: center;
       gap: 2px;
-
+      
       .infinity {
         font-size: 2em; 
         line-height: 0;
         vertical-align: middle;
       }
-
+      
       &.limited { color: var(--primary-pigment); opacity: 1; }
     }
   }
-
+  
   .icon-container {
     height: 70px;
     display: flex;
@@ -190,13 +190,13 @@
     justify-content: center;
     margin: var(--s-1) 0;
     z-index: 1;
-
+    
     .emoji-icon { 
       font-size: 2.5rem; 
       line-height: 1; 
       filter: drop-shadow(0 2px 2px oklch(0.12 0.04 260 / 0.5));
     }
-
+    
     .svg-icon {
       width: 3rem;
       height: 3rem;
@@ -204,7 +204,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-
+      
       ::ng-deep svg { 
         width: 100%; 
         height: 100%; 
@@ -212,14 +212,14 @@
       }
     }
   }
-
+  
   .text-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: var(--s-1);
     z-index: 1;
-
+    
     .item-name {
       margin: 0;
       font-family: 'Newsreader', serif;
@@ -228,7 +228,7 @@
       text-align: center;
       line-height: 1.2;
     }
-
+    
     .bundle-contents {
       margin: var(--s-0) 0 0 0;
       font-family: 'DM Sans', sans-serif;
@@ -238,7 +238,7 @@
       strong { color: var(--primary-pigment); }
     }
   }
-
+  
   .price-tag {
     width: 100%;
     margin-top: auto; 
@@ -252,15 +252,15 @@
     color: var(--alabaster);
     cursor: pointer;
     z-index: 1;
-
+    
     transition: background 200ms ease, transform 150ms var(--spring-snappy), color 200ms ease, box-shadow 150ms ease;
-
+    
     &:hover:not([disabled]) {
       background: var(--success-ink);
       color: var(--ink-black);
       border-color: var(--success-ink);
     }
-
+    
     &:active:not([disabled]) {
       transform: scale(0.92) translateY(2px);
       box-shadow: inset 0 4px 8px oklch(0.12 0.04 260 / 0.6); 

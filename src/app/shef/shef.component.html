@@ -22,7 +22,7 @@
       
       <!-- Tactile Polaroid Frame -->
       <div class="landing-hero-frame" (click)="playClick(); startService()">
-        <img src="assets/shef/shef.jpg" alt="A bustling kitchen scene" class="hero-photo">
+        <img src="assets/shef/pictures/shef.jpg" alt="A bustling kitchen scene" class="hero-photo">
       </div>
       
       <div class="action-group">
@@ -30,8 +30,8 @@
           Start Service
         </button>
         <!-- The Codex Replacement -->
-        <button class="artisanal-btn secondary" (click)="playClick(); openAlmanac()">
-          Almanac
+        <button class="artisanal-btn secondary" (click)="playClick(); openCookBook()">
+          📕 Cook Book
         </button>
       </div>
     </section>
@@ -72,15 +72,25 @@
             <h4 class="tray-label">Starting Loadout</h4>
             
             <div class="tray-items">
-              <div class="draft-badge rarity-legendary type-cookware">
-                <span class="emoji-micro">🍳</span>
-                <span class="draft-name">{{ shef.startingCookware }}</span>
+              <!-- Dynamic Cookware Badge -->
+              <div class="draft-badge type-cookware" [class]="'rarity-' + shef.startingCookware.rarity">
+                @if (shef.startingCookware.isSvg) {
+                  <div class="svg-micro" [innerHTML]="shef.startingCookware.icon"></div>
+                } @else {
+                  <span class="emoji-micro">{{ shef.startingCookware.icon }}</span>
+                }
+                <span class="draft-name">{{ shef.startingCookware.name }}</span>
               </div>
               
-              <!-- Common Ingredients Array -->
-              @for (ing of shef.startingIngredients; track ing) {
-                <div class="draft-badge rarity-common">
-                  <span class="draft-name">{{ ing }}</span>
+              <!-- Dynamic Ingredients Array -->
+              @for (item of shef.startingIngredients; track item.id) {
+                <div class="draft-badge" [class]="'rarity-' + item.rarity">
+                  @if (item.isSvg) {
+                    <div class="svg-micro" [innerHTML]="item.icon"></div>
+                  } @else {
+                    <span class="emoji-micro">{{ item.icon }}</span>
+                  }
+                  <span class="draft-name">{{ item.name }}</span>
                 </div>
               }
             </div>
@@ -130,5 +140,11 @@
   (onOpenAlmanac)="openAlmanac()"
   (onRunEnd)="endRun()">
 </app-kitchen>
+}
+
+@if (isCookBookOpen()) {
+  <app-cook-book 
+  (onClose)="closeCookBook()">
+</app-cook-book>
 }
 </main>

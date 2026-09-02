@@ -264,7 +264,7 @@ from the parent .shef-viewport globally.
   &.positive { background-color: var(--success-ink); font-size: 1.5rem; padding: 0.2rem 0.6rem; }
   &.negative { background-color: oklch(0.55 0.16 25); font-size: 0.85rem; margin-left: 0.25rem; }
   &.neutral { background-color: oklch(0.35 0.03 260); font-size: 0.85rem; }
-  &.phase-badge { background-color: var(--primary-pigment); color: var(--ink-black); font-size: 0.85rem; }
+  &.phase-badge { background-color: var(--primary-pigment); color: var(--ink-black); font-size: 0.85rem; margin-left: 0.25rem;}
 }
 
 /* --- KINEMATICS --- */
@@ -463,4 +463,283 @@ from the parent .shef-viewport globally.
       }
     }
   }
+}
+
+/* --- SWIRL KINEMATICS --- */
+.swirl-stage {
+  height: 250px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--s-2);
+
+  .pot-center {
+    font-size: 4rem;
+    z-index: 10;
+    animation: pulse 1s infinite alternate;
+  }
+
+  .swirling-icon {
+    position: absolute;
+    font-size: 2.5rem;
+    animation: orbit 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    filter: drop-shadow(0 4px 8px var(--shadow-tint));
+  }
+}
+
+@keyframes orbit {
+  0% { transform: rotate(0deg) translateX(80px) rotate(0deg) scale(0.8); }
+  50% { transform: rotate(180deg) translateX(40px) rotate(-180deg) scale(1.3); }
+  100% { transform: rotate(360deg) translateX(80px) rotate(-360deg) scale(0.8); }
+}
+
+@keyframes pulse {
+  from { transform: scale(0.95); opacity: 0.8; }
+  to { transform: scale(1.1); opacity: 1; }
+}
+
+/* --- RESULT CARD JUICE --- */
+.result-card {
+  padding: var(--s-1) var(--s-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  align-items: stretch;
+  
+  /* Desktop Layout: Split into two physical columns */
+  @media (min-width: 768px) {
+    flex-direction: row; 
+    align-items: flex-start;
+    padding: var(--s-2);
+  }
+
+  /* Physical Pigment Wash for Failure State */
+  &.is-goop {
+    border-color: oklch(0.55 0.16 25); /* Subtractive Red */
+    background-image: linear-gradient(
+      180deg, 
+      oklch(0.55 0.16 25 / 0.08) 0%, 
+      transparent 100%
+    );
+  }
+
+  /* --- MEDIA COLUMN (Left) --- */
+  .result-media {
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .recipe-image-frame {
+      width: 100%; 
+      max-width: 280px; 
+      aspect-ratio: 4 / 3;
+      margin: 0 auto;
+      padding: 4px 4px 1.5rem 4px; 
+      background: var(--alabaster); 
+      /* No rgba() allowed, mapped strictly to Oklch tint */
+      box-shadow: inset 0 0 4px var(--shadow-tint), 0 4px 8px var(--shadow-tint);
+      border-radius: 2px;
+      transform: rotate(-1.5deg); /* Human Jitter */
+      
+      @media (min-width: 768px) { width: 220px; }
+      
+      .recipe-photo { width: 100%; height: 100%; object-fit: cover; border-radius: 1px; filter: sepia(0.15) contrast(1.1); }
+    }
+
+    .goop-icon {
+      font-size: clamp(4rem, 15vw, 6rem);
+      line-height: 1;
+      filter: drop-shadow(0 4px 6px var(--shadow-tint));
+      animation: pulse 2s infinite ease-in-out;
+    }
+  }
+
+  /* --- CONTENT COLUMN (Right) --- */
+  .result-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0; /* CRITICAL: Prevents text from blowing out the flex grid */
+    
+    .title-and-score {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-1);
+      border-bottom: 1px dashed oklch(0.35 0.03 260);
+      padding-bottom: var(--s-1);
+      margin-bottom: var(--s-1);
+
+      @media (min-width: 500px) {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+    }
+
+    .dish-title {
+      font-family: 'Newsreader', serif;
+      font-size: clamp(1.8rem, 6vw, 2.5rem);
+      color: var(--primary-pigment);
+      margin: 0;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .score-showcase {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      
+      @media (min-width: 500px) { align-items: flex-end; }
+
+      .score-label {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        opacity: 0.7;
+      }
+
+      .juicy-tally {
+        font-family: 'Newsreader', serif;
+        font-size: clamp(3rem, 8vw, 4rem);
+        font-style: italic;
+        font-weight: 700;
+        color: var(--success-ink);
+        line-height: 1;
+        /* Anchored to Oklch Success Ink */
+        text-shadow: 0 4px 12px oklch(0.65 0.12 145 / 0.4);
+        animation: springUp 600ms var(--spring-heavy) both 300ms;
+        
+        &.goop-score { 
+          color: oklch(0.65 0.16 25); /* Subtractive red */
+          text-shadow: none; 
+        }
+      }
+    }
+
+    .breakdown-list {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      opacity: 0.85;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: var(--s-2);
+      
+      .breakdown-item {
+        animation: fadeIn 400ms ease both 600ms;
+      }
+    }
+
+    .serve-btn {
+      margin-top: auto; /* Forces button to the physical bottom of the column */
+      width: 100%;
+    }
+  }
+}
+
+/* --- POST-COOK ANALYSIS GRID --- */
+.analysis-grid {
+  margin-top: 0;
+  padding-top: var(--s-1);
+  border-top: 1px dashed oklch(0.35 0.03 260);
+  margin-bottom: var(--s-2);
+  
+  .req-section {
+    margin-bottom: var(--s-1);
+    
+    h4 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: oklch(0.6 0.02 260);
+      margin: 0 0 0.4rem 0;
+    }
+    
+    .badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+  }
+}
+
+/* --- BADGE STATUS OVERRIDES (Rulebook Compliant) --- */
+.draft-badge {
+  &.status-correct {
+    border-color: var(--success-ink);
+    background: oklch(0.65 0.12 145 / 0.15); /* Subtractive wash */
+    .draft-name { color: var(--success-ink); }
+  }
+  
+  &.status-wrong {
+    border-color: oklch(0.55 0.16 25);
+    background: oklch(0.55 0.16 25 / 0.15); 
+    .draft-name { 
+      color: oklch(0.65 0.16 25); 
+      text-decoration: line-through; 
+      opacity: 0.8; 
+    }
+  }
+  
+  &.status-missing {
+    opacity: 0.6;
+    border-style: dashed;
+    border-color: oklch(0.45 0.03 260);
+    background: transparent;
+    filter: grayscale(100%);
+  }
+}
+
+/* --- EPIC VISUAL CELEBRATIONS (PHYSICAL STAMPS) --- */
+.recipe-image-frame {
+  position: relative; /* Anchor for the stamps */
+  overflow: hidden;
+}
+
+.physical-stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.1;
+  padding: 0.25rem 0.75rem;
+  border: 4px solid;
+  border-radius: 4px;
+  mix-blend-mode: hard-light; /* Simulates physical ink soaking into the paper */
+  pointer-events: none;
+  opacity: 0; /* Handled by animation */
+  
+  &.stamp-success {
+    color: var(--success-ink);
+    border-color: var(--success-ink);
+    text-shadow: 0 0 2px var(--surface-dark);
+    margin-top: -1rem; /* Offset multiple stamps */
+    &:nth-of-type(2) { margin-top: 2rem; transform: translate(-50%, -50%) rotate(5deg); }
+  }
+  
+  &.stamp-legendary {
+    color: oklch(0.75 0.14 75); /* Legendary Gold */
+    border-color: oklch(0.75 0.14 75);
+    font-size: 2rem;
+    box-shadow: inset 0 0 8px oklch(0.75 0.14 75 / 0.5), 0 0 12px oklch(0.75 0.14 75 / 0.5);
+    transform: translate(-50%, -50%) rotate(-8deg);
+  }
+}
+
+.animate-stamp {
+  animation: slamStamp 300ms cubic-bezier(0.2, 1.5, 0.4, 1) forwards 600ms;
+}
+
+@keyframes slamStamp {
+  0% { opacity: 0; transform: translate(-50%, -50%) rotate(0deg) scale(3); }
+  100% { opacity: 0.9; } /* Stops at 0.9 to simulate slight ink fade */
 }

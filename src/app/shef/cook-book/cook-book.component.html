@@ -1,0 +1,154 @@
+<section class="cook-book-viewport animate-fade-in">
+  
+  <header class="book-header layer-1">
+    <h1 class="book-title">The Cook Book</h1>
+    <button class="close-btn" (click)="playClick(); closeCookBook()">×</button>
+  </header>
+  
+  <nav class="book-tabs layer-1">
+    <button class="tab-btn" [class.active]="currentTab() === 'recipes'" (click)="playClick(); setTab('recipes')">Recipes</button>
+    <button class="tab-btn" [class.active]="currentTab() === 'ingredients'" (click)="playClick(); setTab('ingredients')">Ingredients</button>
+    <button class="tab-btn" [class.active]="currentTab() === 'spices'" (click)="playClick(); setTab('spices')">Spices</button>
+    <button class="tab-btn" [class.active]="currentTab() === 'cookware'" (click)="playClick(); setTab('cookware')">Cookware</button>
+  </nav>
+  
+  <div class="book-content layer--1">
+    
+    <!-- ITEMS GRID (Cookware, Ingredients, Spices) -->
+    @if (currentTab() !== 'recipes') {
+      <div class="item-grid">
+        @for (item of (currentTab() === 'ingredients' ? ingredientsView() : currentTab() === 'spices' ? spicesView() : cookwareView()); track item.id) {
+          
+          <article class="codex-card layer-1" [class]="'rarity-' + item.rarity">
+            
+            <span class="rarity-label">{{ item.rarity }}</span>
+            
+            <div class="card-top">
+              <span class="type-badge">{{ item.type }}</span>
+              <span class="uses-badge" [class.limited]="item.defaultUses !== '∞'">
+                @if (item.defaultUses === '∞') {
+                  <span class="infinity">∞</span>
+                } @else if (item.defaultUses === 1) {
+                  {{ item.defaultUses }} Use
+                } @else {
+                  {{ item.defaultUses }} Uses
+                }
+              </span>
+            </div>
+            
+            <div class="icon-container">
+              @if (item.isSvg) {
+                <div class="svg-icon" [innerHTML]="item.icon"></div>
+              } @else {
+                <div class="emoji-icon">{{ item.icon }}</div>
+              }
+            </div>
+            
+            <div class="text-container">
+              <h3 class="item-name">{{ item.name }}</h3>
+              @if (item.lore) {
+                <p class="item-lore">"{{ item.lore }}"</p>
+              }
+            </div>
+            
+            <!-- EXHAUSTIVE DIETARY TRAIT TAGS -->
+            <div class="trait-tags">
+              @if (item.traits.isVegetarian) { <span class="trait-badge vegetarian">Vegetarian</span> }
+              @if (item.traits.isVegan) { <span class="trait-badge vegan">Vegan</span> }
+              @if (item.traits.isHalal) { <span class="trait-badge halal">Halal</span> }
+              @if (item.traits.isMeat) { <span class="trait-badge meat">Meat</span> }
+              @if (item.traits.isBeef) { <span class="trait-badge meat">Beef</span> }
+              @if (item.traits.isPoultry) { <span class="trait-badge meat">Poultry</span> }
+              @if (item.traits.isSeafood) { <span class="trait-badge seafood">Seafood</span> }
+              @if (item.traits.isPork) { <span class="trait-badge alert">Pork</span> }
+              @if (item.traits.isCrustacean) { <span class="trait-badge alert">Crustacean</span> }
+              @if (item.traits.isGluten) { <span class="trait-badge neutral">Gluten</span> }
+              @if (item.traits.isAllium) { <span class="trait-badge neutral">Allium</span> }
+              @if (item.traits.isDairy) { <span class="trait-badge dairy">Dairy</span> }
+            </div>
+            
+          </article>
+        }
+      </div>
+    }
+    
+    <!-- RECIPES VIEW -->
+    @if (currentTab() === 'recipes') {
+      <div class="recipe-list">
+        @for (recipe of enrichedRecipesView(); track recipe.id) {
+          
+          <article class="recipe-card layer-1 codex-card" [class]="'rarity-' + recipe.rarity">
+            
+            <span class="rarity-label">{{ recipe.rarity }}</span>
+            
+            <!-- TACTILE PHOTOGRAPHY -->
+            <div class="recipe-image-frame">
+              <img [src]="recipe.image" alt="{{ recipe.name }}" class="recipe-photo" onerror="this.style.display='none'">
+            </div>
+            
+            <!-- RECIPE DATA -->
+            <div class="recipe-content">
+              <div class="recipe-title-row">
+                <div class="title-block">
+                  <h3 class="recipe-name">{{ recipe.name }}</h3>
+                  <p class="recipe-lore">"{{ recipe.lore }}"</p>
+                </div>
+                <div class="score-block">
+                  <span class="score-label">Base</span>
+                  <span class="squircle-counter positive">{{ recipe.baseScore }}</span>
+                </div>
+              </div>
+              
+              <div class="recipe-requirements">
+                
+                @if (recipe.reqCookware.length > 0) {
+                  <div class="req-section">
+                    <h4>Essential Cookware</h4>
+                    <div class="badge-list">
+                      @for (cw of recipe.reqCookware; track cw?.id) {
+                        <!-- Restored Global Draft Badge -->
+                        <div class="draft-badge type-cookware" [class]="'rarity-' + cw?.rarity">
+                          <span class="emoji-micro">{{ cw?.icon }}</span>
+                          <span class="draft-name">{{ cw?.name }}</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+                
+                @if (recipe.reqIngredients.length > 0) {
+                  <div class="req-section">
+                    <h4>Essential Ingredients</h4>
+                    <div class="badge-list">
+                      @for (ing of recipe.reqIngredients; track ing?.id) {
+                        <div class="draft-badge" [class]="'rarity-' + ing?.rarity">
+                          <span class="emoji-micro">{{ ing?.icon }}</span>
+                          <span class="draft-name">{{ ing?.name }}</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+                
+                @if (recipe.reqSpices.length > 0) {
+                  <div class="req-section">
+                    <h4>Cultural Spices</h4>
+                    <div class="badge-list">
+                      @for (sp of recipe.reqSpices; track sp?.id) {
+                        <div class="draft-badge" [class]="'rarity-' + sp?.rarity">
+                          <span class="emoji-micro">{{ sp?.icon }}</span>
+                          <span class="draft-name">{{ sp?.name }}</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+                
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>

@@ -81,7 +81,7 @@
   class="artisanal-btn secondary" 
   [disabled]="runCurrency() < bribeCost()"
   (click)="playClick(); bribeShopkeep()">
-  Reroll <span class="squircle-counter negative">-${{ bribeCost() }}</span>
+  Restock <span class="squircle-counter negative">-${{ bribeCost() }}</span>
 </button>
 <button class="artisanal-btn primary" (click)="playClick(); headToKitchen()">
   Back To Kitchen →

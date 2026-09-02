@@ -1,7 +1,8 @@
-import { Component, model, output, signal, inject } from '@angular/core';
+import { Component, model, output, signal, inject, input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { uiClickSound, waterDripSound } from '../shef.component';
+import { MASTER_ITEMS } from '../cook-book/master-items';
 
 export type Rarity = 'common' | 'rare' | 'legendary';
 export type ItemType = 'ingredient' | 'spice' | 'cookware' | 'bundle';
@@ -12,8 +13,8 @@ export interface MarketItem {
   type: ItemType;
   rarity: Rarity;
   price: number;
-  uses: number | '∞'; 
-  icon: string | SafeHtml; 
+  uses: number | '∞';
+  icon: string | SafeHtml;
   isSvg?: boolean;
   bundleItems?: MarketItem[];
 }
@@ -25,7 +26,7 @@ export interface MarketItem {
   templateUrl: './market.component.html',
   styleUrls: ['./market.component.scss', '../shef.component.scss']
 })
-export class MarketComponent {
+export class MarketComponent implements OnInit {
   private sanitizer = inject(DomSanitizer);
   
   private kachingPool: HTMLAudioElement[] = [];
@@ -35,44 +36,65 @@ export class MarketComponent {
   runCurrency = model.required<number>();
   onLeaveMarket = output();
   
-  bribeCost = signal<number>(10);
+  // Required to cross-reference against permanent stock
+  pantryItems = input<MarketItem[]>([]);
+  
+  bribeCost = signal<number>(0);
   draftedItems = signal<MarketItem[]>([]);
-  shopItems = signal<MarketItem[]>(this.generateShop());
+  
+  // Initialize empty, populated securely in ngOnInit
+  shopItems = signal<MarketItem[]>([]);
   onItemPurchased = output<MarketItem>();
   
   constructor() {
     for (let i = 0; i < this.poolSize; i++) {
-      this.kachingPool.push(new Audio('assets/shef/kaching.mp3'));
+      this.kachingPool.push(new Audio('assets/shef/sounds/kaching.mp3'));
     }
+  }
+
+  ngOnInit() {
+    this.shopItems.set(this.generateShop());
   }
   
   getBundleContentsText(bundleItems: MarketItem[]): string {
     return bundleItems.map(item => item.name).join(', ');
   }
+
+  // Helper to combine permanent items with newly drafted ones
+  allOwnedItems(): MarketItem[] {
+    return [...this.pantryItems(), ...this.draftedItems()];
+  }
   
   generateShop(): MarketItem[] {
-    return [
-      { id: 'm-1', name: 'Premium Rice', type: 'ingredient', rarity: 'common', price: 5, uses: '∞', icon: '🍚' },
-      { id: 'm-2', name: 'Shaoxing Wine', type: 'spice', rarity: 'rare', price: 15, uses: '∞', icon: '🍶' },
-      { id: 'm-3', name: 'Wagyu Beef', type: 'ingredient', rarity: 'legendary', price: 40, uses: 1, icon: '🥩' },
-      { id: 'm-4', name: 'Scallions', type: 'ingredient', rarity: 'common', price: 3, uses: '∞', icon: '🧅' },
-      { id: 'm-5', name: 'Organic Eggs', type: 'ingredient', rarity: 'rare', price: 12, uses: 5, icon: '🥚' },
-      { 
-        id: 'm-6', 
-        name: 'Dumpling Kit', 
-        type: 'bundle', 
-        rarity: 'rare', 
-        price: 20, 
-        uses: 5, 
-        isSvg: true,
-        icon: this.sanitizer.bypassSecurityTrustHtml(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 13a9.5 9.5 0 0 0 19 0c0-1.5-3-3-9.5-3S2.5 11.5 2.5 13z"/><path d="M12 10v12"/><path d="M8 10.5l3 11.5"/><path d="M16 10.5l-3 11.5"/><path d="M5 11.5l5 10.5"/><path d="M19 11.5l-5 10.5"/></svg>`),
-        bundleItems: [
-          { id: 'b-1', name: 'Flour', type: 'ingredient', rarity: 'common', price: 0, uses: '∞', icon: '🌾' },
-          { id: 'b-2', name: 'Ground Pork', type: 'ingredient', rarity: 'common', price: 0, uses: '∞', icon: '🥩' },
-          { id: 'b-3', name: 'Scallions', type: 'ingredient', rarity: 'common', price: 0, uses: '∞', icon: '🧅' }
-        ]
+    // 1. Identify all infinite-use items the player currently holds
+    const ownedInfiniteIds = this.allOwnedItems()
+      .filter(item => item.uses === '∞')
+      .map(item => item.id);
+
+    // 2. Filter the Single Source of Truth
+    const validPool = MASTER_ITEMS.filter(item => {
+      // Exclude the item if it is infinite-use AND already owned
+      if (item.defaultUses === '∞' && ownedInfiniteIds.includes(item.id)) {
+        return false;
       }
-    ];
+      return true;
+    });
+
+    // 3. Shuffle the valid pool and draft exactly 5 items
+    const shuffled = validPool.sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, 6);
+
+    // 4. Map the global CookBookItem shape to the localized MarketItem interface
+    return selected.map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type as ItemType,
+      rarity: item.rarity as Rarity,
+      price: item.basePrice, // Translating basePrice to immediate market price
+      uses: item.defaultUses,
+      icon: item.icon,
+      isSvg: item.isSvg
+    }));
   }
   
   private playTactileKaching() {
@@ -88,6 +110,7 @@ export class MarketComponent {
     if (this.runCurrency() >= item.price) {
       this.runCurrency.update(c => c - item.price);
       
+      // Unpack bundle logic vs single item logic
       if (item.type === 'bundle' && item.bundleItems) {
         this.draftedItems.update(draft => [...draft, ...item.bundleItems!]);
       } else {

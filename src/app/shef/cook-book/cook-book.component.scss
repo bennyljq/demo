@@ -1,0 +1,419 @@
+/* --- KEYFRAMES --- */
+@keyframes legendary-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes legendary-pulse {
+  0%, 100% { box-shadow: 0 4px 8px var(--shadow-tint), inset 0 0 15px oklch(0.75 0.14 75 / 0.08); }
+  50% { box-shadow: 0 6px 14px var(--shadow-tint), inset 0 0 25px oklch(0.75 0.14 75 / 0.22); }
+}
+
+/* --- THE VIEWPORT LOCK --- */
+:host {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 500;
+  background-color: var(--ink-black);
+  color: var(--alabaster);
+  overflow: hidden; 
+}
+
+.cook-book-viewport {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- HEADER & NAVIGATION --- */
+.book-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--s-1);
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  z-index: 10;
+  
+  .book-title {
+    margin: 0;
+    font-family: 'Newsreader', serif;
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-style: italic;
+    color: var(--primary-pigment);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: var(--alabaster);
+    font-size: 2.5rem;
+    line-height: 0.8;
+    cursor: pointer;
+    transition: transform 150ms var(--spring-snappy), color 150ms ease;
+    
+    @media (hover: hover) {
+      &:hover { color: var(--primary-hover); transform: scale(1.1); }
+    }
+  }
+}
+
+.book-tabs {
+  display: flex;
+  gap: var(--s-0);
+  padding: var(--s-0) var(--s-1);
+  z-index: 9;
+  border-radius: 0;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  
+  /* CRITICAL MOBILE BUG FIX: Prevents vertical crushing */
+  align-items: center; 
+  min-height: 3.5rem; 
+
+  /* Native mobile scrolling without visual scrollbar */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; 
+  &::-webkit-scrollbar { display: none; } 
+  
+  .tab-btn {
+    flex-shrink: 0; /* Ensures the button text never wraps or squishes */
+    white-space: nowrap;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--alabaster);
+    opacity: 0.6;
+    padding: 0.4rem var(--s-1);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 200ms ease;
+    border-radius: 2px;
+    
+    &.active {
+      opacity: 1;
+      border-color: var(--primary-pigment);
+      color: var(--primary-pigment);
+      background: oklch(0.65 0.16 45 / 0.1);
+    }
+  }
+}
+
+.book-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: var(--s-1); 
+}
+
+/* --- THE CARDS --- */
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: var(--s-1);
+  padding-top: var(--s-1);
+
+  @media (min-width: 500px) {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+.codex-card {
+  padding: var(--s-1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  
+  .rarity-label {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+    z-index: 2;
+    line-height: 1;
+    box-shadow: 0 1px 2px var(--shadow-tint);
+  }
+
+  &.rarity-common { 
+    border-top: 4px solid oklch(0.65 0.02 260); 
+    .rarity-label { background: oklch(0.65 0.02 260); color: var(--ink-black); }
+  }
+
+  &.rarity-rare { 
+    border-top: 4px solid oklch(0.55 0.12 250); 
+    .rarity-label { background: oklch(0.55 0.12 250); color: var(--ink-black); }
+  }
+
+  &.rarity-legendary { 
+    border-top: 4px solid oklch(0.75 0.14 75); 
+    animation: legendary-pulse 4s ease-in-out infinite;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background-image: linear-gradient(
+        110deg,
+        transparent 30%,
+        oklch(0.85 0.16 75 / 0.15) 50%,
+        transparent 70%
+      );
+      background-size: 200% 100%;
+      animation: legendary-shimmer 3s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .rarity-label { 
+      background: oklch(0.75 0.14 75); 
+      color: var(--ink-black); 
+      box-shadow: 0 0 8px oklch(0.75 0.14 75 / 0.5);
+    }
+  }
+
+  .card-top {
+    width: 100%;
+    padding-top: var(--s-0);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    z-index: 1;
+
+    .type-badge { opacity: 0.6; }
+
+    .uses-badge { 
+      font-size: 0.8rem;
+      opacity: 0.7;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+
+      .infinity { font-size: 1.5em; line-height: 0; vertical-align: middle; }
+      &.limited { color: var(--primary-pigment); opacity: 1; }
+    }
+  }
+
+  .icon-container {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: var(--s-1) 0;
+    z-index: 1;
+
+    .emoji-icon { 
+      font-size: 2rem; 
+      line-height: 1; 
+      filter: drop-shadow(0 2px 2px oklch(0.12 0.04 260 / 0.5));
+    }
+
+    .svg-icon {
+      width: 2.2rem;
+      height: 2.2rem;
+      color: var(--primary-pigment);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      ::ng-deep svg { width: 100%; height: 100%; stroke-width: 1.5px !important; }
+    }
+  }
+
+  .text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: var(--s-1);
+    z-index: 1;
+
+    .item-name {
+      margin: 0;
+      font-family: 'Newsreader', serif;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.2;
+    }
+    
+    .item-lore {
+      margin: var(--s-0) 0 0 0;
+      font-size: 0.75rem;
+      opacity: 0.7;
+      font-style: italic;
+      text-align: center;
+    }
+  }
+
+  .trait-tags {
+    width: 100%;
+    margin-top: auto; 
+    padding-top: var(--s-0);
+    border-top: 1px dashed oklch(0.40 0.03 260);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem;
+    z-index: 1;
+
+    .trait-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.15rem 0.35rem;
+      border-radius: 2px;
+      border: 1px solid transparent;
+      
+      &.vegan { border-color: oklch(0.65 0.12 145); color: oklch(0.65 0.12 145); }
+      &.vegetarian { border-color: oklch(0.70 0.14 135); color: oklch(0.70 0.14 135); }
+      &.halal { border-color: oklch(0.55 0.12 250); color: oklch(0.55 0.12 250); }
+      &.meat { border-color: oklch(0.6 0.05 45); color: oklch(0.8 0.1 45); }
+      &.seafood { border-color: oklch(0.6 0.08 220); color: oklch(0.7 0.1 220); }
+      &.dairy { border-color: oklch(0.85 0.04 85); color: oklch(0.85 0.04 85); }
+      &.neutral { border-color: oklch(0.65 0.02 260); color: oklch(0.65 0.02 260); }
+      &.alert { border-color: oklch(0.55 0.16 25); color: oklch(0.65 0.16 25); background: oklch(0.55 0.16 25 / 0.1); }
+    }
+  }
+}
+
+/* --- RECIPES LIST VIEW: DENSE PACKING --- */
+.recipe-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding-top: var(--s-1);
+}
+
+.recipe-card {
+  padding: var(--s-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  align-items: stretch;
+  
+  @media (min-width: 768px) {
+    flex-direction: row; 
+    align-items: flex-start;
+    gap: var(--s-2);
+  }
+  
+  /* --- TACTILE PHOTOGRAPHY FRAME --- */
+  .recipe-image-frame {
+    width: 100%; 
+    max-width: 280px; 
+    aspect-ratio: 4 / 3;
+    margin: var(--s-1) auto 0;
+    padding: 4px 4px 1.5rem 4px; 
+    background: var(--alabaster); 
+    box-shadow: inset 0 0 4px var(--shadow-tint), 0 4px 8px var(--shadow-tint);
+    border-radius: 2px;
+    transform: rotate(-1.5deg);
+    flex-shrink: 0;
+    
+    @media (min-width: 768px) {
+      width: 220px;
+      margin: 0; 
+    }
+    
+    .recipe-photo { width: 100%; height: 100%; object-fit: cover; border-radius: 1px; filter: sepia(0.15) contrast(1.1); }
+  }
+  
+  /* --- RECIPE DATA --- */
+  .recipe-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+  }
+  
+  .recipe-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--s-1);
+    
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    
+    .recipe-name {
+      margin: 0;
+      font-family: 'Newsreader', serif;
+      font-size: clamp(1.4rem, 4vw, 1.8rem);
+      color: var(--primary-pigment);
+    }
+
+    .recipe-lore {
+      margin: 0;
+      font-size: 0.85rem;
+      opacity: 0.7;
+      font-style: italic;
+    }
+
+    .score-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+
+      .score-label {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .recipe-requirements {
+    margin-top: var(--s-1);
+    padding-top: var(--s-1);
+    border-top: 1px dashed oklch(0.35 0.03 260);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-0);
+    
+    .req-section {
+      h4 {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: oklch(0.6 0.02 260);
+        margin: 0 0 0.35rem 0;
+      }
+      
+      .badge-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+    }
+  }
+}

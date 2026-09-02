@@ -1,17 +1,21 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { KitchenComponent } from './kitchen/kitchen.component';
+import { CookBookComponent } from './cook-book/cook-book.component';
+import { baseTraits, CookBookItem, MASTER_ITEMS } from './cook-book/master-items';
 
-interface Shef {
+export interface Shef {
   id: string;
   name: string;
   description: string;
   available: boolean;
   avatar: string;
-  startingCookware: string;
-  startingIngredients: string[];
+  startingCookware: CookBookItem;
+  startingIngredients: CookBookItem[];
   restaurantImages: string[];
 }
+
+const getItem = (id: string): CookBookItem => MASTER_ITEMS.find(i => i.id === id)!;
 
 // --- CARNAL AUDIO POOLS ---
 export class CarnalAudioPool {
@@ -29,13 +33,13 @@ export class CarnalAudioPool {
   }
 }
 
-export const uiClickSound = new CarnalAudioPool('assets/shef/button-click.mp3');
-export const waterDripSound = new CarnalAudioPool('assets/shef/drip.mp3');
+export const uiClickSound = new CarnalAudioPool('assets/shef/sounds/button-click.mp3');
+export const waterDripSound = new CarnalAudioPool('assets/shef/sounds/drip.mp3');
 
 @Component({
   selector: 'app-shef-root',
   standalone: true,
-  imports: [CommonModule, KitchenComponent],
+  imports: [CommonModule, KitchenComponent, CookBookComponent],
   templateUrl: './shef.component.html',
   styleUrls: ['./shef.component.scss']
 })
@@ -49,11 +53,18 @@ export class ShefComponent {
       name: 'Mathew Wok',
       description: 'Hong Kong hawker extraordinaire.',
       available: true,
-      avatar: 'assets/shef/mat.jpg',
-      startingCookware: 'Mathew\'s Wok',
-      startingIngredients: ['Rice', 'Eggs', 'Pork', 'Scallions', 'Oil'],
+      avatar: 'assets/shef/pictures/mat.jpg',
+      // Pulling directly from the OOP Database
+      startingCookware: getItem('cw-1'), // Mathew's Wok
+      startingIngredients: [
+        getItem('ig-1'), // White Rice
+        getItem('ig-6'), // Chicken Eggs
+        getItem('ig-8'), // Pork Belly
+        getItem('ig-16'), // Scallions
+        getItem('sp-1')  // Peanut Oil
+      ],
       restaurantImages: [
-        'assets/shef/dapaidang.jpg', 
+        'assets/shef/pictures/dapaidang.jpg', 
       ]
     },
     {
@@ -61,9 +72,13 @@ export class ShefComponent {
       name: 'Balaji Krishnan',
       description: 'Indian food master.',
       available: false,
-      avatar: 'assets/shef/balaji.png',
-      startingCookware: 'Cast Iron Kadhai',
-      startingIngredients: ['Basmati Rice', 'Paneer', 'Ghee', 'Cumin', 'Onions'],
+      avatar: 'assets/shef/pictures/balaji.png',
+      // Inline OOP objects for locked characters to satisfy the interface
+      startingCookware: { id: 'cw-balaji', name: 'Cast Iron Kadhai', type: 'cookware', rarity: 'legendary', basePrice: 80, defaultUses: '∞', icon: '🥘', traits: baseTraits },
+      startingIngredients: [
+        { id: 'ig-balaji-1', name: 'Basmati Rice', type: 'ingredient', rarity: 'common', basePrice: 5, defaultUses: '∞', icon: '🍚', traits: baseTraits },
+        { id: 'ig-balaji-2', name: 'Paneer', type: 'ingredient', rarity: 'rare', basePrice: 12, defaultUses: 5, icon: '🧀', traits: baseTraits }
+      ],
       restaurantImages: []
     },
     {
@@ -71,9 +86,12 @@ export class ShefComponent {
       name: 'Roberto Carlost',
       description: 'Mexican culinary expert.',
       available: false,
-      avatar: 'assets/shef/roberto.png',
-      startingCookware: 'Traditional Comal',
-      startingIngredients: ['Masa Flour', 'Cilantro', 'Limes', 'Avocados', 'Pork Lard'],
+      avatar: 'assets/shef/pictures/roberto.png',
+      startingCookware: { id: 'cw-roberto', name: 'Traditional Comal', type: 'cookware', rarity: 'legendary', basePrice: 80, defaultUses: '∞', icon: '🍳', traits: baseTraits },
+      startingIngredients: [
+        { id: 'ig-roberto-1', name: 'Masa Flour', type: 'ingredient', rarity: 'common', basePrice: 4, defaultUses: '∞', icon: '🌾', traits: baseTraits },
+        { id: 'ig-roberto-2', name: 'Avocados', type: 'ingredient', rarity: 'rare', basePrice: 10, defaultUses: 5, icon: '🥑', traits: baseTraits }
+      ],
       restaurantImages: []
     }
   ]);
@@ -83,6 +101,7 @@ export class ShefComponent {
   
   // 3. Global Pantry State
   showGlobalPantry = signal<boolean>(false);
+  isCookBookOpen = signal<boolean>(false);
   
   private transitionTimeout: any = null;
   
@@ -128,4 +147,12 @@ export class ShefComponent {
   
   playClick() { uiClickSound.play(); }
   playDrip() { waterDripSound.play(); }
+  
+  openCookBook() {
+    this.isCookBookOpen.set(true);
+  }
+  
+  closeCookBook() {
+    this.isCookBookOpen.set(false);
+  }
 }
