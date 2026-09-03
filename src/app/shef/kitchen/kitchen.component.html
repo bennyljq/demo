@@ -3,7 +3,7 @@
   <div class="nav-top-row">
     <div class="nav-shef-info">
       <img class="nav-avatar" [src]="shef().avatar" alt="Shef Avatar">
-      <span class="nav-name">{{ shef().name }}</span>
+      <span class="nav-name">{{ formattedShefName() }}</span>
     </div>
     <div class="nav-actions">
       <button class="artisanal-btn secondary micro-btn" (click)="playClick(); toggleGlobalPantry()">Pantry</button>
@@ -20,7 +20,7 @@
   <!-- Bottom Row: Run Context -->
   <div class="nav-meta-row">
     <div class="meta-pills">
-      <span class="squircle-counter neutral">Day 1</span>
+      <span class="squircle-counter neutral">Day {{ currentDay() }}</span>
       <span class="squircle-counter neutral">Hawker Tier</span>
       <span class="squircle-counter phase-badge">
         @if (currentPhase() === 'customer_reveal') { Customer }
@@ -28,6 +28,7 @@
         @else if (currentPhase() === 'service') { Prep }
         @else if (currentPhase() === 'cooking') { Cooking }
         @else if (currentPhase() === 'result') { Service }
+        @else if (currentPhase() === 'day_transition') { Result }
       </span>
     </div>
     <div class="currency-tracker">
@@ -36,62 +37,64 @@
   </div>
 </nav>
 
-@if (currentPhase() === 'customer_reveal') {
-  <section class="phase-container animate-spring-up">
-    
-    <div class="customer-card layer-1">
-      <div class="docket-clip"></div>
+<div class="kitchen-content-wrapper" [class.frozen-under-glass]="isCookBookOpen()">
+  
+  @if (currentPhase() === 'customer_reveal') {
+    <section class="phase-container animate-spring-up">
       
-      <!-- COMPACT DOSSIER LAYOUT -->
-      <div class="dossier-layout">
-        <!-- Left Column: Physical Polaroid -->
-        <div class="avatar-frame">
-          <span class="emoji-avatar">{{ currentCustomer().avatar }}</span>
-        </div>
+      <div class="customer-card layer-1">
+        <div class="docket-clip"></div>
         
-        <!-- Right Column: Vital Data -->
-        <div class="vital-info">
-          <h2 class="customer-name">{{ currentCustomer().name }}</h2>
+        <!-- COMPACT DOSSIER LAYOUT -->
+        <div class="dossier-layout">
+          <!-- Left Column: Physical Polaroid -->
+          <div class="avatar-frame">
+            <span class="emoji-avatar">{{ currentCustomer().avatar }}</span>
+          </div>
           
-          <div class="requirements-grid">
-            <div class="req-box target-box layer-minus-1">
-              <span class="box-label">Target</span>
-              <span class="target-score">{{ currentCustomer().tastyMeterTarget }}</span>
-            </div>
+          <!-- Right Column: Vital Data -->
+          <div class="vital-info">
+            <h2 class="customer-name">{{ currentCustomer().name }}</h2>
             
-            <div class="req-box restrictions-box layer-minus-1">
-              <span class="box-label">Notes</span>
-              <div class="badge-group">
-                @for (restriction of currentCustomer().restrictions; track restriction) {
-                  <span class="badge restriction-badge">{{ restriction }}</span>
-                }
-                @for (preference of currentCustomer().preferences; track preference) {
-                  <span class="badge preference-badge">{{ preference }}</span>
-                }
+            <div class="requirements-grid">
+              <div class="req-box target-box layer-minus-1">
+                <span class="box-label">Target</span>
+                <span class="target-score">{{ currentCustomer().tastyMeterTarget }}</span>
+              </div>
+              
+              <div class="req-box restrictions-box layer-minus-1">
+                <span class="box-label">Notes</span>
+                <div class="badge-group">
+                  @for (restriction of currentCustomer().restrictions; track restriction) {
+                    <span class="badge restriction-badge">{{ restriction }}</span>
+                  }
+                  @for (preference of currentCustomer().preferences; track preference) {
+                    <span class="badge preference-badge">{{ preference }}</span>
+                  }
+                </div>
               </div>
             </div>
           </div>
         </div>
+        
+        <!-- Recessed physical quote block at the bottom -->
+        <blockquote class="customer-dialogue">
+          "{{ currentCustomer().dialogue }}"
+        </blockquote>
       </div>
       
-      <!-- Recessed physical quote block at the bottom -->
-      <blockquote class="customer-dialogue">
-        "{{ currentCustomer().dialogue }}"
-      </blockquote>
-    </div>
-    
-    <footer class="button-footer layer-1">
-      <button 
-      class="artisanal-btn secondary"
-      [disabled]="runCurrency() < currentCustomer().compCost"
-      (click)="playClick(); compCustomer()">
-      Turn Away <span class="squircle-counter negative">-${{ currentCustomer().compCost }}</span>
-    </button>
-    <button class="artisanal-btn primary" (click)="playClick(); goToMarket()">
-      Head to Market →
-    </button>
-  </footer>
-</section>
+      <footer class="button-footer layer-1">
+        <button 
+        class="artisanal-btn secondary"
+        [disabled]="runCurrency() < currentCustomer().compCost"
+        (click)="playClick(); compCustomer()">
+        Turn Away <span class="squircle-counter negative">-${{ currentCustomer().compCost }}</span>
+      </button>
+      <button class="artisanal-btn primary" (click)="playShop(); goToMarket()">
+        Head to Market →
+      </button>
+    </footer>
+  </section>
 }
 
 @if (currentPhase() === 'market') {
@@ -187,7 +190,10 @@
 }
 </div>
 
-<footer class="button-footer layer-1">
+<footer class="button-footer layer-1" style="flex-direction: column;">
+  @if (!canCook()) {
+    <p class="footer-tip">Select at least <strong>1 COOKWARE</strong> and <strong>1 INGREDIENT</strong> to start cooking.</p>
+  }
   <button class="artisanal-btn primary" style="width: 100%;" 
   [disabled]="!canCook()"
   (click)="playClick(); cookDish()">
@@ -196,83 +202,6 @@
 </footer>
 
 </section>
-}
-
-<!-- LAYER 2: RUN PANTRY MODAL -->
-@if (showGlobalPantry()) {
-  <div class="modal-backdrop animate-fade" (click)="toggleGlobalPantry()">
-    <aside class="pantry-modal layer-2 animate-spring-up" (click)="$event.stopPropagation()">
-      <header class="modal-header">
-        <h2 class="modal-title">Pantry</h2>
-        <button class="close-btn" (click)="playClick(); toggleGlobalPantry()">×</button>
-      </header>
-      
-      <div class="modal-content">
-        @if (cookware().length > 0) {
-          <section class="category-section">
-            <h3 class="category-title">Cookware</h3>
-            <div class="tray-items">
-              @for (item of cookware(); track item.id) {
-                <div class="draft-badge type-cookware" [class]="'rarity-' + item.rarity">
-                  <span class="emoji-micro">{{ item.icon }}</span>
-                  <span class="draft-name">{{ item.name }}</span>
-                </div>
-              }
-            </div>
-          </section>
-        }
-        
-        @if (ingredients().length > 0) {
-          <section class="category-section">
-            <h3 class="category-title">Ingredients</h3>
-            <div class="tray-items">
-              @for (item of ingredients(); track item.id) {
-                <div class="draft-badge" [class]="'rarity-' + item.rarity">
-                  <span class="emoji-micro">{{ item.icon }}</span>
-                  <span class="draft-name">{{ item.name }}</span>
-                </div>
-              }
-            </div>
-          </section>
-        }
-        
-        @if (spices().length > 0) {
-          <section class="category-section">
-            <h3 class="category-title">Spices</h3>
-            <div class="tray-items">
-              @for (item of spices(); track item.id) {
-                <div class="draft-badge" [class]="'rarity-' + item.rarity">
-                  <span class="emoji-micro">{{ item.icon }}</span>
-                  <span class="draft-name">{{ item.name }}</span>
-                </div>
-              }
-            </div>
-          </section>
-        }
-      </div>
-    </aside>
-  </div>
-}
-
-@if (isCookBookOpen()) {
-  <app-cook-book 
-  (onClose)="closeCookBook()">
-</app-cook-book>
-}
-
-<!-- THE CINEMATIC TRANSITION -->
-@if (currentPhase() === 'cooking') {
-  <section class="phase-container animate-fade-in" style="justify-content: center; min-height: 50vh;">
-    <div class="swirl-stage">
-      <div class="pot-center">🔥</div>
-      @for (item of selectedItems(); track item.id; let i = $index) {
-        <div class="swirling-icon" [style.animation-delay.ms]="i * -300">
-          {{ item.icon }}
-        </div>
-      }
-    </div>
-    <h3 style="text-align: center; font-family: 'DM Sans', sans-serif; opacity: 0.7;">Tossing the wok...</h3>
-  </section>
 }
 
 <!-- THE REVEAL -->
@@ -285,17 +214,10 @@
         @if (dishResult()?.image) {
           <div class="recipe-image-frame">
             <img [src]="dishResult()?.image" alt="Dish" class="recipe-photo" onerror="this.style.display='none'">
-
+            
             <!-- EPIC VISUAL CELEBRATIONS (PHYSICAL STAMPS) -->
             @if (dishResult()?.absolutePerfection) {
               <div class="physical-stamp stamp-legendary animate-stamp">FLAWLESS<br>EXECUTION</div>
-            } @else {
-              @if (dishResult()?.perfectIngredients) {
-                <div class="physical-stamp stamp-success animate-stamp">PERFECT<br>INGREDIENTS</div>
-              }
-              @if (dishResult()?.perfectSpices) {
-                <div class="physical-stamp stamp-success animate-stamp" [style.animation-delay.ms]="200">MASTERFUL<br>SPICING</div>
-              }
             }
           </div>
         } @else {
@@ -360,10 +282,135 @@
           }
         </div>
         
-        <button class="artisanal-btn primary serve-btn" (click)="playClick(); serveCustomer()">
-          Serve to Customer 🛎️
-        </button>
+        <footer class="button-footer layer-1" style="margin-top: auto;">
+          <button class="artisanal-btn primary serve-btn" style="width: 100%;" (click)="playClick(); serveCustomer()">
+            Serve to Customer 🛎️
+          </button>
+        </footer>
       </div>
     </div>
   </section>
+}
+
+<!-- THE POST-SERVICE TRANSITION SCREEN -->
+@if (currentPhase() === 'day_transition') {
+  <section class="phase-container animate-spring-up">
+    <div class="result-card layer-1" [class.is-goop]="!isRunSuccessful()">
+      
+      <div class="card-header transition-header">
+        <h2 class="dish-title">
+          @if (isRunSuccessful()) { Service Complete }
+          @else { Customer Walked Out }
+        </h2>
+      </div>
+      
+      <div class="transition-body">
+        @if (isRunSuccessful()) {
+          <p class="narrative-text">The customer was satisfied with your craft.</p>
+          <div class="score-showcase centered-showcase">
+            <span class="score-label">Payment Received</span>
+            <div class="juicy-tally positive">+${{ lastPayment() }}</div>
+          </div>
+        } @else {
+          <div class="goop-icon">😡</div>
+          <p class="narrative-text">
+            Your dish failed to meet the Tasty-Meter target of <strong>{{ currentCustomer().tastyMeterTarget }}</strong>.
+          </p>
+          <p class="bankrupt-text">
+            The hawker stall has gone bankrupt.
+          </p>
+        }
+      </div>
+      
+      <footer class="button-footer layer-1 transition-footer">
+        @if (isRunSuccessful()) {
+          <button class="artisanal-btn primary full-width" (click)="playClick(); nextDay()">
+            Begin Day {{ currentDay() + 1 }} →
+          </button>
+        } @else {
+          <button class="artisanal-btn primary full-width" (click)="playClick(); onRunEnd.emit()">
+            Try Again ↺
+          </button>
+        }
+      </footer>
+      
+    </div>
+  </section>
+}
+
+@if (currentPhase() === 'cooking') {
+  <section class="phase-container cooking-phase-container animate-fade-in">
+    <div class="swirl-stage">
+      <div class="pot-center">🔥</div>
+      @for (item of selectedItems(); track item.id; let i = $index) {
+        <div class="swirling-icon" [style.animation-delay.ms]="i * -250">
+          {{ item.icon }}
+        </div>
+      }
+    </div>
+    <h3 class="cooking-label">Tossing the wok...</h3>
+  </section>
+}
+
+</div> <!-- End of Master Wrapper -->
+
+<!-- THE COOK BOOK OVERLAY -->
+@if (isCookBookOpen()) {
+  <app-cook-book (onClose)="closeCookBook()">
+  </app-cook-book>
+}
+
+@if (showGlobalPantry()) {
+  <div class="modal-backdrop animate-fade" (click)="toggleGlobalPantry()">
+    <aside class="pantry-modal layer-2 animate-spring-up" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <h2 class="modal-title">Pantry</h2>
+        <button class="close-btn" (click)="playClick(); toggleGlobalPantry()">×</button>
+      </header>
+      
+      <div class="modal-content">
+        @if (cookware().length > 0) {
+          <section class="category-section">
+            <h3 class="category-title">Cookware</h3>
+            <div class="tray-items">
+              @for (item of cookware(); track item.id) {
+                <div class="draft-badge type-cookware" [class]="'rarity-' + item.rarity">
+                  <span class="emoji-micro">{{ item.icon }}</span>
+                  <span class="draft-name">{{ item.name }}</span>
+                </div>
+              }
+            </div>
+          </section>
+        }
+        
+        @if (ingredients().length > 0) {
+          <section class="category-section">
+            <h3 class="category-title">Ingredients</h3>
+            <div class="tray-items">
+              @for (item of ingredients(); track item.id) {
+                <div class="draft-badge" [class]="'rarity-' + item.rarity">
+                  <span class="emoji-micro">{{ item.icon }}</span>
+                  <span class="draft-name">{{ item.name }}</span>
+                </div>
+              }
+            </div>
+          </section>
+        }
+        
+        @if (spices().length > 0) {
+          <section class="category-section">
+            <h3 class="category-title">Spices</h3>
+            <div class="tray-items">
+              @for (item of spices(); track item.id) {
+                <div class="draft-badge" [class]="'rarity-' + item.rarity">
+                  <span class="emoji-micro">{{ item.icon }}</span>
+                  <span class="draft-name">{{ item.name }}</span>
+                </div>
+              }
+            </div>
+          </section>
+        }
+      </div>
+    </aside>
+  </div>
 }

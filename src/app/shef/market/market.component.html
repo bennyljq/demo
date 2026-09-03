@@ -28,11 +28,13 @@
 <div class="shop-grid">
   @for (item of shopItems(); track item.id) {
     <div 
-    class="market-card layer-1" 
-    [class]="'rarity-' + item.rarity"
-    [class.affordable]="runCurrency() >= item.price"
-    [class.unaffordable]="runCurrency() < item.price">
+      class="market-card layer-1" 
+      [class]="'rarity-' + item.rarity"
+      [class.purchased]="item.purchased"
+      [class.affordable]="runCurrency() >= item.price && !item.purchased"
+      [class.unaffordable]="runCurrency() < item.price && !item.purchased">
 
+      <!-- ... Keep labels and icon containers exactly the same ... -->
       <span class="rarity-label">{{ item.rarity }}</span>
 
       <div class="card-top">
@@ -58,21 +60,20 @@
 
       <div class="text-container">
         <h3 class="item-name">{{ item.name }}</h3>
-
-        @if (item.type === 'bundle' && item.bundleItems) {
-          <p class="bundle-contents">
-            Contains: <strong>{{ getBundleContentsText(item.bundleItems) }}</strong>
-          </p>
-        }
       </div>
 
+      <!-- Button toggles text and disables itself -->
       <button 
-      class="price-tag" 
-      [disabled]="runCurrency() < item.price"
-      (click)="buyItem(item)">
-      ${{ item.price }}
-    </button>
-  </div>
+        class="price-tag" 
+        [disabled]="runCurrency() < item.price || item.purchased"
+        (click)="buyItem(item)">
+        @if (item.purchased) {
+          Sold
+        } @else {
+          ${{ item.price }}
+        }
+      </button>
+    </div>
   }
 </div>
 
@@ -80,7 +81,7 @@
   <button 
   class="artisanal-btn secondary" 
   [disabled]="runCurrency() < bribeCost()"
-  (click)="playClick(); bribeShopkeep()">
+  (click)="playShop(); bribeShopkeep()">
   Restock <span class="squircle-counter negative">-${{ bribeCost() }}</span>
 </button>
 <button class="artisanal-btn primary" (click)="playClick(); headToKitchen()">

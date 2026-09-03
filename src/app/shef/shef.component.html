@@ -107,39 +107,50 @@
   </section>
 }
 
-@if (currentScreen() === 'transition') {
-  <section class="transition-screen">
-    <h2 class="transition-title">Day 1</h2>
-    
-    <!-- Physical Polaroid Scene Frame -->
-    @if (selectedShef()?.restaurantImages?.length) {
-      <div class="scene-frame" (click)="playClick(); skipTransition()">
-        <img [src]="selectedShef()?.restaurantImages?.[0]" alt="Restaurant Scene" class="scene-photo">
-      </div>
-    }
-    
-    <div class="transition-details">
-      <p class="transition-subtitle">Service in {{ selectedShef()?.name }}'s stall</p>
+<!-- We group these states so the Kitchen doesn't get destroyed -->
+@if (currentScreen() === 'kitchen' || currentScreen() === 'transition') {
+  
+  <!-- THE CINEMATIC TRANSITION OVERLAY -->
+  @if (currentScreen() === 'transition') {
+    <section class="transition-screen animate-cinematic">
+      <!-- Dynamically bound to currentDay() -->
+      <h2 class="transition-title">Day {{ currentDay() }}</h2>
       
-      <p class="transition-location">
-        <svg class="map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-          <circle cx="12" cy="10" r="3"></circle>
-        </svg>
-        Hong Kong
-      </p>
-    </div>
-  </section>
-}
-
-@if (currentScreen() === 'kitchen') {
-  <!-- Removed animate-spring-up from host to prevent viewport breach -->
+      <!-- Physical Polaroid Scene Frame -->
+      @if (selectedShef()?.restaurantImages?.length) {
+        <div class="scene-frame" (click)="playClick(); skipTransition()">
+          <img [src]="selectedShef()?.restaurantImages?.[0]" alt="Restaurant Scene" class="scene-photo">
+        </div>
+      }
+      
+      <div class="transition-details">
+        <p class="transition-subtitle">Service in {{ selectedShef()?.name }}'s stall</p>
+        
+        <p class="transition-location">
+          <svg class="map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          Hong Kong
+        </p>
+      </div>
+    </section>
+  }
+  
+  <!-- THE PERSISTENT KITCHEN ENGINE -->
+  <!-- We collapse it via display:none while transitioning, preserving all state -->
+  <div 
+  [style.display]="currentScreen() === 'transition' ? 'none' : 'flex'" 
+  style="width: 100%; height: 100%; flex-direction: column;">
+  
   <app-kitchen 
-  style="width: 100%; height: 100%;"
   [shef]="selectedShef()!"
   (onOpenAlmanac)="openAlmanac()"
+  (onNextDay)="triggerNextDayTransition($event)"
   (onRunEnd)="endRun()">
 </app-kitchen>
+
+</div>
 }
 
 @if (isCookBookOpen()) {

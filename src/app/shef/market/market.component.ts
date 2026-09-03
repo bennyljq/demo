@@ -1,7 +1,7 @@
 import { Component, model, output, signal, inject, input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { uiClickSound, waterDripSound } from '../shef.component';
+import { shopSound, uiClickSound, waterDripSound } from '../shef.component';
 import { MASTER_ITEMS } from '../cook-book/master-items';
 
 export type Rarity = 'common' | 'rare' | 'legendary';
@@ -17,6 +17,7 @@ export interface MarketItem {
   icon: string | SafeHtml;
   isSvg?: boolean;
   bundleItems?: MarketItem[];
+  purchased?: boolean;
 }
 
 @Component({
@@ -39,7 +40,7 @@ export class MarketComponent implements OnInit {
   // Required to cross-reference against permanent stock
   pantryItems = input<MarketItem[]>([]);
   
-  bribeCost = signal<number>(0);
+  bribeCost = signal<number>(1);
   draftedItems = signal<MarketItem[]>([]);
   
   // Initialize empty, populated securely in ngOnInit
@@ -51,7 +52,7 @@ export class MarketComponent implements OnInit {
       this.kachingPool.push(new Audio('assets/shef/sounds/kaching.mp3'));
     }
   }
-
+  
   ngOnInit() {
     this.shopItems.set(this.generateShop());
   }
@@ -59,7 +60,7 @@ export class MarketComponent implements OnInit {
   getBundleContentsText(bundleItems: MarketItem[]): string {
     return bundleItems.map(item => item.name).join(', ');
   }
-
+  
   // Helper to combine permanent items with newly drafted ones
   allOwnedItems(): MarketItem[] {
     return [...this.pantryItems(), ...this.draftedItems()];
@@ -68,9 +69,9 @@ export class MarketComponent implements OnInit {
   generateShop(): MarketItem[] {
     // 1. Identify all infinite-use items the player currently holds
     const ownedInfiniteIds = this.allOwnedItems()
-      .filter(item => item.uses === '∞')
-      .map(item => item.id);
-
+    .filter(item => item.uses === '∞')
+    .map(item => item.id);
+    
     // 2. Filter the Single Source of Truth
     const validPool = MASTER_ITEMS.filter(item => {
       // Exclude the item if it is infinite-use AND already owned
@@ -79,18 +80,46 @@ export class MarketComponent implements OnInit {
       }
       return true;
     });
-
-    // 3. Shuffle the valid pool and draft exactly 5 items
-    const shuffled = validPool.sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 6);
-
-    // 4. Map the global CookBookItem shape to the localized MarketItem interface
+    
+    // 3. Separate into Rarity Pools
+    const commons = validPool.filter(i => i.rarity === 'common');
+    const rares = validPool.filter(i => i.rarity === 'rare');
+    const legendaries = validPool.filter(i => i.rarity === 'legendary');
+    
+    const selected: any[] = [];
+    const shopSize = 8; 
+    
+    // 4. Draft exactly 8 items using the weighted probability matrix
+    for (let i = 0; i < shopSize; i++) {
+      const roll = Math.random();
+      let chosenPool;
+      
+      // 60% Common, 30% Rare, 10% Legendary
+      if (roll < 0.6) chosenPool = commons;
+      else if (roll < 0.9) chosenPool = rares;
+      else chosenPool = legendaries;
+      
+      // Fallback cascade if the rolled pool is already empty
+      if (chosenPool.length === 0) {
+        if (commons.length > 0) chosenPool = commons;
+        else if (rares.length > 0) chosenPool = rares;
+        else if (legendaries.length > 0) chosenPool = legendaries;
+        else break; // No valid items left in the entire database
+      }
+      
+      // Pick a random item from the chosen pool and remove it to prevent duplicates
+      const index = Math.floor(Math.random() * chosenPool.length);
+      selected.push(chosenPool[index]);
+      chosenPool.splice(index, 1);
+    }
+    
+    // 5. Map the global CookBookItem shape to the localized MarketItem interface
     return selected.map(item => ({
       id: item.id,
       name: item.name,
       type: item.type as ItemType,
       rarity: item.rarity as Rarity,
-      price: item.basePrice, // Translating basePrice to immediate market price
+      price: item.basePrice, 
       uses: item.defaultUses,
       icon: item.icon,
       isSvg: item.isSvg
@@ -106,29 +135,40 @@ export class MarketComponent implements OnInit {
     audio.play().catch(err => console.warn('Audio blocked by browser:', err));
   }
   
-  buyItem(item: MarketItem) {
-    if (this.runCurrency() >= item.price) {
-      this.runCurrency.update(c => c - item.price);
+buyItem(item: MarketItem) {
+  // Prevent double-purchasing
+  if (this.runCurrency() >= item.price && !item.purchased) {
+    this.runCurrency.update(c => c - item.price);
+    
+    // 1. Local Stacking: Only track what was procured in THIS visit
+    if (item.uses !== '∞') {
+      const draftMatch = this.draftedItems().find(i => i.id === item.id);
       
-      // Unpack bundle logic vs single item logic
-      if (item.type === 'bundle' && item.bundleItems) {
-        this.draftedItems.update(draft => [...draft, ...item.bundleItems!]);
+      if (draftMatch && draftMatch.uses !== '∞') {
+        draftMatch.uses = (draftMatch.uses as number) + (item.uses as number);
+        this.draftedItems.update(draft => [...draft]);
       } else {
-        this.draftedItems.update(draft => [...draft, item]);
+        this.draftedItems.update(draft => [...draft, { ...item }]);
       }
-      
-      this.shopItems.update(items => items.filter(i => i.id !== item.id));
-      this.playTactileKaching();
-      this.onItemPurchased.emit(item);
+    } else {
+      this.draftedItems.update(draft => [...draft, { ...item }]);
     }
+    
+    // 2. FIX: Transition to Purchased state instead of removing the item
+    this.shopItems.update(items => 
+      items.map(i => i.id === item.id ? { ...i, purchased: true } : i)
+    );
+    
+    this.playTactileKaching();
+    this.onItemPurchased.emit(item);
   }
+}
   
   bribeShopkeep() {
     if (this.runCurrency() >= this.bribeCost()) {
       this.runCurrency.update(c => c - this.bribeCost());
-      this.bribeCost.update(cost => Math.floor(cost * 1.5)); 
+      this.bribeCost.update(cost => cost+1); 
       this.shopItems.set(this.generateShop()); 
-      this.playTactileKaching();
     }
   }
   
@@ -138,4 +178,5 @@ export class MarketComponent implements OnInit {
   
   playClick() { uiClickSound.play(); }
   playDrip() { waterDripSound.play(); }
+  playShop() { shopSound.play(); }
 }

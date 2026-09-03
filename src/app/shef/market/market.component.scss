@@ -266,6 +266,40 @@
       box-shadow: inset 0 4px 8px oklch(0.12 0.04 260 / 0.6); 
     }
   }
+
+  &.purchased {
+    opacity: 0.45;
+    filter: grayscale(100%);
+    pointer-events: none; /* Prevents all hover/active kinematics */
+    border-color: transparent;
+    
+    /* Pushes the card visually downward into Layer -1 */
+    box-shadow: inset 0 4px 12px rgba(0,0,0,0.6);
+    background: oklch(0.25 0.02 260);
+
+    /* Grays out the rarity label */
+    &::before {
+      background-color: oklch(0.35 0.03 260) !important;
+      color: oklch(0.6 0.02 260) !important;
+      box-shadow: none;
+    }
+
+    /* Depresses the button permanently */
+    .price-tag {
+      background: oklch(0.2 0.02 260);
+      color: oklch(0.5 0.02 260);
+      border-color: transparent;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    }
+  }
+
+  /* Update the hover media query to completely ignore purchased items */
+  @media (hover: hover) {
+    &.affordable:not(.purchased):hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 8px var(--shadow-tint);
+    }
+  }
 }
 
 /* --- CLS PREVENTION KINEMATICS --- */

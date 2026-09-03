@@ -35,6 +35,7 @@ export class CarnalAudioPool {
 
 export const uiClickSound = new CarnalAudioPool('assets/shef/sounds/button-click.mp3');
 export const waterDripSound = new CarnalAudioPool('assets/shef/sounds/drip.mp3');
+export const shopSound = new CarnalAudioPool('assets/shef/sounds/shop.mp3');
 
 @Component({
   selector: 'app-shef-root',
@@ -46,6 +47,7 @@ export const waterDripSound = new CarnalAudioPool('assets/shef/sounds/drip.mp3')
 export class ShefComponent {
   // 1. Expand the signal to accept the 'transition' state
   currentScreen = signal<'landing' | 'selection' | 'transition' | 'kitchen'>('landing');
+  currentDay = signal<number>(1);
   
   shefRoster = signal<Shef[]>([
     {
@@ -59,9 +61,12 @@ export class ShefComponent {
       startingIngredients: [
         getItem('ig-1'), // White Rice
         getItem('ig-6'), // Chicken Eggs
-        getItem('ig-8'), // Pork Belly
+        // getItem('ig-10'), // Char Siu
+        // getItem('ig-11'), // shrimp
         getItem('ig-16'), // Scallions
-        getItem('sp-1')  // Peanut Oil
+        getItem('sp-1'),  // Peanut Oil
+        getItem('sp-2'),  // Light Soy Sauce
+        getItem('sp-4'),  // White pepper
       ],
       restaurantImages: [
         'assets/shef/pictures/dapaidang.jpg', 
@@ -108,24 +113,15 @@ export class ShefComponent {
   selectShef(shef: Shef) {
     if (shef.available) {
       this.selectedShef.set(shef);
+      this.currentDay.set(1);
       this.currentScreen.set('transition');
-      
-      if (this.transitionTimeout) {
-        clearTimeout(this.transitionTimeout);
-      }
-      
-      // Artisanal pause to allow the player to collect themselves
-      this.transitionTimeout = setTimeout(() => {
+      setTimeout(() => {
         this.currentScreen.set('kitchen');
       }, 3000);
     }
   }
   
   skipTransition() {
-    if (this.transitionTimeout) {
-      clearTimeout(this.transitionTimeout);
-      this.transitionTimeout = null;
-    }
     this.currentScreen.set('kitchen');
   }
   
@@ -147,6 +143,7 @@ export class ShefComponent {
   
   playClick() { uiClickSound.play(); }
   playDrip() { waterDripSound.play(); }
+  playShop() { shopSound.play(); }
   
   openCookBook() {
     this.isCookBookOpen.set(true);
@@ -154,5 +151,15 @@ export class ShefComponent {
   
   closeCookBook() {
     this.isCookBookOpen.set(false);
+  }
+  
+  triggerNextDayTransition(newDay: number) {
+    this.currentDay.set(newDay);
+    this.currentScreen.set('transition');
+    
+    // 3-second cinematic hold before returning to the kitchen
+    setTimeout(() => {
+      this.currentScreen.set('kitchen');
+    }, 3000);
   }
 }

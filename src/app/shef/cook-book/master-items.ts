@@ -37,7 +37,7 @@ export const baseTraits: DietaryTraits = {
 
 export const MASTER_ITEMS: CookBookItem[] = [
   // --- COOKWARE (All Legendary, Infinite Uses) ---
-  { id: 'cw-1', name: 'Mathew\'s Wok', type: 'cookware', rarity: 'legendary', basePrice: 100, defaultUses: '∞', icon: '🍳', lore: 'Seasoned over a decade of fiery services in Hong Kong. The crucible of Wok Hei.', traits: { ...baseTraits } },
+  { id: 'cw-1', name: 'Carbon Steel Wok', type: 'cookware', rarity: 'legendary', basePrice: 100, defaultUses: '∞', icon: '🍳', lore: 'Seasoned over a decade of fiery services in Hong Kong. The crucible of Wok Hei.', traits: { ...baseTraits } },
   { id: 'cw-2', name: 'Bamboo Steamer', type: 'cookware', rarity: 'legendary', basePrice: 60, defaultUses: '∞', icon: '🧺', lore: 'Imparts a subtle, earthy aroma to delicate skins.', traits: { ...baseTraits } },
   { id: 'cw-3', name: 'Cast Iron Skillet', type: 'cookware', rarity: 'legendary', basePrice: 75, defaultUses: '∞', icon: '🥘', lore: 'Retains heat flawlessly. Essential for the perfect, punishing sear.', traits: { ...baseTraits } },
   
@@ -64,7 +64,7 @@ export const MASTER_ITEMS: CookBookItem[] = [
   { id: 'ig-17', name: 'Garlic', type: 'ingredient', rarity: 'common', basePrice: 3, defaultUses: '∞', icon: '🧄', traits: { ...baseTraits, isVegetarian: true, isVegan: true, isHalal: true, isAllium: true } },
   { id: 'ig-18', name: 'Bean Sprouts', type: 'ingredient', rarity: 'common', basePrice: 3, defaultUses: '∞', icon: '🌱', traits: { ...baseTraits, isVegetarian: true, isVegan: true, isHalal: true } },
   { id: 'ig-19', name: 'Chinese Chives (Ku Chai)', type: 'ingredient', rarity: 'common', basePrice: 4, defaultUses: '∞', icon: '🌿', traits: { ...baseTraits, isVegetarian: true, isVegan: true, isHalal: true, isAllium: true } },
-  { id: 'ig-20', name: 'Pork Lard', type: 'ingredient', rarity: 'rare', basePrice: 12, defaultUses: 5, icon: '🧈', traits: { ...baseTraits, isMeat: true, isPork: true } },
+  { id: 'ig-20', name: 'Pork Lard', type: 'ingredient', rarity: 'legendary', basePrice: 12, defaultUses: 1, icon: '🧈', traits: { ...baseTraits, isMeat: true, isPork: true } },
   { id: 'ig-21', name: 'Kai Lan (Chinese Broccoli)', type: 'ingredient', rarity: 'common', basePrice: 4, defaultUses: '∞', icon: '🥬', traits: { ...baseTraits, isVegetarian: true, isVegan: true, isHalal: true } },
 
   // --- SPICES (10 Total, All Infinite Uses) ---

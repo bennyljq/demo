@@ -1,7 +1,7 @@
 import { Component, signal, output, computed, inject, input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MarketComponent, MarketItem, ItemType, Rarity } from '../market/market.component';
-import { uiClickSound, waterDripSound } from '../shef.component';
+import { uiClickSound, waterDripSound, shopSound } from '../shef.component';
 import { MASTER_RECIPES, RecipeDefinition } from '../cook-book/master-recipes';
 import { MASTER_ITEMS } from '../cook-book/master-items';
 import { CookBookComponent } from '../cook-book/cook-book.component';
@@ -66,8 +66,11 @@ export class KitchenComponent implements OnInit {
   
   // Run Pantry State
   showGlobalPantry = signal<boolean>(false);
-  runCurrency = signal<number>(500);
-  currentPhase = signal<'customer_reveal' | 'market' | 'service' | 'cooking' | 'result'>('customer_reveal');
+  runCurrency = signal<number>(150);
+  currentPhase = signal<'customer_reveal' | 'market' | 'service' | 'cooking' | 'result' | 'day_transition'>('customer_reveal');
+  currentDay = signal<number>(1);
+  isRunSuccessful = signal<boolean>(false);
+  lastPayment = signal<number>(0);
   dishResult = signal<{ 
     isGoop: boolean, 
     name: string, 
@@ -89,10 +92,10 @@ export class KitchenComponent implements OnInit {
     id: 'c-01',
     name: this.generatedCustomer.name,
     tastyMeterTarget: 80,
-    restrictions: ['No Crustaceans'],
-    preferences: ['Enjoys Pork', 'Enjoys Chicken'],
-    compCost: 10,
-    dialogue: "I'm in a rush! Make it hot, and absolutely no shrimp!",
+    restrictions: [],
+    preferences: ['Enjoys all kinds of food'],
+    compCost: 0,
+    dialogue: "I'm a test customer who eats everything! Nom nom nom!",
     avatar: this.generatedCustomer.avatar
   });
   
@@ -117,6 +120,14 @@ export class KitchenComponent implements OnInit {
   });
   
   isCookBookOpen = signal<boolean>(false);
+  onNextDay = output<number>();
+  formattedShefName = computed(() => {
+    const parts = this.shef().name.split(' ');
+    if (parts.length > 1) {
+      return `${parts[0].charAt(0)}. ${parts.slice(1).join(' ')}`;
+    }
+    return this.shef().name; // Fallback for single names
+  });
   
   ngOnInit() {
     const shefData = this.shef();
@@ -158,7 +169,24 @@ export class KitchenComponent implements OnInit {
   }
   
   handleItemPurchased(item: MarketItem) {
-    this.pantry.update(current => [...current, item]);
+    this.pantry.update(current => {
+      // Global Stacking logic for limited-use items
+      if (item.uses !== '∞') {
+        const existing = current.find(i => i.id === item.id);
+        
+        // If it already exists in the global pantry, map over the array and increment uses
+        if (existing && existing.uses !== '∞') {
+          return current.map(i => 
+            i.id === item.id 
+            ? { ...i, uses: (i.uses as number) + (item.uses as number) } 
+            : i
+          );
+        }
+      }
+      
+      // If it's infinite, or doesn't exist in the global pantry yet, append it safely
+      return [...current, { ...item }];
+    });
   }
   
   toggleItem(item: MarketItem) {
@@ -189,140 +217,117 @@ export class KitchenComponent implements OnInit {
     const selectedSpices = selected.filter(i => i.type === 'spice').map(i => i.id);
     
     let bestMatch: any = null;
-    let highestScore = -9999;
+    const getItem = (id: string) => MASTER_ITEMS.find(i => i.id === id);
     
-    // 2. The Recipe Matrix
+    // 2. The Recipe Matrix (Strict Edition)
     for (const recipe of MASTER_RECIPES) {
       // Cookware MUST be exact. No exceptions.
       const exactCookware = selectedCookware.length === recipe.essentialCookwareIds.length &&
       recipe.essentialCookwareIds.every(id => selectedCookware.includes(id));
       if (!exactCookware) continue;
       
-      // Ingredients: ±1 Leeway Logic
-      const missing = recipe.essentialIngredientIds.filter(id => !selectedIngredients.includes(id));
-      const extra = selectedIngredients.filter(id => !recipe.essentialIngredientIds.includes(id));
-      const totalDeviations = missing.length + extra.length;
+      // Ingredients MUST be exact. No exceptions.
+      const exactIngredients = selectedIngredients.length === recipe.essentialIngredientIds.length &&
+      recipe.essentialIngredientIds.every(id => selectedIngredients.includes(id));
+      if (!exactIngredients) continue;
       
-      if (totalDeviations <= 1) {
-        let score = recipe.baseScore;
-        let notes: string[] = [];
-        let finalName = recipe.name;
-        
-        // Ingredient Modifiers
-        if (missing.length === 1) {
-          const missingName = MASTER_ITEMS.find(i => i.id === missing[0])?.name;
-          score -= 15;
-          notes.push(`Missing ${missingName} (-15)`);
-          finalName += ` (No ${missingName})`;
-        } else if (extra.length === 1) {
-          const extraName = MASTER_ITEMS.find(i => i.id === extra[0])?.name;
-          score -= 15;
-          notes.push(`Extra ${extraName} (-15)`);
-          finalName += ` (with ${extraName})`;
+      // --- WE HAVE A VALID DISH ---
+      let score = recipe.baseScore;
+      let notes: string[] = ['Flawless Base Execution!'];
+      
+      // Spice Modifiers (Lax but rewarding)
+      let correctSpicesCount = 0;
+      let wrongSpicesCount = 0;
+      
+      selectedSpices.forEach(spiceId => {
+        if (recipe.culturalSpiceIds.includes(spiceId)) {
+          correctSpicesCount++;
+          score += 15; // Reward per correct spice
         } else {
-          notes.push(`Perfect Ingredients!`);
+          wrongSpicesCount++;
+          score -= 10; // Penalty per wrong spice
         }
-        
-        // Spice Modifiers (Lax but rewarding)
-        let correctSpices = 0;
-        let wrongSpices = 0;
-        
-        selectedSpices.forEach(spiceId => {
-          if (recipe.culturalSpiceIds.includes(spiceId)) {
-            correctSpices++;
-            score += 15; // Reward per correct spice
-          } else {
-            wrongSpices++;
-            score -= 10; // Penalty per wrong spice
-          }
-        });
-        
-        if (correctSpices === recipe.culturalSpiceIds.length && wrongSpices === 0 && recipe.culturalSpiceIds.length > 0) {
-          score += 50; // The Perfect Spice Bonus
-          notes.push(`Masterful Spicing! (+50)`);
-        } else {
-          if (correctSpices > 0) notes.push(`Good Spices (+${correctSpices * 15})`);
-          if (wrongSpices > 0) notes.push(`Wrong Spices (-${wrongSpices * 10})`);
-        }
-        
-        if (score > highestScore) {
-          highestScore = score;
-          bestMatch = { isGoop: false, name: finalName, score, breakdown: notes, image: recipe.image };
-        }
+      });
+      
+      let isAbsolutePerfection = false;
+      
+      if (correctSpicesCount === recipe.culturalSpiceIds.length && wrongSpicesCount === 0 && recipe.culturalSpiceIds.length > 0) {
+        score += 50; // The Perfect Spice Bonus
+        notes.push(`Masterful Spicing! (+50)`);
+        isAbsolutePerfection = true; // Cookware and Ingredients are already guaranteed perfect
+      } else {
+        if (correctSpicesCount > 0) notes.push(`Good Spices (+${correctSpicesCount * 15})`);
+        if (wrongSpicesCount > 0) notes.push(`Wrong Spices (-${wrongSpicesCount * 10})`);
       }
+      
+      // Build Analysis Grid for Success
+      const analysis = { cookware: [] as any[], ingredients: [] as any[], spices: [] as any[] };
+      
+      // Cookware & Ingredients are mathematically guaranteed to be correct here
+      selectedCookware.forEach(id => analysis.cookware.push({ item: getItem(id), status: 'correct' }));
+      selectedIngredients.forEach(id => analysis.ingredients.push({ item: getItem(id), status: 'correct' }));
+      
+      // Spices (Track what was used + what was missed)
+      recipe.culturalSpiceIds.forEach(id => {
+        if (selectedSpices.includes(id)) {
+          analysis.spices.push({ item: getItem(id), status: 'correct' });
+        } else {
+          analysis.spices.push({ item: getItem(id), status: 'missing' });
+        }
+      });
+      selectedSpices.forEach(id => {
+        if (!recipe.culturalSpiceIds.includes(id)) {
+          analysis.spices.push({ item: getItem(id), status: 'wrong' });
+        }
+      });
+      
+      bestMatch = { 
+        isGoop: false, 
+        name: recipe.name, 
+        score, 
+        breakdown: notes, 
+        image: recipe.image,
+        absolutePerfection: isAbsolutePerfection,
+        analysis: analysis
+      };
+      
+      break; // Break early, as exact matching guarantees only one possible recipe
     }
     
     // 3. Fallback to Goop Economy
     if (!bestMatch) {
+      const analysis = { cookware: [] as any[], ingredients: [] as any[], spices: [] as any[] };
+      
+      // Everything used is lost in the void
+      selectedCookware.forEach(id => analysis.cookware.push({ item: getItem(id), status: 'missing' }));
+      selectedIngredients.forEach(id => analysis.ingredients.push({ item: getItem(id), status: 'missing' }));
+      selectedSpices.forEach(id => analysis.spices.push({ item: getItem(id), status: 'missing' }));
+      
       bestMatch = {
         isGoop: true,
         name: 'Incomprehensible Goop',
-        score: 1,
-        breakdown: ['Cookware mismatch or too many deviations.', 'Utter culinary chaos.'],
+        score: 0,
+        breakdown: ['Recipe mismatch.', 'Ingredients lost in the void.'],
+        absolutePerfection: false,
+        analysis: analysis
       };
     }
     
-    const analysis = { cookware: [] as any[], ingredients: [] as any[], spices: [] as any[] };
-    let perfectIngredients = false;
-    let perfectSpices = false;
-    let absolutePerfection = false;
-    
-    // Helper to grab full item data
-    const getItem = (id: string) => MASTER_ITEMS.find(i => i.id === id);
-    
-    if (bestMatch && !bestMatch.isGoop) {
-      const recipe = MASTER_RECIPES.find(r => r.name === bestMatch.name.split(' (')[0]) || MASTER_RECIPES[0];
-      
-      // 1. Cookware (Only what was used, which must be correct to match)
-      selectedCookware.forEach(id => analysis.cookware.push({ item: getItem(id), status: 'correct' }));
-      
-      // 2. Ingredients (What was used + What was missing)
-      const missing = recipe.essentialIngredientIds.filter(id => !selectedIngredients.includes(id));
-      const extra = selectedIngredients.filter(id => !recipe.essentialIngredientIds.includes(id));
-      
-      selectedIngredients.forEach(id => {
-        const status = recipe.essentialIngredientIds.includes(id) ? 'correct' : 'wrong';
-        analysis.ingredients.push({ item: getItem(id), status });
-      });
-      
-      missing.forEach(id => {
-        analysis.ingredients.push({ item: getItem(id), status: 'missing' });
-      });
-      
-      if (missing.length === 0 && extra.length === 0) perfectIngredients = true;
-      
-      // 3. Spices (Only what was used)
-      let correctSpicesCount = 0;
-      let wrongSpicesCount = 0;
-      
-      selectedSpices.forEach(id => {
-        if (recipe.culturalSpiceIds.includes(id)) {
-          analysis.spices.push({ item: getItem(id), status: 'correct' });
-          correctSpicesCount++;
-        } else {
-          analysis.spices.push({ item: getItem(id), status: 'wrong' });
-          wrongSpicesCount++;
+    // 3.5. PHYSICAL CONSUMPTION: Deduct limited-use items from the pantry
+    this.pantry.update(currentPantry => {
+      const updatedPantry = currentPantry.map(pantryItem => {
+        // If the item was placed in the wok and is not infinite, deduct 1 use
+        if (selected.find(s => s.id === pantryItem.id) && pantryItem.uses !== '∞') {
+          return { ...pantryItem, uses: (pantryItem.uses as number) - 1 };
         }
+        return pantryItem;
       });
       
-      if (recipe.culturalSpiceIds.length > 0 && correctSpicesCount === recipe.culturalSpiceIds.length && wrongSpicesCount === 0) {
-        perfectSpices = true;
-      }
-      
-      if (perfectIngredients && perfectSpices) absolutePerfection = true;
-      
-    } else {
-      // GOOP: Everything used is fundamentally wrong
-      selectedCookware.forEach(id => analysis.cookware.push({ item: getItem(id), status: 'wrong' }));
-      selectedIngredients.forEach(id => analysis.ingredients.push({ item: getItem(id), status: 'wrong' }));
-      selectedSpices.forEach(id => analysis.spices.push({ item: getItem(id), status: 'wrong' }));
-    }
+      // Instantly remove any item that has been completely exhausted (0 uses)
+      return updatedPantry.filter(pantryItem => pantryItem.uses === '∞' || (pantryItem.uses as number) > 0);
+    });
     
-    bestMatch.analysis = analysis;
-    bestMatch.perfectIngredients = perfectIngredients;
-    bestMatch.perfectSpices = perfectSpices;
-    bestMatch.absolutePerfection = absolutePerfection;
-    
+    // Finalize the result
     this.dishResult.set(bestMatch);
     
     // 4. Yield to cinematic transition (2.5 seconds)
@@ -333,9 +338,53 @@ export class KitchenComponent implements OnInit {
   
   playClick() { uiClickSound.play(); }
   playDrip() { waterDripSound.play(); }
+  playShop() { shopSound.play(); }
   
   serveCustomer() {
-    // We will build the payment and hype-tally logic here next!
-    console.log("Serving dish... calculating payment.");
+    const result = this.dishResult();
+    const customer = this.currentCustomer();
+    if (!result) return;
+    
+    const passed = result.score >= customer.tastyMeterTarget;
+    
+    if (passed) {
+      // Payment Logic: Raw score converts directly to cash, rewarding perfection
+      const payment = result.score; 
+      this.runCurrency.update(c => c + payment);
+      this.lastPayment.set(payment);
+      this.isRunSuccessful.set(true);
+    } else {
+      // Catastrophic failure
+      this.isRunSuccessful.set(false);
+    }
+    
+    this.currentPhase.set('day_transition');
+  }
+  
+  nextDay() {
+    this.currentDay.update(d => d + 1);
+    
+    // Emit to ShefComponent to trigger the cinematic overlay
+    this.onNextDay.emit(this.currentDay());
+    
+    // Procedurally generate the next customer behind the scenes
+    this.generatedCustomer = generateCustomer();
+    this.currentCustomer.set({
+      id: `c-0${this.currentDay()}`,
+      name: this.generatedCustomer.name,
+      // tastyMeterTarget: 60 + (this.currentDay() * 10),
+      tastyMeterTarget: 80,
+      restrictions: [],
+      preferences: ['Eats everything!'],
+      // compCost: 10 + (this.currentDay() * 2),
+      compCost: 0,
+      dialogue: "Another day, another meal! Don't keep me waiting.",
+      avatar: this.generatedCustomer.avatar
+    });
+    
+    // Wipe the physical prep station clean
+    this.selectedItems.set([]);
+    this.dishResult.set(null);
+    this.currentPhase.set('customer_reveal');
   }
 }

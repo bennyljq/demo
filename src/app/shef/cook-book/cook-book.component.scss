@@ -12,7 +12,7 @@
 /* --- THE VIEWPORT LOCK --- */
 :host {
   display: block;
-  position: absolute;
+  position: fixed; 
   inset: 0;
   width: 100vw;
   height: 100dvh;
@@ -78,7 +78,7 @@
   /* CRITICAL MOBILE BUG FIX: Prevents vertical crushing */
   align-items: center; 
   min-height: 3.5rem; 
-
+  
   /* Native mobile scrolling without visual scrollbar */
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -123,7 +123,7 @@
   grid-template-columns: repeat(2, 1fr); 
   gap: var(--s-1);
   padding-top: var(--s-1);
-
+  
   @media (min-width: 500px) {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   }
@@ -152,45 +152,45 @@
     line-height: 1;
     box-shadow: 0 1px 2px var(--shadow-tint);
   }
-
+  
   &.rarity-common { 
     border-top: 4px solid oklch(0.65 0.02 260); 
     .rarity-label { background: oklch(0.65 0.02 260); color: var(--ink-black); }
   }
-
+  
   &.rarity-rare { 
     border-top: 4px solid oklch(0.55 0.12 250); 
     .rarity-label { background: oklch(0.55 0.12 250); color: var(--ink-black); }
   }
-
+  
   &.rarity-legendary { 
     border-top: 4px solid oklch(0.75 0.14 75); 
     animation: legendary-pulse 4s ease-in-out infinite;
-
+    
     &::before {
       content: '';
       position: absolute;
       inset: 0;
       border-radius: inherit;
       background-image: linear-gradient(
-        110deg,
-        transparent 30%,
-        oklch(0.85 0.16 75 / 0.15) 50%,
-        transparent 70%
+      110deg,
+      transparent 30%,
+      oklch(0.85 0.16 75 / 0.15) 50%,
+      transparent 70%
       );
       background-size: 200% 100%;
       animation: legendary-shimmer 3s linear infinite;
       pointer-events: none;
       z-index: 0;
     }
-
+    
     .rarity-label { 
       background: oklch(0.75 0.14 75); 
       color: var(--ink-black); 
       box-shadow: 0 0 8px oklch(0.75 0.14 75 / 0.5);
     }
   }
-
+  
   .card-top {
     width: 100%;
     padding-top: var(--s-0);
@@ -203,21 +203,21 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     z-index: 1;
-
+    
     .type-badge { opacity: 0.6; }
-
+    
     .uses-badge { 
       font-size: 0.8rem;
       opacity: 0.7;
       display: flex;
       align-items: center;
       gap: 2px;
-
+      
       .infinity { font-size: 1.5em; line-height: 0; vertical-align: middle; }
       &.limited { color: var(--primary-pigment); opacity: 1; }
     }
   }
-
+  
   .icon-container {
     height: 50px;
     display: flex;
@@ -225,13 +225,13 @@
     justify-content: center;
     margin: var(--s-1) 0;
     z-index: 1;
-
+    
     .emoji-icon { 
       font-size: 2rem; 
       line-height: 1; 
       filter: drop-shadow(0 2px 2px oklch(0.12 0.04 260 / 0.5));
     }
-
+    
     .svg-icon {
       width: 2.2rem;
       height: 2.2rem;
@@ -242,14 +242,14 @@
       ::ng-deep svg { width: 100%; height: 100%; stroke-width: 1.5px !important; }
     }
   }
-
+  
   .text-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: var(--s-1);
     z-index: 1;
-
+    
     .item-name {
       margin: 0;
       font-family: 'Newsreader', serif;
@@ -267,7 +267,7 @@
       text-align: center;
     }
   }
-
+  
   .trait-tags {
     width: 100%;
     margin-top: auto; 
@@ -278,7 +278,7 @@
     justify-content: center;
     gap: 0.35rem;
     z-index: 1;
-
+    
     .trait-badge {
       font-size: 0.6rem;
       font-weight: 700;
@@ -301,10 +301,15 @@
 
 /* --- RECIPES LIST VIEW: DENSE PACKING --- */
 .recipe-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-2);
+  display: grid;
+  grid-template-columns: 1fr; /* Mobile & Tablet default */
+  gap: var(--s-1);
   padding-top: var(--s-1);
+  
+  /* Wide Desktop Breakpoint: Automatically spawns columns as space permits */
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  }
 }
 
 .recipe-card {
@@ -367,20 +372,20 @@
       font-size: clamp(1.4rem, 4vw, 1.8rem);
       color: var(--primary-pigment);
     }
-
+    
     .recipe-lore {
       margin: 0;
       font-size: 0.85rem;
       opacity: 0.7;
       font-style: italic;
     }
-
+    
     .score-block {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
       gap: 2px;
-
+      
       .score-label {
         font-family: 'DM Sans', sans-serif;
         font-size: 0.65rem;
@@ -390,7 +395,7 @@
       }
     }
   }
-
+  
   .recipe-requirements {
     margin-top: var(--s-1);
     padding-top: var(--s-1);

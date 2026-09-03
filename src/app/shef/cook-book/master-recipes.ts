@@ -15,19 +15,8 @@ export interface RecipeDefinition {
 export const MASTER_RECIPES: RecipeDefinition[] = [
   {
     id: 'rcp-1',
-    name: 'Authentic Char Kway Teow',
-    rarity: 'legendary',
-    image: 'assets/shef/pictures/char-kway-teow.jpg',
-    baseScore: 160,
-    essentialCookwareIds: ['cw-1'], // Wok
-    essentialIngredientIds: ['ig-2', 'ig-6', 'ig-9', 'ig-12', 'ig-18', 'ig-19', 'ig-20'], // Kway Teow, Egg, Lup Cheong, Cockles, Bean Sprouts, Chives, Pork Lard
-    culturalSpiceIds: ['sp-2', 'sp-3', 'sp-8', 'sp-9'], // Light Soy, Dark Soy, Chili Paste, Belacan
-    lore: 'A fiercely charred masterpiece. The pork lard and blood cockles are absolutely non-negotiable.'
-  },
-  {
-    id: 'rcp-2',
     name: 'Yang Zhou Fried Rice',
-    rarity: 'rare',
+    rarity: 'legendary',
     image: 'assets/shef/pictures/yang-zhou-fried-rice.jpg',
     baseScore: 110,
     essentialCookwareIds: ['cw-1'], // Wok
@@ -36,9 +25,20 @@ export const MASTER_RECIPES: RecipeDefinition[] = [
     lore: 'A gold standard of wok mastery. Day-old rice separated perfectly by blazing heat.'
   },
   {
+    id: 'rcp-2',
+    name: 'Authentic Char Kway Teow',
+    rarity: 'common',
+    image: 'assets/shef/pictures/char-kway-teow.jpg',
+    baseScore: 160,
+    essentialCookwareIds: ['cw-1'], // Wok
+    essentialIngredientIds: ['ig-2', 'ig-6', 'ig-9', 'ig-12', 'ig-18', 'ig-19', 'ig-20'], // Kway Teow, Egg, Lup Cheong, Cockles, Bean Sprouts, Chives, Pork Lard
+    culturalSpiceIds: ['sp-2', 'sp-3', 'sp-8', 'sp-9'], // Light Soy, Dark Soy, Chili Paste, Belacan
+    lore: 'A fiercely charred masterpiece. The pork lard and blood cockles are absolutely non-negotiable.'
+  },
+  {
     id: 'rcp-3',
     name: 'Har Gow (Shrimp Dumplings)',
-    rarity: 'rare',
+    rarity: 'common',
     image: 'assets/shef/pictures/har-gow.jpg',
     baseScore: 130,
     essentialCookwareIds: ['cw-1', 'cw-2'], // Wok + Bamboo Steamer
@@ -60,7 +60,7 @@ export const MASTER_RECIPES: RecipeDefinition[] = [
   {
     id: 'rcp-5',
     name: 'Dry Beef Hor Fun',
-    rarity: 'legendary',
+    rarity: 'rare',
     image: 'assets/shef/pictures/beef-hor-fun.jpg',
     baseScore: 150,
     essentialCookwareIds: ['cw-1'], // Wok
@@ -71,7 +71,7 @@ export const MASTER_RECIPES: RecipeDefinition[] = [
   {
     id: 'rcp-6',
     name: 'Siu Mai (Pork & Shrimp Dumplings)',
-    rarity: 'rare',
+    rarity: 'common',
     image: 'assets/shef/pictures/siu-mai.jpg',
     baseScore: 120,
     essentialCookwareIds: ['cw-1', 'cw-2'], // Wok + Steamer
@@ -104,7 +104,7 @@ export const MASTER_RECIPES: RecipeDefinition[] = [
   {
     id: 'rcp-9',
     name: 'Mapo Tofu',
-    rarity: 'common',
+    rarity: 'rare',
     image: 'assets/shef/pictures/mapo-tofu.webp',
     baseScore: 90,
     essentialCookwareIds: ['cw-1'], // Wok
