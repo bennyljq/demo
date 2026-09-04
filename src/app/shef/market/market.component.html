@@ -34,7 +34,6 @@
       [class.affordable]="runCurrency() >= item.price && !item.purchased"
       [class.unaffordable]="runCurrency() < item.price && !item.purchased">
 
-      <!-- ... Keep labels and icon containers exactly the same ... -->
       <span class="rarity-label">{{ item.rarity }}</span>
 
       <div class="card-top">
@@ -60,6 +59,7 @@
 
       <div class="text-container">
         <h3 class="item-name">{{ item.name }}</h3>
+        <!-- Bundle text logic entirely removed here -->
       </div>
 
       <!-- Button toggles text and disables itself -->

@@ -25,14 +25,17 @@
             
             <div class="card-top">
               <span class="type-badge">{{ item.type }}</span>
-              <span class="uses-badge" [class.limited]="item.defaultUses !== '∞'">
-                @if (item.defaultUses === '∞') {
+              <span class="uses-badge" [class.limited]="item.type == 'ingredient'">
+                @if (item.type !== 'ingredient') {
                   <span class="infinity">∞</span>
-                } @else if (item.defaultUses === 1) {
-                  {{ item.defaultUses }} Use
-                } @else {
-                  {{ item.defaultUses }} Uses
-                }
+                  <!-- all items below are ingredients -->
+                } @else if (item.rarity === 'common') {
+                  5 Uses
+                } @else if (item.rarity === 'rare') {
+                  3 Uses
+                } @else if (item.rarity === 'legendary') {
+                  1 Use
+                } 
               </span>
             </div>
             

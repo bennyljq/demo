@@ -1,4 +1,4 @@
-<nav class="global-nav unified-dossier layer-1 animate-spring-up">
+<nav class="global-nav unified-dossier layer-1 animate-fade">
   <!-- Top Row: Vital Actions -->
   <div class="nav-top-row">
     <div class="nav-shef-info">
@@ -99,11 +99,14 @@
 
 @if (currentPhase() === 'market') {
   <app-market 
-  [(runCurrency)]="runCurrency"
-  [pantryItems]="pantry()"
-  (onItemPurchased)="handleItemPurchased($event)"
-  (onLeaveMarket)="goToService()">
-</app-market>
+    [(runCurrency)]="runCurrency"
+    [pantryItems]="pantry()"
+    [restoredShop]="savedShop()"
+    [initialBribe]="savedBribeCost()"
+    (onItemPurchased)="handleItemPurchased($event)"
+    (onMarketStateChange)="syncMarketState($event)" 
+    (onLeaveMarket)="goToService()">
+  </app-market>
 }
 
 @if (currentPhase() === 'service') {
@@ -191,14 +194,23 @@
 </div>
 
 <footer class="button-footer layer-1" style="flex-direction: column;">
+  
   @if (!canCook()) {
     <p class="footer-tip">Select at least <strong>1 COOKWARE</strong> and <strong>1 INGREDIENT</strong> to start cooking.</p>
   }
-  <button class="artisanal-btn primary" style="width: 100%;" 
-  [disabled]="!canCook()"
-  (click)="playClick(); cookDish()">
-  Cook Dish 🔥
-</button>
+  
+  <div class="footer-button-container">
+    <button class="artisanal-btn secondary" (click)="playShop(); goToMarket()" style="flex-grow: 1;">
+      ← Back to Market
+    </button>
+    @if (canCook()) {
+      <button class="artisanal-btn primary" style="flex-grow: 1;"
+      (click)="playClick(); cookDish()">
+      Cook Dish 🔥
+    </button>
+  }
+</div>
+
 </footer>
 
 </section>
@@ -377,6 +389,10 @@
                 <div class="draft-badge type-cookware" [class]="'rarity-' + item.rarity">
                   <span class="emoji-micro">{{ item.icon }}</span>
                   <span class="draft-name">{{ item.name }}</span>
+                  <!-- Tactile Uses Counter -->
+                  @if (item.uses !== '∞') {
+                    <span class="squircle-counter uses-counter">{{ item.uses }}</span>
+                  }
                 </div>
               }
             </div>
@@ -391,6 +407,10 @@
                 <div class="draft-badge" [class]="'rarity-' + item.rarity">
                   <span class="emoji-micro">{{ item.icon }}</span>
                   <span class="draft-name">{{ item.name }}</span>
+                  <!-- Tactile Uses Counter -->
+                  @if (item.uses !== '∞') {
+                    <span class="squircle-counter uses-counter">{{ item.uses }}</span>
+                  }
                 </div>
               }
             </div>
@@ -405,6 +425,10 @@
                 <div class="draft-badge" [class]="'rarity-' + item.rarity">
                   <span class="emoji-micro">{{ item.icon }}</span>
                   <span class="draft-name">{{ item.name }}</span>
+                  <!-- Tactile Uses Counter -->
+                  @if (item.uses !== '∞') {
+                    <span class="squircle-counter uses-counter">{{ item.uses }}</span>
+                  }
                 </div>
               }
             </div>

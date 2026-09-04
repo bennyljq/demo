@@ -1,7 +1,7 @@
 import { Component, signal, output, computed, inject, input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MarketComponent, MarketItem, ItemType, Rarity } from '../market/market.component';
-import { uiClickSound, waterDripSound, shopSound } from '../shef.component';
+import { uiClickSound, waterDripSound, shopSound, successSound, failSound } from '../shef.component';
 import { MASTER_RECIPES, RecipeDefinition } from '../cook-book/master-recipes';
 import { MASTER_ITEMS } from '../cook-book/master-items';
 import { CookBookComponent } from '../cook-book/cook-book.component';
@@ -128,11 +128,55 @@ export class KitchenComponent implements OnInit {
     }
     return this.shef().name; // Fallback for single names
   });
+  savedShop = signal<MarketItem[]>([]);
+  
+  loadFromSave = input<boolean>(false);
+  savedBribeCost = signal<number>(1);
+  
+  private calculateUses(type: string, rarity: string): number | '∞' {
+    if (type === 'spice' || type === 'cookware') return '∞';
+    
+    if (type === 'ingredient') {
+      if (rarity === 'common') return 5;
+      if (rarity === 'rare') return 3;
+      if (rarity === 'legendary') return 1;
+    }
+    
+    return '∞';
+  }
+  
+  private saveGameState() {
+    const state = {
+      shefId: this.shef().id,
+      currentDay: this.currentDay(),
+      runCurrency: this.runCurrency(),
+      pantry: this.pantry(),
+      savedShop: this.savedShop(),
+      bribeCost: this.savedBribeCost(),
+      currentCustomer: this.currentCustomer(),
+      currentPhase: this.currentPhase()
+    };
+    localStorage.setItem('shef_save_state', JSON.stringify(state));
+  }
   
   ngOnInit() {
+    if (this.loadFromSave()) {
+      const saveRaw = localStorage.getItem('shef_save_state');
+      if (saveRaw) {
+        const state = JSON.parse(saveRaw);
+        this.currentDay.set(state.currentDay);
+        this.runCurrency.set(state.runCurrency);
+        this.pantry.set(state.pantry);
+        this.savedShop.set(state.savedShop || []);
+        this.savedBribeCost.set(state.bribeCost || 1);
+        this.currentCustomer.set(state.currentCustomer);
+        // this.currentPhase.set(state.currentPhase);
+        this.currentPhase.set("customer_reveal"); // default to customer on load
+        return; // Abort standard setup
+      }
+    }
     const shefData = this.shef();
     
-    // Unpack the real database items from the selected chef's loadout
     const startingItems = [
       shefData.startingCookware,
       ...shefData.startingIngredients
@@ -142,12 +186,13 @@ export class KitchenComponent implements OnInit {
       type: item.type as ItemType,
       rarity: item.rarity as Rarity,
       price: item.basePrice,
-      uses: item.defaultUses,
+      uses: this.calculateUses(item.type, item.rarity),
       icon: item.icon,
       isSvg: item.isSvg
     }));
     
     this.pantry.set(startingItems);
+    this.saveGameState();
   }
   
   goToMarket() { 
@@ -187,6 +232,8 @@ export class KitchenComponent implements OnInit {
       // If it's infinite, or doesn't exist in the global pantry yet, append it safely
       return [...current, { ...item }];
     });
+
+    this.saveGameState();
   }
   
   toggleItem(item: MarketItem) {
@@ -333,12 +380,19 @@ export class KitchenComponent implements OnInit {
     // 4. Yield to cinematic transition (2.5 seconds)
     setTimeout(() => {
       this.currentPhase.set('result');
+      if (bestMatch.isGoop) {
+        this.playFail()
+      } else {
+        this.playSuccess()
+      }
     }, 2500);
   }
   
   playClick() { uiClickSound.play(); }
   playDrip() { waterDripSound.play(); }
   playShop() { shopSound.play(); }
+  playSuccess() { successSound.play(); }
+  playFail() { failSound.play(); }
   
   serveCustomer() {
     const result = this.dishResult();
@@ -353,15 +407,18 @@ export class KitchenComponent implements OnInit {
       this.runCurrency.update(c => c + payment);
       this.lastPayment.set(payment);
       this.isRunSuccessful.set(true);
+      this.saveGameState();
     } else {
       // Catastrophic failure
       this.isRunSuccessful.set(false);
+      localStorage.removeItem('shef_save_state');
     }
     
     this.currentPhase.set('day_transition');
   }
   
   nextDay() {
+    this.savedShop.set([]);
     this.currentDay.update(d => d + 1);
     
     // Emit to ShefComponent to trigger the cinematic overlay
@@ -373,7 +430,7 @@ export class KitchenComponent implements OnInit {
       id: `c-0${this.currentDay()}`,
       name: this.generatedCustomer.name,
       // tastyMeterTarget: 60 + (this.currentDay() * 10),
-      tastyMeterTarget: 80,
+      tastyMeterTarget: 100,
       restrictions: [],
       preferences: ['Eats everything!'],
       // compCost: 10 + (this.currentDay() * 2),
@@ -386,5 +443,13 @@ export class KitchenComponent implements OnInit {
     this.selectedItems.set([]);
     this.dishResult.set(null);
     this.currentPhase.set('customer_reveal');
+    this.savedBribeCost.set(1);
+    this.saveGameState();
+  }
+
+  syncMarketState(marketState: { shop: MarketItem[], bribe: number }) {
+    this.savedShop.set(marketState.shop);
+    this.savedBribeCost.set(marketState.bribe);
+    this.saveGameState(); // Disk write
   }
 }

@@ -4,15 +4,15 @@ from the parent .shef-viewport globally.
 */
 
 /* --- CRITICAL SCROLL & SPACING FIX --- */
-:host {
-  /* Establish a flex formatting context to eradicate margin-collapse */
+:host { 
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 100%; 
   
-  /* Replaced strict 'height: 100%' with min-height */
+  /* FIX: Eradicated strict 'height' for 'min-height'. 
+  This allows the host to grow to 2000px+ if needed, providing a full track for the sticky nav. */
   min-height: 100%; 
-  pointer-events: auto;
+  pointer-events: auto; 
 }
 
 /* --- STRUCTURAL DETERMINISM --- */
@@ -296,19 +296,22 @@ from the parent .shef-viewport globally.
 .global-nav {
   width: 92%;
   max-width: 1200px; /* Expanded to give the nav items breathing room */
-  margin: var(--s-1) auto 0;
-  padding: var(--s-1);
+  margin: 0 auto;
+  padding: var(--s-0) var(--s-1);
   display: flex;
   flex-direction: column;
-  gap: var(--s-1);
+  gap: var(--s-0);
   position: sticky;
-  top: var(--s-1);
+  top: 0;
   z-index: 200;
+  align-self: flex-start;
   
   @media (min-width: 768px) {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    margin: var(--s-1) auto 0;
+  gap: var(--s-1);
   }
   
   .nav-top-row {
@@ -316,7 +319,7 @@ from the parent .shef-viewport globally.
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px dashed oklch(0.35 0.03 260);
-    padding-bottom: var(--s-1);
+    padding-bottom: var(--s-0);
     width: 100%;
     
     @media (min-width: 768px) {
@@ -861,8 +864,19 @@ from the parent .shef-viewport globally.
 
 .footer-tip {
   margin: 0;
-
+  
   strong {
     color: var(--primary-pigment)
+  }
+}
+
+.footer-button-container {
+  flex-direction: column; 
+  display: flex; 
+  width: 100%; 
+  gap: 1em;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
   }
 }

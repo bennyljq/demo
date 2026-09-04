@@ -213,7 +213,7 @@
       align-items: center;
       gap: 2px;
       
-      .infinity { font-size: 1.5em; line-height: 0; vertical-align: middle; }
+      .infinity { font-size: 2em; line-height: 0; vertical-align: middle; }
       &.limited { color: var(--primary-pigment); opacity: 1; }
     }
   }
@@ -308,7 +308,7 @@
   
   /* Wide Desktop Breakpoint: Automatically spawns columns as space permits */
   @media (min-width: 1024px) {
-    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(666px, 1fr));
   }
 }
 

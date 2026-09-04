@@ -21,90 +21,99 @@
       </div>
       
       <!-- Tactile Polaroid Frame -->
-      <div class="landing-hero-frame" (click)="playClick(); startService()">
+      <div class="landing-hero-frame" (click)="playClick(); clickHero();">
         <img src="assets/shef/pictures/shef.jpg" alt="A bustling kitchen scene" class="hero-photo">
       </div>
       
       <div class="action-group">
-        <button class="artisanal-btn primary" (click)="playClick(); startService()">
-          Start Service
+        @if (hasSavedGame()) {
+          <!-- The Tactile Continue Button -->
+          <button 
+          class="artisanal-btn primary" 
+          style="background: var(--success-ink); color: var(--alabaster); box-shadow: 0 4px 0 oklch(0.55 0.12 145);" 
+          (click)="playClick(); continueRun()">
+          Continue Service ➔
         </button>
-        <!-- The Codex Replacement -->
-        <button class="artisanal-btn secondary" (click)="playClick(); openCookBook()">
-          📕 Cook Book
-        </button>
-      </div>
-    </section>
-  }
-  
-  @if (currentScreen() === 'selection') {
-    <section class="selection-screen animate-spring-up">
-      <header class="selection-header">
-        <button class="artisanal-btn secondary back-btn" (click)="playClick(); goBack()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-micro">
-            <path d="m12 19-7-7 7-7"></path>
-            <path d="M19 12H5"></path>
-          </svg>
-          <span>Back</span>
-        </button>
-        <h2 class="selection-title">Select Your Shef</h2>
-      </header>
-      
-      <div class="roster-grid">
-        @for (shef of shefRoster(); track shef.id) {
-          <div 
-          class="shef-card layer-1" 
-          [class.locked]="!shef.available"
-          (click)="playClick(); selectShef(shef)">
-          
-          <div class="avatar-frame">
-            <img 
-            class="shef-avatar" 
-            [src]="shef.avatar" 
-            alt="{{ shef.name }} Avatar">
-          </div>
-          
-          <h3>{{ shef.name }}</h3>
-          <p>{{ shef.description }}</p>
-          
-          <!-- Starting Loadout Details -->
-          <div class="loadout-info">
-            <h4 class="tray-label">Starting Loadout</h4>
-            
-            <div class="tray-items">
-              <!-- Dynamic Cookware Badge -->
-              <div class="draft-badge type-cookware" [class]="'rarity-' + shef.startingCookware.rarity">
-                @if (shef.startingCookware.isSvg) {
-                  <div class="svg-micro" [innerHTML]="shef.startingCookware.icon"></div>
-                } @else {
-                  <span class="emoji-micro">{{ shef.startingCookware.icon }}</span>
-                }
-                <span class="draft-name">{{ shef.startingCookware.name }}</span>
-              </div>
-              
-              <!-- Dynamic Ingredients Array -->
-              @for (item of shef.startingIngredients; track item.id) {
-                <div class="draft-badge" [class]="'rarity-' + item.rarity">
-                  @if (item.isSvg) {
-                    <div class="svg-micro" [innerHTML]="item.icon"></div>
-                  } @else {
-                    <span class="emoji-micro">{{ item.icon }}</span>
-                  }
-                  <span class="draft-name">{{ item.name }}</span>
-                </div>
-              }
-            </div>
-          </div>
-          
-          @if (!shef.available) {
-            <span class="badge locked-badge">Sleeping</span>
-          } @else {
-            <span class="badge available-badge">Ready</span>
-          }
-        </div>
       }
+      
+      <button class="artisanal-btn primary" (click)="playClick(); startService()">
+        New Service
+      </button>
+      <button class="artisanal-btn secondary" (click)="playClick(); openCookBook()">
+        📕 Cook Book
+      </button>
     </div>
   </section>
+}
+
+@if (currentScreen() === 'selection') {
+  <section class="selection-screen animate-spring-up">
+    <header class="selection-header">
+      <button class="artisanal-btn secondary back-btn" (click)="playClick(); goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-micro">
+          <path d="m12 19-7-7 7-7"></path>
+          <path d="M19 12H5"></path>
+        </svg>
+        <span>Back</span>
+      </button>
+      <h2 class="selection-title">Select Your Shef</h2>
+    </header>
+    
+    <div class="roster-grid">
+      @for (shef of shefRoster(); track shef.id) {
+        <div 
+        class="shef-card layer-1" 
+        [class.locked]="!shef.available"
+        (click)="playClick(); selectShef(shef)">
+        
+        <div class="avatar-frame">
+          <img 
+          class="shef-avatar" 
+          [src]="shef.avatar" 
+          alt="{{ shef.name }} Avatar">
+        </div>
+        
+        <h3>{{ shef.name }}</h3>
+        <p>{{ shef.description }}</p>
+        
+        <!-- Starting Loadout Details -->
+        <div class="loadout-info">
+          <h4 class="tray-label">Starting Loadout</h4>
+          
+          <div class="tray-items">
+            <!-- Dynamic Cookware Badge -->
+            <div class="draft-badge type-cookware" [class]="'rarity-' + shef.startingCookware.rarity">
+              @if (shef.startingCookware.isSvg) {
+                <div class="svg-micro" [innerHTML]="shef.startingCookware.icon"></div>
+              } @else {
+                <span class="emoji-micro">{{ shef.startingCookware.icon }}</span>
+              }
+              <span class="draft-name">{{ shef.startingCookware.name }}</span>
+            </div>
+            
+            <!-- Dynamic Ingredients Array -->
+            @for (item of shef.startingIngredients; track item.id) {
+              <div class="draft-badge" [class]="'rarity-' + item.rarity">
+                @if (item.isSvg) {
+                  <div class="svg-micro" [innerHTML]="item.icon"></div>
+                } @else {
+                  <span class="emoji-micro">{{ item.icon }}</span>
+                }
+                <span class="draft-name">{{ item.name }}</span>
+              </div>
+            }
+          </div>
+        </div>
+        
+        @if (!shef.available) {
+          <span class="badge locked-badge">Sleeping</span>
+        } @else {
+          <span class="badge available-badge">Ready</span>
+        }
+      </div>
+    }
+  </div>
+</section>
 }
 
 <!-- We group these states so the Kitchen doesn't get destroyed -->
@@ -141,10 +150,11 @@
   <!-- We collapse it via display:none while transitioning, preserving all state -->
   <div 
   [style.display]="currentScreen() === 'transition' ? 'none' : 'flex'" 
-  style="width: 100%; height: 100%; flex-direction: column;">
+  style="width: 100%; min-height: 100%; flex-direction: column;">
   
   <app-kitchen 
   [shef]="selectedShef()!"
+  [loadFromSave]="isContinuingRun()"
   (onOpenAlmanac)="openAlmanac()"
   (onNextDay)="triggerNextDayTransition($event)"
   (onRunEnd)="endRun()">

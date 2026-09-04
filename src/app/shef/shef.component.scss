@@ -672,53 +672,6 @@
   }
 }
 
-/* --- GLOBAL NAV BAR --- */
-.global-nav {
-  width: 92%;
-  max-width: 1200px;
-  margin: var(--s-1) auto 0;
-  padding: var(--s-0) var(--s-1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  
-  /* Z-Axis Realism */
-  position: sticky;
-  top: var(--s-0);
-  z-index: 200;
-  gap: 8px;
-  
-  .nav-shef-info {
-    display: flex;
-    align-items: center;
-    gap: var(--s-0);
-    
-    .nav-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 2px;
-      border: 1px solid oklch(0.35 0.03 260);
-      object-fit: cover;
-    }
-    .nav-name {
-      font-family: 'Newsreader', serif;
-      font-size: 1.2rem;
-      font-style: italic;
-      color: var(--alabaster);
-    }
-  }
-  
-  .nav-actions {
-    display: flex;
-    gap: var(--s-0);
-    
-    .micro-btn {
-      padding: 0.35rem 0.75rem;
-      font-size: 0.8rem;
-    }
-  }
-}
-
 /* --- LAYER 2: GLOBAL PANTRY MODAL --- */
 .modal-backdrop {
   position: fixed;
