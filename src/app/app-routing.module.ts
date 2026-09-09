@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomepageComponent } from './components-wip/homepage/homepage.component';
 import { HomepageV2Component } from './components-active/homepage-v2/homepage-v2.component';
-import { HomepageV3Component } from './components-active/homepage-v3/homepage-v3.component';
+import { HomepageSlopComponent } from './components-active/homepage-v3/homepage-v3.component';
 import { AboutComponent } from './components-wip/about/about.component';
 import { ExperimentalComponent } from './components-active/experimental/experimental.component';
 import { About2Component } from './components-active/about2/about2.component';
@@ -36,7 +36,7 @@ import { KeyboardWizardWebComponent } from './keyboard-wizard-web/app.component'
 const routes: Routes = [
   { path: '', component: HomepageV2Component },
   { path: 'v2', component: HomepageV2Component },
-  { path: 'v3', component: HomepageV3Component },
+  { path: 'slop', component: HomepageSlopComponent },
   { path: 'about', component: About2Component },
   { path: 'sandbox', component: ExperimentalComponent },
   { path: 'enterprise', component: EnterpriseComponent },

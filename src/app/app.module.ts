@@ -10,7 +10,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 // Components //
 import { HomepageComponent } from './components-wip/homepage/homepage.component';
 import { HomepageV2Component } from './components-active/homepage-v2/homepage-v2.component';
-import { HomepageV3Component } from './components-active/homepage-v3/homepage-v3.component';
+import { HomepageSlopComponent } from './components-active/homepage-v3/homepage-v3.component';
 import { AboutComponent } from './components-wip/about/about.component';
 import { HistoryComponent } from './components-wip/history/history.component';
 import { ExperimentalComponent } from './components-active/experimental/experimental.component';
@@ -78,7 +78,7 @@ import { Gravity2025DialogVelocityComponent } from './gravity2025-dialog-velocit
     AppComponent,
     HomepageComponent,
     HomepageV2Component,
-    HomepageV3Component,
+    HomepageSlopComponent,
     AboutComponent,
     HistoryComponent,
     ExperimentalComponent,

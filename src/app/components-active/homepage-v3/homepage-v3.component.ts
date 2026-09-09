@@ -25,7 +25,7 @@ export interface NavPortal {
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomepageV3Component {
+export class HomepageSlopComponent {
   readonly name = 'Benny Lim';
   readonly location = 'Singapore · 01°17′N 103°51′E';
   readonly year = new Date().getFullYear();
