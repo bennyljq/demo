@@ -1,0 +1,50 @@
+<div class="phy-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+  <mat-toolbar class="phy-toolbar" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <button class="phy-menu-button" [ngClass]="{'dark-theme': themeService.isDarkTheme}" mat-icon-button [matMenuTriggerFor]="phyMenu">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <div class="spacer"></div>
+    <div class="phy-dark-mode" [ngClass]="{'dark-theme': themeService.isDarkTheme}" [title]="themeService.isDarkTheme ? 'Toggle Light Mode' : 'Toggle Dark Mode' ">
+      <mat-icon style="margin-right: -28px;">wb_sunny</mat-icon>
+      <app-switch (switchEmitter)="themeService.isDarkTheme = $event"></app-switch>
+      <mat-icon style="margin-left: -28px; transform: rotate(135deg) translateY(-2px);">brightness_3</mat-icon>
+    </div>
+  </mat-toolbar>
+  <!-- <div class="phy-chapter f-poppins" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+  {{chapters[selectedIndex]}}
+</div> -->
+@if (selectedIndex==0) {
+  <app-physics-intro (selectChapter)="onChapterSelect($event)" [selectedPageIndex]="childPageIndex"></app-physics-intro>
+}
+@if (selectedIndex==1) {
+  <app-physics-watt (selectChapter)="onChapterSelect($event)" [selectedPageIndex]="childPageIndex"></app-physics-watt>
+}
+@if (selectedIndex==2) {
+  <app-physics-battery (selectChapter)="onChapterSelect($event)" [selectedPageIndex]="childPageIndex"></app-physics-battery>
+}
+@if (selectedIndex==3) {
+  <app-physics-power (selectChapter)="onChapterSelect($event)" [selectedPageIndex]="childPageIndex"></app-physics-power>
+}
+</div>
+<mat-menu #phyMenu="matMenu">
+  @for (chapter of chapters; track chapter; let i = $index) {
+    <button mat-menu-item
+      (click)="selectedIndex=i; childPageIndex=0">
+      <div style="display: flex; width: 220px;" [ngStyle]="{'font-weight': i==selectedIndex ? '500' : '400'}" class="f-poppins">
+        {{chapter}}
+        <div class="spacer"></div>
+        <!-- <mat-icon class="phy-menu-radio" *ngIf="i==selectedIndex">chevron_left</mat-icon> -->
+        @if (i==selectedIndex) {
+          <mat-icon class="phy-menu-radio">lightbulb</mat-icon>
+        }
+      </div>
+    </button>
+  }
+  <button mat-menu-item routerLink="">
+    <div style="display: flex; width: 220px; color: Firebrick;" class="f-poppins">
+      Exit Course
+      <div class="spacer"></div>
+      <mat-icon class="phy-menu-exit">exit_to_app</mat-icon>
+    </div>
+  </button>
+</mat-menu>

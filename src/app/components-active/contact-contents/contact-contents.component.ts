@@ -1,0 +1,20 @@
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+
+@Component({
+    selector: 'app-contact-contents',
+    templateUrl: './contact-contents.component.html',
+    styleUrls: ['./contact-contents.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
+})
+export class ContactContentsComponent {
+
+  download_resume() {
+    // window.open("/assets/Bennys Resume - November 2023.pdf", '_blank');
+    let link = document.createElement("a");
+    link.download = "Benny's Resume - 2026.pdf";
+    link.href = "assets/Benny's Resume - 2026.pdf";
+    link.click();
+  }
+
+}

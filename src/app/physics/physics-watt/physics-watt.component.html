@@ -1,0 +1,215 @@
+<div class="phy-content-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}" (swipeleft)="nextPage()" (swiperight)="prevPage()">
+  <div class="phy-intro-title f-merri" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    Watt is Love
+  </div>
+  <div class="phy-content-subcontainer" [ngStyle]="{
+    'transform': 'translateX(calc(-' + 100/numPages + '%*' + selectedPageIndex + '))'
+    }">
+    <ng-container [ngTemplateOutlet]="page1"></ng-container>
+    <ng-container [ngTemplateOutlet]="page2"></ng-container>
+    <ng-container [ngTemplateOutlet]="page3"></ng-container>
+    <ng-container [ngTemplateOutlet]="page4"></ng-container>
+  </div>
+  <div class="phy-dot-container">
+    <div class="phy-dot-touch-target" *ngFor="let page of pagesArray; let i = index"
+    (click)="selectedPageIndex = i; setButtons()"
+    [ngClass]="{'phy-dot-touch-target-active': i == selectedPageIndex}">
+      <div class="phy-dot"
+      [ngClass]="{'dark-theme': themeService.isDarkTheme, 'phy-dot-active': i == selectedPageIndex}"></div>
+    </div>
+  </div>
+</div>
+<div class="phy-button-container">
+  <button mat-stroked-button *ngIf="selectedPageIndex == 0"
+  class="phy-button phy-button-stroked f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="prevChapter()">
+    <mat-icon>arrow_back</mat-icon>
+    &nbsp; Introduction
+  </button>
+  <button mat-stroked-button *ngIf="!hideBack"
+  class="phy-button phy-button-stroked f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="prevPage()">
+    Back
+  </button>
+  <div class="spacer"></div>
+  <button mat-flat-button *ngIf="!hideNext"
+  class="phy-button phy-button-flat f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="nextPage()">
+    Next
+  </button>
+  <button mat-flat-button *ngIf="selectedPageIndex == this.numPages-1"
+  class="phy-button phy-button-flat f-poppins" 
+  [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+  (click)="nextChapter()">
+    <div style="display: flex; align-items: center;">
+      Battery, don't hurt me &nbsp;
+      <mat-icon>arrow_forward</mat-icon>
+    </div>
+  </button>
+</div>
+
+<ng-template #page1>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      <!-- <div [mathjax]="content"></div>
+      <div [mathjax]="einstein"></div> -->
+      Like most young adults, Dionne charges her mobile phone overnight after a long day of use. 
+      <br><br>
+      She notices that the charging brick is rated for <strong>25W</strong>, while the battery capacity is <strong>5000mAh</strong>. 
+      <br><br>
+      Dionne recalls learning that <strong>watt (W)</strong> is the standard unit for <strong>power</strong>, which measures the rate of energy transfer.
+      <br><br>
+      With <strong>joules (J)</strong> being the standard unit for <strong>energy</strong>, 1 watt is equivalent to an energy transfer rate of 1 joule per second. 
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page2>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      To visualise watts and joules, Dionne <br> imagines electrical energy to be stored in packets of 1 joule each.
+      <div class="phy-equation">
+        <div class="phy-joule-container">
+          <i class="material-icons phy-joule-icon">electric_bolt</i>
+        </div>&nbsp;
+        <div [mathjax]="joule_eq"></div>
+      </div>
+      If a battery is being charged at a rate of <strong>{{current_watt}}W</strong>, that means <strong>{{current_watt}}J</strong> of energy is flowing into it <br><strong>every second</strong>.
+      <div class="phy-equation">
+        <i class="material-icons phy-charger">electrical_services</i>
+        <div class="phy-joule-container phy-joule-moving"
+        [ngStyle]="{'animation-delay': '0s', 'animation-duration': anim_duration+'s', 'position': 'absolute'}">
+          <i class="material-icons phy-joule-icon">electric_bolt</i>
+        </div>
+        <div class="phy-joule-container phy-joule-moving"
+        [ngStyle]="{'animation-delay': anim_delay+'s', 'animation-duration': anim_duration+'s', 'position': 'absolute'}">
+          <i class="material-icons phy-joule-icon">electric_bolt</i>
+        </div>
+        <div class="phy-joule-container phy-joule-moving"
+        [ngStyle]="{'animation-delay': 2*anim_delay+'s', 'animation-duration': anim_duration+'s', 'position': 'absolute'}">
+          <i class="material-icons phy-joule-icon">electric_bolt</i>
+        </div>
+        <div class="phy-joule-container phy-joule-moving"
+        [ngStyle]="{'animation-delay': 3*anim_delay+'s', 'animation-duration': anim_duration+'s', 'position': 'absolute'}">
+          <i class="material-icons phy-joule-icon">electric_bolt</i>
+        </div>
+        <div class="phy-joule-container phy-joule-moving" 
+        [ngStyle]="{'animation-delay': 4*anim_delay+'s', 'animation-duration': anim_duration+'s', 'position': 'absolute'}">
+          <i class="material-icons phy-joule-icon">electric_bolt</i>
+        </div>
+        <i class="material-icons phy-battery">battery_charging_full</i>
+      </div>
+      <div class="phy-equation">
+        <button mat-flat-button
+        class="phy-button phy-button-flat f-poppins" 
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+        [ngStyle]="{'opacity': current_watt == 1 ? '0' : '1'}"
+        [disabled]="current_watt == 1"
+        (click)="set_watt('minus')">
+          -
+        </button>
+        <div style="width: 12%;"></div>
+        <span class="phy-math-font"
+        style="width: 12%; text-align: center; transform: scale(1.2);">
+          {{current_watt}} <em>W</em>
+        </span>
+        <div style="width: 12%;"></div>
+        <button mat-flat-button
+        class="phy-button phy-button-flat f-poppins" 
+        [ngClass]="{'dark-theme': themeService.isDarkTheme}"
+        [ngStyle]="{'opacity': current_watt == 10 ? '0' : '1'}"
+        [disabled]="current_watt == 10"
+        (click)="set_watt('add')">
+          +
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page3>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      The relationship between watts and joules can thus be represented by the equation:
+      <div class="phy-equation">
+        <div [mathjax]="watt"></div>
+      </div>
+      However in reality, energy does not flow in discrete packets. Instead, energy flow is more analogous to filling a glass with water.
+      <div class="phy-equation">
+        <img src="assets/tap.svg" class="phy-tap" *ngIf="!themeService.isDarkTheme">
+        <img src="assets/tap_white.svg" class="phy-tap" *ngIf="themeService.isDarkTheme">
+      </div>
+      <div class="phy-equation">
+        <div class="phy-joule-flow-container">
+          <i class="material-icons phy-joule-icon phy-joule-flowing">electric_bolt</i>
+          <i class="material-icons phy-joule-icon phy-joule-flowing" style="animation-delay: 0.25s;">electric_bolt</i>
+          <i class="material-icons phy-joule-icon phy-joule-flowing" style="animation-delay: 0.5s;">electric_bolt</i>
+          <i class="material-icons phy-joule-icon phy-joule-flowing" style="animation-delay: 0.75s;">electric_bolt</i>
+        </div>
+      </div>
+      <div class="phy-equation">
+        <div class="phy-cup-container" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+          <div class="phy-cup-filling"></div>
+          <div class="phy-cup-filling-bottom"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #page4>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      In this chapter, we have learnt:
+      <ul>
+        <li>A <strong>watt (W)</strong> is a unit of <strong>power</strong>.</li>
+        <li>A <strong>joule (J)</strong> is a unit of <strong>energy</strong>.</li>
+        <li>Power is the <strong>rate of transfer</strong> of energy.</li>
+        <li>Watts and joules are related by the equation:</li>
+      </ul>
+      <div class="phy-equation">
+        <div [mathjax]="watt"></div>
+      </div>
+      However, Dionne remains confused about the battery capacity being measured in <strong>mAh</strong> instead of <strong>J</strong>. 
+      <br><br>
+      All this and more will be uncovered in the next chapter, <strong>"Battery, don't hurt me"</strong>.
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #dummy>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      However, Dionne remains confused about the battery capacity being <strong>5000mAh</strong>. 
+      <br><br>
+      She reasons that since the charging speed is in watts, battery capacity should be in joules. 
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #dummy>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      But how does a charging speed of <strong>25W</strong> even relate to the battery capacity of <strong>3000mAh</strong>? 
+      <br><br>
+      It would certainly make more sense if the battery capacity was measured in joules instead, Dionne thought. If so, the total charging time would simply be capacity divided by wattage.
+      <br><br>
+      As we will uncover later, there turns out to be a rather convoluted way to indirectly convert <strong>mAh</strong> to <strong>J</strong>. 
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #dummy>
+  <div class="phy-content" [ngClass]="{'dark-theme': themeService.isDarkTheme}">
+    <div class="phy-intro-desc">
+      Before attempting to convert mAh to J, Dionne wanted to first estimate the battery capacity in joules.
+      <br><br>
+      Starting with a battery percentage of 25%, Dionne records that it takes approximately 90 minutes to fully charge.
+      <br><br>
+      Can you estimate the battery capacity in joules?
+    </div>
+  </div>
+</ng-template>

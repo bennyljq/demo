@@ -1,0 +1,60 @@
+$t2-transition-duration: 0.333s;
+* {
+  --bg-color: hsl(240, 75%, 85%); 
+  --bg-color-2: GhostWhite; 
+  --text-color: black;
+  --concept-bg: GhostWhite;
+  --train-color: BlueViolet;
+
+  --red-line: #e22726;
+
+  transition-duration: $t2-transition-duration;
+  transition-timing-function: ease-in-out;
+}
+.dark-theme {
+  --bg-color: DimGrey; 
+  --bg-color-2: rgb(33, 33, 33); 
+  --text-color: Gainsboro; 
+  --concept-bg: black;
+  --train-color: BlueViolet;
+}
+.t2-fade-up {
+  animation: t2-fade-up 0.5s ease-in-out;
+}
+.t2-fade-down {
+  animation: t2-fade-down 0.5s ease-in-out;
+}
+.t2-fade-out-left {
+  animation: fade-out-left 0.5s ease-in-out;
+  opacity: 0;
+}
+@keyframes t2-fade-up {
+  from { 
+    transform: translateY(1.5vh);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes t2-fade-down {
+  from { 
+    transform: translateY(-1.5vh);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes fade-out-left {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  } 
+  100% {
+    transform: translateX(-5vw);
+    opacity: 0;
+  } 
+}

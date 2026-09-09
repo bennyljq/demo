@@ -1,0 +1,150 @@
+@if (showScrollButton()) {
+  <button mat-icon-button class="scroll-top-button" (click)="scrollToTop()">
+    <mat-icon>arrow_upward</mat-icon>
+  </button>
+}
+
+<div #historyContainer class="history-container" (scroll)="onScroll($event)">
+  
+  <!-- We add "let isOdd = $odd" to the @for statement -->
+  @for (project of projects; track project.id; let isOdd = $odd) {
+    
+    <!-- We replace project.reverseLayout with isOdd -->
+    <div class="history-item" 
+    [ngClass]="isLargeScreen() ? (isOdd ? 'flex-row flex-row-reverse' : 'flex-row') : 'flex-col'">
+    
+    <!-- Action/Logo Block -->
+    <div class="logo-container"
+    (mouseenter)="project.isHovered = true"
+    (mouseleave)="project.isHovered = false"
+    [routerLink]="project.actionType === 'route' ? project.actionTarget : null"
+    (click)="project.actionType !== 'route' ? handleAction(project) : null">
+    
+    <div class="logo-title f-poppins" [class.logo-title-hover]="project.isHovered">
+      <div style="transform: skew(15deg)">
+        <span [innerHTML]="project.titleHtml"></span><br>
+        <span class="logo-subtitle">{{ project.subtitle }}</span>
+      </div>
+    </div>
+    
+    @if (project.id === 'snowpiercer') {
+      <div class="logo" [ngStyle]="project.customLogoStyles">
+        <img [src]="project.imgSrc" [class]="project.imgClass" [class.logo-hover]="project.isHovered">
+      </div>
+    } @else {
+      <img [src]="project.imgSrc" [class]="project.imgClass" [ngStyle]="project.customLogoStyles" [class.logo-hover]="project.isHovered">
+    }
+    
+    <div class="logo-link f-poppins" [class.logo-link-hover]="project.isHovered">
+      <div style="transform: skew(15deg)">
+        {{ project.linkText }} 
+        <span class="f-hino" style="font-weight: bold;" 
+        [style.border-bottom]="project.actionType === 'download' ? '1px solid white' : 'none'">
+        {{ project.linkIcon }}
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- Description Text Injection -->
+<div class="f-poppins" [ngClass]="isLargeScreen() ? (isOdd ? 'history-text' : 'history-text-alt') : 'history-text-small'">
+  <ng-container *ngTemplateOutlet="getTemplateForId(project.id)"></ng-container>
+</div>
+
+</div>
+}
+
+<div style="height: 25vh; width: 100%;"></div>
+</div>
+
+<!-- ============================================== -->
+<!-- TEXT CONTENT TEMPLATES                         -->
+<!-- ============================================== -->
+
+<ng-template #desc_potong>
+  <a href="https://potong.io" target="_blank">potong.io</a> is a minimalist geometry puzzle game that tests your spatial awareness.
+  <br><br>
+  I built this from scratch using Angular 21 to keep the experience lightweight and responsive. Under the hood, it uses a custom Mulberry32 PRNG engine to ensure every shape is deterministic. There is no backend, no ads, and no database.
+</ng-template>
+
+<ng-template #desc_keyboard_wizard>
+  <strong>Keyboard Wizard</strong> is an indie game I'm currently working on. 
+  <br><br>
+  The vision: A high-APM roguelite typing game where players cast customizable spells and defend against enemy projectiles. It combines an addictive typing loop with strategic, Scrabble-esque RPG progression.
+  <br><br>
+  Built in Godot.
+</ng-template>
+
+<ng-template #desc_switchyon>
+  Architected and developed a high-performance, serverless portfolio website for my talented friend, <strong>Masami</strong>, who's a Japanese actress and DJ. Focused on advanced motion design, stateless architecture, and long-term maintainability.
+  <br><br>
+  It was also a fun break from corporate life 🤪
+</ng-template>
+
+<ng-template #desc_enterprise>
+  A snippet of the bank-wide Angular component library of which I was the principal developer at DBS Bank.
+</ng-template>
+
+<ng-template #desc_parabola>
+  Parabola is a recreational math magazine published by the University of New South Wales since 1964.
+  <br><br>
+  <strong>Prime Numbers Generated From Highly Composite Numbers</strong> is a Number Theory article of mine which Parabola had graciously published in December 2018.
+</ng-template>
+
+<ng-template #desc_3body>
+  A refinement of the <b>Gravity Simulator 2023</b> project, built in HTML Canvas within Angular 21.
+  <br><br>
+  This canvas presents five quasi-stable three-body configurations interacting gravitationally.
+  <br><br>
+  I plan to turn this into a fun little game in the near future.
+</ng-template>
+
+<ng-template #desc_physics>
+  An interactive Physics lesson on electricity in our everyday lives.
+  <br><br>
+  This project showcases storytelling, scientific knowledge, and technical depth in UI/UX engineering. It is also a step towards my goal of building a career in Educational Technology.
+  <br><br>
+  Do give the lesson a shot - I hope you learn something from it! 🙃
+</ng-template>
+
+<ng-template #desc_gravity>
+  A gravity simulator which is built entirely in TypeScript and within the Angular framework.
+  <br><br>
+  This project showcases the building of a physics engine from scratch, and demonstrates technical competency in scripting and optimisation.
+</ng-template>
+
+<ng-template #desc_brownian2>
+  A refinement of the <b>Brownian Motion</b> project, also built in HTML Canvas.
+  <br><br>
+  Particles here collide and observe viscosity and gravity.
+</ng-template>
+
+<ng-template #desc_brownian1>
+  A particle simulator built in HTML Canvas.
+  <br><br>
+  Particles here are "repelled" by the cursor and on touch. My two-year-old goddaughter has taken a liking to this.
+  <br><br>
+  <strong>2026 update</strong>: I'm working on another <a routerLink="/gravity-2026">satisfying particle simulator</a> which attracts on touch (or click), and explodes on release. My now four-year-old goddaughter is also quite tickled by this.
+</ng-template>
+
+<ng-template #desc_twinprimes>
+  <strong>On the Infinitude of Twin Primes</strong> is another Number Theory paper I'm currently working on.
+  <br><br>
+  I have since received positive reviews, hence I plan to submit this paper for publishing in the near future.
+  <br><br>
+  Any interested readers are welcome to download the latest draft.
+</ng-template>
+
+<ng-template #desc_snowpiercer>
+  Supporting material for an ongoing civil engineering project. See the following project <b>Train Simulator 2023</b> for additional context.
+</ng-template>
+
+<ng-template #desc_train>
+  A simulation of a novel, self-designed train management system.
+  <br><br>
+  I have since discovered that professional engineers at <a href="https://ethz.ch/en.html" target="_blank">ETH Zurich</a> are working on something
+  <a href="https://www.sciencedirect.com/science/article/pii/S2210970621000081#bib40" target="_blank">similar</a>.
+  <br><br>
+  In hopes of a possible collaboration in the near future, I plan to furnish this simulation with
+  <strong>rigorous statistical analysis</strong> along with <strong>beautiful animations and data visualisation</strong>.
+</ng-template>

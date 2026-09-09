@@ -1,0 +1,140 @@
+.game-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  
+  /* Changed from vh to dvh to fix mobile browser UI clipping */
+  height: 100dvh; 
+  
+  overflow: hidden;
+  position: relative;
+  background-color: #030308;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none; 
+  cursor: crosshair; 
+}
+
+.hud {
+  position: absolute;
+  /* Respects mobile notches/status bars */
+  top: max(20px, env(safe-area-inset-top)); 
+  left: max(20px, env(safe-area-inset-left));
+  right: max(20px, env(safe-area-inset-right));
+  
+  font-family: 'Courier New', Courier, monospace;
+  color: #fff;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* Allows the reset button to drop to next line on ultra-narrow phones */
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(20px, 5vw, 32px); /* Smoother scaling for narrow devices */
+  letter-spacing: 4px;
+  color: #00cc77;
+  text-shadow: 0 0 10px rgba(0, 255, 170, 0.8);
+}
+
+.reset-btn {
+  pointer-events: auto;
+  background: transparent;
+  color: #ff0055;
+  border: 2px solid #ff0055;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  font-size: clamp(14px, 3vw, 16px);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 0, 85, 0.5), inset 0 0 5px rgba(255, 0, 85, 0.5);
+  text-shadow: 0 0 5px #ff0055;
+  transition: all 0.2s ease;
+}
+
+.reset-btn:hover {
+  background: rgba(255, 0, 85, 0.2);
+  box-shadow: 0 0 15px rgba(255, 0, 85, 0.8), inset 0 0 10px rgba(255, 0, 85, 0.8);
+}
+
+.reset-btn:active {
+  background: rgba(255, 0, 85, 0.5);
+}
+
+.stats p {
+  margin: 10px 0;
+  font-size: clamp(16px, 4vw, 20px);
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(0, 255, 170, 0.8);
+}
+
+.stats span {
+  color: #ffaa00;
+  text-shadow: 0 0 10px rgba(255, 170, 0, 0.8);
+}
+
+.instructions {
+  margin-top: 15px;
+  font-size: clamp(12px, 3vw, 14px);
+  color: #aaaaaa;
+  animation: pulse 2s infinite;
+}
+
+.score-zones {
+  position: absolute;
+  /* Lifts above iOS home indicator if present */
+  bottom: max(1dvh, env(safe-area-inset-bottom)); 
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  width: 100%;
+  
+  /* Changed to dvh to keep mapping perfect with the canvas height */
+  max-width: min(100vw, calc(100dvh * (22/46))); 
+  
+  justify-content: space-evenly;
+  pointer-events: none;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  font-size: clamp(12px, 2.5vw, 18px); /* Widen the clamp for small screens */
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  z-index: 10;
+}
+
+.score-zones div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Perfect Geometry mapping: Outer Bins are 3.5 units, Inner Bins are 3 units */
+.sz-outer { flex: 3.5; }
+.sz-inner { flex: 3; }
+
+.score-zones .jackpot {
+  color: #ffaa00;
+  text-shadow: 0 0 15px rgba(255, 170, 0, 1);
+  font-size: clamp(16px, 3.5vw, 24px); /* Slightly more aggressive clamp */
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}

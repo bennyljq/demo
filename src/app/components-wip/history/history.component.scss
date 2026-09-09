@@ -1,0 +1,85 @@
+$year-ball-diameter: max(7vh, 66px);
+$year-ball-border-colour: firebrick;
+$year-ball-border-width: calc($year-ball-diameter * 0.03);
+$year-ball-blur-radius: calc($year-ball-border-width * 1);
+$year-ball-opacity: 90%;
+.history-container {
+  overflow-y: scroll;
+  height: 100%;
+  --mask: linear-gradient(to bottom, 
+      rgba(0,0,0, 0) 0,   rgba(0,0,0, 1) 1%, 
+      rgba(0,0,0, 1) 85%, rgba(0,0,0, 0) 100%
+  ) 100% 50% / 100% 100% repeat-x;
+  -webkit-mask: var(--mask); 
+  mask: var(--mask);
+  padding-left: calc($year-ball-blur-radius + $year-ball-border-width);
+}
+.history-container::-webkit-scrollbar {
+  width: min(1vw, 10px);
+}
+.history-container::-webkit-scrollbar-thumb {
+  background: rgb(178, 34, 34, 0.9);
+  border-radius: 5px;
+}
+.year-ball {
+  width: $year-ball-diameter;
+  height: $year-ball-diameter;
+  border-radius: 50%;
+  background-color: salmon;
+  justify-content: center;
+  align-items: center;
+  font-size: calc($year-ball-diameter * 0.3);
+  color: white;
+  box-shadow: 0 0 $year-ball-blur-radius $year-ball-border-width $year-ball-border-colour;
+  opacity: $year-ball-opacity;
+  z-index: 2;
+}
+.year-bar {
+  height: 33px;
+  background-color: $year-ball-border-colour;
+  width: calc($year-ball-border-width / 2);
+  margin-left: calc($year-ball-diameter * 0.5 - calc($year-ball-border-width / 4));
+  opacity: $year-ball-opacity;
+  box-shadow: 0 0 $year-ball-blur-radius 1px $year-ball-border-colour;
+  z-index: 1;
+  margin-top: calc($year-ball-border-width * 0.5);
+  margin-bottom: calc($year-ball-border-width * -0.5);
+}
+.month-ball {
+  width: calc($year-ball-diameter * 0.75);
+  height: calc($year-ball-diameter * 0.75);
+  border-radius: 50%;
+  background-color: salmon;
+  justify-content: center;
+  align-items: center;
+  font-size: calc($year-ball-diameter * 0.25);
+  color: white;
+  box-shadow: 0 0 $year-ball-blur-radius $year-ball-border-width $year-ball-border-colour;
+  margin-left: calc($year-ball-diameter * 0.125);
+  opacity: $year-ball-opacity;
+  z-index: 2;
+}
+.month-container {
+  align-items: center;
+  width: 90%;
+}
+.month-bar {
+  height: calc($year-ball-border-width / 2);
+  width: calc($year-ball-diameter / 2);
+  box-shadow: 0 0 $year-ball-blur-radius 1px $year-ball-border-colour;
+  background-color: $year-ball-border-colour;
+}
+.history-text {
+  align-items: center;
+  opacity: $year-ball-opacity;
+  width: 80%;
+}
+.text-container {
+  box-shadow: 0 0 $year-ball-blur-radius $year-ball-border-width $year-ball-border-colour;
+  background-color: MistyRose;
+  font-size: calc($year-ball-diameter * 0.2);
+  line-height: calc($year-ball-diameter * 0.3);
+  color: black;
+  padding: calc($year-ball-diameter * 0.1);
+  border-radius: calc($year-ball-diameter * 0.1);
+}

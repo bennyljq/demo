@@ -1,0 +1,159 @@
+<main class="atelier-root" [class.is-exiting]="isExiting">
+  <!-- Tactile Analog Grain Overlay -->
+  <div class="analog-grain" aria-hidden="true"></div>
+
+  <!-- Environmental Ambient Light Anchor -->
+  <div class="environmental-light" aria-hidden="true"></div>
+
+  <div class="atelier-container">
+    <!-- Masthead / Editorial Folio -->
+    <header class="masthead">
+      <div class="masthead-left">
+        <div class="monogram-seal" aria-label="Benny Lim Monogram">
+          <span class="seal-glyph">BL</span>
+        </div>
+        <div class="masthead-identity">
+          <span class="masthead-title">{{name}}</span>
+          <span class="masthead-coordinates">{{location}}</span>
+        </div>
+      </div>
+
+      <div class="masthead-center">
+        <span class="edition-tag">FOLIO № {{year}} · VOL. III</span>
+      </div>
+
+      <div class="masthead-right">
+        <button 
+          type="button" 
+          class="util-action" 
+          (click)="openResume()" 
+          title="Inspect Curriculum Vitae (PDF)">
+          <span class="util-glyph">⎙</span>
+          <span class="util-label">Curriculum Vitae</span>
+        </button>
+        <div class="status-indicator">
+          <span class="status-pip"></span>
+          <span class="status-label">Active Atelier</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="atelier-divider" aria-hidden="true">
+      <span class="divider-notch start"></span>
+      <span class="divider-line"></span>
+      <span class="divider-glyph">✦</span>
+      <span class="divider-line"></span>
+      <span class="divider-notch end"></span>
+    </div>
+
+    <!-- Editorial Core / Hero Section -->
+    <section class="hero-section" aria-label="Introduction">
+      <div class="hero-prologue">
+        <span class="kicker-greeting">Hello there!</span>
+        <span class="kicker-rule"></span>
+      </div>
+
+      <h1 class="display-title">
+        I am <span class="ink-emphasis">Benny</span> — a polymath navigating the intersections of 
+        <span class="highlight-science">theoretical physics</span>, 
+        <span class="highlight-engineering">rigorous software</span> & 
+        <span class="highlight-craft">tactile craft</span>.
+      </h1>
+
+      <p class="editorial-narrative">
+        Sculpting deterministic web simulations, celestial n-body mechanics, and resilient distributed architectures. 
+        Guided by mathematical discipline, human intentionality, and classical acoustic harmony.
+      </p>
+
+      <!-- Polymath Facets Matrix -->
+      <div class="facets-showcase" aria-label="Disciplines & Facets">
+        <div class="facets-header">
+          <span class="facets-label">Polymath Spectrum & Disciplines</span>
+          <span class="facets-hint">Select a discipline to reveal focus</span>
+        </div>
+
+        <div class="facets-matrix" role="tablist">
+          @for (facet of facets; track facet.title) {
+            <button 
+              type="button" 
+              class="facet-chip" 
+              [class.is-active]="activeFacet.title === facet.title"
+              [class.facet-science]="facet.discipline === 'science'"
+              [class.facet-engineering]="facet.discipline === 'engineering'"
+              [class.facet-arts]="facet.discipline === 'arts'"
+              (mouseenter)="selectFacet(facet)"
+              (focus)="selectFacet(facet)"
+              (click)="selectFacet(facet)"
+              role="tab"
+              [attr.aria-selected]="activeFacet.title === facet.title">
+              <span class="facet-glyph">{{facet.glyph}}</span>
+              <span class="facet-title">{{facet.title}}</span>
+            </button>
+          }
+        </div>
+
+        <!-- Dynamic Annotation Register -->
+        <div class="annotation-register" role="region" aria-live="polite">
+          <div class="register-badge">
+            <span class="register-glyph">{{activeFacet.glyph}}</span>
+            <span class="register-title">{{activeFacet.title}}</span>
+            <span class="register-category">{{activeFacet.discipline}}</span>
+          </div>
+          <p class="register-annotation">{{activeFacet.annotation}}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tactile Navigational Portals -->
+    <section class="portals-section" aria-label="Portals to Folio Sections">
+      <div class="portals-grid">
+        @for (portal of portals; track portal.id) {
+          <article 
+            [id]="portal.id" 
+            class="portal-card" 
+            [class.navigating]="navigatingTo === portal.route"
+            (click)="goToRoute(portal.route)"
+            role="button"
+            tabindex="0"
+            (keydown.enter)="goToRoute(portal.route)"
+            (keydown.space)="goToRoute(portal.route)">
+            <div class="portal-meta">
+              <span class="portal-index">{{portal.index}}</span>
+              <span class="portal-category">{{portal.meta}}</span>
+            </div>
+
+            <div class="portal-body">
+              <h2 class="portal-title">{{portal.title}}</h2>
+              <p class="portal-subtitle">{{portal.subtitle}}</p>
+            </div>
+
+            <div class="portal-footer">
+              <span class="portal-action-label">Enter Section</span>
+              <div class="portal-arrow" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4.167 10h11.666M10.833 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+
+    <!-- Editorial Colophon / Footer -->
+    <footer class="colophon">
+      <div class="colophon-left">
+        <span class="colophon-item">Atelier Benny Lim · {{year}}</span>
+        <span class="colophon-bullet">/</span>
+        <span class="colophon-item">Oklch Subtractive Color Architecture</span>
+        <span class="colophon-bullet">/</span>
+        <span class="colophon-item">Geometric Scale (\(S_n = 4 \times 2^n\))</span>
+      </div>
+
+      <div class="colophon-right">
+        <span class="colophon-quote">"Physics gives the laws; code breathes life into the apparatus."</span>
+      </div>
+    </footer>
+  </div>
+</main>
+

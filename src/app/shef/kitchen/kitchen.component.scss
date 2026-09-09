@@ -1,0 +1,882 @@
+/* 
+Inherits CSS Custom Properties (--primary-pigment, --ink-black, etc.) 
+from the parent .shef-viewport globally.
+*/
+
+/* --- CRITICAL SCROLL & SPACING FIX --- */
+:host { 
+  display: flex;
+  flex-direction: column;
+  width: 100%; 
+  
+  /* FIX: Eradicated strict 'height' for 'min-height'. 
+  This allows the host to grow to 2000px+ if needed, providing a full track for the sticky nav. */
+  min-height: 100%; 
+  pointer-events: auto; 
+}
+
+/* --- STRUCTURAL DETERMINISM --- */
+.phase-container {
+  width: 92%;
+  max-width: 800px;
+  margin: var(--s-2) auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+/* --- Z-AXIS REALISM: LAYER 1 TILE --- */
+.layer-1 {
+  background-color: var(--surface-dark);
+  box-shadow: 0 2px 4px var(--shadow-tint), 0 1px 2px var(--shadow-tint);
+  border: 1px solid oklch(0.35 0.03 260); 
+  border-radius: 3px 5px 4px 2px; 
+}
+
+.layer-2 {
+  background-color: var(--surface-dark);
+  /* Oklch conversion for shadow integrity */
+  box-shadow: 0 16px 48px oklch(0.12 0.04 260 / 0.8), 0 4px 12px var(--shadow-tint);
+  border: 1px solid oklch(0.40 0.03 260); 
+  border-radius: 4px 5px 3px 4px; 
+}
+
+/* --- TACTILE CUSTOMER DOSSIER --- */
+.customer-card {
+  padding: clamp(1.25rem, 4vw, var(--s-3));
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  position: relative;
+  
+  /* A physical brass/terracotta clip accent at the top of the docket */
+  .docket-clip {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 6px;
+    background-color: var(--primary-pigment);
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 2px 4px var(--shadow-tint);
+  }
+  
+  /* --- NEW DOSSIER GRID --- */
+  .dossier-layout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--s-1);
+    align-items: start;
+    margin-top: var(--s-1);
+  }
+  
+  .avatar-frame {
+    width: clamp(70px, 18vw, 100px);
+    height: clamp(70px, 18vw, 100px);
+    margin: 0; 
+    padding: 4px;
+    background: var(--alabaster); 
+    box-shadow: inset 0 0 4px oklch(0.12 0.04 260 / 0.4), 0 2px 4px var(--shadow-tint);
+    border-radius: 2px;
+    transform: rotate(-3deg); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 300ms var(--spring-snappy);
+    
+    &:hover { transform: rotate(1deg) scale(1.02); }
+    
+    .emoji-avatar {
+      font-size: clamp(2.5rem, 10vw, 4rem);
+      line-height: 1;
+      filter: drop-shadow(0 2px 2px oklch(0.12 0.04 260 / 0.3));
+    }
+  }
+  
+  .vital-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-0);
+    min-width: 0;
+  }
+  
+  .customer-name {
+    margin: 0;
+    font-family: 'Newsreader', serif;
+    font-size: clamp(1.4rem, 5vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--primary-pigment);
+    text-align: left;
+    border-bottom: 1px dashed oklch(0.45 0.03 260); 
+    padding-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .requirements-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--s-0);
+    align-items: stretch;
+  }
+  
+  .layer-minus-1 {
+    background: var(--ink-black); 
+    border-radius: 2px 3px 2px 4px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    border: 1px solid oklch(0.30 0.03 260);
+    box-shadow: inset 0 3px 6px oklch(0.12 0.04 260 / 0.5); 
+    
+    .box-label {
+      text-transform: uppercase;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: oklch(0.6 0.02 260);
+      text-align: center;
+    }
+  }
+  
+  .target-score {
+    font-family: 'Newsreader', serif;
+    font-size: 2rem; 
+    font-weight: 700;
+    color: var(--success-ink);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-shadow: 0 2px 4px oklch(0.12 0.04 260 / 0.8);
+  }
+  
+  .badge-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    justify-content: center;
+  }
+  
+  .restriction-badge {
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    font-size: 0.65rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: oklch(0.55 0.16 25 / 0.1);
+    color: oklch(0.65 0.16 25); 
+    border: 1px solid oklch(0.65 0.16 25);
+  }
+  
+  .preference-badge {
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    font-size: 0.65rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    
+    /* Leverages the global success-ink for positive visual contrast */
+    background: oklch(0.65 0.12 145 / 0.1);
+    color: var(--success-ink); 
+    border: 1px solid var(--success-ink);
+  }
+  
+  .customer-dialogue {
+    margin: var(--s-0) 0 0 0;
+    font-family: 'Newsreader', serif;
+    font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+    font-style: italic;
+    text-align: left;
+    color: var(--alabaster);
+    opacity: 0.95;
+    line-height: 1.4;
+    padding: 0.75rem 1rem;
+    background: oklch(0.12 0.04 260 / 0.2); 
+    border-left: 3px solid var(--primary-pigment);
+    border-radius: 0 3px 4px 0;
+  }
+}
+
+/* --- PHASE 3: CATEGORIZED SERVICE UI --- */
+.service-hud {
+  text-align: center;
+  padding: var(--s-1);
+  margin-bottom: var(--s-1);
+  
+  .service-details {
+    margin: 0; 
+    opacity: 0.85;
+    font-family: 'DM Sans', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    strong { color: var(--primary-pigment); }
+  }
+}
+
+.pantry-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding-bottom: var(--s-3); 
+}
+
+.category-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: oklch(0.6 0.02 260);
+  margin-bottom: var(--s-1);
+  border-bottom: 1px solid oklch(0.35 0.03 260);
+  padding-bottom: var(--s-0);
+}
+
+.pantry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--s-1);
+}
+
+/* --- ALIGNED TOKENS: BADGE & USES COUNTER --- */
+.squircle-counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 0.4rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  color: var(--alabaster);
+  line-height: 1;
+  border-radius: 4px 5px 3px 4px; 
+  box-shadow: inset 0 1px 1px oklch(0.96 0.01 85 / 0.15), 0 1px 2px var(--shadow-tint);
+  
+  &.positive { background-color: var(--success-ink); font-size: 1.5rem; padding: 0.2rem 0.6rem; }
+  &.negative { background-color: oklch(0.55 0.16 25); font-size: 0.85rem; margin-left: 0.25rem; }
+  &.neutral { background-color: oklch(0.35 0.03 260); font-size: 0.85rem; }
+  &.phase-badge { background-color: var(--primary-pigment); color: var(--ink-black); font-size: 0.85rem; margin-left: 0.25rem;}
+}
+
+/* --- KINEMATICS --- */
+.animate-spring-up { 
+  animation: springUp 400ms var(--spring-heavy) forwards; 
+}
+
+@keyframes springUp {
+  0% { 
+    opacity: 0; 
+    transform: translateY(16px) scale(0.98); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+/* --- MARKET PHASE HOST --- */
+.market-phase-host {
+  display: block;
+  width: 100%;
+  ::ng-deep .market-container {
+    margin-top: 0 !important; 
+  }
+}
+
+/* --- UNIFIED DOSSIER NAV BAR --- */
+.global-nav {
+  width: 92%;
+  max-width: 1200px; /* Expanded to give the nav items breathing room */
+  margin: 0 auto;
+  padding: var(--s-0) var(--s-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-0);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  align-self: flex-start;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: var(--s-1) auto 0;
+  gap: var(--s-1);
+  }
+  
+  .nav-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed oklch(0.35 0.03 260);
+    padding-bottom: var(--s-0);
+    width: 100%;
+    
+    @media (min-width: 768px) {
+      border-bottom: none;
+      padding-bottom: 0;
+      width: auto;
+      flex: 1;
+      justify-content: flex-start;
+      gap: var(--s-2);
+    }
+  }
+  
+  .nav-shef-info {
+    display: flex;
+    align-items: center;
+    gap: var(--s-0);
+    
+    .nav-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 2px;
+      border: 1px solid oklch(0.35 0.03 260);
+      object-fit: cover;
+    }
+    .nav-name {
+      font-family: 'Newsreader', serif;
+      font-size: 1.2rem;
+      font-style: normal !important;
+      font-weight: 700;
+      color: var(--alabaster);
+    }
+  }
+  
+  .nav-actions {
+    display: flex;
+    gap: var(--s-0);
+    
+    .micro-btn { 
+      padding: 0.35rem 0.75rem; 
+      font-size: 0.8rem; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .icon-btn {
+      padding: 0.35rem;
+      svg { width: 1.25rem; height: 1.25rem; }
+    }
+  }
+  
+  .nav-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s-0);
+    flex-wrap: wrap;
+    width: 100%;
+    
+    @media (min-width: 768px) {
+      width: auto;
+      justify-content: flex-end;
+      flex: 1;
+    }
+    
+    .meta-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-0);
+    }
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background-color: oklch(0.12 0.04 260 / 0.6); 
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-1);
+}
+
+.pantry-modal {
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--s-1) var(--s-2);
+    border-bottom: 1px dashed oklch(0.35 0.03 260);
+    
+    .modal-title { margin: 0; font-family: 'Newsreader', serif; font-size: 1.8rem; font-style: italic; color: var(--primary-pigment); }
+    .close-btn { background: transparent; border: none; color: var(--alabaster); font-size: 2rem; cursor: pointer; transition: transform 150ms var(--spring-snappy), color 150ms ease;}
+  }
+  
+  .modal-content {
+    padding: var(--s-2);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+    
+    .category-title { margin: 0; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: oklch(0.6 0.02 260); border-bottom: 1px solid oklch(0.35 0.03 260); padding-bottom: var(--s-0); }
+    .tray-items { display: flex; flex-wrap: wrap; gap: var(--s-0); }
+  }
+}
+
+.animate-fade { animation: fadeIn 300ms ease forwards; }
+@keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+/* Interactive mechanics chaining with .draft-badge */
+.pantry-item {
+  cursor: pointer;
+  transition: transform 250ms var(--spring-snappy), border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+  
+  @media (hover: hover) {
+    &:hover:not(.selected) { 
+      transform: translateY(-2px); 
+      border-color: var(--primary-hover);
+    }
+  }
+  
+  &.selected {
+    border-color: var(--success-ink) !important;
+    background-color: var(--ink-black) !important; 
+    transform: translateY(2px) scale(0.98); 
+    box-shadow: inset 0 2px 6px oklch(0.12 0.04 260 / 0.6); 
+    
+    &.type-cookware {
+      .draft-name { color: var(--alabaster); font-weight: 600; }
+      .svg-micro { color: var(--primary-pigment); }
+      .uses-counter {
+        background-color: var(--surface-dark);
+        color: var(--alabaster);
+      }
+    }
+  }
+}
+
+/* --- POST-COOK ANALYSIS GRID --- */
+.analysis-grid {
+  margin-top: 0;
+  padding-top: var(--s-1);
+  border-top: 1px dashed oklch(0.35 0.03 260);
+  margin-bottom: var(--s-2);
+  
+  .req-section {
+    margin-bottom: var(--s-1);
+    
+    h4 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: oklch(0.6 0.02 260);
+      margin: 0 0 0.4rem 0;
+    }
+    
+    .badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+  }
+}
+
+/* --- BADGE STATUS OVERRIDES (Rulebook Compliant) --- */
+.draft-badge {
+  &.status-correct {
+    border-color: var(--success-ink);
+    background: oklch(0.65 0.12 145 / 0.15); /* Subtractive wash */
+    .draft-name { color: var(--success-ink); }
+  }
+  
+  &.status-wrong {
+    border-color: oklch(0.55 0.16 25);
+    background: oklch(0.55 0.16 25 / 0.15); 
+    .draft-name { 
+      color: oklch(0.65 0.16 25); 
+      text-decoration: line-through; 
+      opacity: 0.8; 
+    }
+  }
+  
+  &.status-missing {
+    opacity: 0.6;
+    border-style: dashed;
+    border-color: oklch(0.45 0.03 260);
+    background: transparent;
+    filter: grayscale(100%);
+  }
+}
+
+/* --- EPIC VISUAL CELEBRATIONS (PHYSICAL STAMPS) --- */
+.recipe-image-frame {
+  position: relative; /* Anchor for the stamps */
+  overflow: hidden;
+}
+
+/* --- EPIC VISUAL CELEBRATIONS (PHYSICAL STAMPS) --- */
+.physical-stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.1;
+  padding: 0.25rem 0.75rem;
+  border: 4px solid;
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0; /* Handled by animation */
+  
+  /* FIX: Solid physical backing and Z-Axis drop shadow to prevent photo blending */
+  background-color: var(--ink-black);
+  box-shadow: 0 4px 12px var(--shadow-tint);
+  
+  &.stamp-success {
+    color: var(--success-ink);
+    border-color: var(--success-ink);
+    margin-top: -1rem; 
+    &:nth-of-type(2) { margin-top: 2rem; transform: translate(-50%, -50%) rotate(5deg); }
+  }
+  
+  &.stamp-legendary {
+    color: oklch(0.75 0.14 75); /* Legendary Gold */
+    border-color: oklch(0.75 0.14 75);
+    font-size: 2rem;
+    box-shadow: inset 0 0 8px oklch(0.75 0.14 75 / 0.5), 0 8px 16px var(--shadow-tint);
+    transform: translate(-50%, -50%) rotate(-8deg);
+  }
+}
+
+.animate-stamp {
+  animation: slamStamp 300ms cubic-bezier(0.2, 1.5, 0.4, 1) forwards 600ms;
+}
+
+@keyframes slamStamp {
+  0% { opacity: 0; transform: translate(-50%, -50%) rotate(0deg) scale(3); }
+  100% { opacity: 0.6; } /* Stops at 0.6 to simulate slight ink fade */
+}
+
+/* --- CINEMATIC WOK TOSS (EPIC SWIRL) --- */
+.cooking-phase-container {
+  justify-content: center;
+  min-height: 50vh;
+}
+
+.cooking-label {
+  text-align: center; 
+  font-family: 'DM Sans', sans-serif; 
+  opacity: 0.7;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  animation: pulse 1s infinite alternate;
+}
+
+.swirl-stage {
+  height: 350px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--s-3) 0;
+  perspective: 1200px; /* Enforces strict 3D rendering context */
+  
+  .pot-center {
+    font-size: 6rem;
+    z-index: 10;
+    /* Subtractive Terracotta pigment wash for physical heat radiance */
+    filter: drop-shadow(0 0 25px oklch(0.65 0.16 25 / 0.85));
+    animation: wokPulse 1s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  }
+  
+  .swirling-icon {
+    position: absolute;
+    font-size: 3.5rem;
+    /* High-fidelity 3D orbit bypassing generic algorithmic rotation */
+    animation: epicOrbit 1.6s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+    will-change: transform, filter;
+  }
+}
+
+@keyframes wokPulse {
+  0% { transform: scale(0.95) translateY(4px); filter: drop-shadow(0 0 10px oklch(0.65 0.16 25 / 0.4)); }
+  100% { transform: scale(1.15) translateY(-4px); filter: drop-shadow(0 0 45px oklch(0.65 0.16 25 / 1)); }
+}
+
+@keyframes epicOrbit {
+  0% { 
+    transform: rotate(0deg) translateX(120px) rotate(0deg) scale(0.7) translateY(20px); 
+    z-index: 1; 
+    filter: brightness(0.7) blur(2px) drop-shadow(0 4px 4px var(--shadow-tint)); 
+  }
+  25% { 
+    transform: rotate(90deg) translateX(140px) rotate(-90deg) scale(1.2) translateY(-50px); 
+    z-index: 20; 
+    filter: brightness(1.1) blur(0px) drop-shadow(0 16px 20px var(--shadow-tint)); 
+  }
+  50% { 
+    transform: rotate(180deg) translateX(90px) rotate(-180deg) scale(1.6) translateY(10px); 
+    z-index: 20; 
+    filter: brightness(1.2) blur(0px) drop-shadow(0 20px 24px var(--shadow-tint)); 
+  }
+  75% { 
+    transform: rotate(270deg) translateX(140px) rotate(-270deg) scale(1) translateY(40px); 
+    z-index: 1; 
+    filter: brightness(0.8) blur(1px) drop-shadow(0 8px 10px var(--shadow-tint)); 
+  }
+  100% { 
+    transform: rotate(360deg) translateX(120px) rotate(-360deg) scale(0.7) translateY(20px); 
+    z-index: 1; 
+    filter: brightness(0.7) blur(2px) drop-shadow(0 4px 4px var(--shadow-tint)); 
+  }
+}
+
+/* --- RESULT CARD & TRANSITION SHARED TOKENS --- */
+.result-card {
+  padding: var(--s-1) var(--s-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  align-items: stretch;
+  
+  @media (min-width: 768px) {
+    flex-direction: row; 
+    align-items: flex-start;
+    padding: var(--s-2);
+  }
+  
+  &.is-goop {
+    border-color: oklch(0.55 0.16 25);
+    background-image: linear-gradient(
+    180deg, 
+    oklch(0.55 0.16 25 / 0.08) 0%, 
+    transparent 100%
+    );
+  }
+  
+  /* 1. HOISTED: Universally available Goop Icon */
+  .goop-icon {
+    font-size: clamp(4rem, 15vw, 6rem);
+    line-height: 1;
+    filter: drop-shadow(0 4px 6px var(--shadow-tint));
+    animation: pulse 2s infinite ease-in-out;
+    text-align: center;
+  }
+  
+  /* 2. HOISTED: Universally available Title Typography */
+  .dish-title {
+    font-family: 'Newsreader', serif;
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+    color: var(--primary-pigment);
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  
+  /* 3. HOISTED: Universally available Score Tally */
+  .score-showcase {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Default to center for transition screen */
+    
+    .score-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.7;
+    }
+    
+    .juicy-tally {
+      font-family: 'Newsreader', serif;
+      font-size: clamp(3rem, 8vw, 4rem);
+      font-style: italic;
+      font-weight: 700;
+      color: var(--success-ink);
+      line-height: 1;
+      text-shadow: 0 4px 12px oklch(0.65 0.12 145 / 0.4);
+      animation: springUp 600ms var(--spring-heavy) both 300ms;
+      
+      &.goop-score { 
+        color: oklch(0.65 0.16 25); 
+        text-shadow: none; 
+      }
+    }
+  }
+  
+  /* --- MEDIA COLUMN (For the Result Phase) --- */
+  .result-media {
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+    
+    .recipe-image-frame {
+      width: 100%; 
+      max-width: 280px; 
+      aspect-ratio: 4 / 3;
+      margin: 0 auto;
+      padding: 4px 4px 1.5rem 4px; 
+      background: var(--alabaster); 
+      box-shadow: inset 0 0 4px var(--shadow-tint), 0 4px 8px var(--shadow-tint);
+      border-radius: 2px;
+      transform: rotate(-1.5deg);
+      
+      @media (min-width: 768px) { width: 220px; }
+      
+      .recipe-photo { width: 100%; height: 100%; object-fit: cover; border-radius: 1px; filter: sepia(0.15) contrast(1.1); }
+    }
+  }
+  
+  /* --- CONTENT COLUMN (For the Result Phase) --- */
+  .result-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0; 
+    
+    .title-and-score {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-1);
+      border-bottom: 1px dashed oklch(0.35 0.03 260);
+      padding-bottom: var(--s-1);
+      margin-bottom: var(--s-1);
+      
+      @media (min-width: 500px) {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      
+      /* Re-align the score specifically for the side-by-side layout */
+      .score-showcase {
+        @media (min-width: 500px) { align-items: flex-end; }
+      }
+    }
+    
+    .breakdown-list {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      opacity: 0.85;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: var(--s-2);
+      
+      .breakdown-item { animation: fadeIn 400ms ease both 600ms; }
+    }
+    
+    .serve-btn {
+      margin-top: auto; 
+      width: 100%;
+    }
+  }
+}
+
+/* --- POST-SERVICE TRANSITION SCREEN SPECIFICS --- */
+.transition-header {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px dashed oklch(0.35 0.03 260); 
+  padding-bottom: var(--s-1);
+  margin-bottom: var(--s-2);
+}
+
+.transition-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-1);
+  // margin: var(--s-3) 0;
+  width: 100%;
+  
+  /* Because result-card is row-based on desktop, we must force the transition body to span full width */
+  @media (min-width: 768px) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+  }
+  
+  .narrative-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.1rem;
+    color: var(--alabaster);
+    opacity: 0.85;
+    margin: 0;
+    text-align: center;
+    line-height: 1.5;
+    
+    strong { color: var(--primary-pigment); opacity: 1; }
+  }
+  
+  .bankrupt-text {
+    font-family: 'Newsreader', serif;
+    font-size: clamp(1.4rem, 4vw, 1.8rem);
+    color: oklch(0.65 0.16 25); 
+    font-style: italic;
+    margin-top: var(--s-1);
+    text-shadow: 0 2px 4px var(--shadow-tint);
+    animation: fadeIn 600ms ease both 400ms;
+  }
+}
+
+/* Fix the footer positioning for desktop transition screen */
+.transition-footer {
+  padding: var(--s-1);
+  
+  @media (min-width: 768px) {
+    margin-top: 300px; /* Pushes button below the absolute-positioned body */
+    width: 100%;
+  }
+  
+  .full-width { width: 100%; }
+}
+
+/* --- THE VIEWPORT FREEZE HACK --- */
+.frozen-under-glass {
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important; 
+  pointer-events: none !important;
+}
+
+.footer-tip {
+  margin: 0;
+  
+  strong {
+    color: var(--primary-pigment)
+  }
+}
+
+.footer-button-container {
+  flex-direction: column; 
+  display: flex; 
+  width: 100%; 
+  gap: 1em;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+}

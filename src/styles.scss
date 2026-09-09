@@ -1,0 +1,362 @@
+/* Define your color palette as variables */
+:root {
+  --bg-color: #f5f5f5;
+  --text-color: #333;
+  --card-bg: #ffffff;
+  --header-text: #1a1a1a;
+  --secondary-text: #666;
+}
+
+/* Dark Mode Overrides */
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --card-bg: #1e1e1e;
+  --header-text: #ffffff;
+  --secondary-text: #a0a0a0;
+  
+  /* Material Design Overrides (Optional but recommended) */
+  .mat-mdc-card {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+  }
+}
+
+/* Apply variables to the body */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+}
+
+// Font //
+.f-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+.f-hino {
+  font-family: 'Hina Mincho', serif;
+}
+.f-merri {
+  font-family: 'Merriweather', serif;
+}
+.f-light {
+  font-weight: 300;
+}
+.f-normal {
+  font-weight: 400;
+}
+.f-bold {
+  font-weight: 500;
+}
+.f-xbold {
+  font-weight: 700;
+}
+@font-face {
+  font-family: 'Cambria Math';
+  src: url('assets/Cambria Math.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'LTA-font';
+  src:  url('assets/LTAIdentity.Medium.ttf') format('truetype'),
+}
+
+// Misc //
+body, html {
+  margin: 0;
+  overflow: hidden;
+}
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+
+.container {
+  height: 100dvh; /* Changed from 100vh */
+  width: 100vw;
+  background-image: url("./assets/sand-wallpaper.jpeg");
+  background-size: cover;
+  background-position: min(0px, calc(100vw - 1470px/2)) 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Changed from overflow-y: hidden to clip both axes */
+  position: relative; /* ADDED: Forces the absolute .circle to be clipped by this container */
+}
+
+.content {
+  height: 100dvh; /* Changed from 100vh */
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  position: relative; /* ADDED: Keeps content layering above the circle if needed */
+  z-index: 1; /* ADDED: Ensures content stays clickable over the circle */
+}
+$intro-font-size: 5vh;
+.intro {
+  font-size: $intro-font-size;
+  margin: 0 10vw;
+  line-height: calc(1.2*$intro-font-size);
+}
+#hello-there {
+  margin-top: 15vh;
+  animation: fade-down 1s ease-out 0.5s both; 
+  font-size: calc(0.8*$intro-font-size);
+  line-height: calc(0.8*$intro-font-size);
+}
+#my-name {
+  animation: fade-down 1s ease-out 1s both; 
+  margin-bottom: calc($intro-font-size*1);
+}
+// $desc-font-size: min(4.5vw, calc(1470px * 0.045));
+$desc-font-size: min(4.5vw, calc(1200px * 0.045), 4.5vh);
+.desc {
+  font-size: $desc-font-size;
+  line-height: calc(1.2*$desc-font-size);
+}
+.desc-row {
+  margin-left: 10vw;
+  width: min(calc(920/1200*100vw), calc(920/1200*100vh), 920px);
+  // justify-content: space-between;
+  white-space: nowrap;
+}
+#i-am {
+  animation: fade-in 1s ease-out 2s both;
+}
+$desc: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;
+@each $i in $desc {
+  // Sync the CSS delay perfectly with your old TS logic: 4s + (0.25s per item)
+  $delay: 4 + ($i - 1) * 0.25; 
+  $alpha: 1 - ($i * 0.07);
+  
+  #desc#{$i} {
+    animation: fade-in 2s ease-out #{$delay}s both;
+    color: rgba(0, 0, 0, $alpha); // Using rgba is cleaner for standard CSS
+    font-size: calc($desc-font-size * $alpha);
+    
+    // Natively handle the bolding without triggering Dart Sass warnings
+    @if $i % 2 == 0 {
+      font-weight: 700;
+    } @else {
+      font-weight: 400;
+    }
+  }
+}
+// #about {
+//   animation: fade-down 0.5s ease-out 1.5s;
+// }
+// #projects {
+//   animation: fade-down 0.5s ease-out 1.75s;
+// }
+// #contact {
+//   animation: fade-down 0.5s ease-out 2s;
+// }
+.links-container {
+  align-items: start;
+  margin: 7vh 0 0 10vw;
+  text-shadow: 0 0 5px white;
+}
+// $link-font-size: min(8vw, calc(1470px * 0.08));
+$link-font-size: 4vh;
+.link {
+  font-size: $link-font-size;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  line-height: calc(1.5*$link-font-size);
+  user-select: none;
+}
+.link:hover {
+  font-size: calc(1.2*$link-font-size);
+  // text-shadow: 0 0 5px gold;
+}
+.link-secondary {
+  font-size: calc($link-font-size * 0.8);
+  line-height: calc(1.2*$link-font-size);
+  width: 100%;
+}
+.link-secondary:hover {
+  font-size: calc(1*$link-font-size);
+  // text-shadow: 0 0 5px gold;
+}
+.background-credit {
+  color: white;
+  font-size: 12px;
+  text-decoration: none;
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  text-shadow: 2px 2px 3px black;
+}
+$circle-radius: max(100vw*1.5, 100dvh*1.5); /* Changed vh to dvh */
+.circle {
+  background-color: Ivory;
+  border-radius: 50%;
+  position: absolute;
+  top: calc(50dvh - $circle-radius/2); /* Changed vh to dvh */
+  left: calc(50vw - $circle-radius/2);
+  height: $circle-radius;
+  width: $circle-radius;
+  transform: scale(0);
+  animation: circle-shrink 1.2s ease-out;
+  box-shadow: 0 0 100px 100px gold;
+  opacity: 50%;
+  z-index: 0; /* ADDED: Keeps the circle safely behind the content */
+}
+.fade-out-left {
+  animation: fade-out-left 0.666s ease-out;
+  opacity: 0;
+}
+.fade-in-left {
+  animation: fade-in-left 0.666s ease-out;
+  opacity: 1;
+}
+.fade-out-right {
+  animation: fade-out-right 0.666s ease-out;
+  opacity: 0;
+}
+.fade-out-down {
+  animation: fade-out-down 0.666s ease-out;
+  opacity: 0;
+}
+.history-exit {
+  animation: fade-out-down-right 0.666s ease-out;
+  opacity: 0;
+}
+.hidden {
+  display: none;
+}
+$home-font-size: max(1vw, 2vh, 18px);
+#home {
+  font-size: $home-font-size;
+  line-height: $home-font-size;
+  width: calc($home-font-size * 2);
+  height: calc($home-font-size * 2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  opacity: 50%;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  position: absolute;
+  top: $home-font-size;
+  left: $home-font-size;
+  animation: fade-down-home 1s ease-out;
+  border: 2px solid black;
+}
+#home:hover {
+  transform: scale(1.2);
+  opacity: 100%;
+}
+#left-arrow {
+  font-weight: bolder;
+}
+.transparent-backdrop {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+}
+.no-backdrop .mat-mdc-dialog-container {
+  opacity: 0.5;
+}
+// Animations //
+@keyframes fade-down {
+  from {
+    opacity: 0%;
+    transform: translateY(-5vh);
+  }
+  to {
+    opacity: 100%;
+    transform: translateY(0);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0%;
+  }
+  to {
+    opacity: 100%;
+  }
+}
+@keyframes circle-shrink {
+  0%   {
+    opacity: 100%;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 50%;
+    transform: scale(0);
+  }
+}
+@keyframes fade-out-left {
+  from {
+    opacity: 100%;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0%;
+    transform: translateX(-20vw);
+  }
+}
+@keyframes fade-out-right {
+  from {
+    opacity: 100%;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0%;
+    transform: translateX(20vw);
+  }
+}
+@keyframes fade-out-down {
+  from {
+    opacity: 100%;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0%;
+    transform: translateY(20vw);
+  }
+}
+@keyframes fade-out-down-right {
+  from {
+    opacity: 100%;
+    transform: translate(0, 0);
+  }
+  to {
+    opacity: 0%;
+    transform: translate(20vw, 20vh);
+  }
+}
+@keyframes fade-in-left {
+  from {
+    opacity: 0%;
+    transform: translateX(-20vw);
+  }
+  to {
+    opacity: 100%;
+    transform: translateX(0);
+  }
+}
+@keyframes fade-down-home {
+  from {
+    opacity: 0%;
+    transform: translateY(-5vh);
+  }
+  to {
+    opacity: 50%;
+    transform: translateY(0);
+  }
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+#link-about { animation: fade-down 0.5s ease-out 1.5s both; }
+#link-projects { animation: fade-down 0.5s ease-out 1.75s both; }
+#link-contact { animation: fade-down 0.5s ease-out 2s both; }

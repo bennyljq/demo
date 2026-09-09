@@ -1,0 +1,33 @@
+<canvas #canvas class="fullpage-canvas" aria-label="Typing homepage canvas"></canvas>
+
+<div class="top-right-controls">
+  @if (isGameStarted) {
+  <button type="button" class="floating-button" (click)="restartGame()">
+    <span class="material-symbols-outlined">refresh</span>
+  </button>
+  }
+</div>
+
+@if (showSplashScreen) {
+<div class="kbw-menu">
+  <button type="button" class="kbw-btn" aria-label="Start a new game" (click)="showSplashScreen = false">
+    <span class="kbw-btn__inner">
+      <span class="kbw-btn__text">NEW GAME</span>
+    </span>
+  </button>
+</div>
+}
+
+@if (!showSplashScreen) {
+<div class="keystroke-hud" aria-label="Latest keystrokes">
+  <div class="keystroke-hud__keys">
+    @if (keys.length === 0) {
+    <span class="keystroke-hud__key" style="opacity: 0;">-</span>
+    } @else {
+    @for (k of keys; track $index) {
+    <span class="keystroke-hud__key">{{ k }}</span>
+    }
+    }
+  </div>
+</div>
+}

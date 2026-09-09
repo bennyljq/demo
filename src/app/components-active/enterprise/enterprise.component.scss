@@ -1,0 +1,127 @@
+@use "../../../styles" as *;
+#body {
+  width: 100vw;
+  height: 100vh;
+  background-color: azure;
+  padding: calc($home-font-size * 4) min(2vw, 24px);
+  padding-bottom: min(calc($home-font-size * 4), 24px);
+  box-sizing: border-box; /* Added */
+}
+#sand-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  background-image: url("../../../assets/sand-wallpaper.jpeg");
+  background-size: cover;
+  background-position: min(0px, calc(100vw - 1470px/2)) 0;
+  animation: fade-out 1s ease-out;
+  opacity: 0%;
+}
+#ent-container {
+  height: max(
+    calc(100vh - calc($home-font-size * 8)),
+    calc(100vh - calc($home-font-size * 4) - 24px)
+  );
+  width: max(
+    calc(96vw - 4px),
+    calc(100vw - 48px - 4px)
+  );
+  border-radius: 8px;
+  border: 2px solid Silver;
+  background-color: white;
+  animation: fade-down 1s ease-out 0.5s;
+  box-sizing: border-box; /* Added */
+}
+#ent-toolbar {
+  background-color: white;
+  border-radius: 6px 6px 0 0;
+  border-bottom: 2px solid Silver;
+  height: 64px;
+}
+#ent-toolbar-title {
+  margin-left: 8px;
+  font-size: 20px;
+}
+#stick {
+  height: 24px;
+  width: 4px;
+  background-color: DodgerBlue;
+  border-radius: 2px;
+}
+#ent-content {
+  padding: 20px;
+  height: calc(100% - 64px);
+  overflow: auto;
+  box-sizing: border-box; /* Added */
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    opacity: 0;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: lightgrey;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: grey;
+  }
+}
+#ent-content-title {
+  font-family: 'Merriweather', serif;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+#ent-content-subtitle {
+  font-family: 'Merriweather', serif;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+#ent-content-text {
+  font-size: 16px;
+  width: min(660px, 100%);
+  margin-bottom: 24px;
+}
+#ent-button-grid {
+  width: min(800px, 100%);
+  margin-bottom: 24px;
+}
+#demo-row {
+  width: min(400px, 100%);
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.html-text {
+  height: fit-content;
+  font-size: 16px;
+  font-family: monospace;
+  background-color: azure;
+  padding: 12px 24px;
+  border: 1px solid lightgrey;
+  border-radius: 8px;
+  width: fit-content;
+  margin-bottom: 24px;
+}
+@keyframes fade-out {
+  0% {
+    opacity: 100%;
+    width: 100vw;
+    height: 100vh;
+  }
+  99% {
+    opacity: 0%;
+    width: 100vw;
+    height: 100vh;
+  }
+  100% {
+    opacity: 0%;
+    width: 0;
+    height: 0;
+  }
+}

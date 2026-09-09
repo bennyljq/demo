@@ -1,0 +1,36 @@
+.game-container {
+  /* Flexbox automatically handles both horizontal and vertical centering */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* Take up the entire viewport (or the full bounds of the parent route) */
+  width: 100vw;
+  height: 100vh; 
+  
+  /* Optional: A dark letterbox color for screens that don't match 16:9 */
+  background-color: #111; 
+  overflow: hidden;
+}
+
+.godot-iframe {
+  /* Lock the geometric proportions */
+  aspect-ratio: 16 / 9;
+  
+  /* Default to filling the width of the screen (for portrait/narrow monitors) */
+  width: 100%;
+  
+  /* THE MATH: 
+     If the screen is wider than 16:9 (ultrawide), width: 100% would push the 
+     height beyond the screen. We cap the maximum width to exactly 100vh multiplied 
+     by our aspect ratio. This forces it to stop expanding and perfectly touch 
+     the top and bottom edges instead. */
+  max-width: calc(100vh * (16 / 9));
+  
+  /* Cap the height just in case, though the math above prevents it from triggering */
+  max-height: 100vh;
+  
+  /* Optional polish */
+  border: none;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}

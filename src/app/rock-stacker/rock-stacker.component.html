@@ -1,0 +1,10 @@
+<div class="game-container">
+  <canvas #gameCanvas></canvas>
+  
+  <div class="hud">
+    <h1>Zen Stones</h1>
+    <p>Height: {{ engine.score() | number:'1.1-1' }}m</p>
+    <p>Stones: {{ engine.rocksPlaced() }}</p>
+    <button (click)="spawnRock()">Add Stone</button>
+  </div>
+</div>

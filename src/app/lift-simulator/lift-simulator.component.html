@@ -1,0 +1,35 @@
+<div class="building-container">
+  <div class="shaft">
+    @for (floor of floors; track floor) {
+      <div class="floor-level">
+        <div class="label">Floor {{ floor }}</div>
+        <button 
+          class="call-btn"
+          [class.active]="elevator.targetQueue().includes(floor)"
+          (click)="handleFloorRequest(floor)">
+          ●
+        </button>
+      </div>
+    }
+
+    <div class="lift-car" 
+         [style.bottom.px]="elevator.currentFloor() * 100"
+         [class.moving]="elevator.state() !== 'IDLE'">
+      
+      <span class="floor-display">{{ elevator.currentFloor() }}</span>
+      
+      @if (elevator.state() === 'DOORS_OPENING') {
+        <div class="door-animation">
+          <div class="door left"></div>
+          <div class="door right"></div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <aside class="status-panel">
+    <h3>System Status</h3>
+    <p>Status: <strong>{{ elevator.state() }}</strong></p>
+    <p>Requests: {{ elevator.targetQueue().join(', ') || 'None' }}</p>
+  </aside>
+</div>

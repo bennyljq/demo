@@ -1,0 +1,33 @@
+#content-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  color: black;
+  gap: 24px;
+}
+#setting-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+#preset-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  margin-top: -16px;
+}
+.button-green {
+  background-color: ForestGreen;
+  color: white;
+}
+.button-orange {
+  background-color: OrangeRed;
+  color: white;
+}
+.button-grey {
+  background-color: grey;
+  color: white;
+}

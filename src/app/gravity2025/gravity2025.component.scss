@@ -1,0 +1,75 @@
+#gg-canvas {
+  background-color: rgb(6, 3, 15);
+  cursor: crosshair;
+  will-change: transform;
+  position: absolute;
+  top: 0;
+  touch-action: none;
+  display: block;
+}
+.gg-icon-number {
+  font-weight: bold;
+  font-size: 16px;
+}
+.gg-toolbar {
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 6px 12px;
+  gap: 8px;  
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  background: transparent;
+  box-sizing: border-box;
+}
+.gg-toolbar-slider {
+  top: unset;
+  bottom: 5%;
+  justify-content: center;
+  align-items: center;
+  padding: 0 max(5%, 32px);
+  gap: 16px;
+}
+.gg-fps-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.gg-fps {
+  font-size: 16px;
+  color: limegreen;
+  font-family: 'Cambria Math';
+}
+::ng-deep .mdc-button__label {
+  display: flex;
+}
+.button-green {
+  background-color: ForestGreen;
+  color: white;
+}
+.button-orange {
+  background-color: OrangeRed;
+  color: white;
+}
+.button-grey {
+  background-color: grey;
+  color: white;
+}
+.marker-layer {
+  position: fixed;   /* sits above entire window */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* clicks go through to canvas */
+}
+.marker {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: pink;
+  border-radius: 50%;
+  transform: translate(-50%, -50%); /* center on click */
+}

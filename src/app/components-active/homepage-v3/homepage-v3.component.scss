@@ -1,0 +1,811 @@
+/* ==========================================================================
+   HOMEPAGE V3: ARTISANAL DIGITAL ATELIER
+   Adheres strictly to the Artisanal Digital Design Guidelines:
+   - Exclusively Oklch color space (perceptual uniformity, no #000/#fff)
+   - Ambient Surfaces C_max <= 0.12, Interactive Elements C_max <= 0.18
+   - Persistent Global Illuminant (Hue 78deg warm solar ochre)
+   - Complementary Cool Indigo Shadows (Hue 258deg)
+   - Deterministic Spacing S_n = S_0 * 2^n (S_0 = 4px)
+   - Typographic optical kerning, discretionary ligatures, 45-65ch measure
+   - Damped harmonic oscillator spring kinetics (160ms - 260ms)
+   ========================================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100dvh;
+  box-sizing: border-box;
+
+  /* --- ATOMIC TOKENS: CHROMATIC SYSTEM (OKLCH EXCLUSIVELY) --- */
+  /* Global Illuminant: H_0 = 78deg (Warm Morning Solar Ochre) */
+  /* Complementary Shadow: H_comp = 258deg (Cool Indigo) */
+
+  /* Base Light (Unbleached Alabaster & Parchment) */
+  --color-bg-canvas: oklch(0.965 0.012 78);
+  --color-bg-surface: oklch(0.985 0.007 80);
+  --color-bg-surface-hover: oklch(0.995 0.004 80);
+  --color-bg-surface-subtle: oklch(0.942 0.015 76);
+  --color-bg-surface-muted: oklch(0.920 0.020 75);
+
+  /* Base Dark (Deep Saturated Warm Charcoal - No Absolute Black) */
+  --color-ink-primary: oklch(0.200 0.024 65);
+  --color-ink-secondary: oklch(0.420 0.022 68);
+  --color-ink-tertiary: oklch(0.580 0.018 72);
+  --color-ink-faint: oklch(0.720 0.015 75);
+
+  /* Subtractive Accents (Strictly Chroma <= 0.18) */
+  --color-accent-amber: oklch(0.560 0.145 68);
+  --color-accent-amber-hover: oklch(0.480 0.165 65);
+  --color-accent-tint: oklch(0.930 0.035 75);
+  --color-accent-border: oklch(0.850 0.050 72);
+
+  --color-discipline-science: oklch(0.480 0.110 215);
+  --color-discipline-science-tint: oklch(0.940 0.025 215);
+
+  --color-discipline-eng: oklch(0.500 0.130 145);
+  --color-discipline-eng-tint: oklch(0.940 0.030 145);
+
+  --color-discipline-arts: oklch(0.520 0.140 45);
+  --color-discipline-arts-tint: oklch(0.940 0.035 45);
+
+  /* Structural Dividers & Hairlines */
+  --color-border-subtle: oklch(0.880 0.016 75 / 0.70);
+  --color-border-strong: oklch(0.760 0.022 72 / 0.85);
+
+  /* Z-Axis Shadows (Tinted with Complementary Hue 258deg) */
+  --shadow-layer-0: none;
+  --shadow-layer-1-card: 0 2px 4px -1px oklch(0.22 0.035 258 / 0.16), 
+                         0 1px 2px -1px oklch(0.22 0.035 258 / 0.10);
+  --shadow-layer-1-card-hover: 0 8px 16px -4px oklch(0.22 0.035 258 / 0.14),
+                               0 3px 6px -2px oklch(0.22 0.035 258 / 0.08);
+  --shadow-layer-2-elevated: 0 16px 32px -8px oklch(0.22 0.040 258 / 0.14), 
+                             0 4px 12px -2px oklch(0.22 0.040 258 / 0.08);
+  --shadow-layer-pressed: 0 1px 2px 0 oklch(0.22 0.040 258 / 0.14);
+
+  /* --- ATOMIC TOKENS: DETERMINISTIC GEOMETRIC SPACING (S_n = S_0 * 2^n) --- */
+  --space-0: 4px;   /* S_0 = 4px */
+  --space-1: 8px;   /* S_1 = 8px */
+  --space-2: 16px;  /* S_2 = 16px */
+  --space-3: 32px;  /* S_3 = 32px */
+  --space-4: 64px;  /* S_4 = 64px */
+  --space-5: 128px; /* S_5 = 128px */
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-full: 9999px;
+
+  /* Kinematics */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-tactile: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --duration-fast: 160ms;
+  --duration-normal: 240ms;
+  --duration-slow: 360ms;
+}
+
+/* --- ROOT CONTAINER & BACKGROUND TACTILITY --- */
+.atelier-root {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  background-color: var(--color-bg-canvas);
+  color: var(--color-ink-primary);
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  font-feature-settings: "kern" 1, "liga" 1, "dlig" 1;
+  font-variant-ligatures: common-ligatures contextual;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  transition: opacity var(--duration-normal) var(--ease-tactile),
+              transform var(--duration-normal) var(--ease-spring);
+
+  &.is-exiting {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.995);
+    pointer-events: none;
+  }
+}
+
+/* Analog Micro-Grain Texture Simulation */
+.analog-grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grainFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grainFilter)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 140px 140px;
+}
+
+/* Environmental Persistent Ambient Light Anchor (Warm Ochre Sunlight) */
+.environmental-light {
+  position: absolute;
+  top: -10vw;
+  right: -5vw;
+  width: 50vw;
+  height: 50vw;
+  max-width: 700px;
+  max-height: 700px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(
+    circle at center, 
+    oklch(0.94 0.04 78 / 0.45) 0%, 
+    oklch(0.96 0.02 78 / 0.15) 50%, 
+    oklch(0.965 0.012 78 / 0) 75%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.atelier-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1200px;
+  padding: var(--space-3) var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: var(--space-2) var(--space-2) var(--space-3);
+  }
+}
+
+/* --- 1. MASTHEAD / EDITORIAL FOLIO --- */
+.masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-2);
+  gap: var(--space-2);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+}
+
+.masthead-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.monogram-seal {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-layer-1-card);
+  user-select: none;
+  transition: transform var(--duration-fast) var(--ease-spring),
+              border-color var(--duration-fast) var(--ease-tactile);
+
+  &:hover {
+    transform: rotate(-6deg) scale(1.05);
+    border-color: var(--color-accent-amber);
+  }
+}
+
+.seal-glyph {
+  font-family: 'Merriweather', Georgia, serif;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-accent-amber);
+}
+
+.masthead-identity {
+  display: flex;
+  flex-direction: column;
+}
+
+.masthead-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--color-ink-primary);
+  line-height: 1.25;
+}
+
+.masthead-coordinates {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-tertiary);
+  text-transform: uppercase;
+}
+
+.masthead-center {
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.edition-tag {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-secondary);
+  padding: var(--space-0) var(--space-1);
+  background-color: var(--color-bg-surface-subtle);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.masthead-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.util-action {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  padding: 6px var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-ink-secondary);
+  box-shadow: var(--shadow-layer-1-card);
+  transition: all var(--duration-fast) var(--ease-tactile);
+
+  &:hover {
+    color: var(--color-ink-primary);
+    border-color: var(--color-accent-amber);
+    background-color: var(--color-bg-surface-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-layer-1-card-hover);
+  }
+
+  &:active {
+    transform: translateY(1px) scale(0.985);
+    box-shadow: var(--shadow-layer-pressed);
+  }
+}
+
+.util-glyph {
+  font-size: 0.875rem;
+  color: var(--color-accent-amber);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px var(--space-1);
+  background-color: var(--color-bg-surface-subtle);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.status-pip {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background-color: oklch(0.58 0.15 142); /* Natural moss green */
+  box-shadow: 0 0 0 2px oklch(0.58 0.15 142 / 0.25);
+  animation: pulse-soft 3s ease-in-out infinite;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.8; }
+}
+
+.status-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--color-ink-secondary);
+  letter-spacing: 0.02em;
+}
+
+/* Vector-Perfect Divider */
+.atelier-divider {
+  display: flex;
+  align-items: center;
+  margin: var(--space-2) 0 var(--space-4);
+  gap: var(--space-1);
+  color: var(--color-border-strong);
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-border-subtle);
+}
+
+.divider-notch {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-border-strong);
+}
+
+.divider-glyph {
+  font-size: 0.75rem;
+  color: var(--color-accent-amber);
+  user-select: none;
+}
+
+/* --- 2. HERO / EDITORIAL CORE --- */
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.hero-prologue {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.kicker-greeting {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent-amber);
+}
+
+.kicker-rule {
+  width: 32px;
+  height: 1px;
+  background-color: var(--color-accent-amber);
+}
+
+/* Display Title: Golden Ratio scaled, optical kerning, tight tracking */
+.display-title {
+  font-family: 'Merriweather', 'Hina Mincho', Georgia, serif;
+  font-size: clamp(2rem, 4.2vw, 3.25rem);
+  font-weight: 300;
+  line-height: 1.16;
+  letter-spacing: -0.025em;
+  color: var(--color-ink-primary);
+  margin: 0;
+  max-width: 22ch;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    line-height: 1.2;
+  }
+}
+
+.ink-emphasis {
+  font-weight: 700;
+  color: var(--color-ink-primary);
+  position: relative;
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-amber);
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
+}
+
+.highlight-science {
+  font-style: italic;
+  color: var(--color-discipline-science);
+}
+
+.highlight-engineering {
+  color: var(--color-discipline-eng);
+}
+
+.highlight-craft {
+  font-style: italic;
+  color: var(--color-accent-amber);
+}
+
+/* Reading Measure: Strict 45-65 characters limit for optimal optical cadence */
+.editorial-narrative {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(1rem, 1.35vw, 1.125rem);
+  font-weight: 400;
+  line-height: 1.68;
+  color: var(--color-ink-secondary);
+  max-width: 58ch;
+  margin: var(--space-1) 0 var(--space-2);
+}
+
+/* --- 3. POLYMATH SPECTRUM MATRIX --- */
+.facets-showcase {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  box-shadow: var(--shadow-layer-1-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  transition: border-color var(--duration-fast) var(--ease-tactile);
+}
+
+.facets-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+
+.facets-label {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-tertiary);
+  font-weight: 600;
+}
+
+.facets-hint {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.6875rem;
+  color: var(--color-ink-faint);
+  font-style: italic;
+
+  @media (max-width: 600px) {
+    display: none;
+  }
+}
+
+.facets-matrix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.facet-chip {
+  background-color: var(--color-bg-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  padding: 6px var(--space-1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-ink-secondary);
+  transition: all var(--duration-fast) var(--ease-spring);
+  outline: none;
+
+  &:hover {
+    color: var(--color-ink-primary);
+    background-color: var(--color-bg-surface-hover);
+    border-color: var(--color-border-strong);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(1px) scale(0.985);
+  }
+
+  &.is-active {
+    color: var(--color-ink-primary);
+    border-color: var(--color-accent-amber);
+    box-shadow: var(--shadow-layer-1-card);
+
+    &.facet-science {
+      background-color: var(--color-discipline-science-tint);
+      border-color: var(--color-discipline-science);
+    }
+    &.facet-engineering {
+      background-color: var(--color-discipline-eng-tint);
+      border-color: var(--color-discipline-eng);
+    }
+    &.facet-arts {
+      background-color: var(--color-discipline-arts-tint);
+      border-color: var(--color-discipline-arts);
+    }
+  }
+}
+
+.facet-glyph {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.facet-title {
+  line-height: 1;
+}
+
+/* Dynamic Annotation Register (The Curated Notebook) */
+.annotation-register {
+  background-color: var(--color-bg-surface-subtle);
+  border-left: 3px solid var(--color-accent-amber);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: var(--space-1) var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: 48px;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-0);
+  }
+}
+
+.register-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.register-glyph {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.875rem;
+  color: var(--color-accent-amber);
+  font-weight: 700;
+}
+
+.register-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-ink-primary);
+}
+
+.register-category {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-tertiary);
+  padding: 2px 5px;
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.register-annotation {
+  font-family: 'Merriweather', Georgia, serif;
+  font-style: italic;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--color-ink-secondary);
+  margin: 0;
+}
+
+/* --- 4. TACTILE NAVIGATIONAL PORTALS (Z-AXIS LAYER 1 & 2) --- */
+.portals-section {
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.portals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+}
+
+.portal-card {
+  position: relative;
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-2) var(--space-2);
+  box-shadow: var(--shadow-layer-1-card);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 200px;
+  user-select: none;
+  outline: none;
+  box-sizing: border-box;
+
+  /* Kinematic authentic spring */
+  transition: transform var(--duration-fast) var(--ease-spring),
+              box-shadow var(--duration-fast) var(--ease-spring),
+              border-color var(--duration-fast) var(--ease-tactile),
+              background-color var(--duration-fast) var(--ease-tactile);
+
+  &:hover {
+    transform: translateY(-3px);
+    background-color: var(--color-bg-surface-hover);
+    border-color: var(--color-accent-amber);
+    box-shadow: var(--shadow-layer-1-card-hover);
+
+    .portal-arrow {
+      transform: translateX(4px);
+      color: var(--color-accent-amber);
+      background-color: var(--color-accent-tint);
+    }
+
+    .portal-index {
+      color: var(--color-accent-amber);
+    }
+
+    .portal-title {
+      color: var(--color-accent-amber-hover);
+    }
+  }
+
+  /* Tactile Z-axis physical depression on press */
+  &:active {
+    transform: translateY(1px) scale(0.985);
+    box-shadow: var(--shadow-layer-pressed);
+  }
+
+  &.navigating {
+    border-color: var(--color-accent-amber);
+    background-color: var(--color-accent-tint);
+    transform: scale(0.99);
+  }
+
+  &:focus-visible {
+    border-color: var(--color-accent-amber);
+    outline: 2px solid var(--color-accent-amber);
+    outline-offset: 2px;
+  }
+}
+
+.portal-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.portal-index {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-tertiary);
+  transition: color var(--duration-fast) var(--ease-tactile);
+}
+
+.portal-category {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-tertiary);
+}
+
+.portal-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: var(--space-2);
+}
+
+.portal-title {
+  font-family: 'Merriweather', 'Hina Mincho', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--color-ink-primary);
+  margin: 0 0 var(--space-0) 0;
+  transition: color var(--duration-fast) var(--ease-tactile);
+}
+
+.portal-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-ink-secondary);
+  margin: 0;
+}
+
+.portal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-1);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.portal-action-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-ink-tertiary);
+}
+
+.portal-arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink-tertiary);
+  background-color: var(--color-bg-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+  transition: all var(--duration-fast) var(--ease-spring);
+}
+
+/* --- 5. EDITORIAL COLOPHON / FOOTER --- */
+.colophon {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  box-sizing: border-box;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+}
+
+.colophon-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.colophon-item {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.6875rem;
+  color: var(--color-ink-tertiary);
+  letter-spacing: 0.02em;
+}
+
+.colophon-bullet {
+  font-size: 0.6875rem;
+  color: var(--color-border-strong);
+}
+
+.colophon-right {
+  @media (max-width: 900px) {
+    margin-top: var(--space-0);
+  }
+}
+
+.colophon-quote {
+  font-family: 'Merriweather', Georgia, serif;
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--color-ink-secondary);
+}
+

@@ -1,0 +1,52 @@
+#exp-container {
+  background: linear-gradient(135deg, rgba(0,0,0,1) 0%, rgba(25,8,55,1) 50%, rgba(0,0,0,1) 100%);
+  height: 100vh;
+  width: 100vw;
+}
+#exp-ball {
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  box-shadow: 0 0 1.5vh 0.1vh midnightblue inset;
+}
+#exp-title {
+  color: white;
+  padding: 1vh 2vh 0 2vh;
+  text-align: middle;
+  width: fit-content;
+  font-size: 2vh;
+  line-height: 2vh;
+}
+#exp-stats {
+  color: white;
+  padding: 1vh 2vh 0 2vh;
+  text-align: middle;
+  width: fit-content;
+  font-size: 2vh;
+  line-height: 2vh;
+}
+#exp-ball-container {
+  border: 3px solid snow;
+  border-radius: 1vh;
+  display: inline-block;
+}
+#exp-reset {
+  border: 2px solid snow;
+  margin: 1vh 2vh 0 2vh;
+  width: fit-content;
+  color: snow;
+  padding: 0.5vh 1vh;
+  font-size: 1.5vh;
+  border-radius: 0.5vh;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  user-select: none;
+}
+#exp-reset:hover {
+  background-color: snow;
+  color: midnightblue;
+}
+#exp-reset:active {
+  background-color: Lavender;
+  border-color: midnightblue;
+}
