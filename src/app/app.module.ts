@@ -71,7 +71,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Gravity2025DialogGalleryComponent } from './gravity2025-dialog-gallery/gravity2025-dialog-gallery.component';
 import { Gravity2025DialogVelocityComponent } from './gravity2025-dialog-velocity/gravity2025-dialog-velocity.component';
-
+import { GravitySlopComponent } from './gravity-slop/gravity-slop.component';
 
 @NgModule({
   declarations: [
@@ -119,6 +119,7 @@ import { Gravity2025DialogVelocityComponent } from './gravity2025-dialog-velocit
     Gravity2025DialogEditComponent,
     Gravity2025DialogGalleryComponent,
     Gravity2025DialogVelocityComponent,
+    GravitySlopComponent,
   ],
   imports: [
     BrowserModule,

@@ -32,6 +32,7 @@ import { RockStackerComponent } from './rock-stacker/rock-stacker.component';
 import { PachinkoComponent } from './pachinko/pachinko.component';
 import { ShefComponent } from './shef/shef.component';
 import { KeyboardWizardWebComponent } from './keyboard-wizard-web/app.component';
+import { GravitySlopComponent } from './gravity-slop/gravity-slop.component';
 
 const routes: Routes = [
   { path: '', component: HomepageV2Component },
@@ -71,6 +72,7 @@ const routes: Routes = [
   { path: 'pachinko', component: PachinkoComponent },
   { path: 'shef', component: ShefComponent },
   { path: 'test', component: KeyboardWizardWebComponent },
+  { path: 'gravity-slop', component: GravitySlopComponent },
   { path: '**', redirectTo: '', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];
 

@@ -1,0 +1,119 @@
+<div class="wrap">
+
+  <!-- ════════════════ CANVAS ════════════════ -->
+  <canvas #canvas
+    (mousedown)="onMouseDown($event)"
+    (mousemove)="onMouseMove($event)"
+    (mouseup)="onMouseUp($event)"
+    (mouseleave)="onMouseLeave()"
+    (touchstart)="onTouchStart($event)"
+    (touchmove)="onTouchMove($event)"
+    (touchend)="onTouchEnd($event)"
+  ></canvas>
+
+  <!-- ════════════════ TOP HUD ════════════════ -->
+  <div class="hud top-hud">
+
+    <div class="stat">
+      <span class="lbl">SCORE</span>
+      <span class="val score-val">{{ fmtScore(score) }}</span>
+    </div>
+
+    <div class="stat">
+      <span class="lbl">COLLISIONS</span>
+      <span class="val">{{ collisionCount }}</span>
+    </div>
+
+    <div class="stat hide-xs">
+      <span class="lbl">BODIES</span>
+      <span class="val">{{ bodyCount }}</span>
+    </div>
+
+    <div class="stat hide-xs">
+      <span class="lbl">TIME</span>
+      <span class="val">{{ fmtTime(sessionSecs) }}</span>
+    </div>
+
+    <!-- Combo badge — only shown during active combos -->
+    <div class="combo-badge" *ngIf="comboN >= 2" [class.big-combo]="comboN >= 5">
+      COMBO &nbsp;×{{ (1 + comboN * 0.35).toFixed(1) }}
+    </div>
+
+    <div class="stat stat-end">
+      <span class="lbl">FPS</span>
+      <span class="val" [class.fps-warn]="fps < 30">{{ fps }}</span>
+    </div>
+
+  </div>
+
+  <!-- ════════════════ BOTTOM CONTROLS ════════════════ -->
+  <div class="hud bot-hud">
+
+    <button class="btn" (click)="togglePause()" [class.btn-active]="paused">
+      <span class="btn-icon">{{ paused ? '▶' : '⏸' }}</span>
+      <span class="btn-lbl">{{ paused ? 'RESUME' : 'PAUSE' }}</span>
+    </button>
+
+    <button class="btn" (click)="resetGame()">
+      <span class="btn-icon">↺</span>
+      <span class="btn-lbl">RESET</span>
+    </button>
+
+    <button class="btn" (click)="toggleLb()" [class.btn-active]="showLb">
+      <span class="btn-icon">🏆</span>
+      <span class="btn-lbl">SCORES</span>
+    </button>
+
+    <button class="btn" (click)="toggleMute()" [class.btn-active]="muted">
+      <span class="btn-icon">{{ muted ? '🔇' : '🔊' }}</span>
+      <span class="btn-lbl">{{ muted ? 'MUTED' : 'SOUND' }}</span>
+    </button>
+
+    <span class="hint">Drag to throw &nbsp;·&nbsp; P pause &nbsp;·&nbsp; R reset &nbsp;·&nbsp; M mute</span>
+
+  </div>
+
+  <!-- ════════════════ PAUSE OVERLAY ════════════════ -->
+  <div class="pause-overlay" *ngIf="paused">
+    <div class="pause-title">PAUSED</div>
+    <div class="pause-sub">Space &nbsp;/&nbsp; P to resume</div>
+  </div>
+
+  <!-- ════════════════ LEADERBOARD PANEL ════════════════ -->
+  <div class="lb" *ngIf="showLb">
+
+    <div class="lb-title">
+      <span>🏆 &nbsp;HIGH SCORES</span>
+      <button class="lb-x" (click)="toggleLb()">✕</button>
+    </div>
+
+    <div class="lb-empty" *ngIf="!leaderboard.length">
+      No scores yet — play and reset to save your run!
+    </div>
+
+    <ng-container *ngIf="leaderboard.length">
+      <div class="lb-head">
+        <span>#</span>
+        <span>Score</span>
+        <span>Hits</span>
+        <span>Time</span>
+        <span>Date</span>
+      </div>
+
+      <div class="lb-row"
+        *ngFor="let e of leaderboard; let i = index"
+        [class.gold]="i === 0"
+        [class.silver]="i === 1"
+        [class.bronze]="i === 2">
+        <span>{{ i + 1 }}</span>
+        <span>{{ fmtScore(e.score) }}</span>
+        <span>{{ e.collisions }}</span>
+        <span>{{ fmtTime(e.duration) }}</span>
+        <span>{{ e.date }}</span>
+      </div>
+    </ng-container>
+
+  </div>
+
+</div>
+
