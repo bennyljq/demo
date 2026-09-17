@@ -33,6 +33,7 @@ import { PachinkoComponent } from './pachinko/pachinko.component';
 import { ShefComponent } from './shef/shef.component';
 import { KeyboardWizardWebComponent } from './keyboard-wizard-web/app.component';
 import { GravitySlopComponent } from './gravity-slop/gravity-slop.component';
+import { SortComponent } from './sort/sort.component';
 
 const routes: Routes = [
   { path: '', component: HomepageV2Component },
@@ -73,6 +74,7 @@ const routes: Routes = [
   { path: 'shef', component: ShefComponent },
   { path: 'test', component: KeyboardWizardWebComponent },
   { path: 'gravity-slop', component: GravitySlopComponent },
+  { path: 'sort', component: SortComponent },
   { path: '**', redirectTo: '', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];
 

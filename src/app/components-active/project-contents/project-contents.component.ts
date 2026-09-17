@@ -36,6 +36,10 @@ export class ProjectContentsComponent implements OnInit {
       linkText: 'Play POTONG', linkIcon: '→', actionType: 'external', actionTarget: 'https://potong.io'
     },
     {
+      id: 'sort', titleHtml: 'Sorting Algorithm Visualiser', subtitle: '2026', imgSrc: 'assets\\sort-profile-pic.png', imgClass: 'logo',
+      linkText: 'Go sorting', linkIcon: '→', actionType: 'route', actionTarget: '/sort'
+    },
+    {
       id: 'keyboard_wizard', titleHtml: 'Keyboard Wizard', subtitle: '2026', imgSrc: 'assets\\keyboard-wizard-demo\\keyboard-wizard.png', imgClass: 'logo',
       linkText: 'Play the demo', linkIcon: '→', actionType: 'route', actionTarget: '/keyboard-wizard'
     },
@@ -135,6 +139,7 @@ export class ProjectContentsComponent implements OnInit {
   @ViewChild('desc_train', { static: true }) desc_train!: TemplateRef<any>;
   @ViewChild('desc_switchyon', { static: true }) desc_switchyon!: TemplateRef<any>;
   @ViewChild('desc_keyboard_wizard', { static: true }) desc_keyboard_wizard!: TemplateRef<any>;
+  @ViewChild('desc_sort', { static: true }) desc_sort!: TemplateRef<any>;
 
   getTemplateForId(id: string): TemplateRef<any> {
     return (this as any)[`desc_${id}`];

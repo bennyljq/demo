@@ -1,0 +1,159 @@
+<div class="sort-wrapper">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <header class="sort-header">
+    <button class="back-btn" routerLink="/projects" title="Projects" aria-label="Projects">
+      <span class="back-arrow">←</span>
+      <span class="back-text">Projects</span>
+    </button>
+    <div class="header-content">
+      <h1 class="title">Sort<span class="dot">.</span></h1>
+      <span class="subtitle">Algorithm Visualiser</span>
+    </div>
+  </header>
+
+  <!-- ── Algorithm selector ──────────────────────────────────────────────── -->
+  <section class="algo-section">
+
+    <!-- Category tabs -->
+    <div class="cat-tabs">
+      @for (g of algorithmGroups; track g.label) {
+        <button class="cat-tab"
+          [class.cat-tab--active]="selectedCategory() === g.algorithms[0].category"
+          (click)="selectCategory(g.algorithms[0].category)">
+          <span class="cat-icon">{{ g.icon }}</span>
+          <span class="cat-label">{{ g.label }}</span>
+        </button>
+      }
+    </div>
+
+    <!-- Algorithm pills -->
+    <div class="algo-pills">
+      @for (algo of filteredAlgorithms(); track algo.key) {
+        <button class="pill"
+          [class.pill--active]="selectedAlgorithm().key === algo.key"
+          [class.pill--joke]="algo.category === 'joke'"
+          (click)="selectAlgorithm(algo)">
+          {{ algo.name }}
+        </button>
+      }
+    </div>
+
+    <!-- Algorithm info card: name, complexities, description -->
+    <div class="algo-info-card">
+      <div class="algo-info-header">
+        <span class="algo-badge" [class.algo-badge--joke]="selectedAlgorithm().category === 'joke'">
+          {{ selectedAlgorithm().name }}
+        </span>
+        <div class="algo-complexities">
+          <span class="badge-pill badge-pill--time" title="Time Complexity">
+            <span class="pill-label">Time:</span> {{ selectedAlgorithm().timeComplexity }}
+          </span>
+          <span class="badge-pill badge-pill--space" title="Space Complexity">
+            <span class="pill-label">Space:</span> {{ selectedAlgorithm().spaceComplexity }}
+          </span>
+        </div>
+      </div>
+      <p class="algo-desc">{{ selectedAlgorithm().description }}</p>
+    </div>
+
+  </section>
+
+  <!-- ── Controls ─────────────────────────────────────────────────────────── -->
+  <section class="controls">
+
+    <div class="control-group control-group--slider control-group--size">
+      <div class="ctrl-label-box">
+        <span class="ctrl-title">Size</span>
+        <strong class="ctrl-val ctrl-val--size">{{ arrayLength }}</strong>
+      </div>
+      <input type="range" class="slider" min="8" max="200" step="1"
+        [(ngModel)]="arrayLength" (change)="onArrayLengthChange()"
+        [disabled]="isRunning() && !isPaused()" aria-label="Array size">
+    </div>
+
+    <div class="control-group control-group--slider control-group--speed">
+      <div class="ctrl-label-box">
+        <span class="ctrl-title">Speed</span>
+        <strong class="ctrl-val ctrl-val--speed">{{ speedLabel }}</strong>
+      </div>
+      <input type="range" class="slider" min="1" max="10" step="1"
+        [(ngModel)]="speed" (change)="onSpeedChange()" aria-label="Sorting speed">
+    </div>
+
+    <div class="control-group control-group--actions">
+      <button class="btn btn--secondary" (click)="generateArray()"
+        [disabled]="isRunning() && !isPaused()" title="New random array">↺ Shuffle</button>
+      <button class="btn btn--primary" (click)="play()"
+        [disabled]="isRunning() && !isPaused()" title="Play">▶ Play</button>
+      <button class="btn btn--ghost" (click)="pause()"
+        [disabled]="!isRunning() || isPaused()" title="Pause">⏸ Pause</button>
+      <button class="btn btn--ghost" (click)="step()" title="Step one frame">⏭ Step</button>
+      <button class="btn btn--danger" (click)="reset()" title="Reset">⏹ Reset</button>
+      <button class="btn btn--ghost sound-btn" (click)="toggleSound()"
+        [title]="soundEnabled() ? 'Mute' : 'Unmute'" aria-label="Toggle sound">
+        {{ soundEnabled() ? '🔊' : '🔇' }}
+      </button>
+    </div>
+
+  </section>
+
+  <!-- ── Stats bar: live runtime metrics only ─────────────────────────────── -->
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-lbl">Elapsed</span>
+      <span class="stat-val">{{ formatTime(elapsedMs()) }}</span>
+    </div>
+    <div class="stat">
+      <span class="stat-lbl">Comparisons</span>
+      <span class="stat-val stat-val--comps">{{ comparisons() | number }}</span>
+    </div>
+    <div class="stat">
+      <span class="stat-lbl">Swaps</span>
+      <span class="stat-val stat-val--swaps">{{ swaps() | number }}</span>
+    </div>
+    @if (auxiliarySize() > 0) {
+      <div class="stat">
+        <span class="stat-lbl">Aux Memory</span>
+        <span class="stat-val stat-val--aux">{{ auxiliarySize() }} el</span>
+      </div>
+    }
+  </div>
+
+  <!-- ── Visualiser ────────────────────────────────────────────────────────── -->
+  <main class="visualiser" [class.visualiser--sorted]="isSorted() && !isRunning()">
+
+    <div class="bars-container">
+      @for (bar of bars(); track $index) {
+        <div class="bar"
+          [class]="'bar bar--' + bar.state"
+          [style.height.%]="(bar.value / maxValue) * 92 + 2"
+          [style.transition]="barTransition">
+        </div>
+      }
+    </div>
+
+    <!-- Joke overlay shown while running/paused -->
+    @if (jokeMessage() && (isRunning() || isPaused())) {
+      <div class="joke-overlay">
+        <span class="joke-text">{{ jokeMessage() }}</span>
+      </div>
+    }
+
+    <!-- Completion badge -->
+    @if (isSorted() && !isRunning()) {
+      <div class="done-badge">
+        <div class="done-badge-card">
+          @if (!jokeMessage()) {
+            <span class="done-badge-icon">✓</span>
+            <span class="done-badge-title">Sorted!</span>
+          } @else {
+            <span class="done-badge-joke">{{ jokeMessage() }}</span>
+          }
+        </div>
+      </div>
+    }
+
+  </main>
+
+</div>
