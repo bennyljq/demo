@@ -46,6 +46,9 @@ export const ALGORITHMS: AlgorithmMeta[] = [
   { key: 'counting',  name: 'Counting Sort',        category: 'non-comparison',
     timeComplexity: 'O(n+k)',        spaceComplexity: 'O(k)',    spaceRatio: 0.48,
     description: 'Counts occurrences of each value, then reconstructs the sorted array.' },
+  { key: 'bucket',    name: 'Bucket Sort',          category: 'non-comparison',
+    timeComplexity: 'O(n+k)',        spaceComplexity: 'O(n+k)',  spaceRatio: 0.82,
+    description: 'Scatters elements into buckets, sorts the buckets, and then concatenates them.' },
   // ── Joke ─────────────────────────────────────────────────────────────────
   { key: 'bogo',      name: 'Bogo Sort',            category: 'joke',
     timeComplexity: 'O((n+1)!)',     spaceComplexity: 'O(1)',    spaceRatio: 0.04,
@@ -102,6 +105,7 @@ export class SortEngineService {
       case 'comb':      return this.comb(a);
       case 'radix':     return this.radix(a);
       case 'counting':  return this.counting(a);
+      case 'bucket':    return this.bucket(a);
       case 'bogo':      return this.bogo(a);
       case 'sleep':     return this.sleepSort(a);
       case 'stalin':    return this.stalin(a);
@@ -520,6 +524,39 @@ export class SortEngineService {
         a[idx] = v;
         cnts.s++;
         yield this.snap(a, { [idx]: 'swapping' }, sorted, cnts, cnt.length, `Writing ${v}`);
+        idx++;
+      }
+    }
+    yield this.doneStep(a, cnts, 0);
+  }
+
+  private *bucket(a: number[]): Generator<SortStep> {
+    const cnts: Counters = { c: 0, s: 0 };
+    const sorted = new Set<number>();
+    const n = a.length;
+    if (n === 0) { yield this.doneStep(a, cnts, 0); return; }
+
+    const max = Math.max(...a);
+    const min = Math.min(...a);
+    const bucketCount = Math.floor(Math.sqrt(n)) || 1;
+    const buckets: number[][] = Array.from({ length: bucketCount }, () => []);
+
+    for (let i = 0; i < n; i++) {
+      cnts.c++;
+      let bIdx = Math.floor(((a[i] - min) / (max - min + 1)) * bucketCount);
+      if (bIdx >= bucketCount) bIdx = bucketCount - 1;
+      buckets[bIdx].push(a[i]);
+      yield this.snap(a, { [i]: 'comparing' }, sorted, cnts, n + bucketCount, `Scattering ${a[i]} to bucket ${bIdx}`);
+    }
+
+    let idx = 0;
+    for (let b = 0; b < bucketCount; b++) {
+      const bucket = buckets[b];
+      bucket.sort((x, y) => { cnts.c++; return x - y; });
+      for (let i = 0; i < bucket.length; i++) {
+        a[idx] = bucket[i];
+        cnts.s++;
+        yield this.snap(a, { [idx]: 'swapping' }, sorted, cnts, n + bucketCount, `Writing ${a[idx]} from bucket ${b}`);
         idx++;
       }
     }
