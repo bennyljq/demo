@@ -1,0 +1,63 @@
+﻿<section aria-labelledby="piano-title">
+  <h1 id="piano-title">How to Piano</h1>
+  <p>Marche turque &middot; Acoustic grand piano</p>
+  <p role="status" aria-live="polite">Status: {{ playback.status() }}</p>
+  <div class="controls">
+    <button type="button" (click)="play()" [disabled]="playback.status() !== 'ready'">Play</button>
+    <button type="button" (click)="stop()" [disabled]="playback.status() !== 'playing'">Stop</button>
+    <label for="piano-speed">Speed</label>
+    <select id="piano-speed" [value]="playback.playbackRate()" [disabled]="playback.status() !== 'ready'"
+      (change)="playback.setPlaybackRate(+$any($event.target).value)">
+      @for (rate of playback.speedOptions; track rate) {
+        <option [value]="rate">{{ rate }}&times;</option>
+      }
+    </select>
+  </div>
+  @if (playback.error()) {
+    <p class="error" role="alert">{{ playback.error() }}</p>
+  }
+  <div class="typing-area" aria-label="Typing passage">
+    @if (chartError()) {
+      <p role="alert">{{ chartError() }}</p>
+    } @else if (chart().length) {
+      <p class="typing-feedback" aria-live="polite">
+        @if (attempt().complete) {
+          Passage complete: Perfect {{ counts().perfect }} &middot; Good {{ counts().good }} &middot; Miss {{ counts().miss }}
+        } @else if (attempt().listening) {
+          Listen
+        } @else {
+          Type one letter per marker
+        }
+      </p>
+      <div class="word-preview">
+        @for (word of preview(); track word[0].wordIndex) {
+          <span class="word" [class.current-word]="word[0].wordIndex === attempt().wordIndex">
+            @for (target of word; track target.noteId) {
+              <span [class]="'letter ' + attempt().results[target.index]"
+                [class.target]="target.index === attempt().current"
+                [attr.aria-current]="target.index === attempt().current ? 'true' : null"
+                [title]="target.letter + ': ' + attempt().results[target.index]">{{ target.letter }}</span>
+            }
+          </span>
+        }
+      </div>
+      <p class="roll-help">Listen first, then type at the playhead. Spaces need no input. Green: Perfect; amber: Good; red: Miss. The music continues regardless.</p>
+    }
+  </div>
+  <div class="track-controls">
+    <label for="piano-track">Visualise track: </label>
+    <select id="piano-track" [value]="selectedTrack()" (change)="selectTrack($event)">
+      <option value="-1">All tracks ({{ playback.timeline().notes.length }} notes)</option>
+      @for (track of playback.timeline().tracks; track track.index) {
+        <option [value]="track.index">Track {{ track.index }} - {{ track.name || 'Unnamed' }} ({{ track.notes.length }} notes)</option>
+      }
+    </select>
+  </div>
+  <div class="judgement-label" role="status" aria-live="polite" [attr.data-result]="feedback()?.kind">
+    {{ feedback()?.label }}
+  </div>
+  <canvas #roll role="img" aria-label="Scrolling MIDI piano roll" aria-describedby="roll-help">
+    MIDI notes scroll toward a fixed playhead, with higher pitches above lower pitches.
+  </canvas>
+  <p id="roll-help" class="roll-help">Four seconds ahead. Vertical labels are MIDI pitches; green notes are at the playhead. Track selection changes the display only.</p>
+</section>

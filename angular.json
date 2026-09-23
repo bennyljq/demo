@@ -28,7 +28,17 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "spessasynth_processor.min.js",
+                "input": "node_modules/spessasynth_lib/dist",
+                "output": "assets/piano/runtime"
+              },
+              {
+                "glob": "LICENSE",
+                "input": "node_modules/spessasynth_lib",
+                "output": "assets/piano/runtime"
+              }
             ],
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
