@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Original four-measure How to Piano import test, not Mozart's Turkish March. -->
+<score-partwise version="4.0">
+  <work><work-title>How to Piano - Import POC</work-title></work>
+  <movement-title>How to Piano - Import POC</movement-title>
+  <part-list><score-part id="P1"><part-name>Piano</part-name><part-abbreviation>Pno</part-abbreviation><score-instrument id="I1"><instrument-name>Piano</instrument-name></score-instrument><midi-instrument id="I1"><midi-channel>1</midi-channel><midi-program>1</midi-program></midi-instrument></score-part></part-list>
+  <part id="P1">
+    <measure number="1">
+      <attributes><divisions>480</divisions><time><beats>4</beats><beat-type>4</beat-type></time><staves>2</staves><clef number="1"><sign>G</sign><line>2</line></clef><clef number="2"><sign>F</sign><line>4</line></clef></attributes>
+      <direction><direction-type><dynamics><mf/></dynamics></direction-type><sound tempo="120" dynamics="80"/></direction>
+      <note><pitch><step>C</step><octave>5</octave></pitch><duration>480</duration><voice>1</voice><staff>1</staff></note>
+      <note><pitch><step>D</step><octave>5</octave></pitch><duration>480</duration><voice>1</voice><staff>1</staff></note>
+      <note><pitch><step>E</step><octave>5</octave></pitch><duration>480</duration><voice>1</voice><staff>1</staff></note>
+      <note><pitch><step>F</step><octave>5</octave></pitch><duration>480</duration><voice>1</voice><staff>1</staff></note>
+      <backup><duration>1920</duration></backup>
+      <note><pitch><step>C</step><octave>3</octave></pitch><duration>960</duration><voice>2</voice><staff>2</staff></note>
+      <note><chord/><pitch><step>E</step><octave>3</octave></pitch><duration>960</duration><voice>2</voice><staff>2</staff></note>
+      <note><pitch><step>G</step><octave>3</octave></pitch><duration>960</duration><voice>2</voice><staff>2</staff></note>
+    </measure>
+    <measure number="2">
+      <note><pitch><step>G</step><octave>5</octave></pitch><duration>960</duration><voice>1</voice><staff>1</staff></note>
+      <note><rest/><duration>480</duration><voice>1</voice><staff>1</staff></note>
+      <note><pitch><step>A</step><octave>5</octave></pitch><duration>480</duration><tie type="start"/><voice>1</voice><staff>1</staff><notations><tied type="start"/></notations></note>
+      <backup><duration>1920</duration></backup>
+      <note><pitch><step>F</step><octave>3</octave></pitch><duration>1920</duration><voice>2</voice><staff>2</staff></note>
+    </measure>
+    <measure number="3">
+      <direction><direction-type><dynamics><f/></dynamics></direction-type><sound tempo="90" dynamics="120"/></direction>
+      <note><pitch><step>A</step><octave>5</octave></pitch><duration>480</duration><tie type="stop"/><voice>1</voice><staff>1</staff><notations><tied type="stop"/></notations></note>
+      <note><pitch><step>G</step><octave>5</octave></pitch><duration>480</duration><voice>1</voice><staff>1</staff></note>
+      <note><pitch><step>E</step><alter>-1</alter><octave>5</octave></pitch><duration>480</duration><voice>1</voice><staff>1</staff></note>
+      <note><pitch><step>C</step><octave>5</octave></pitch><duration>480</duration><voice>1</voice><staff>1</staff></note>
+      <backup><duration>1920</duration></backup>
+      <note><pitch><step>G</step><octave>3</octave></pitch><duration>960</duration><voice>2</voice><staff>2</staff></note>
+      <note><pitch><step>D</step><octave>3</octave></pitch><duration>960</duration><voice>2</voice><staff>2</staff></note>
+    </measure>
+    <measure number="4">
+      <note><pitch><step>D</step><octave>5</octave></pitch><duration>480</duration><voice>1</voice><staff>1</staff></note>
+      <note><pitch><step>E</step><octave>5</octave></pitch><duration>480</duration><voice>1</voice><staff>1</staff></note>
+      <note><pitch><step>F</step><octave>5</octave></pitch><duration>480</duration><voice>1</voice><staff>1</staff></note>
+      <note><pitch><step>C</step><octave>5</octave></pitch><duration>480</duration><voice>1</voice><staff>1</staff></note>
+      <backup><duration>1920</duration></backup>
+      <note><pitch><step>C</step><octave>3</octave></pitch><duration>1920</duration><voice>2</voice><staff>2</staff></note>
+    </measure>
+  </part>
+</score-partwise>

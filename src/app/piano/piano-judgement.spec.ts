@@ -3,10 +3,49 @@ import { isGameplayKey, TypingRound } from './piano-judgement';
 import { extractPianoTimeline } from './piano-timeline';
 
 const targets = (times = [1, 1.25, 2]): TypingTarget[] => times.map((time, index) => ({
-  time, index, wordIndex: 0, letter: 'ABC'[index], noteId: `test:${index}`,
+  time, index, wordIndex: 0, word: 'ABC', letter: 'ABC'[index], id: `test:${index}`,
 }));
 
 describe('typing judgement', () => {
+  it('judges equal real-time errors equally at normal, slow and fast playback rates', () => {
+    for (const rate of [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3]) {
+      for (const [realError, expected] of [[0.08, 'perfect'], [0.10, 'good'], [0.16, 'good']] as const) {
+        const round = new TypingRound(targets([1]));
+        round.key('a', 1 + realError * rate, rate);
+        expect(round.results[0]).withContext(`rate ${rate}, error ${realError}`).toBe(expected);
+      }
+    }
+  });
+
+  it('scales miss and completion boundaries into source-song time', () => {
+    for (const rate of [0.5, 1, 2, 3]) {
+      const round = new TypingRound(targets([1]));
+      round.advance(1 + 0.16 * rate, rate);
+      expect(round.results[0]).toBe('pending');
+      expect(round.complete).toBeFalse();
+      round.advance(1 + 0.161 * rate, rate);
+      expect(round.results[0]).toBe('miss');
+      expect(round.complete).toBeTrue();
+    }
+  });
+
+  it('resolves just one nearest target in overlapping windows at 2×', () => {
+    const round = new TypingRound(targets([1, 1.25]));
+    round.key('b', 1.126, 2);
+    expect(round.results).toEqual(['pending', 'perfect']);
+    round.key('a', 1.126, 2);
+    expect(round.results).toEqual(['perfect', 'perfect']);
+  });
+
+  it('uses cosmetic time for wrong-key feedback independent of rate', () => {
+    const round = new TypingRound(targets([1]));
+    round.key('z', 1, 2, 10);
+    round.advance(1.2, 2, 10.49);
+    expect(round.wrong).toBeTrue();
+    round.advance(1.2, 2, 10.5);
+    expect(round.wrong).toBeFalse();
+  });
+
   it('includes both Perfect/Good boundaries and excludes times outside the window', () => {
     for (const delta of [-0.16, -0.080001, -0.08, 0, 0.08, 0.080001, 0.16]) {
       const round = new TypingRound(targets([1]));
@@ -90,9 +129,11 @@ describe('authored opening chart', () => {
     expect(chart.length).toBe(33);
     expect(chart[0].time).toBe(2);
     expect(chart[32].time).toBe(15);
+    expect(chart.map(t => t.time)).toEqual([2,2.25,2.5,2.75,3,4,4.25,4.5,4.75,5,5.25,5.5,5.75,
+      6,6.25,6.5,6.75,7,8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15]);
     expect(chart.every((target, i) => !i || target.time > chart[i - 1].time)).toBeTrue();
-    expect(() => buildTypingChart(timeline, [{ word: 'A', noteIds: ['missing'] }])).toThrowError(/missing note/);
-    expect(() => buildTypingChart(timeline, [{ word: 'AB', noteIds: ['1:11'] }])).toThrowError(/letter count/);
-    expect(() => buildTypingChart(timeline, [{ word: 'AB', noteIds: ['1:11', '1:11'] }])).toThrowError(/strictly increasing/);
+    expect(() => buildTypingChart(timeline, [{ word: 'A', track: 1, groups: [999] }])).toThrowError(/missing track 1, group 999/);
+    expect(() => buildTypingChart(timeline, [{ word: 'AB', track: 1, groups: [5] }])).toThrowError(/letter count/);
+    expect(() => buildTypingChart(timeline, [{ word: 'AB', track: 1, groups: [5, 5] }])).toThrowError(/strictly increasing/);
   });
 });
