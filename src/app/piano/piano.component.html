@@ -10,15 +10,18 @@
   </button>
 </header>
 
-<p class="status" role="status" aria-live="polite">Status: {{ playback.status() }}
-  @if (playback.countIn() !== null) { · Count in {{ playback.countIn() }} }
+<p class="status" role="status" aria-live="polite" [attr.data-status]="playback.status()">{{ statusLabel() }}
+  @if (playback.countIn() !== null) { - {{ playback.countIn() }} }
+  @if (playback.status() === 'enable-audio') {
+    <button type="button" (click)="playback.enableAudio()">Enable audio</button>
+  }
 </p>
 
 <div class="control-panel">
   <div class="transport-controls">
     <button type="button" (click)="play()" [disabled]="playback.status() !== 'ready'">Play</button>
     <button type="button" (click)="stop()"
-    [disabled]="playback.status() !== 'playing' && playback.status() !== 'count-in' && !(playback.status() === 'ready' && displayedTime() > 0)">Stop</button>
+    [disabled]="playback.status() !== 'playing' && playback.status() !== 'count-in' && playback.status() !== 'starting' && !(playback.status() === 'ready' && displayedTime() > 0)">Stop</button>
     <label class="song-selector" for="piano-song">Song
       <select id="piano-song" [value]="playback.source()" (change)="selectSong($event)">
         @for (song of playback.songs; track song.id) { <option [value]="song.id">{{ song.title }}</option> }
@@ -100,71 +103,70 @@
 
       
       <div class="track-controls">
-        <label for="piano-track">Visualise score group</label>
-        <select id="piano-track" [value]="selectedTrack()" (change)="selectTrack($event)">
-          <option value="-1">All staves and voices ({{ playback.timeline().notes.length }} notes)</option>
-          @for (track of playback.timeline().tracks; track track.index) {
-            <option [value]="track.index">{{ track.name }} ({{ track.notes.length }} notes)</option>
-          }
-        </select>
-      </div>
-      <p class="score-markings" aria-live="polite">{{ currentMarkings() }}</p>
+  <label for="piano-track">Visualise score group</label>
+  <select id="piano-track" [value]="selectedTrack()" (change)="selectTrack($event)">
+    <option value="-1">All staves and voices ({{ playback.timeline().notes.length }} notes)</option>
+    @for (track of playback.timeline().tracks; track track.index) {
+      <option [value]="track.index">{{ track.name }} ({{ track.notes.length }} notes)</option>
+    }
+  </select>
+</div>
+<p class="score-markings" aria-live="polite">{{ currentMarkings() }}</p>
 
-            <div class="typing-area" #passage aria-label="Typing passage">
-        @if (chartError()) {
-          <p class="error" role="alert">{{ chartError() }}</p>
-        } @else if (!chart().length && playback.score()) {
-          <p>No typing chart yet.</p>
-        } @else if (chart().length) {
-          <p class="typing-feedback" aria-live="polite">
-            @if (playback.status() === 'count-in') {
-              Count in {{ playback.countIn() }} · Listen for the downbeat
-            } @else if (attempt().current < 0 && counts().perfect + counts().good + counts().miss === 0) {
-              No charted letters ahead
-            } @else if (attempt().complete) {
-              Passage complete: Perfect {{ counts().perfect }} · Good {{ counts().good }} · Miss {{ counts().miss }} · Wrong {{ attempt().wrongCount }} · Best combo {{ attempt().bestCombo }}
-            } @else if (attempt().listening) {
-              Listen
-            } @else {
-              Type at the line · Combo {{ attempt().combo }} · Best {{ attempt().bestCombo }} · Wrong {{ attempt().wrongCount }}
-            }
-          </p>
-          <div class="passage">
-            @for (line of visibleLines(); track $index) {
-              <div class="passage-line">
-                @for (word of line; track word[0].wordIndex) {
-                  <span class="word" [class.current-word]="word[0].wordIndex === attempt().wordIndex">
-                    @for (target of word; track target.id) {
-                      <span [class]="'letter ' + attempt().results[target.index]" [class.target]="target.index === attempt().current"
-                      [class.has-hold]="target.holdEnd !== undefined"
-                      [style.--hold-progress]="target.holdEnd !== undefined && attempt().results[target.index] === 'holding' ?
-                      ((displayedTime() - target.time) / (target.holdEnd - target.time) * 100) + '%' : '0%'"
-                      [attr.aria-current]="target.index === attempt().current ? 'true' : null"
-                      [title]="target.letter + ': ' + attempt().results[target.index]">{{ target.letter }}</span>
-                    }
-                  </span>
-                }
-              </div>
-            }
-          </div>
-          <p class="hold-legend">Underlined letter means hold the key; the line fills until its end.</p>
-          <details class="scoring-help">
-            <summary>How scoring works</summary>
-            <p>Perfect attack: 100 points. Good attack: 70. Miss: 0. A successful hold adds up to 100 more, proportional to held song time. A release within the final {{ settings().holdReleaseMs }} ms at the selected speed receives full credit; the allowance never exceeds half the hold. Wrong keys break combo without a point deduction.</p>
-          </details>
-          @if (attempt().complete) {
-            <p class="result-points">Total score {{ attempt().total.toFixed(0) }} / {{ attempt().available }} ? Sustain {{ attempt().sustain.toFixed(0) }} / {{ attempt().sustainAvailable }}</p>
+<div class="typing-area" #passage aria-label="Typing passage">
+  @if (chartError()) {
+    <p class="error" role="alert">{{ chartError() }}</p>
+  } @else if (!chart().length && playback.score()) {
+    <p>No typing chart yet.</p>
+  } @else if (chart().length) {
+    <p class="typing-feedback" aria-live="polite">
+      @if (playback.status() === 'count-in') {
+        Count in {{ playback.countIn() }} - Listen for the downbeat
+      } @else if (attempt().current < 0 && counts().perfect + counts().good + counts().miss === 0) {
+        No charted letters ahead
+      } @else if (attempt().complete) {
+        Passage complete: Perfect {{ counts().perfect }} / Good {{ counts().good }} / Miss {{ counts().miss }} / Wrong {{ attempt().wrongCount }} / Best combo {{ attempt().bestCombo }}
+      } @else if (attempt().listening) {
+        Listen
+      } @else {
+        Type at the line - Combo {{ attempt().combo }} / Best {{ attempt().bestCombo }} / Wrong {{ attempt().wrongCount }}
+      }
+    </p>
+    <p class="hold-legend">The bar above a letter fills while you hold its key. Underline marks the current letter.</p>
+    <details class="scoring-help">
+      <summary>How scoring works</summary>
+      <p>Perfect attack: 100 points. Good attack: 70. Miss: 0. A successful hold adds up to 100 more, proportional to held song time. A release within the final {{ settings().holdReleaseMs }} ms at the selected speed receives full credit; the allowance never exceeds half the hold. Wrong keys break combo without a point deduction.</p>
+    </details>
+    @if (attempt().complete) {
+      <p class="result-points">Total score {{ attempt().total.toFixed(0) }} / {{ attempt().available }} - Sustain {{ attempt().sustain.toFixed(0) }} / {{ attempt().sustainAvailable }}</p>
+    }
+  }
+  <div class="judgement-label" role="status" aria-live="polite" [attr.data-result]="feedback()?.kind">
+    @if (feedback()) { <span class="judged-letter">{{ feedback().letter }}</span> }
+    {{ feedback()?.label }}
+  </div>
+  @if (chart().length) {
+    <div class="passage">
+      @for (line of visibleLines(); track $index) {
+        <div class="passage-line">
+          @for (word of line; track word[0].wordIndex) {
+            <span class="word" [class.current-word]="word[0].wordIndex === attempt().wordIndex">
+              @for (target of word; track target.id) {
+                <span [class]="'letter ' + attempt().results[target.index]" [class.target]="target.index === attempt().current"
+                  [class.has-hold]="target.holdEnd !== undefined"
+                  [style.--hold-progress]="(attempt().sustainPoints[target.index] || 0) + '%'"
+                  [attr.aria-current]="target.index === attempt().current ? 'true' : null"
+                  [title]="target.letter + ': ' + attempt().results[target.index]">{{ target.letter }}</span>
+              }
+            </span>
           }
-        }
-      </div>
-      
-      <div class="judgement-label" role="status" aria-live="polite" [attr.data-result]="feedback()?.kind">
-        @if (feedback()) { <span class="judged-letter">{{ feedback().letter }}</span> }
-        {{ feedback()?.label }}
-      </div>
-      <canvas #roll role="img" aria-label="Scrolling score notes and independent typing targets" aria-describedby="roll-help">
-        Score notes and letters scroll toward a fixed playhead.
-      </canvas>
-      <p id="roll-help" class="roll-help">Letters use the upper lane and their own chart times. Note bars below show the music; track selection changes only those bars.</p>
-    </section>
-    
+        </div>
+      }
+    </div>
+  }
+</div>
+<canvas #roll role="img" aria-label="Scrolling score notes and independent typing targets" aria-describedby="roll-help">
+  Score notes and letters scroll toward a fixed playhead.
+</canvas>
+<p id="roll-help" class="roll-help">Letters use the upper lane and their own chart times. Note bars below show the music; track selection changes only those bars.</p>
+</section>

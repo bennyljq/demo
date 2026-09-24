@@ -5,8 +5,10 @@ import { ImportedScore, importMusicXml } from './musicxml-import';
 import { readMxlRootfile } from './mxl-container';
 import { countInBeatSeconds, scoreBeatGrid, BeatPulse } from './piano-metronome';
 import { SONGS } from './song-manifest.generated';
+import { buildXmlTypingChart, TypingTarget } from './piano-chart';
+import { songChartFor } from './song-charts';
 
-type PlaybackStatus = 'loading' | 'ready' | 'count-in' | 'playing' | 'error';
+type PlaybackStatus = 'loading' | 'enable-audio' | 'ready' | 'starting' | 'count-in' | 'playing' | 'error';
 export type PianoSource = string;
 
 @Injectable()
@@ -28,6 +30,8 @@ export class PianoPlaybackService implements OnDestroy {
   private sequenceQueue: Promise<void> = Promise.resolve();
   private readonly scoreValue = signal<ImportedScore | null>(null);
   readonly score = this.scoreValue.asReadonly();
+  private readonly chartValue = signal<readonly TypingTarget[]>([]);
+  readonly chart = this.chartValue.asReadonly();
   readonly speedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3] as const;
   private readonly rateValue = signal(1);
   readonly playbackRate = this.rateValue.asReadonly();
@@ -89,11 +93,15 @@ export class PianoPlaybackService implements OnDestroy {
     return this.scrubPreview ?? this.pendingSeek ?? (this.status() === 'playing' ? Math.max(0, this.sequencer?.currentTime ?? this.positionValue()) : this.positionValue());
   }
   
-  setMetronome(enabled: boolean): void {
+  async setMetronome(enabled: boolean): Promise<void> {
     if (this.status() !== 'ready') return;
     this.metronomeValue.set(enabled);
     this.metronomeErrorValue.set('');
-    if (enabled) void this.prepareClick();
+    if (enabled && !this.clickBuffer) {
+      this.statusValue.set('loading');
+      await this.prepareClick();
+      if (!this.lifetime.signal.aborted && this.status() === 'loading') this.statusValue.set('ready');
+    }
   }
   
   private async prepareClick(): Promise<void> {
@@ -156,6 +164,7 @@ export class PianoPlaybackService implements OnDestroy {
   private output?: GainNode;
   private synth?: WorkletSynthesizer;
   private sequencer?: Sequencer;
+  private enginePromise?: Promise<void>;
   private loadedSongId = '';
   private loadStarted = false;
 
@@ -163,7 +172,8 @@ export class PianoPlaybackService implements OnDestroy {
     if (this.loadStarted) return;
     this.loadStarted = true;
     try {
-      this.soundFont = await this.fetchAsset('acoustic_grand_piano_ydp_20080910.sf2', 'RIFF');
+      this.soundFont = await this.fetchAsset('SalC5Light2.sf2', 'RIFF');
+      // this.soundFont = await this.fetchAsset('TimGM6mb.sf2', 'RIFF');
       if (!this.lifetime.signal.aborted) await this.selectSong(this.source());
     } catch (error) { this.fail(error); }
   }
@@ -187,6 +197,7 @@ export class PianoPlaybackService implements OnDestroy {
     this.statusValue.set('loading');
     this.errorValue.set('');
     this.scoreValue.set(null);
+    this.chartValue.set([]);
     this.timelineValue.set({ tracks: [], notes: [] });
     this.durationValue.set(0);
     this.positionValue.set(0);
@@ -195,26 +206,35 @@ export class PianoPlaybackService implements OnDestroy {
     try {
       let score = this.scores.get(id);
       if (!score) {
-        const buffer = await this.fetchAsset(`tracks/${song.file}`, 'PK', controller.signal);
-        const xml = await readMxlRootfile(buffer);
+        const compressed = song.file.toLowerCase().endsWith('.mxl');
+        const buffer = await this.fetchAsset(`tracks/${song.file}`, compressed ? 'PK' : '<?xml', controller.signal);
+        const xml = compressed ? await readMxlRootfile(buffer) : new TextDecoder().decode(buffer);
         if (version !== this.selectionVersion || controller.signal.aborted) return;
         score = importMusicXml(xml);
         this.scores.set(id, score);
       }
       if (version !== this.selectionVersion || controller.signal.aborted) return;
-      if (this.sequencer) {
-        const selectedScore = score;
-        const operation = this.sequenceQueue.catch(() => {}).then(async () => {
-          if (version === this.selectionVersion) await this.loadSequence(selectedScore.midi, id);
-        });
-        this.sequenceQueue = operation;
-        await operation;
-      }
-      if (version !== this.selectionVersion || controller.signal.aborted) return;
+      const chart = songChartFor(id);
+      const targets = buildXmlTypingChart(score, chart.phrases, chart.unitsPerQuarter);
+      this.chartValue.set(targets);
       this.scoreValue.set(score);
       this.timelineValue.set(score.timeline);
       this.durationValue.set(score.duration);
       this.beatGrid = scoreBeatGrid(score);
+      if (this.metronome()) await this.prepareClick();
+      if (version !== this.selectionVersion || controller.signal.aborted) return;
+      if (!this.sequencer && !this.enginePromise) {
+        this.context ??= new AudioContext();
+        if (this.context.state === 'suspended') {
+          this.statusValue.set('enable-audio');
+          return;
+        }
+        this.enginePromise = this.initialiseAudio(score.midi, id);
+      }
+      if (this.enginePromise) await this.enginePromise;
+      if (version !== this.selectionVersion || controller.signal.aborted) return;
+      if (this.loadedSongId !== id) await this.queueSequence(score.midi, id);
+      if (version !== this.selectionVersion || controller.signal.aborted) return;
       this.statusValue.set('ready');
     } catch (error) {
       if (version === this.selectionVersion && !controller.signal.aborted && !this.lifetime.signal.aborted) {
@@ -224,22 +244,34 @@ export class PianoPlaybackService implements OnDestroy {
     }
   }
 
+  /** Browser gesture required only when background AudioContext activation was blocked. */
+  async enableAudio(): Promise<void> {
+    if (this.status() !== 'enable-audio' || !this.context || !this.score()) return;
+    const version = this.selectionVersion;
+    this.statusValue.set('loading');
+    try {
+      // Resume immediately in the click handler, before any await.
+      await this.waitFor(this.context.resume(), 'Could not enable browser audio.');
+      if (version !== this.selectionVersion) return;
+      this.enginePromise ??= this.initialiseAudio(this.score()!.midi, this.source());
+      await this.enginePromise;
+      if (version !== this.selectionVersion) return;
+      if (this.loadedSongId !== this.source()) await this.queueSequence(this.score()!.midi, this.source());
+      if (version === this.selectionVersion) this.statusValue.set('ready');
+    } catch (error) { this.fail(error); }
+  }
+
   async play(): Promise<void> {
     if (this.status() !== 'ready' || this.lifetime.signal.aborted) return;
     const version = this.selectionVersion;
-    const selected = this.score();
-    if (!selected) return;
+    if (!this.sequencer || !this.context || this.loadedSongId !== this.source()) return;
     // Set synchronously: double clicks cannot create a second engine.
-    this.statusValue.set('loading');
+    this.statusValue.set('starting');
     try {
-      this.context ??= new AudioContext();
       // Before any await so browser audio is unlocked by the user's click.
       await this.waitFor(this.context.resume(), 'Could not start browser audio.');
-      if (!this.sequencer) await this.initialiseAudio(selected.midi, this.source());
-      else if (this.loadedSongId !== this.source()) await this.queueSequence(selected.midi, this.source());
-      if (this.metronome()) await this.prepareClick();
       this.lifetime.signal.throwIfAborted();
-      if (version !== this.selectionVersion) return;
+      if (version !== this.selectionVersion || this.status() !== 'starting') return;
       this.sequencer.playbackRate = this.playbackRate();
       if (this.metronome() && this.clickBuffer && this.score()) this.startCountIn();
       else this.startSequence();
@@ -249,7 +281,7 @@ export class PianoPlaybackService implements OnDestroy {
   }
   
   stop(): void {
-    if (this.status() !== 'playing' && this.status() !== 'count-in' && this.status() !== 'ready') return;
+    if (this.status() !== 'playing' && this.status() !== 'count-in' && this.status() !== 'starting' && this.status() !== 'ready') return;
     this.cancelClicks();
     this.scrubPreview = null;
     this.pendingSeek = null;
@@ -474,7 +506,7 @@ export class PianoPlaybackService implements OnDestroy {
     const response = await fetch(this.assetUrl(fileName), { signal });
     if (!response.ok) throw new Error(`Could not load ${fileName}: HTTP ${response.status}.`);
     const buffer = await response.arrayBuffer();
-    if (!new TextDecoder().decode(buffer.slice(0, 4)).startsWith(signature)) {
+    if (!new TextDecoder().decode(buffer.slice(0, signature.length)).startsWith(signature)) {
       throw new Error(`Invalid ${fileName} response. Check that Angular serves the supplied file.`);
     }
     return buffer;

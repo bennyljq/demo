@@ -186,6 +186,10 @@ function parseMeasure(measure: Element, index: number, state: { divisions: numbe
             const type = mark.getAttribute('type'), size = mark.getAttribute('size');
             if (!['up', 'down', 'stop'].includes(type || '') || size !== '8') fail(`unsupported octave shift in measure ${numberLabel}.`);
             // MusicXML pitch values are the sounding pitch; this is engraving only.
+          } else if (mark.localName === 'dashes') {
+            if (!['start', 'stop'].includes(mark.getAttribute('type') || ''))
+              fail(`unsupported direction dashes in measure ${numberLabel}.`);
+            // A text continuation line has no MIDI effect; its words are retained above.
           } else fail(`unsupported direction ${mark.localName} in measure ${numberLabel}.`);
         }
         const sound = child(item, 'sound');

@@ -5,8 +5,29 @@ import { TypingRound } from './piano-judgement';
 import { resolveChartLocation } from './piano-chart-time';
 import { scoreBeatGrid, countInBeatSeconds } from './piano-metronome';
 import { timeToX } from './piano-roll-geometry';
+import { PHASE9_CHART_TIMES } from './chart-times.phase9';
+import { songChartFor } from './song-charts';
 
 describe('readable score chart', () => {
+  it('keeps every migrated Turkish and Greensleeves attack and hold time', async () => {
+    for (const id of ['greensleeves', 'wa-mozart-marche-turque-turkish-march-fingered']) {
+      const file = id === 'greensleeves' ? 'Greensleeves.mxl' : 'WA_Mozart_Marche_Turque_Turkish_March_fingered.mxl';
+      const response = await fetch(`/assets/piano/tracks/${file}`);
+      const score = importMusicXml(await readMxlRootfile(await response.arrayBuffer()));
+      const definition = songChartFor(id);
+      const actual = buildXmlTypingChart(score, definition.phrases, definition.unitsPerQuarter);
+      const baseline = PHASE9_CHART_TIMES[id];
+      expect(actual.length).toBe(baseline.length);
+      actual.forEach((target, index) => {
+        expect(target.id).toBe(baseline[index].id);
+        expect(target.time).withContext(`${id} attack ${index}`).toBeCloseTo(baseline[index].time, 7);
+        if (target.holdEnd !== undefined)
+          expect(target.holdEnd).withContext(`${id} hold ${index}`).toBeCloseTo(baseline[index].holdEnd!, 7);
+        else expect(baseline[index].holdEnd).toBeNull();
+      });
+    }
+  });
+
   it('selects the first-pass upper line and a musical hold endpoint', async () => {
     const response = await fetch('/assets/piano/tracks/WA_Mozart_Marche_Turque_Turkish_March_fingered.mxl');
     expect(response.ok).toBeTrue();
@@ -35,10 +56,10 @@ describe('readable score chart', () => {
     const both = buildXmlTypingChart(score, [{ ...phrase, occurrence: 'all' }]);
     expect(both.map(t => t.id)).toEqual([first[0].id, second[0].id]);
     expect(() => buildXmlTypingChart(score, [{ word: 'A', occurrence: 2, letters: [{
-      start: { measure: repeated.number, beat: 0 }, end: { measure: repeated.number, beat: 1.5, occurrence: 1 },
+      start: { measure: repeated.number, beat: 0 }, end: { measure: repeated.number, beat: 2, occurrence: 1 },
     }] }])).toThrowError(/hold end must follow start/);
     const beforeJump = score.measures[score.measures.indexOf(repeated) - 1];
-    expect(resolveChartLocation(score, { measure: beforeJump.number, beat: 3, occurrence: beforeJump.occurrence }).time)
+    expect(resolveChartLocation(score, { measure: beforeJump.number, beat: beforeJump.durationQuarter * 2, occurrence: beforeJump.occurrence }).time)
       .toBe(resolveChartLocation(score, { measure: repeated.number, beat: 0, occurrence: repeated.occurrence }).time);
   });
 
@@ -50,7 +71,7 @@ describe('readable score chart', () => {
     expect(target.holdEnd).toBe(resolveChartLocation(score, { measure: 6, beat: 0 }).time);
     expect(() => buildXmlTypingChart(score, [{ word: 'AA', letters: [
       { start: { measure: 5, beat: 0 }, end: { measure: 6, beat: 0 } },
-      { start: { measure: 5, beat: 1.5 } },
+      { start: { measure: 5, beat: 2 } },
     ] }])).toThrowError(/same-key target/);
     expect(() => buildXmlTypingChart(score, [{ word: 'A', letters: [
       { start: { measure: 5, beat: Number.NaN } },
@@ -61,13 +82,13 @@ describe('readable score chart', () => {
     const response = await fetch('/assets/piano/how-to-piano-poc.musicxml');
     const fixture = importMusicXml(await response.text());
     const third = fixture.measures[2];
-    expect(resolveChartLocation(fixture, { measure: third.number, beat: 3 }).time).toBe(fixture.measures[3].start);
+    expect(resolveChartLocation(fixture, { measure: third.number, beat: third.durationQuarter * 2 }).time).toBe(fixture.measures[3].start);
     const fourth = fixture.measures[3];
-    const middle = resolveChartLocation(fixture, { measure: fourth.number, beat: 1.5 });
+    const middle = resolveChartLocation(fixture, { measure: fourth.number, beat: fourth.durationQuarter });
     expect(middle.time).toBeCloseTo(fourth.start + fourth.durationQuarter / 2 * 60 / 90, 6);
     const changedInside = { ...fixture, tempos: [...fixture.tempos, { quarter: fourth.quarter + 1, value: 60 }]
       .sort((a, b) => a.quarter - b.quarter) };
-    const integrated = resolveChartLocation(changedInside, { measure: fourth.number, beat: 1.5 });
+    const integrated = resolveChartLocation(changedInside, { measure: fourth.number, beat: fourth.durationQuarter });
     expect(integrated.time).toBeCloseTo(fourth.start + 60 / 90 + 60 / 60, 6);
     expect(scoreBeatGrid(fixture).find(beat => beat.measureId === fourth.id && beat.beat === 1)!.sourceTime)
       .toBeCloseTo(fourth.start + 60 / 90, 6);
@@ -75,13 +96,27 @@ describe('readable score chart', () => {
     const scoreResponse = await fetch('/assets/piano/tracks/WA_Mozart_Marche_Turque_Turkish_March_fingered.mxl');
     const score = importMusicXml(await readMxlRootfile(await scoreResponse.arrayBuffer()));
     expect(score.measures[0].durationQuarter).toBe(1);
-    expect(resolveChartLocation(score, { measure: 0, beat: 1.5 }).quarter).toBe(score.measures[0].quarter + 0.5);
+    expect(resolveChartLocation(score, { measure: 0, beat: 1 }).quarter).toBe(score.measures[0].quarter + 0.5);
+    expect(resolveChartLocation(score, { measure: 0, beat: 2 }).time).toBe(score.measures[1].start);
+    expect(() => resolveChartLocation(score, { measure: 0, beat: 2.01 })).toThrowError(/0-2 musical units/);
     expect(scoreBeatGrid(score).filter(beat => beat.measureId === score.measures[0].id).length).toBe(1);
     const repeated = score.measures.find(measure => measure.occurrence === 2)!;
     expect(scoreBeatGrid(score).find(beat => beat.measureId === repeated.id && beat.beat === 0)?.sourceTime)
       .toBe(repeated.start);
     expect(countInBeatSeconds(score, 0, 1)).toEqual([0, 0.5]);
     expect(countInBeatSeconds(score, 0, 3)[1]).toBeCloseTo(1 / 6, 8);
+  });
+
+  it('extends musical units through Liebestraum cadenza bars', async () => {
+    const response = await fetch('/assets/piano/tracks/Liebestraum_No._3_in_A_Major.mxl');
+    const score = importMusicXml(await readMxlRootfile(await response.arrayBuffer()));
+    for (const [label, length] of [['25', 15], ['26', 21]] as const) {
+      const measure = score.measures.find(item => item.number === label)!;
+      expect(measure.durationQuarter).toBe(length);
+      const atEnd = resolveChartLocation(score, { measure: label, beat: length * 2 });
+      expect(atEnd.time).toBe(score.measures[score.measures.indexOf(measure) + 1].start);
+      expect(resolveChartLocation(score, { measure: label, beat: 6 }).quarter).toBe(measure.quarter + 3);
+    }
   });
 
   it('changes only roll geometry when look-ahead changes', () => {

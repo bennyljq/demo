@@ -66,7 +66,8 @@ export function buildTypingChart(timeline: PianoTimeline, definition: readonly M
   return validate(targets);
 }
 
-export function buildXmlTypingChart(score: ImportedScore, definition: readonly XmlPhrase[] = TURKISH_CHART): TypingTarget[] {
+export function buildXmlTypingChart(score: ImportedScore, definition: readonly XmlPhrase[] = TURKISH_CHART,
+  unitsPerQuarter = 2): TypingTarget[] {
   const phrases = definition.flatMap((phrase, authoredIndex) => {
     const occurrences = phrase.occurrence === 'all'
       ? [...new Set(score.measures.filter(measure => measure.number === String(phrase.letters[0]?.start.measure))
@@ -81,8 +82,8 @@ export function buildXmlTypingChart(score: ImportedScore, definition: readonly X
     const group = phrase.letters.map((entry, letterIndex) => {
       const id = `xml:${phrase.id ?? authoredIndex}:${occurrence}:${letterIndex}`;
       try {
-        const start = resolveChartLocation(score, entry.start, occurrence);
-        const end = entry.end ? resolveChartLocation(score, entry.end, occurrence) : undefined;
+        const start = resolveChartLocation(score, entry.start, occurrence, unitsPerQuarter);
+        const end = entry.end ? resolveChartLocation(score, entry.end, occurrence, unitsPerQuarter) : undefined;
         if (end && end.time <= start.time) throw new Error(`hold end must follow start at measure ${entry.end!.measure}, beat ${entry.end!.beat}.`);
         return { id, word: phrase.word, letter: phrase.word[letterIndex], time: start.time, holdEnd: end?.time,
           wordIndex: 0, index: 0, source: { start: entry.start, end: entry.end, occurrence } } satisfies TypingTarget;

@@ -15,5 +15,75 @@ export const SONGS: readonly SongEntry[] = [
     "id": "wa-mozart-marche-turque-turkish-march-fingered",
     "title": "Mozart: Marche Turque Turkish March fingered",
     "file": "WA_Mozart_Marche_Turque_Turkish_March_fingered.mxl"
+  },
+  {
+    "id": "12-variations-of-twinkle-twinkle-little-star",
+    "title": "Twinkle Twinkle Little Star - Complete collection",
+    "file": "12_Variations_of_Twinkle_Twinkle_Little_Star.mxl"
+  },
+  {
+    "id": "twinkle-theme",
+    "title": "Twinkle Twinkle Little Star - Theme",
+    "file": "Twinkle_Theme.musicxml"
+  },
+  {
+    "id": "twinkle-variation-01",
+    "title": "Twinkle Twinkle Little Star - Variation 1",
+    "file": "Twinkle_Variation_01.musicxml"
+  },
+  {
+    "id": "twinkle-variation-02",
+    "title": "Twinkle Twinkle Little Star - Variation 2",
+    "file": "Twinkle_Variation_02.musicxml"
+  },
+  {
+    "id": "twinkle-variation-03",
+    "title": "Twinkle Twinkle Little Star - Variation 3",
+    "file": "Twinkle_Variation_03.musicxml"
+  },
+  {
+    "id": "twinkle-variation-04",
+    "title": "Twinkle Twinkle Little Star - Variation 4",
+    "file": "Twinkle_Variation_04.musicxml"
+  },
+  {
+    "id": "twinkle-variation-05",
+    "title": "Twinkle Twinkle Little Star - Variation 5",
+    "file": "Twinkle_Variation_05.musicxml"
+  },
+  {
+    "id": "twinkle-variation-06",
+    "title": "Twinkle Twinkle Little Star - Variation 6",
+    "file": "Twinkle_Variation_06.musicxml"
+  },
+  {
+    "id": "twinkle-variation-07",
+    "title": "Twinkle Twinkle Little Star - Variation 7",
+    "file": "Twinkle_Variation_07.musicxml"
+  },
+  {
+    "id": "twinkle-variation-08",
+    "title": "Twinkle Twinkle Little Star - Variation 8",
+    "file": "Twinkle_Variation_08.musicxml"
+  },
+  {
+    "id": "twinkle-variation-09",
+    "title": "Twinkle Twinkle Little Star - Variation 9",
+    "file": "Twinkle_Variation_09.musicxml"
+  },
+  {
+    "id": "twinkle-variation-10",
+    "title": "Twinkle Twinkle Little Star - Variation 10",
+    "file": "Twinkle_Variation_10.musicxml"
+  },
+  {
+    "id": "twinkle-variation-11",
+    "title": "Twinkle Twinkle Little Star - Variation 11",
+    "file": "Twinkle_Variation_11.musicxml"
+  },
+  {
+    "id": "twinkle-variation-12",
+    "title": "Twinkle Twinkle Little Star - Variation 12",
+    "file": "Twinkle_Variation_12.musicxml"
   }
 ];

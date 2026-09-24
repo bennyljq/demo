@@ -1,8 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, NgZone, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { PianoPlaybackService } from './piano-playback.service';
 import { PianoRoll, JudgementFeedback } from './piano-roll';
-import { buildXmlTypingChart, TypingTarget } from './piano-chart';
-import { chartForSong } from './song-charts';
+import { TypingTarget } from './piano-chart';
 import { DEFAULT_SCORING_SETTINGS, ScoringSettings, validateScoringSettings } from './piano-scoring-settings';
 import { isGameplayKey, LetterResult, TypingRound } from './piano-judgement';
 
@@ -20,6 +19,10 @@ export class PianoComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly selectedTrack = signal(-1);
   readonly lookAhead = signal(6);
   readonly theme = signal<'light' | 'dark'>('dark');
+  readonly statusLabel = computed(() => ({
+    loading: 'Preparing', 'enable-audio': 'Enable audio to prepare', ready: 'Ready',
+    starting: 'Starting', 'count-in': 'Count in', playing: 'Playing', error: 'Error',
+  })[this.playback.status()]);
   readonly currentMarkings = signal('');
   readonly visibleNotes = computed(() => {
     const timeline = this.playback.timeline();
@@ -35,7 +38,7 @@ export class PianoComponent implements OnInit, AfterViewInit, OnDestroy {
   private pianoRoll?: PianoRoll;
   readonly chart = signal<readonly TypingTarget[]>([]);
   readonly chartError = signal('');
-  readonly attempt = signal({ results: [] as LetterResult[], current: -1, wordIndex: 0, listening: true, complete: false, wrong: false, wrongCount: 0, combo: 0, bestCombo: 0, total: 0, available: 0, sustain: 0, sustainAvailable: 0 });
+  readonly attempt = signal({ results: [] as LetterResult[], sustainPoints: [] as number[], current: -1, wordIndex: 0, listening: true, complete: false, wrong: false, wrongCount: 0, combo: 0, bestCombo: 0, total: 0, available: 0, sustain: 0, sustainAvailable: 0 });
   readonly displayedTime = signal(0);
   private lastTimePublish = -1;
   readonly words = computed(() => {
@@ -74,14 +77,13 @@ export class PianoComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor() {
     effect(() => {
       const score = this.playback.score();
-      const id = this.playback.source();
+      const targets = this.playback.chart();
       if (!score) {
         this.chart.set([]); this.round = undefined; this.publishedRevision = -1;
         this.chartError.set('');
         return;
       }
       try {
-        const targets = buildXmlTypingChart(score, chartForSong(id));
         this.chart.set(targets);
         this.round = new TypingRound(targets, this.settings());
         this.chartError.set('');
@@ -146,7 +148,7 @@ export class PianoComponent implements OnInit, AfterViewInit, OnDestroy {
     return `calc(${percent / 5}% + ${8 - 16 * percent / 500}px)`;
   }
   toggleTheme(): void { this.theme.update(theme => theme === 'light' ? 'dark' : 'light'); }
-  setMetronome(event: Event): void { this.playback.setMetronome((event.target as HTMLInputElement).checked); }
+  setMetronome(event: Event): void { void this.playback.setMetronome((event.target as HTMLInputElement).checked); }
 
   ngOnDestroy(): void {
     this.feedback.set(null);
@@ -266,7 +268,7 @@ export class PianoComponent implements OnInit, AfterViewInit, OnDestroy {
     const current = pending < 0 ? -1 : pending;
     const wordIndex = round.targets[current < 0 ? round.targets.length - 1 : current]?.wordIndex ?? 0;
     // Only judgement/phrase changes enter Angular, not each animation frame.
-    this.zone.run(() => this.attempt.set({ results: [...round.results], current, wordIndex,
+    this.zone.run(() => this.attempt.set({ results: [...round.results], sustainPoints: [...round.sustainPoints], current, wordIndex,
       listening: round.listening, complete: round.complete, wrong: round.wrong,
       wrongCount: round.wrongCount, combo: round.combo, bestCombo: round.bestCombo,
       total: round.totalPoints, available: round.availablePoints, sustain: round.earnedSustainPoints, sustainAvailable: round.availableSustainPoints }));

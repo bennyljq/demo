@@ -3,10 +3,22 @@ const path = require('node:path');
 
 const root = path.resolve(__dirname, '../../assets/piano/tracks');
 const destination = path.join(__dirname, 'song-manifest.generated.ts');
-const files = fs.readdirSync(root).filter(file => file.toLowerCase().endsWith('.mxl')).sort();
+const rank = file => /^12_Variations_of_Twinkle/.test(file) ? 100
+  : /^Twinkle_Theme\.musicxml$/i.test(file) ? 101
+  : /^Twinkle_Variation_(\d+)\.musicxml$/i.test(file) ? 101 + Number(/^Twinkle_Variation_(\d+)/i.exec(file)[1])
+  : 0;
+const files = fs.readdirSync(root).filter(file => /\.(mxl|musicxml)$/i.test(file))
+  .sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+const titleFor = file => {
+  if (/^12_Variations_of_Twinkle/.test(file)) return 'Twinkle Twinkle Little Star - Complete collection';
+  if (/^Twinkle_Theme\.musicxml$/i.test(file)) return 'Twinkle Twinkle Little Star - Theme';
+  const variation = /^Twinkle_Variation_(\d+)\.musicxml$/i.exec(file);
+  if (variation) return `Twinkle Twinkle Little Star - Variation ${Number(variation[1])}`;
+  return path.basename(file, path.extname(file)).replace(/_/g, ' ').replace(/^WA Mozart /, 'Mozart: ');
+};
 const songs = files.map(file => ({
   id: path.basename(file, path.extname(file)).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
-  title: path.basename(file, path.extname(file)).replace(/_/g, ' ').replace(/^WA Mozart /, 'Mozart: '),
+  title: titleFor(file),
   file,
 }));
 if (new Set(songs.map(song => song.id)).size !== songs.length) throw new Error('Song IDs must be unique.');
