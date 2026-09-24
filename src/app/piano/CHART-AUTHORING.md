@@ -1,10 +1,11 @@
-# How to Piano chart authoring (Phase 9)
+# How to Piano chart authoring (Phase 10)
 
 The generated song library is `song-manifest.generated.ts`. `generate-song-manifest.cjs`
-scans every `.mxl` in `src/assets/piano/tracks` before normal `npm start`,
+scans every `.mxl` and `.musicxml` in `src/assets/piano/tracks` before normal `npm start`,
 `npm run build`, `npm test`, and `npm run watch`. Restart a running dev server
-after adding a file. Add one entry for each song ID in `song-charts.ts`; this is
-the intentionally separate chart registry, not another filename list. The
+after adding a file. Add an entry in `song-charts.ts` only when authoring a chart;
+discovered songs otherwise have an empty chart. The registry is
+independent of filenames. The
 Turkish chart is in `turkish-chart.ts`; the complete Greensleeves chart is in
 `greensleeves-chart.ts`; Liebestraum deliberately has an empty chart.
 
@@ -15,17 +16,21 @@ sounding note. `measure` is the source measure label. `occurrence` defaults to
 phrase over every visit. The compiler rejects missing measures, reversed hold
 ends, simultaneous/non-increasing attacks, and same-key targets inside a hold.
 
-`beat` is a **0-to-3 fraction of the actual measure**, not a conventional beat
-number. Coordinate 0 is its start, 1.5 its midpoint, and 3 the next performed
-barline. This works with Greensleeves' 3/4 pickup, Turkish March's 2/4 and
-Liebestraum's 6/4 cadenza bars. The converter uses actual measure duration and
-integrates the score's tempo map. Do not interpolate seconds or assume two
-quarter notes per measure when writing charts.
+`beat` is a **zero-based musical-unit offset**. Each song chart declares
+`unitsPerQuarter`; the current charts use 2, so 1 unit is an eighth note and
+`quarterOffset = beat / unitsPerQuarter`. A full 2/4 measure spans 0–4 units,
+a full 3/4 or 6/8 measure spans 0–6, and a one-quarter pickup spans 0–2.
+The ruler follows the measure's actual duration: a 15-quarter cadenza spans
+0–30. A change of metre changes the usual measure span, not the unit length.
+The endpoint is exactly the next **performed** measure start, even across a
+repeat jump. The converter integrates the score's tempo map; chart positions
+do not snap to sounding notes. The metronome retains its independent metric
+pulse.
 
 ```ts
 { id: 'example', word: 'SUN', letters: [
   { start: { measure: 3, beat: 0 } },
-  { start: { measure: 3, beat: 1.5 }, end: { measure: 3, beat: 2.7 } },
+  { start: { measure: 3, beat: 2 }, end: { measure: 3, beat: 3.5 } },
   { start: { measure: 4, beat: 0 } },
 ] }
 ```
@@ -49,7 +54,9 @@ Numeric Perfect/Good tolerances and the hold buffer share the validated
 Numbers are frozen during count-in and playback; overlay visibility can change
 live. Attack overlays cover `target +/- tolerance * rate`, and the tail overlay
 shows the capped early-release region. The passage displays up to three stable
-wrapped lines. Its hold underline and symbol do not take character width.
+wrapped lines directly above the Canvas. The current letter has an underline;
+holds use a thin overhead bar whose fill shows credited sustain. Neither changes
+character width.
 
 Greensleeves is manually mapped to all 73 selected upper-staff attacks in
 source measures 2-33, in 19 words with 17 holds. Measure 1 is listen-only. The
@@ -57,6 +64,23 @@ file has 33 written measures and no encoded repeat navigation; its recurring
 phrases are written out. The wording and phrase breaks are plausible but still
 need human musical review. Turkish March retains the existing 33-target chart.
 Liebestraum is a playback/inspection source until a chart is authored.
+
+The Twinkle Theme chart has 49 written upper-staff attacks expanded over its
+encoded repeats to 98 performed letters, with 10 holds. Its 2/4 bars use the
+same two-units-per-quarter ruler; all twelve variations and the complete
+collection are intentionally uncharted. Its words and hold choices need human
+musical review.
+
+The Twinkle source collection has explicit `THEME.` and `VAR. I.` through
+`VAR. XII.` headings. Run `python src/app/piano/extract-twinkle.py` to
+regenerate the 13 standalone `.musicxml` files, or add `--check` to verify
+them. The script validates heading order, movement repeat boundaries and
+cross-boundary spanners, preserves each original measure body, and inserts
+inherited opening score state and source-index provenance. The 325 source
+measures partition into 24 Theme, 25 Variation I, 24 each for II–XI, and
+36 for XII; the extra Variation I measure is an alternate ending, not an
+extraction duplicate. Repeated **performance** visits are expanded by the
+importer, not copied into the extracted XML.
 
 The importer follows encoded note durations, tempo changes, dynamics, ties,
 repeats and alternate endings, grace timing, arpeggio marks and pedal controller

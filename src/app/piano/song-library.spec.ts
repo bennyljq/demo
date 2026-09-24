@@ -1,33 +1,95 @@
 import { SONGS } from './song-manifest.generated';
-import { chartForSong } from './song-charts';
+import { songChartFor } from './song-charts';
 import { readMxlRootfile } from './mxl-container';
 import { importMusicXml } from './musicxml-import';
 import { buildXmlTypingChart } from './piano-chart';
 import { metricGrouping, scoreBeatGrid } from './piano-metronome';
 
 describe('generated song library', () => {
-  it('discovers all three supplied MXL files with independent charts', async () => {
-    expect(SONGS.length).toBe(3);
-    expect(SONGS.map(song => song.id)).toEqual(['greensleeves', 'liebestraum-no-3-in-a-major',
-      'wa-mozart-marche-turque-turkish-march-fingered']);
+  it('discovers compressed and uncompressed songs and parses every extraction', async () => {
+    expect(SONGS.length).toBe(17);
+    expect(SONGS.map(song => song.id).slice(4)).toEqual([
+      'twinkle-theme', ...Array.from({ length: 12 }, (_, index) => `twinkle-variation-${String(index + 1).padStart(2, '0')}`),
+    ]);
+    expect(SONGS[3].title).toContain('Complete collection');
     for (const song of SONGS) {
       const response = await fetch(`/assets/piano/tracks/${encodeURIComponent(song.file)}`);
       expect(response.ok).withContext(song.file).toBeTrue();
       let score: ReturnType<typeof importMusicXml>;
-      try { score = importMusicXml(await readMxlRootfile(await response.arrayBuffer())); }
+      try {
+        const xml = song.file.endsWith('.mxl')
+          ? await readMxlRootfile(await response.arrayBuffer()) : await response.text();
+        score = importMusicXml(xml);
+      }
       catch (error) { throw new Error(`${song.file}: ${error}`); }
       expect(score.duration).withContext(song.file).toBeGreaterThan(0);
-      const chart = buildXmlTypingChart(score, chartForSong(song.id));
+      const definition = songChartFor(song.id);
+      const chart = buildXmlTypingChart(score, definition.phrases, definition.unitsPerQuarter);
       if (song.id === 'greensleeves') {
         expect(score.measureCount).toBe(33);
         expect(chart.length).toBe(73);
         expect(chart.filter(target => target.holdEnd !== undefined).length).toBe(17);
         expect(chart[0].source?.start.measure).toBe(2);
         expect(chart.at(-1)?.source?.start.measure).toBe(33);
-      } else if (song.id.startsWith('liebestraum')) expect(chart).toEqual([]);
-      else expect(chart.length).toBeGreaterThan(0);
+      } else if (song.id === 'twinkle-theme') {
+        expect(score.measureCount).toBe(24);
+        expect(score.duration).toBeCloseTo(48, 5);
+        expect(chart.length).toBe(98);
+        expect(chart.filter(target => target.holdEnd !== undefined).length).toBe(10);
+        expect(score.measures.length).toBe(48); // encoded repeats, not extraction duplication
+      } else if (song.id.startsWith('liebestraum') || song.id.startsWith('twinkle') || song.id.startsWith('12-variations')) {
+        expect(chart).toEqual([]);
+      } else expect(chart.length).toBeGreaterThan(0);
       expect(scoreBeatGrid(score).length).toBeGreaterThan(0);
     }
+  });
+
+  it('partitions the collection at its printed headings without losing musical measures', async () => {
+    const collection = SONGS[3];
+    const sourceXml = await readMxlRootfile(await (await fetch(`/assets/piano/tracks/${collection.file}`)).arrayBuffer());
+    const source = new DOMParser().parseFromString(sourceXml, 'application/xml');
+    const sourceMeasures = Array.from(source.querySelectorAll('part > measure'));
+    const headings = sourceMeasures.flatMap((measure, index) => {
+      const labels = Array.from(measure.querySelectorAll('words'), node => node.textContent?.trim() ?? '');
+      return labels.some(label => label === 'THEME.' || /^VAR\. (?:I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII)\.$/.test(label)) ? [index] : [];
+    });
+    expect(headings.length).toBe(13);
+    expect(headings[0]).toBe(0);
+    let total = 0;
+    for (let index = 0; index < 13; index++) {
+      const entry = SONGS[index + 4];
+      const xml = await (await fetch(`/assets/piano/tracks/${entry.file}`)).text();
+      const section = new DOMParser().parseFromString(xml, 'application/xml');
+      const measures = Array.from(section.querySelectorAll('part > measure'));
+      const originals = sourceMeasures.slice(headings[index], headings[index + 1] ?? sourceMeasures.length);
+      total += measures.length;
+      expect(measures.length).withContext(entry.file).toBe(originals.length);
+      expect(measures.map(measure => measure.getAttribute('number'))).toEqual(originals.map(measure => measure.getAttribute('number')));
+      measures.forEach((measure, at) => {
+        const sourceMeasure = originals[at];
+        for (const element of ['note', 'backup', 'forward', 'barline']) {
+          expect(Array.from(measure.querySelectorAll(element), node => node.outerHTML))
+            .withContext(`${entry.file} measure ${at + 1} ${element}`)
+            .toEqual(Array.from(sourceMeasure.querySelectorAll(element), node => node.outerHTML));
+        }
+      });
+      if (index > 0) {
+        const attributes = measures[0].querySelector('attributes');
+        for (const name of ['divisions', 'key', 'time', 'clef'])
+          expect(attributes?.querySelector(name)).withContext(`${entry.file} inherited ${name}`).not.toBeNull();
+        const prior = sourceMeasures.slice(0, headings[index]);
+        for (const selector of ['divisions', 'key > fifths', 'time > beats', 'time > beat-type']) {
+          const previous = prior.flatMap(measure => Array.from(measure.querySelectorAll(`attributes > ${selector}`))).at(-1);
+          expect(attributes?.querySelector(selector)?.textContent).withContext(`${entry.file} ${selector}`)
+            .toBe(previous?.textContent);
+        }
+        const priorTempo = prior.flatMap(measure => Array.from(measure.querySelectorAll('sound[tempo]'))).at(-1);
+        if (priorTempo) expect(measures[0].querySelector('sound[tempo]')?.getAttribute('tempo'))
+          .withContext(`${entry.file} inherited tempo`).toBe(priorTempo.getAttribute('tempo'));
+      }
+    }
+    expect(total).toBe(sourceMeasures.length);
+    expect(total).toBe(325);
   });
 
   it('groups 6/4 into two dotted-half clicks', () => {

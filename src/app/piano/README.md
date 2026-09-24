@@ -348,7 +348,7 @@ describes its own snapshot; see that guide for the current practice controls.
 The current [chart guide](./CHART-AUTHORING.md) supersedes the phase 7 v2
 chart syntax and badge layout described earlier in this history. Turkish March
 MusicXML is the only selectable source. XML letter targets are independent of
-sound attacks and use the score's 0–3 measure coordinate. The roll has a
+sound attacks and use the score's authored measure coordinate. The roll has a
 separate letter lane, adjustable Look ahead, measure labels and two themes.
 An optional local-sample metronome provides a 2/4 count-in and score-beat
 clicks. MIDI and the four-measure fixture remain for regression coverage.
@@ -386,3 +386,36 @@ and rapid selection without page exceptions. Layout was inspected in both
 themes at 2- and 10-second look-ahead, including a narrow viewport. These
 checks did not include human listening or a human assessment of phrase wording
 and musical feel.
+
+## Phase 10
+
+Chart `beat` values are now musical units, with an explicit `unitsPerQuarter`
+per song. Turkish March, Greensleeves and Twinkle Theme use two units per
+quarter. The Turkish and Greensleeves charts were migrated from their previous
+coordinates; a saved pre-migration fixture compares all 106 attack times and
+their hold endpoints. Pickups and cadenza bars use their actual lengths, and
+barline endpoints resolve to the next performed visit through repeats. See
+[CHART-AUTHORING.md](./CHART-AUTHORING.md) for the syntax and extraction command.
+
+The reading passage now sits immediately above the roll. Its overhead bars
+fill as a held letter earns sustain credit; the underline marks only the
+current letter. Ready means the chart, score, metronome sample (if enabled),
+audio engine, SF2 and selected MIDI sequence are prepared. A browser that
+starts with audio suspended shows **Enable audio** first; click it to finish
+preparation, then Play starts the normal count-in.
+
+The Twinkle collection remains selectable. Its printed Theme and Variation
+I–XII headings delimit 13 standalone MusicXML files under `tracks`; the
+reproducible extractor preserves the 325 written source measures exactly once
+across these files. The Theme has 24 written 2/4 measures and 48 performed
+measures through encoded repeats, for about 48 seconds at its initial tempo.
+Its 98-letter chart covers the repeated theme and includes 10 holds; the
+variations and complete collection have no typing chart. These words and
+holds are provisional musical interpretations.
+
+The focused Chrome test suite compares extraction content, imported scores,
+chart timing, repeat endpoints and readiness gating. Automated browser checks
+also exercised fresh suspended-context activation, first Play, rapid song
+selection, a full Theme run at 3x, and playback starts for Variations I, XI
+and XII. Analyser measurements found nonzero PCM for Theme, Variation I and
+Variation XII. No human listening or judgement of musical feel has been done.

@@ -35,7 +35,7 @@ export class PianoPlaybackService implements OnDestroy {
   readonly speedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3] as const;
   private readonly rateValue = signal(1);
   readonly playbackRate = this.rateValue.asReadonly();
-  private readonly volumeValue = signal(500);
+  private readonly volumeValue = signal(400);
   readonly volume = this.volumeValue.asReadonly();
   private readonly metronomeValue = signal(true);
   private readonly clickVolumeValue = signal(50);
