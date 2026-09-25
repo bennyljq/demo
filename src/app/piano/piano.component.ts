@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, c
 import { PianoPlaybackService } from './audio/piano-playback.service';
 import { PianoRoll, JudgementFeedback } from './rendering/piano-roll';
 import { TypingTarget } from './gameplay/piano-chart';
-import { DEFAULT_SCORING_SETTINGS, ScoringSettings, validateScoringSettings } from './gameplay/piano-scoring-settings';
+import { attackWindowSeconds, DEFAULT_SCORING_SETTINGS, ScoringSettings, validateScoringSettings } from './gameplay/piano-scoring-settings';
 import { isGameplayKey, LetterResult, SCORING_POINTS, TypingRound } from './gameplay/piano-judgement';
 import { captureRunResult, ResultLetter, RunResult } from './gameplay/piano-run-result';
 import { ChartCoverage, songChartFor } from './charts/song-charts';
@@ -53,7 +53,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   readonly librarySongs = this.playback.songs;
   readonly selectedTrack = signal(-1);
   readonly lookAhead = signal(6);
-  readonly theme = signal<'light' | 'dark'>('dark');
+  readonly theme = signal<'light' | 'dark'>('light');
   readonly statusLabel = computed(() => ({
     loading: 'Preparing', 'enable-audio': 'Enable audio to prepare', ready: 'Ready',
     starting: 'Starting', 'count-in': 'Count in', playing: 'Playing', error: 'Error',
@@ -156,7 +156,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
         () => this.chart().map(target => ({ ...target, result: this.round?.results[target.index] ?? 'pending', attackGrade: this.round?.attackGrades[target.index] })),
         () => this.updateAttempt(this.playback.playbackPosition), () => this.playback.score(), () => this.lookAhead(),
         () => this.settings(), () => this.playback.playbackRate(), () => this.playback.countInVisual,
-        () => this.playback.songBeatPositions);
+        () => this.playback.songBeatPositions, () => this.playback.melodyCoupling(), () => this.playback.performedBars);
       document.addEventListener('keydown', this.onKey);
       document.addEventListener('keyup', this.onKeyUp);
       window.addEventListener('blur', this.onBlur);
@@ -243,6 +243,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.cancelDemo();
+    this.playback.releasePlayerVoices();
     this.feedback.set(null);
     this.pianoRoll?.destroy();
     this.passageObserver?.disconnect();
@@ -265,7 +266,11 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.tutorialOutcome.set(null);
     this.runStarted.set(true);
     if (this.stage() === 'tutorial' && this.tutorialMode() === 'watch' && this.round)
-      this.demo = new PianoDemoController(this.chart(), this.round, this.playback.playbackRate());
+      this.demo = new PianoDemoController(this.chart(), this.round, this.playback.playbackRate(), (key, time, release) => {
+        const physical = `demo:${key}`;
+        if (release) this.releaseGameplayKey(key, physical, time);
+        else this.acceptGameplayKey(key, physical, time, this.playback.playbackPosition);
+      });
     void this.playback.play();
     this.changeDetector.detectChanges();
     this.gameplay.nativeElement.focus({ preventScroll: true });
@@ -354,6 +359,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   openSettings(): void {
     if (this.settingsOpen()) return;
     this.focusBeforeSettings = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    this.playback.releasePlayerVoices();
     this.round?.blur();
     this.publishAttempt();
     this.settingsOpen.set(true);
@@ -393,6 +399,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
 
   private finishNaturalRun(): void {
     if (this.stage() !== 'play' || !this.runStarted()) return;
+    this.playback.releasePlayerVoices();
     if (this.chartedRun() && this.round) {
       this.round.advance(this.playback.duration() + 1, this.playback.playbackRate());
       this.publishAttempt();
@@ -510,24 +517,53 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       return;
     }
     const accepting = this.stage() === 'play' || (this.stage() === 'tutorial' && this.tutorialMode() === 'try');
-    if (!accepting || !this.runStarted() || this.playback.status() !== 'playing' || !this.round || !isGameplayKey(event)) return;
-    this.round.key(event.key, this.playback.playbackPosition, this.playback.playbackRate(), performance.now() / 1000);
-    this.publishAttempt();
+    if (!accepting || !this.runStarted() || !this.round || !isGameplayKey(event)) return;
+    const leadIn = this.playback.leadInPosition;
+    const earlyFirst = leadIn !== null && this.round.targets.some(target =>
+      this.round!.results[target.index] === 'pending' &&
+      Math.abs(target.time - this.runStartPosition()) < 1e-8 &&
+      leadIn >= target.time - attackWindowSeconds(this.settings().goodMs, this.playback.playbackRate()) - 1e-9);
+    const playing = this.playback.status() === 'playing';
+    if (!playing && !earlyFirst) return;
+    const position = playing ? this.playback.playbackPosition : leadIn!;
+    this.acceptGameplayKey(event.key, event.code || `Key${event.key.toUpperCase()}`, position, position);
   };
 
   private readonly onKeyUp = (event: KeyboardEvent): void => {
     if (this.suppressedStartKeys.delete(event.key.toUpperCase())) return;
     const accepting = this.stage() === 'play' || (this.stage() === 'tutorial' && this.tutorialMode() === 'try');
-    if (!accepting || this.settingsOpen() || !this.runStarted() || this.playback.status() !== 'playing' ||
+    if (!accepting || this.settingsOpen() || !this.runStarted() ||
       !/^[a-z]$/i.test(event.key) || !this.round) return;
-    this.round.keyUp(event.key, this.playback.playbackPosition, this.playback.playbackRate());
-    this.publishAttempt();
+    const playing = this.playback.status() === 'playing';
+    const leadIn = this.playback.leadInPosition;
+    if (!playing && leadIn === null) return;
+    this.releaseGameplayKey(event.key, event.code || `Key${event.key.toUpperCase()}`,
+      playing ? this.playback.playbackPosition : leadIn!);
   };
   private readonly onBlur = (): void => {
     this.suppressedStartKeys.clear();
+    this.playback.releasePlayerVoices();
     this.round?.blur();
     this.publishAttempt();
   };
+
+  private acceptGameplayKey(key: string, physical: string, judgementTime: number, audioPosition: number): void {
+    const round = this.round;
+    if (!round) return;
+    const before = round.feedbackSerial;
+    round.key(key, judgementTime, this.playback.playbackRate(), performance.now() / 1000);
+    if (round.feedbackSerial !== before && round.feedbackIndex >= 0 &&
+        (round.feedbackKind === 'perfect' || round.feedbackKind === 'good' || round.feedbackKind === 'wrong')) {
+      this.playback.performMelodyInput(round.feedbackIndex, round.feedbackKind, physical, audioPosition);
+    }
+    this.publishAttempt();
+  }
+
+  private releaseGameplayKey(key: string, physical: string, position: number): void {
+    this.playback.releasePlayerKey(physical);
+    this.round?.keyUp(key, position, this.playback.playbackRate());
+    this.publishAttempt();
+  }
 
   beginSeek(): void { this.playback.beginScrub(); }
   previewSeek(event: Event): void {

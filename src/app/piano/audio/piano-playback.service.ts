@@ -1,12 +1,14 @@
 import { DOCUMENT, inject, Injectable, OnDestroy, signal } from '@angular/core';
 import { Sequencer, WorkletSynthesizer } from 'spessasynth_lib';
 import { PianoTimeline } from '../music/piano-timeline';
-import { ImportedScore, importMusicXml } from '../music/musicxml-import';
+import { ImportedScore, buildScoreMidi, importMusicXml } from '../music/musicxml-import';
 import { readMxlRootfile } from '../music/mxl-container';
 import { preparePulsePlan, scoreBeatGrid, BeatPulse, PreparedPulsePlan } from './piano-metronome';
 import { SONGS } from '../song-manifest.generated';
 import { buildXmlTypingChart, TypingTarget } from '../gameplay/piano-chart';
 import { songChartFor } from '../charts/song-charts';
+import { CoupledTarget, coupleTwinkleMelody } from '../gameplay/twinkle-coupling';
+import { PerformedBar, PerformanceKind, PlayerPerformance } from './player-performance';
 
 type PlaybackStatus = 'loading' | 'enable-audio' | 'ready' | 'starting' | 'count-in' | 'playing' | 'error';
 type EngineStatus = 'idle' | 'preparing' | 'ready' | 'error';
@@ -35,7 +37,7 @@ export class PianoPlaybackService implements OnDestroy {
   readonly engineError = this.engineErrorValue.asReadonly();
   private readonly timelineValue = signal<PianoTimeline>({ tracks: [], notes: [] });
   readonly timeline = this.timelineValue.asReadonly();
-  readonly songs = SONGS;
+  readonly songs = SONGS.slice(0, 1);
   private readonly sourceValue = signal<PianoSource>(SONGS[0]?.id ?? '');
   readonly source = this.sourceValue.asReadonly();
   private readonly scores = new Map<PianoSource, ImportedScore>();
@@ -46,6 +48,10 @@ export class PianoPlaybackService implements OnDestroy {
   readonly score = this.scoreValue.asReadonly();
   private readonly chartValue = signal<readonly TypingTarget[]>([]);
   readonly chart = this.chartValue.asReadonly();
+  private readonly couplingValue = signal<readonly CoupledTarget[]>([]);
+  readonly melodyCoupling = this.couplingValue.asReadonly();
+  private playerPerformance?: PlayerPerformance;
+  private twinklePerformance?: PlayerPerformance;
   readonly speedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3] as const;
   private readonly rateValue = signal(1);
   readonly playbackRate = this.rateValue.asReadonly();
@@ -117,6 +123,16 @@ export class PianoPlaybackService implements OnDestroy {
       ? this.duration() + Math.max(0, this.context.currentTime - this.endingAt) * this.playbackRate()
       : this.status() === 'playing' ? Math.max(0, this.sequencer?.currentTime ?? this.positionValue()) : this.positionValue());
   }
+  /** The audio-clock source position before a coupled melody attack's downbeat. */
+  get leadInPosition(): number | null {
+    const run = this.countInPlan, context = this.context;
+    if (this.status() !== 'count-in' || !run || !context ||
+        !this.songs.find(song => song.id === this.source())?.playerPerformedMelody ||
+        !this.melodyCoupling().some(target => Math.abs(target.start - run.plan.songStart) < 1e-8)) return null;
+    return Math.min(run.plan.songStart,
+      run.plan.songStart + (context.currentTime - run.songAt) * this.playbackRate());
+  }
+  get gameplayInputPosition(): number { return this.leadInPosition ?? this.playbackPosition; }
   
   async setMetronome(enabled: boolean): Promise<void> {
     if (this.status() === 'playing' || this.status() === 'count-in' || this.status() === 'starting') return;
@@ -147,6 +163,14 @@ export class PianoPlaybackService implements OnDestroy {
   }
   get visualPosition(): number { return this.countInVisual?.position ?? this.playbackPosition; }
   get songBeatPositions(): readonly number[] { return this.metronome() ? this.preparedPulsePlan?.songPositions ?? [] : []; }
+  get performedBars(): readonly PerformedBar[] { return this.playerPerformance?.snapshot(this.gameplayInputPosition) ?? []; }
+
+  performMelodyInput(targetIndex: number, kind: PerformanceKind, physical: string, position: number): void {
+    if (this.status() === 'playing' || this.leadInPosition !== null)
+      this.playerPerformance?.perform(targetIndex, kind, physical, position, this.playbackRate());
+  }
+  releasePlayerKey(physical: string): void { this.playerPerformance?.releasePhysical(physical, this.gameplayInputPosition); }
+  releasePlayerVoices(): void { this.playerPerformance?.releaseAll(this.gameplayInputPosition); }
   
   private async prepareClick(): Promise<void> {
     if (this.clickBuffer) return;
@@ -168,6 +192,7 @@ export class PianoPlaybackService implements OnDestroy {
     if (this.status() !== 'ready' && this.status() !== 'playing' && this.status() !== 'count-in') return;
     this.resumeAfterScrub = this.status() === 'playing' || this.status() === 'count-in';
     this.scrubPreview = this.playbackPosition;
+    this.releasePlayerVoices();
     this.cancelClicks();
     this.mute();
     this.sequencer?.pause();
@@ -186,6 +211,7 @@ export class PianoPlaybackService implements OnDestroy {
     this.ending = false;
     this.cancelClicks();
     const destination = Math.max(0, Math.min(Math.max(0, this.duration() - 0.001), Number(seconds) || 0));
+    this.playerPerformance?.releaseAll(destination, true);
     const resume = this.scrubPreview !== null ? this.resumeAfterScrub : this.status() === 'playing';
     this.mute();
     this.sequencer?.pause();
@@ -266,6 +292,8 @@ export class PianoPlaybackService implements OnDestroy {
     this.statusValue.set('loading');
     this.errorValue.set('');
     this.scoreValue.set(null);
+    this.couplingValue.set([]);
+    this.playerPerformance = undefined;
     this.preparedPulsePlan = undefined;
     this.chartValue.set([]);
     this.timelineValue.set({ tracks: [], notes: [] });
@@ -286,7 +314,11 @@ export class PianoPlaybackService implements OnDestroy {
       if (version !== this.selectionVersion || controller.signal.aborted) return;
       const chart = songChartFor(id);
       const targets = buildXmlTypingChart(score, chart.phrases, chart.unitsPerQuarter);
+      const coupling = song.playerPerformedMelody ? coupleTwinkleMelody(score, targets) : [];
+      const playbackMidi = song.playerPerformedMelody
+        ? buildScoreMidi(score, new Set(coupling.flatMap(target => target.notes.map(note => note.id)))) : score.midi;
       this.chartValue.set(targets);
+      this.couplingValue.set(coupling);
       this.scoreValue.set(score);
       this.timelineValue.set(score.timeline);
       this.durationValue.set(score.duration);
@@ -295,8 +327,13 @@ export class PianoPlaybackService implements OnDestroy {
       if (this.enginePromise) await this.enginePromise;
       if (!this.sequencer) throw new Error(this.engineError() || 'Audio engine is not ready. Return home and retry Start.');
       if (version !== this.selectionVersion || controller.signal.aborted) return;
-      if (this.loadedSongId !== id) await this.queueSequence(score.midi, id);
+      if (this.loadedSongId !== id) await this.queueSequence(playbackMidi, id);
       if (version !== this.selectionVersion || controller.signal.aborted) return;
+      if (song.playerPerformedMelody) {
+        this.twinklePerformance ??= this.createPlayerPerformance(score, coupling);
+        this.playerPerformance = this.twinklePerformance;
+        this.playerPerformance.releaseAll(0, true);
+      }
       this.statusValue.set('ready');
     } catch (error) {
       if (version === this.selectionVersion && !controller.signal.aborted && !this.lifetime.signal.aborted) {
@@ -555,6 +592,7 @@ export class PianoPlaybackService implements OnDestroy {
   
   private silenceAndRewind(): void {
     // Mute immediately, including effect tails; rewind resets MIDI controllers.
+    this.playerPerformance?.releaseAll(this.playbackPosition, true);
     this.mute();
     this.sequencer?.pause();
     this.synth?.stopAll(true);
@@ -576,6 +614,34 @@ export class PianoPlaybackService implements OnDestroy {
     this.clickGain = undefined;
     this.context = undefined;
     this.soundFont = undefined;
+    this.playerPerformance = undefined;
+    this.twinklePerformance = undefined;
+  }
+
+  private createPlayerPerformance(score: ImportedScore, targets: readonly CoupledTarget[]): PlayerPerformance {
+    const synth = this.synth!, context = this.context!;
+    // The sequencer uses one channel per staff/voice track. Reserve only channels
+    // outside that set: the worklet's initial 16 channels already exist on both
+    // sides, whereas dynamically adding one is not synchronous in this version.
+    const sequencerChannels = new Set(
+      [...new Set(score.soundingNotes.map(note => `${note.staff}:${note.voice}`))].sort()
+        .map((_, index) => index),
+    );
+    const playerChannels = Array.from({ length: Math.min(16, synth.channelCount) }, (_, index) => index)
+      .filter(channel => channel !== 9 && !sequencerChannels.has(channel));
+    let nextChannel = 0;
+    return new PlayerPerformance(targets, {
+      now: () => context.currentTime,
+      newChannel: () => {
+        const channel = playerChannels[nextChannel++];
+        if (channel === undefined) return -1;
+        synth.programChange(channel, 0);
+        synth.controllerChange(channel, 64, 0);
+        return channel;
+      },
+      noteOn: (channel, pitch, velocity, at) => synth.noteOn(channel, pitch, velocity, { time: at }),
+      noteOff: (channel, pitch, at) => synth.noteOff(channel, pitch, { time: at }),
+    });
   }
   
   private fail(error: unknown): void {

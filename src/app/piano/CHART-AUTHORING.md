@@ -1,4 +1,4 @@
-# How to Piano chart authoring (Phase 10)
+# How to Piano chart authoring
 
 The generated song library is `song-manifest.generated.ts`. `generate-song-manifest.cjs`
 scans every `.mxl` and `.musicxml` in `src/assets/piano/tracks` before normal `npm start`,
@@ -71,10 +71,25 @@ need human musical review. Turkish March retains the existing 33-target chart.
 Liebestraum is a playback/inspection source until a chart is authored.
 
 The Twinkle Theme chart has 49 written upper-staff attacks expanded over its
-encoded repeats to 98 performed letters, with 10 holds. Its 2/4 bars use the
-same two-units-per-quarter ruler; all twelve variations and the complete
-collection are intentionally uncharted. Its words and hold choices need human
-musical review.
+encoded repeats to 98 performed letters, with 6 current holds. Its 2/4 bars use
+the same two-units-per-quarter ruler; all twelve variations and the complete
+collection are intentionally uncharted. The authored 12 phrases define eleven
+four-letter slots and one five-letter slot. `twinkle-word-randomizer.ts` replaces
+the displayed words from a short common-word bank once per page load, without
+changing the slots, note coordinates, holds, IDs or repeat policy. Words are
+unique within a chart and fixed during a session, including both repeat visits.
+The authored placeholder words and hold choices still need human musical review.
+
+For `twinkle-theme`, each target must coincide with exactly one performed
+staff-1 sounding attack. `coupleTwinkleMelody` checks the target's source
+measure and repeat occurrence, maps its complete pitch bundle by retained
+sounding-note IDs, verifies hold endpoints, and rejects missing or duplicate
+attacks. Tied continuations are not new attacks. The coupled note, rather than
+a separate hand-authored pitch list, supplies velocity and original sounding
+end to player audio. When editing this chart, keep full staff-1 coverage across
+both repeat visits; a mismatch prevents Twinkle from loading instead of
+silently autoplaying or omitting melody notes. Other charts do not use this
+coupling.
 
 The committed Twinkle source collection has explicit `THEME.` and `VAR. I.`
 through `VAR. XII.` headings. The 13 standalone `.musicxml` files in

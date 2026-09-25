@@ -2,7 +2,7 @@
 // and import regression tests, but are not listed in the game.
 module.exports = [
   { id: 'twinkle-theme', title: 'Twinkle Twinkle Little Star', file: 'Twinkle_Theme.musicxml',
-    composer: 'Wolfgang Amadeus Mozart', credit: 'arr. Solángel', difficulty: 'Beginner' },
+    composer: 'Wolfgang Amadeus Mozart', credit: 'arr. Solángel', difficulty: 'Beginner', playerPerformedMelody: true },
   { id: 'greensleeves', title: 'Greensleeves', file: 'Greensleeves.mxl',
     composer: 'Traditional', credit: 'arr. Dominique Makowski', difficulty: 'Intermediate' },
   { id: 'wa-mozart-marche-turque-turkish-march-fingered', title: 'Turkish March',

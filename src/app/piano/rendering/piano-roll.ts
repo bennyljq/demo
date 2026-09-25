@@ -6,6 +6,8 @@ import type { CountInVisual } from '../audio/piano-playback.service';
 import { pitchName } from '../music/piano-pitch';
 import { ROLL_PLAYHEAD_X, timeToX } from './piano-roll-geometry';
 import { attackWindowSeconds, holdBufferSeconds, ScoringSettings } from '../gameplay/piano-scoring-settings';
+import type { CoupledTarget } from '../gameplay/twinkle-coupling';
+import type { PerformedBar } from '../audio/player-performance';
 
 export interface JudgementFeedback {
   kind: 'perfect' | 'good' | 'miss' | 'wrong';
@@ -45,6 +47,8 @@ export class PianoRoll {
     private readonly readRate: () => number,
     private readonly readCountIn: () => CountInVisual | null,
     private readonly readSongBeats: () => readonly number[],
+    private readonly readCoupling: () => readonly CoupledTarget[],
+    private readonly readPerformedBars: () => readonly PerformedBar[],
   ) {
     this.ctx = canvas.getContext('2d');
     this.observer = new ResizeObserver(() => this.resize());
@@ -79,10 +83,13 @@ export class PianoRoll {
   private readonly draw = (): void => {
     if (this.dpr !== (window.devicePixelRatio || 1)) this.resize();
     const notes = this.readNotes();
+    const coupled = this.readCoupling();
+    const melodyIds = new Set(coupled.flatMap(target => target.notes.map(note => note.id)));
+    const showMelody = notes.some(note => melodyIds.has(note.id));
     if (notes !== this.notes) {
       this.notes = notes;
-      this.low = notes.length ? Math.max(0, Math.min(...notes.map(n => n.pitch)) - 2) : 48;
-      this.high = notes.length ? Math.min(127, Math.max(...notes.map(n => n.pitch)) + 2) : 84;
+      this.low = notes.length ? Math.max(0, Math.min(...notes.map(n => n.pitch)) - (showMelody ? 4 : 2)) : 48;
+      this.high = notes.length ? Math.min(127, Math.max(...notes.map(n => n.pitch)) + (showMelody ? 4 : 2)) : 84;
     }
     const position = this.readPosition();
     const countIn = this.readCountIn();
@@ -183,6 +190,14 @@ export class PianoRoll {
       if (end < 42) continue;
       const noteY = y(note.pitch) + 1;
       const height = Math.max(1, row - 2), width = Math.max(1, end - at);
+      if (melodyIds.has(note.id)) {
+        c.strokeStyle = color('--roll-shadow-note');
+        c.lineWidth = 1.4;
+        c.setLineDash([4, 3]);
+        c.strokeRect(at + 0.5, noteY + 0.5, Math.max(1, width - 1), Math.max(1, height - 1));
+        c.setLineDash([]);
+        continue;
+      }
       const active = note.start <= position && position < note.start + note.duration;
       c.fillStyle = active
         ? color('--roll-active-note') : color('--roll-note');
@@ -190,6 +205,15 @@ export class PianoRoll {
       c.strokeStyle = color(active ? '--roll-active-note-edge' : '--roll-note-edge');
       c.lineWidth = active ? 1.6 : 1.2;
       c.strokeRect(at + 0.5, noteY + 0.5, Math.max(1, width - 1), Math.max(1, height - 1));
+    }
+    if (showMelody) for (const bar of this.readPerformedBars()) {
+      const at = x(bar.start), end = x(bar.end ?? position);
+      if (at > this.width || end < 42) continue;
+      c.fillStyle = color(`--roll-played-${bar.kind}`);
+      c.fillRect(at, y(bar.pitch) + 1, Math.max(2, end - at), Math.max(2, row - 2));
+      c.strokeStyle = color('--roll-active-note-edge');
+      c.lineWidth = 1;
+      c.strokeRect(at + 0.5, y(bar.pitch) + 1.5, Math.max(1, end - at - 1), Math.max(1, row - 3));
     }
     c.restore();
 

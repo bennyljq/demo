@@ -1,6 +1,6 @@
 # How to Piano
 
-## Current flow (Phase 14)
+## Current flow (Phases 12–15)
 
 Run `npm start` and open `http://localhost:4200/piano`. The homepage **Start**
 prepares the reusable SoundFont engine and opens the library. Choose one of four
@@ -21,7 +21,8 @@ manifest. The generator preserves this list; extra scores remain on disk for
 import tests. Liebestraum is listen-only and therefore “Not rated.” The current
 lighter `SalC5Light2.sf2` remains the instrument.
 
-The tutorial uses the first 11 authored Twinkle targets, including a hold.
+The tutorial uses the first 11 authored Twinkle targets. The current chart's
+first hold occurs later in the piece.
 Watch mode feeds deterministic attacks/releases to the normal `TypingRound`
 using the sequencer position sampled by the existing Canvas frame loop. Try
 mode uses the same excerpt and normal keyboard judgement. Neither modifies the
@@ -38,11 +39,14 @@ themes, and no browser console errors. Screenshots of Homepage, Library,
 Settings, armed/running Play, Tutorial and Results were inspected. Automated
 checks did not assess audible musical feel or human typing latency.
 
+## Phase 13: count-in, input and results
+
 Phase 13 gives every Start a full metric-bar count-in, including when
 **Metronome during song** is off. The count-in uses the selected seek position's
 metre and tempo, the current playback speed, and the existing click sample. Its
 virtual empty bar and bell markers are derived from AudioContext time; the
-actual song position and judgement remain frozen until the sequencer starts.
+actual song position remains frozen until the sequencer starts. Twinkle's first
+attack now accepts input during its early tolerance at the end of the count-in.
 The count-in downbeat is scheduled once, then normal in-song clicks begin at
 the next beat if enabled. Master and click volume still control their gains.
 
@@ -65,12 +69,14 @@ and normal taps/holds. Headless Chrome inspected count-in, hit effects, full
 and seeked Results, partial sustain, Watch/Try cleanup, both themes and reduced
 motion. Human listening and typing latency assessment remain open.
 
+## Phase 14: prepared count-in and quick restart
+
 Phase 14 prepares the virtual count-in bar and all planned bell positions
 before Start. The prepared pulse plan also supplies click timing; the song
 downbeat remains visible across the boundary and is scheduled once. The
 separate top-lane bands keep bells above letters. Holds retain the attack's
-Perfect/Good colour while their overhead progress bar fills; the bar is 1.5×
-wide and centred. Dark note outlines are brighter, with a distinct active
+Perfect/Good colour while their overhead progress bar fills; the bar is widened
+and centred. Dark note outlines are brighter, with a distinct active
 edge. Restart preserves settings and the loaded SF2 engine. The feature code
 is grouped into `audio/`, `music/`, `gameplay/`, `charts/`, and `rendering/`;
 the component, manifest generator, generated manifest, config, and guides
@@ -495,7 +501,7 @@ I–XII headings delimit 13 standalone MusicXML files under `tracks`; the
 committed score files preserve the 325 written source measures exactly once
 across these files. The Theme has 24 written 2/4 measures and 48 performed
 measures through encoded repeats, for about 48 seconds at its initial tempo.
-Its 98-letter chart covers the repeated theme and includes 10 holds; the
+Its 98-letter chart covers the repeated theme and currently includes 6 holds; the
 variations and complete collection have no typing chart. These words and
 holds are provisional musical interpretations.
 
@@ -533,3 +539,44 @@ and Listen-only natural completion and Replay. Screenshots of Library, Setup,
 Play, Results and the light listening view were inspected at desktop and
 smaller viewports with reduced motion. This is automated verification, not
 human playtesting or listening review.
+
+## Phase 15: Twinkle player melody prototype
+
+The `twinkle-theme` manifest entry alone enables player-performed melody.
+Its 98 chart letters map one-to-one to all 98 performed staff-1 sounding
+attacks: 49 on each repeat visit, including 6 current holds. The importer retains
+source note IDs, visits, pitch, velocity and sounding endpoints. Selection
+validates complete mapping, then removes only those note IDs from the MIDI
+loaded into the sequencer. Accompaniment, tempo and pedal events remain.
+Other songs still queue their original imported MIDI and have no player voices.
+Phase 15 did not alter the then-authored chart timing or holds.
+
+A keydown that earns Perfect or Good sounds the mapped piano pitch immediately;
+an eligible Wrong sounds a deterministic pitch one or two semitones away. Both
+use the existing SF2 synth on unused, pedal-free channels 2–15 (excluding 9).
+Twinkle's first pending attack also accepts the early half of its timing window
+during the last part of the count-in, using the audio clock's time before the
+downbeat; its note still ends at the original score endpoint.
+Tap note-offs
+are scheduled at the source score endpoint using AudioContext time and the
+selected rate. Holds sound until physical keyup, while their score remains
+capped at the authored hold interval. Misses and Wrong inputs outside a target
+window create no player note. The six shortest Twinkle taps are 125 ms long,
+shorter than the default 160 ms Good late window at 1×; a Good input after
+one of those endpoints remains scored but silent. At 3×, 12 tap targets have
+this possible edge. Wrong attempts replace a prior voice for the same target.
+Restart, Exit, seek, blur, Settings, song changes, audio failure and teardown
+release player voices. Watch uses the same judgement-to-synth path as typing.
+
+The roll retains dashed intended melody shadows and shows actual green,
+orange or red bars at the played pitch. The armed panel stays mounted at a
+fixed height with a reserved Start/Restart control slot, including count-in
+and playback. Human listening is still needed to assess response and feel.
+
+The current Twinkle authoring groups those 49 written attacks into eleven
+four-letter words and one five-letter word. `twinkle-word-randomizer.ts` chooses
+distinct, familiar words of matching lengths once per page load. Both repeat
+visits use the same choices, and words remain fixed through gameplay, Restart,
+and song reselection; reloading the page draws another set. Randomization changes
+letters only, leaving note locations, holds, source IDs, audio and scoring rules
+intact.

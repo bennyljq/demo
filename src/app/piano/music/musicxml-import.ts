@@ -67,9 +67,31 @@ export interface ImportedScore {
   readonly annotations: readonly ScoreAnnotation[];
   readonly tempos: readonly ScoreEvent[];
   readonly dynamics: readonly ScoreEvent[];
+  readonly controllerEvents: readonly { quarter: number; staff: number; value: number }[];
   readonly duration: number;
   readonly timeline: PianoTimeline;
   readonly midi: ArrayBuffer;
+}
+
+/** Rebuilds the imported MIDI from retained sounding-note identities. Controllers and tempo stay intact. */
+export function buildScoreMidi(score: Omit<ImportedScore, 'midi'>, excludedNoteIds: ReadonlySet<string> = new Set()): ArrayBuffer {
+  const groups = [...new Set(score.soundingNotes.map(note => `${note.staff}:${note.voice}`))].sort();
+  const builder = new MIDIBuilder({ format: 1, timeDivision: 480, initialTempo: score.tempos[0].value,
+    name: 'Turkish March MusicXML' });
+  for (const group of groups) builder.addTrack(group);
+  for (const tempo of score.tempos.slice(1)) builder.setTempo(Math.round(tempo.quarter * 480), tempo.value);
+  for (const note of score.soundingNotes) {
+    if (excludedNoteIds.has(note.id)) continue;
+    const track = groups.indexOf(`${note.staff}:${note.voice}`) + 1;
+    builder.noteOn(Math.round(note.onsetQuarter * 480), track, track - 1, note.pitch, note.velocity);
+    builder.noteOff(Math.round((note.onsetQuarter + note.durationQuarter) * 480), track, track - 1, note.pitch);
+  }
+  for (const pedal of score.controllerEvents) groups.forEach((group, index) => {
+    if (Number(group.split(':')[0]) === pedal.staff)
+      builder.controllerChange(Math.round(pedal.quarter * 480), index + 1, index, 64, pedal.value);
+  });
+  builder.flush();
+  return builder.writeMIDI();
 }
 
 interface SourceNote extends Omit<WrittenNote, 'onsetQuarter' | 'id'> {
@@ -538,19 +560,7 @@ export function importMusicXml(xml: string): ImportedScore {
     return { index, name: `Staff ${staff}, voice ${voice}`, channels: [index], notes };
   });
   const timeline = { tracks, notes: tracks.flatMap(track => track.notes).sort((a, b) => a.start - b.start || a.pitch - b.pitch) };
-  const builder = new MIDIBuilder({ format: 1, timeDivision: 480, initialTempo: tempos[0].value, name: 'Turkish March MusicXML' });
-  for (const group of groups) builder.addTrack(group);
-  for (const tempo of tempos.slice(1)) builder.setTempo(Math.round(tempo.quarter * 480), tempo.value);
-  for (const note of soundingNotes) {
-    const track = groups.indexOf(`${note.staff}:${note.voice}`) + 1;
-    builder.noteOn(Math.round(note.onsetQuarter * 480), track, track - 1, note.pitch, note.velocity);
-    builder.noteOff(Math.round((note.onsetQuarter + note.durationQuarter) * 480), track, track - 1, note.pitch);
-  }
-  for (const pedal of pedals) groups.forEach((group, index) => {
-    if (Number(group.split(':')[0]) === pedal.staff)
-      builder.controllerChange(Math.round(pedal.quarter * 480), index + 1, index, 64, pedal.value);
-  });
-  builder.flush();
-  return { part: partId, measureCount: source.length, writtenNotes: written, soundingNotes, measures, annotations,
-    tempos, dynamics, duration: toSeconds(quarter), timeline, midi: builder.writeMIDI() };
+  const score = { part: partId, measureCount: source.length, writtenNotes: written, soundingNotes, measures, annotations,
+    tempos, dynamics, controllerEvents: pedals, duration: toSeconds(quarter), timeline };
+  return { ...score, midi: buildScoreMidi(score) };
 }

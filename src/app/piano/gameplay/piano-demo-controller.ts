@@ -9,7 +9,8 @@ export class PianoDemoController {
   private next = 0;
   private cancelled = false;
 
-  constructor(targets: readonly TypingTarget[], private readonly round: TypingRound, private readonly rate: number) {
+  constructor(targets: readonly TypingTarget[], private readonly round: TypingRound, private readonly rate: number,
+    private readonly onAction?: (key: string, time: number, release: boolean) => void) {
     this.actions = targets.flatMap((target, order) => [
       { time: target.time, key: target.letter, release: false, order },
       { time: target.holdEnd ?? target.time + 0.01, key: target.letter, release: true, order },
@@ -20,7 +21,8 @@ export class PianoDemoController {
     if (this.cancelled) return;
     while (this.next < this.actions.length && this.actions[this.next].time <= position + 1e-9) {
       const action = this.actions[this.next++];
-      if (action.release) this.round.keyUp(action.key, action.time, this.rate);
+      if (this.onAction) this.onAction(action.key, action.time, action.release);
+      else if (action.release) this.round.keyUp(action.key, action.time, this.rate);
       else this.round.key(action.key, action.time, this.rate, action.time / this.rate);
     }
   }

@@ -68,4 +68,69 @@ describe('song selection', () => {
       expect(fetchSpy.calls.count()).toBe(2);
     } finally { service.ngOnDestroy(); }
   });
+
+  it('queues the untouched imported MIDI and no player voices for other songs', async () => {
+    const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
+    const internal = service as any;
+    internal.enginePromise = Promise.resolve();
+    internal.sequencer = { pause: () => {}, currentTime: 0 };
+    let queued: ArrayBuffer | undefined;
+    spyOn(internal, 'queueSequence').and.callFake(async (midi: ArrayBuffer, id: string) => {
+      queued = midi;
+      internal.loadedSongId = id;
+    });
+    try {
+      for (const song of service.songs.filter(song => song.id !== 'twinkle-theme')) {
+        await service.selectSong(song.id);
+        expect(service.status()).withContext(song.id).toBe('ready');
+        expect(queued).withContext(song.id).toBe(service.score()?.midi);
+        expect(service.melodyCoupling()).withContext(song.id).toEqual([]);
+        expect(service.performedBars).withContext(song.id).toEqual([]);
+      }
+    } finally { service.ngOnDestroy(); }
+  });
+
+  it('releases player voices and bars on restart and committed seek', () => {
+    const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
+    const internal = service as any;
+    const releaseAll = jasmine.createSpy('releaseAll');
+    internal.playerPerformance = { releaseAll };
+    internal.sequencer = { pause: () => {}, currentTime: 0 };
+    internal.synth = { stopAll: () => {}, reset: () => {}, destroy: () => {} };
+    internal.statusValue.set('ready');
+    internal.durationValue.set(10);
+    try {
+      service.restart();
+      expect(releaseAll).toHaveBeenCalledWith(0, true);
+      releaseAll.calls.reset();
+      service.commitSeek(2);
+      expect(releaseAll).toHaveBeenCalledWith(2, true);
+    } finally { service.ngOnDestroy(); }
+  });
+
+  it('uses audio-clock lead-in time for Twinkle input before the sequencer starts', () => {
+    const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
+    const internal = service as any;
+    const perform = jasmine.createSpy('perform');
+    const releasePhysical = jasmine.createSpy('releasePhysical');
+    internal.context = { currentTime: 9.88, close: async () => {} };
+    internal.countInPlan = { songAt: 10, plan: { songStart: 0 } };
+    internal.couplingValue.set([{ start: 0 }]);
+    internal.playerPerformance = { perform, releasePhysical, releaseAll: () => {}, snapshot: (at: number) => [{ start: at }] };
+    internal.statusValue.set('count-in');
+    try {
+      expect(service.leadInPosition).toBeCloseTo(-0.12, 8);
+      expect(service.gameplayInputPosition).toBeCloseTo(-0.12, 8);
+      expect(service.performedBars[0].start).toBeCloseTo(-0.12, 8);
+      service.performMelodyInput(0, 'good', 'KeyT', service.gameplayInputPosition);
+      expect(perform.calls.mostRecent().args.slice(0, 3)).toEqual([0, 'good', 'KeyT']);
+      expect(perform.calls.mostRecent().args[3]).toBeCloseTo(-0.12, 8);
+      expect(perform.calls.mostRecent().args[4]).toBe(1);
+      service.releasePlayerKey('KeyT');
+      expect(releasePhysical.calls.mostRecent().args[0]).toBe('KeyT');
+      expect(releasePhysical.calls.mostRecent().args[1]).toBeCloseTo(-0.12, 8);
+      internal.sourceValue.set('greensleeves');
+      expect(service.leadInPosition).toBeNull();
+    } finally { service.ngOnDestroy(); }
+  });
 });

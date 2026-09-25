@@ -37,7 +37,7 @@ describe('generated song library', () => {
         expect(score.measureCount).toBe(24);
         expect(score.duration).toBeCloseTo(48, 5);
         expect(chart.length).toBe(98);
-        expect(chart.filter(target => target.holdEnd !== undefined).length).toBe(10);
+        expect(chart.filter(target => target.holdEnd !== undefined).length).toBe(6);
         expect(score.measures.length).toBe(48); // encoded repeats, not extraction duplication
       } else if (song.id.startsWith('liebestraum')) {
         expect(chart).toEqual([]);

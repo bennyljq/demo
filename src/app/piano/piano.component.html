@@ -6,9 +6,9 @@
   
   @if (stage() === 'home') {
     <div class="stage-screen home-screen">
-      <p class="eyebrow">A little music, one letter at a time</p>
-      <h1 id="piano-title">How to <em>Piano</em></h1>
-      <p class="home-intro">Listen, read ahead, and meet the melody at the playhead.</p>
+      <!-- <p class="eyebrow">A little music, one letter at a time</p> -->
+      <h1 id="piano-title"><strong>HARD </strong><em>Pianist</em></h1>
+      <p class="home-intro">a musical typing game</p>
       <svg class="home-art" viewBox="0 0 560 180" aria-hidden="true" focusable="false" draggable="false">
         <path d="M16 39h528M16 57h528M16 75h528M16 93h528M16 111h528" fill="none" stroke="currentColor" stroke-width="1" opacity=".25"/>
         <path d="M72 102q13-22 26 0t26 0m192-35q13-22 26 0t26 0" fill="none" stroke="currentColor" stroke-width="2" opacity=".65"/>
@@ -22,8 +22,8 @@
       </svg>
       <div class="home-actions">
         <button type="button" class="primary-button" (click)="enterLibrary()">Start</button>
-        <button type="button" (click)="openSettings()">Settings</button>
-        <button type="button" (click)="enterTutorial()">How to Play</button>
+        <!-- <button type="button" (click)="openSettings()">Settings</button> -->
+        <!-- <button type="button" (click)="enterTutorial()">How to Play</button> -->
       </div>
       @if (playback.engineStatus() === 'preparing') { <p class="home-audio-status" role="status">Preparing piano audio…</p> }
       @if (playback.engineStatus() === 'error') {
@@ -37,7 +37,7 @@
     <div class="stage-screen menu-screen library-screen">
       <header class="menu-heading"><div>
         <p class="eyebrow">Choose a piece</p><h1 id="piano-title">Music library</h1>
-        <p>Difficulty rates the typing chart, not piano performance.</p>
+        <!-- <p>Difficulty rates the typing chart, not piano performance.</p> -->
       </div></header>
       @if (playback.engineStatus() === 'preparing') { <p class="status" data-status="loading" role="status">Preparing piano audio…</p> }
       @if (playback.engineStatus() === 'error') {
@@ -69,6 +69,7 @@
       {{ scoringPoints.miss }}. Each Wrong key costs {{ -scoringPoints.wrong }} points and breaks combo; score cannot display below zero, but debt carries forward. A completed hold adds up to
       {{ scoringPoints.hold }} sustain points; the final {{ settings().holdReleaseMs }} ms have a release allowance.</p>
       <p>Adjust metronome and speed in Settings. Watch the actual Twinkle opening, then try it yourself.</p>
+      <p class="performance-legend">For Twinkle, dashed notes show the intended melody. Solid green, orange and red notes show your Perfect, Good and altered-pitch Wrong performances.</p>
       <div class="tutorial-actions">
         <button type="button" [class.selected]="tutorialMode() === 'watch'" (click)="selectTutorialMode('watch')">Watch example <span class="demo-label">Demonstration</span></button>
         <button type="button" [class.selected]="tutorialMode() === 'try'" (click)="selectTutorialMode('try')">Try example</button>
@@ -96,24 +97,33 @@
     </header>
     @if (!tutorialOutcome()) {
       <div class="armed-panel">
-        <p class="status" role="status" aria-live="polite" [attr.data-status]="playback.status()">
-          {{ playback.status() === 'loading' ? 'Preparing score and audio' : statusLabel() }}
-        </p>
-        @if (playback.error()) { <p class="error" role="alert">{{ playback.error() }}</p> }
-        @if (playback.engineError()) { <p class="error" role="alert">{{ playback.engineError() }}</p> }
-        @if (playback.status() === 'error' || playback.engineStatus() === 'error') {
-          <button type="button" (click)="retryPreparation()">Retry preparation</button>
+        <div class="armed-status-slot"><p class="status" role="status" aria-live="polite" [attr.data-status]="playback.status()">
+            {{ playback.status() === 'loading' ? 'Preparing score and audio' : statusLabel() }}
+          </p></div>
+        <div class="armed-control-slot">
+          @if (runStarted()) {
+            <button type="button" (click)="restart()" title="Restart from the beginning (Escape)">Restart <span aria-hidden="true">(Esc)</span></button>
+          } @else {
+            <button type="button" class="primary-button" (click)="play()" [disabled]="playback.status() !== 'ready' || !playback.score()">
+              {{ stage() === 'tutorial' ? (tutorialMode() === 'watch' ? 'Start demonstration' : 'Start example') : coverage() === 'listen' ? 'Start listening' : 'Start run' }}
+            </button>
+          }
+        </div>
+        <div class="armed-hint-slot">
+          @if (playback.status() === 'ready' && playback.score() && (stage() === 'play' || tutorialMode() === 'try')) {
+            <span class="keyboard-start-hint">Press any key to start</span>
+          }
+          @if (runStartPosition() > 0.001 && stage() === 'play') { <span class="practice-note">Practice segment from {{ runStartPosition().toFixed(1) }} s</span> }
+        </div>
+        @if (playback.error() || playback.engineError() || playback.status() === 'error' || playback.engineStatus() === 'error') {
+          <div class="armed-messages">
+            @if (playback.error()) { <p class="error" role="alert">{{ playback.error() }}</p> }
+            @if (playback.engineError()) { <p class="error" role="alert">{{ playback.engineError() }}</p> }
+            @if (playback.status() === 'error' || playback.engineStatus() === 'error') {
+              <button type="button" (click)="retryPreparation()">Retry preparation</button>
+            }
+          </div>
         }
-        <button type="button" class="primary-button" (click)="play()" [disabled]="playback.status() !== 'ready' || !playback.score()">
-          {{ stage() === 'tutorial' ? (tutorialMode() === 'watch' ? 'Start demonstration' : 'Start example') : coverage() === 'listen' ? 'Start listening' : 'Start run' }}
-        </button>
-        @if (runStarted()) {
-          <button type="button" (click)="restart()" title="Restart from the beginning (Escape)">Restart <span aria-hidden="true">(Esc)</span></button>
-        }
-        @if (playback.status() === 'ready' && playback.score() && (stage() === 'play' || tutorialMode() === 'try')) {
-          <span class="keyboard-start-hint">Press any key to start</span>
-        }
-        @if (runStartPosition() > 0.001 && stage() === 'play') { <span class="practice-note">Practice segment from {{ runStartPosition().toFixed(1) }} s</span> }
       </div>
     }
     <div #passage class="passage-measure">
@@ -261,4 +271,3 @@
         </div>
       }
     </section>
-    
