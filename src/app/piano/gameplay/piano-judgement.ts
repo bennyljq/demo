@@ -2,7 +2,7 @@ import type { TypingTarget } from './piano-chart';
 import { attackWindowSeconds, DEFAULT_SCORING_SETTINGS, holdBufferSeconds, ScoringSettings } from './piano-scoring-settings';
 
 export const TIMING_WINDOWS = { perfect: 0.080, good: 0.160, wrongFeedback: 0.5 } as const;
-export const SCORING_POINTS = { perfect: 100, good: 70, miss: 0, hold: 100 } as const;
+export const SCORING_POINTS = { perfect: 100, good: 70, miss: 0, hold: 100, wrong: -100 } as const;
 export type LetterResult = 'pending' | 'holding' | 'skipped' | 'perfect' | 'good' | 'miss';
 type Grade = 'perfect' | 'good';
 const EPSILON = 1e-9;
@@ -23,9 +23,9 @@ export class TypingRound {
   feedbackSerial = 0;
   feedbackKind: Grade | 'miss' | 'wrong' | undefined;
   feedbackIndex = -1;
+  feedbackLetter = '';
   private readonly held = new Map<number, { key: string; lastPosition: number }>();
   private readonly down = new Set<string>();
-  private lastPosition = 0;
 
   constructor(readonly targets: readonly TypingTarget[], public settings: ScoringSettings = DEFAULT_SCORING_SETTINGS) { this.reset(); }
 
@@ -36,25 +36,25 @@ export class TypingRound {
     return this.targets.reduce((sum, target) => sum + (target.holdEnd !== undefined && this.results[target.index] !== 'skipped' ? SCORING_POINTS.hold : 0), 0);
   }
   get earnedSustainPoints(): number { return this.sustainPoints.reduce((sum, points) => sum + points, 0); }
-  get totalPoints(): number {
-    return this.attackGrades.reduce<number>((sum, grade) => sum + (grade === 'perfect' ? SCORING_POINTS.perfect : grade === 'good' ? SCORING_POINTS.good : 0), 0) + this.earnedSustainPoints;
+  get rawPoints(): number {
+    return this.attackGrades.reduce<number>((sum, grade) => sum + (grade === 'perfect' ? SCORING_POINTS.perfect : grade === 'good' ? SCORING_POINTS.good : 0), 0)
+      + this.earnedSustainPoints + this.wrongCount * SCORING_POINTS.wrong;
   }
+  get totalPoints(): number { return Math.max(0, this.rawPoints); }
 
   reset(destination = 0): void {
     this.results = this.targets.map(target => target.time < destination ? 'skipped' : 'pending');
     this.attackGrades = this.targets.map(() => undefined);
     this.sustainPoints = this.targets.map(() => 0);
     this.held.clear(); this.down.clear();
-    this.lastPosition = destination;
     this.complete = false; this.listening = true; this.wrong = false;
     this.wrongUntil = -Infinity; this.wrongCount = 0; this.combo = 0; this.bestCombo = 0;
-    this.feedbackKind = undefined; this.feedbackIndex = -1;
+    this.feedbackKind = undefined; this.feedbackIndex = -1; this.feedbackLetter = '';
     this.revision++;
     this.advance(destination);
   }
 
   advance(time: number, rate = 1, cosmeticTime = time): void {
-    this.lastPosition = time;
     const good = attackWindowSeconds(this.settings.goodMs, rate);
     let lastMissed = -1;
     for (const target of this.targets) {
@@ -83,8 +83,12 @@ export class TypingRound {
     const upper = key.toUpperCase();
     if (this.down.has(upper)) return;
     this.advance(time, rate, cosmeticTime);
-    if (this.complete || this.listening) return;
     const good = attackWindowSeconds(this.settings.goodMs, rate);
+    const eligible = this.targets.filter(target => this.results[target.index] !== 'skipped');
+    const first = eligible[0], last = eligible.at(-1);
+    if (!first || !last || time < first.time - good - EPSILON ||
+        time > Math.max(last.time + good, last.holdEnd ?? 0) + EPSILON || this.complete) return;
+    this.down.add(upper);
     let nearest: TypingTarget | undefined;
     let distance = Infinity;
     for (const target of this.targets) {
@@ -93,18 +97,16 @@ export class TypingRound {
         nearest = target; distance = delta;
       }
     }
-    if (!nearest) return;
-    if (upper !== nearest.letter) {
+    if (!nearest || upper !== nearest.letter) {
       this.wrongCount++; this.combo = 0;
       this.wrongUntil = cosmeticTime + TIMING_WINDOWS.wrongFeedback;
       this.wrong = true;
-      this.setFeedback('wrong', nearest.index);
+      this.setFeedback('wrong', nearest?.index ?? -1, upper);
     } else {
       const grade: Grade = distance <= attackWindowSeconds(this.settings.perfectMs, rate) + EPSILON ? 'perfect' : 'good';
       this.attackGrades[nearest.index] = grade;
       this.combo++; this.bestCombo = Math.max(this.bestCombo, this.combo);
       if (nearest.holdEnd !== undefined) {
-        this.down.add(upper);
         this.results[nearest.index] = 'holding';
         this.held.set(nearest.index, { key: upper, lastPosition: Math.max(nearest.time, time) });
         this.sustainPoints[nearest.index] = this.proportional(nearest, time);
@@ -144,13 +146,12 @@ export class TypingRound {
     const held = this.held.get(index);
     if (!held) return;
     this.held.delete(index);
-    this.down.delete(held.key);
     this.results[index] = this.attackGrades[index]!;
     if (full) this.sustainPoints[index] = SCORING_POINTS.hold;
     this.revision++;
   }
-  private setFeedback(kind: Grade | 'miss' | 'wrong', index: number): void {
-    this.feedbackKind = kind; this.feedbackIndex = index; this.feedbackSerial++;
+  private setFeedback(kind: Grade | 'miss' | 'wrong', index: number, letter = this.targets[index]?.letter ?? ''): void {
+    this.feedbackKind = kind; this.feedbackIndex = index; this.feedbackLetter = letter; this.feedbackSerial++;
   }
 }
 

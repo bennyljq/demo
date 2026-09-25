@@ -1,7 +1,7 @@
 // Curated game library. The other score files remain available for extraction
 // and import regression tests, but are not listed in the game.
 module.exports = [
-  { id: 'twinkle-theme', title: 'Twinkle Theme', file: 'Twinkle_Theme.musicxml',
+  { id: 'twinkle-theme', title: 'Twinkle Twinkle Little Star', file: 'Twinkle_Theme.musicxml',
     composer: 'Wolfgang Amadeus Mozart', credit: 'arr. Solángel', difficulty: 'Beginner' },
   { id: 'greensleeves', title: 'Greensleeves', file: 'Greensleeves.mxl',
     composer: 'Traditional', credit: 'arr. Dominique Makowski', difficulty: 'Intermediate' },

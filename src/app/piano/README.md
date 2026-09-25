@@ -1,6 +1,6 @@
 # How to Piano
 
-## Current flow (Phase 12)
+## Current flow (Phase 14)
 
 Run `npm start` and open `http://localhost:4200/piano`. The homepage **Start**
 prepares the reusable SoundFont engine and opens the library. Choose one of four
@@ -10,7 +10,9 @@ Exit returns to the library, and Home stops the run while retaining the audio
 engine. **How to Play** on the homepage prepares audio too; Watch/Try then load
 the short Twinkle example. Settings is available from every stage. During a run,
 opening Settings releases held typing keys and suspends game input while music
-continues. Escape closes Settings before leaving Play or Tutorial.
+continues. **Restart** or Escape silences the run, clears the attempt, and
+returns to the armed song beginning (or tutorial excerpt). Escape closes
+Settings first. Exit to Library and Back to Homepage remain visible.
 
 The curated order, titles, verified composer/arrangement credits, and provisional
 **typing chart** difficulty labels live in `song-library.config.cjs`. Run
@@ -35,6 +37,52 @@ Try cancellation, listen-only Results/Replay, Home/Library navigation, both
 themes, and no browser console errors. Screenshots of Homepage, Library,
 Settings, armed/running Play, Tutorial and Results were inspected. Automated
 checks did not assess audible musical feel or human typing latency.
+
+Phase 13 gives every Start a full metric-bar count-in, including when
+**Metronome during song** is off. The count-in uses the selected seek position's
+metre and tempo, the current playback speed, and the existing click sample. Its
+virtual empty bar and bell markers are derived from AudioContext time; the
+actual song position and judgement remain frozen until the sequencer starts.
+The count-in downbeat is scheduled once, then normal in-song clicks begin at
+the next beat if enabled. Master and click volume still control their gains.
+
+Armed Play and tutorial Try also accept a deliberate key, Space or Enter as
+Start. That key is consumed and suppressed until keyup. Start buttons and
+Settings controls keep native keyboard behaviour. During the active chart
+interval, every eligible new alphabetic keydown is either the nearest target's
+correct letter or Wrong. Wrong costs 100 points and breaks combo; negative raw
+score debt persists while the displayed score has a zero floor. Results show
+the penalty separately and retain a frozen, scrollable letter-by-letter passage,
+including skipped practice letters and final hold credit. Focus or hover a
+letter to read its attack and sustain detail. Successful hits create a short
+Canvas flash at the recorded hit position; reduced motion keeps a static
+high-contrast outline.
+
+The Phase 13 checks cover count-in with in-song clicks on/off, pickup and seek
+meter/tempo/speed, downbeat deduplication and cancellation, score debt and
+alphabet smashing, keyboard-start consumption, immutable result snapshots,
+and normal taps/holds. Headless Chrome inspected count-in, hit effects, full
+and seeked Results, partial sustain, Watch/Try cleanup, both themes and reduced
+motion. Human listening and typing latency assessment remain open.
+
+Phase 14 prepares the virtual count-in bar and all planned bell positions
+before Start. The prepared pulse plan also supplies click timing; the song
+downbeat remains visible across the boundary and is scheduled once. The
+separate top-lane bands keep bells above letters. Holds retain the attack's
+Perfect/Good colour while their overhead progress bar fills; the bar is 1.5×
+wide and centred. Dark note outlines are brighter, with a distinct active
+edge. Restart preserves settings and the loaded SF2 engine. The feature code
+is grouped into `audio/`, `music/`, `gameplay/`, `charts/`, and `rendering/`;
+the component, manifest generator, generated manifest, config, and guides
+remain here. Historical screenshots and the one-time Twinkle extraction script
+were removed; the extracted scores remain committed under
+`src/assets/piano/tracks/` and are covered by `song-library.spec.ts`.
+
+After reorganisation, run the complete focused suite with:
+
+```sh
+npx ng test --watch=false --browsers=ChromeHeadless --ts-config=src/app/piano/tsconfig.spec.json --include="src/app/piano/**/*.spec.ts"
+```
 
 ## Earlier prototype notes (historical)
 
@@ -117,7 +165,7 @@ zero-velocity note-offs, sustain independence, repeated pitches and track/channe
 identity. Run them with Chrome available:
 
 ```sh
-npx ng test --watch=false --browsers=ChromeHeadless --ts-config=src/app/piano/tsconfig.spec.json --include=src/app/piano/piano-timeline.spec.ts
+npx ng test --watch=false --browsers=ChromeHeadless --ts-config=src/app/piano/tsconfig.spec.json --include=src/app/piano/music/piano-timeline.spec.ts
 ```
 
 The isolated test configuration avoids an existing unrelated stale
@@ -188,7 +236,7 @@ tests passed (including the original timeline tests). Existing bundle-size/Momen
 warnings remain. Run the complete focused set with:
 
 ```sh
-npx ng test --watch=false --browsers=ChromeHeadless --ts-config=src/app/piano/tsconfig.spec.json --include="src/app/piano/*.spec.ts"
+npx ng test --watch=false --browsers=ChromeHeadless --ts-config=src/app/piano/tsconfig.spec.json --include="src/app/piano/**/*.spec.ts"
 ```
 
 Headless Chrome keyboard automation verified previews, Listen, wrong-key feedback,
@@ -433,7 +481,7 @@ quarter. The Turkish and Greensleeves charts were migrated from their previous
 coordinates; a saved pre-migration fixture compares all 106 attack times and
 their hold endpoints. Pickups and cadenza bars use their actual lengths, and
 barline endpoints resolve to the next performed visit through repeats. See
-[CHART-AUTHORING.md](./CHART-AUTHORING.md) for the syntax and extraction command.
+[CHART-AUTHORING.md](./CHART-AUTHORING.md) for the syntax and committed score provenance.
 
 The reading passage now sits immediately above the roll. Its overhead bars
 fill as a held letter earns sustain credit; the underline marks only the
@@ -444,7 +492,7 @@ preparation, then Play starts the normal count-in.
 
 The Twinkle collection remains selectable. Its printed Theme and Variation
 I–XII headings delimit 13 standalone MusicXML files under `tracks`; the
-reproducible extractor preserves the 325 written source measures exactly once
+committed score files preserve the 325 written source measures exactly once
 across these files. The Theme has 24 written 2/4 measures and 48 performed
 measures through encoded repeats, for about 48 seconds at its initial tempo.
 Its 98-letter chart covers the repeated theme and includes 10 holds; the

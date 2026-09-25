@@ -1,4 +1,4 @@
-import type { XmlPhrase } from './piano-chart';
+import type { XmlPhrase } from '../gameplay/piano-chart';
 
 /** Explicit upper-staff Theme locations. Both encoded repeat visits use the same words. */
 export const TWINKLE_THEME_CHART: readonly XmlPhrase[] = [

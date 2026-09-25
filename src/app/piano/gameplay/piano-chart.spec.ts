@@ -1,12 +1,12 @@
 import { buildXmlTypingChart } from './piano-chart';
-import { importMusicXml } from './musicxml-import';
-import { readMxlRootfile } from './mxl-container';
+import { importMusicXml } from '../music/musicxml-import';
+import { readMxlRootfile } from '../music/mxl-container';
 import { TypingRound } from './piano-judgement';
-import { resolveChartLocation } from './piano-chart-time';
-import { scoreBeatGrid, countInBeatSeconds } from './piano-metronome';
-import { timeToX } from './piano-roll-geometry';
-import { PHASE9_CHART_TIMES } from './chart-times.phase9';
-import { songChartFor } from './song-charts';
+import { resolveChartLocation } from '../music/piano-chart-time';
+import { scoreBeatGrid, countInBeatSeconds } from '../audio/piano-metronome';
+import { timeToX } from '../rendering/piano-roll-geometry';
+import { PHASE9_CHART_TIMES } from '../charts/chart-times.phase9';
+import { songChartFor } from '../charts/song-charts';
 
 describe('readable score chart', () => {
   it('keeps every migrated Turkish and Greensleeves attack and hold time', async () => {

@@ -18,6 +18,29 @@ describe('song selection', () => {
     } finally { service.ngOnDestroy(); }
   });
 
+  it('restarts preparation and ignores a late audio-resume callback from the old run', async () => {
+    const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
+    const internal = service as any;
+    const selection = spyOn(service, 'selectSong').and.resolveTo();
+    try {
+      service.restart();
+      expect(selection).toHaveBeenCalledOnceWith(service.source());
+      let finishResume!: () => void;
+      internal.context = { resume: () => new Promise<void>(resolve => { finishResume = resolve; }), close: async () => {} };
+      internal.sequencer = { currentTime: 0, pause: () => {} };
+      internal.loadedSongId = service.source();
+      internal.statusValue.set('ready');
+      const start = spyOn(internal, 'startCountIn');
+      const playing = service.play();
+      expect(service.status()).toBe('starting');
+      service.restart();
+      finishResume();
+      await playing;
+      expect(service.status()).toBe('ready');
+      expect(start).not.toHaveBeenCalled();
+    } finally { service.ngOnDestroy(); }
+  });
+
   it('does not let a stale score request replace the latest selection', async () => {
     const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
     let finishPreparation!: () => void;

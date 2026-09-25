@@ -63,6 +63,28 @@ describe('hold score', () => {
     expect(round.availablePoints).toBe(200);
   });
 
+  it('keeps the attack grade through hold progress and never credits wrong or missed attacks', () => {
+    const perfect = new TypingRound([hold]);
+    perfect.key('a', 1);
+    perfect.advance(1.5);
+    expect(perfect.results[0]).toBe('holding');
+    expect(perfect.attackGrades[0]).toBe('perfect');
+    expect(perfect.earnedSustainPoints).toBe(50);
+    const good = new TypingRound([hold]);
+    good.key('a', 1.1);
+    good.advance(1.5);
+    expect(good.results[0]).toBe('holding');
+    expect(good.attackGrades[0]).toBe('good');
+    expect(good.earnedSustainPoints).toBe(50);
+    const wrong = new TypingRound([hold]);
+    wrong.key('b', 1);
+    wrong.advance(1.4);
+    expect(wrong.results[0]).toBe('miss');
+    expect(wrong.attackGrades[0]).toBeUndefined();
+    expect(wrong.earnedSustainPoints).toBe(0);
+    expect(wrong.wrongCount).toBe(1);
+  });
+
   it('validates shared tolerances and scales overlay geometry', () => {
     expect(validateScoringSettings({ ...DEFAULT_SCORING_SETTINGS, goodMs: -1 })).toMatch(/nonnegative/);
     expect(validateScoringSettings({ ...DEFAULT_SCORING_SETTINGS, perfectMs: Infinity })).toMatch(/finite/);

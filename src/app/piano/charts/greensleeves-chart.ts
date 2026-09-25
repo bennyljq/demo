@@ -1,4 +1,4 @@
-import type { XmlPhrase } from './piano-chart';
+import type { XmlPhrase } from '../gameplay/piano-chart';
 
 /** Manually selected upper-staff attacks from all 33 written measures; measure 1 is listen-only. */
 export const GREENSLEEVES_CHART: readonly XmlPhrase[] = [

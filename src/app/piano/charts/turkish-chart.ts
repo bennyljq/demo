@@ -1,4 +1,4 @@
-import type { XmlPhrase } from './piano-chart';
+import type { XmlPhrase } from '../gameplay/piano-chart';
 
 /** The first score traversal only. Locations are authoritative, independent of sounded notes. */
 export const TURKISH_CHART: readonly XmlPhrase[] = [

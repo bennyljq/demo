@@ -1,16 +1,23 @@
 import { DOCUMENT, inject, Injectable, OnDestroy, signal } from '@angular/core';
 import { Sequencer, WorkletSynthesizer } from 'spessasynth_lib';
-import { PianoTimeline } from './piano-timeline';
-import { ImportedScore, importMusicXml } from './musicxml-import';
-import { readMxlRootfile } from './mxl-container';
-import { countInBeatSeconds, scoreBeatGrid, BeatPulse } from './piano-metronome';
-import { SONGS } from './song-manifest.generated';
-import { buildXmlTypingChart, TypingTarget } from './piano-chart';
-import { songChartFor } from './song-charts';
+import { PianoTimeline } from '../music/piano-timeline';
+import { ImportedScore, importMusicXml } from '../music/musicxml-import';
+import { readMxlRootfile } from '../music/mxl-container';
+import { preparePulsePlan, scoreBeatGrid, BeatPulse, PreparedPulsePlan } from './piano-metronome';
+import { SONGS } from '../song-manifest.generated';
+import { buildXmlTypingChart, TypingTarget } from '../gameplay/piano-chart';
+import { songChartFor } from '../charts/song-charts';
 
 type PlaybackStatus = 'loading' | 'enable-audio' | 'ready' | 'starting' | 'count-in' | 'playing' | 'error';
 type EngineStatus = 'idle' | 'preparing' | 'ready' | 'error';
 export type PianoSource = string;
+export interface CountInVisual {
+  readonly songStart: number;
+  readonly barStart: number;
+  readonly position: number;
+  readonly pulsePositions: readonly number[];
+  readonly pulseTimes: readonly number[];
+}
 
 @Injectable()
 export class PianoPlaybackService implements OnDestroy {
@@ -42,16 +49,18 @@ export class PianoPlaybackService implements OnDestroy {
   readonly speedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3] as const;
   private readonly rateValue = signal(1);
   readonly playbackRate = this.rateValue.asReadonly();
-  private readonly volumeValue = signal(400);
+  private readonly volumeValue = signal(100);
   readonly volume = this.volumeValue.asReadonly();
   private readonly metronomeValue = signal(true);
-  private readonly clickVolumeValue = signal(50);
+  private readonly clickVolumeValue = signal(100);
   readonly metronomeVolume = this.clickVolumeValue.asReadonly();
   readonly metronome = this.metronomeValue.asReadonly();
   private readonly metronomeErrorValue = signal('');
   readonly metronomeError = this.metronomeErrorValue.asReadonly();
   private readonly countInValue = signal<number | null>(null);
   readonly countIn = this.countInValue.asReadonly();
+  private preparedPulsePlan?: PreparedPulsePlan;
+  private countInPlan?: { firstAt: number; songAt: number; plan: PreparedPulsePlan };
   private readonly positionValue = signal(0);
   private readonly durationValue = signal(0);
   readonly duration = this.durationValue.asReadonly();
@@ -96,7 +105,10 @@ export class PianoPlaybackService implements OnDestroy {
 
   setPlaybackRate(rate: number): void {
     if (this.status() !== 'playing' && this.status() !== 'starting' && this.status() !== 'count-in' &&
-        this.speedOptions.some(option => option === rate)) this.rateValue.set(rate);
+        this.speedOptions.some(option => option === rate)) {
+      this.rateValue.set(rate);
+      this.prepareVisualPlan();
+    }
   }
   
   /** Shared time source for Canvas and typing; no independent visual/game clock. */
@@ -113,29 +125,43 @@ export class PianoPlaybackService implements OnDestroy {
     if (enabled && !this.clickBuffer && this.context) {
       const songWasReady = this.status() === 'ready';
       if (songWasReady) this.statusValue.set('loading');
-      await this.prepareClick();
+      try { await this.prepareClick(); }
+      catch (error) {
+        this.metronomeValue.set(false);
+        this.metronomeErrorValue.set(error instanceof Error ? error.message : String(error));
+      }
       if (songWasReady && !this.lifetime.signal.aborted && this.status() === 'loading') this.statusValue.set('ready');
     }
   }
+  get countInVisual(): CountInVisual | null {
+    const plan = this.countInPlan?.plan ?? this.preparedPulsePlan;
+    if (!plan || (this.status() !== 'ready' && this.status() !== 'count-in')) return null;
+    const runtime = this.countInPlan, context = this.context;
+    if (this.status() === 'count-in' && (!runtime || !context)) return null;
+    const position = runtime && context
+      ? Math.min(plan.songStart, plan.barStart + Math.max(0, context.currentTime - runtime.firstAt) * this.playbackRate())
+      : plan.barStart;
+    return { songStart: plan.songStart, barStart: plan.barStart, position,
+      pulsePositions: plan.countInPositions,
+      pulseTimes: runtime ? [...plan.offsets.map(offset => runtime.firstAt + offset), runtime.songAt] : [] };
+  }
+  get visualPosition(): number { return this.countInVisual?.position ?? this.playbackPosition; }
+  get songBeatPositions(): readonly number[] { return this.metronome() ? this.preparedPulsePlan?.songPositions ?? [] : []; }
   
   private async prepareClick(): Promise<void> {
     if (this.clickBuffer) return;
     this.clickPromise ??= (async () => {
-      try {
         this.context ??= new AudioContext();
         const response = await fetch(this.assetUrl('metronome.mp3'), { signal: this.lifetime.signal });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         this.clickBuffer = await this.context.decodeAudioData(await response.arrayBuffer());
         if (!this.clickBuffer.duration) throw new Error('empty audio sample');
-      } catch (error) {
-        if (!this.lifetime.signal.aborted) {
-          this.metronomeValue.set(false);
-          this.metronomeErrorValue.set(`Could not load local metronome.mp3: ${error instanceof Error ? error.message : error}`);
-        }
-      }
     })();
-    await this.clickPromise;
-    if (!this.clickBuffer) this.clickPromise = undefined;
+    try { await this.clickPromise; }
+    catch (error) {
+      this.clickPromise = undefined;
+      throw new Error(`Could not load local metronome.mp3: ${error instanceof Error ? error.message : error}`);
+    }
   }
   
   beginScrub(): void {
@@ -158,6 +184,7 @@ export class PianoPlaybackService implements OnDestroy {
     clearTimeout(this.naturalEndTimer);
     this.naturalEndTimer = undefined;
     this.ending = false;
+    this.cancelClicks();
     const destination = Math.max(0, Math.min(Math.max(0, this.duration() - 0.001), Number(seconds) || 0));
     const resume = this.scrubPreview !== null ? this.resumeAfterScrub : this.status() === 'playing';
     this.mute();
@@ -168,11 +195,11 @@ export class PianoPlaybackService implements OnDestroy {
       this.sequencer.currentTime = destination;
     }
     this.positionValue.set(destination);
+    this.prepareVisualPlan();
     this.scrubPreview = null;
     this.resumeAfterScrub = false;
     if (resume && this.sequencer && this.context && this.output) {
-      if (this.metronome() && this.clickBuffer && this.score()) this.startCountIn();
-      else this.startSequence();
+      this.startCountIn();
     } else this.statusValue.set('ready');
   }
   
@@ -202,7 +229,7 @@ export class PianoPlaybackService implements OnDestroy {
       this.enginePromise ??= (async () => {
         await this.waitFor(resume, 'Could not enable browser audio.');
         this.soundFont ??= await this.fetchAsset('SalC5Light2.sf2', 'RIFF');
-        if (this.metronome()) await this.prepareClick();
+        await this.prepareClick();
         await this.initialiseAudio();
         this.soundFont = undefined;
         this.engineStatusValue.set('ready');
@@ -239,6 +266,7 @@ export class PianoPlaybackService implements OnDestroy {
     this.statusValue.set('loading');
     this.errorValue.set('');
     this.scoreValue.set(null);
+    this.preparedPulsePlan = undefined;
     this.chartValue.set([]);
     this.timelineValue.set({ tracks: [], notes: [] });
     this.durationValue.set(0);
@@ -263,6 +291,7 @@ export class PianoPlaybackService implements OnDestroy {
       this.timelineValue.set(score.timeline);
       this.durationValue.set(score.duration);
       this.beatGrid = scoreBeatGrid(score);
+      this.prepareVisualPlan();
       if (this.enginePromise) await this.enginePromise;
       if (!this.sequencer) throw new Error(this.engineError() || 'Audio engine is not ready. Return home and retry Start.');
       if (version !== this.selectionVersion || controller.signal.aborted) return;
@@ -289,10 +318,9 @@ export class PianoPlaybackService implements OnDestroy {
       this.lifetime.signal.throwIfAborted();
       if (version !== this.selectionVersion || this.status() !== 'starting') return;
       this.sequencer.playbackRate = this.playbackRate();
-      if (this.metronome() && this.clickBuffer && this.score()) this.startCountIn();
-      else this.startSequence();
+      this.startCountIn();
     } catch (error) {
-      this.fail(error);
+      if (version === this.selectionVersion && this.status() === 'starting') this.fail(error);
     }
   }
   
@@ -307,7 +335,18 @@ export class PianoPlaybackService implements OnDestroy {
     this.resumeAfterScrub = false;
     this.silenceAndRewind();
     this.positionValue.set(0);
+    this.prepareVisualPlan();
     this.statusValue.set('ready');
+  }
+
+  /** Return to an armed beginning without rebuilding the audio engine or song. */
+  restart(): void {
+    if (this.lifetime.signal.aborted) return;
+    if (this.status() === 'loading' || this.status() === 'enable-audio' || this.status() === 'error') {
+      void this.selectSong(this.source());
+      return;
+    }
+    this.stop();
   }
 
   /** Fade an opening-passage ending on the audio clock before transport cleanup. */
@@ -398,19 +437,23 @@ export class PianoPlaybackService implements OnDestroy {
     if (!fromCountIn) this.rampVolume();
     this.sequencer.play();
     this.countInValue.set(null);
+    this.countInPlan = undefined;
     this.statusValue.set('playing');
     if (this.metronome() && this.clickBuffer) this.scheduleBeatGrid();
   }
   
   private startCountIn(): void {
     const score = this.score(), context = this.context;
-    if (!score || !context || !this.clickBuffer) { this.startSequence(); return; }
+    if (!score || !context || !this.clickBuffer) { this.fail(new Error('The count-in click is unavailable. Retry audio preparation.')); return; }
     this.cancelClicks();
-    const offsets = countInBeatSeconds(score, this.positionValue(), this.playbackRate());
-    const spacing = offsets.length > 1 ? offsets[1] - offsets[0] : 60 / 120 / this.playbackRate();
+    this.prepareVisualPlan();
+    const plan = this.preparedPulsePlan!;
+    const { offsets } = plan;
+    const spacing = plan.beatSeconds;
     const firstAt = context.currentTime + 0.055;
     const songAt = firstAt + offsets.length * spacing;
     const run = ++this.transportRun;
+    this.countInPlan = { firstAt, songAt, plan };
     this.countInValue.set(offsets.length);
     this.statusValue.set('count-in');
     this.rampVolume();
@@ -445,6 +488,11 @@ export class PianoPlaybackService implements OnDestroy {
     source.start(at, offset, duration);
     this.clickSources.add(source);
   }
+
+  private prepareVisualPlan(): void {
+    const score = this.score();
+    this.preparedPulsePlan = score ? preparePulsePlan(score, this.positionValue(), this.playbackRate(), this.beatGrid) : undefined;
+  }
   
   private scheduleBeatGrid(): void {
     if (!this.context || !this.sequencer || !this.metronome()) return;
@@ -477,6 +525,7 @@ export class PianoPlaybackService implements OnDestroy {
     }
     this.clickSources.clear();
     this.countInValue.set(null);
+    this.countInPlan = undefined;
   }
   private rampVolume(): void {
     if (!this.output || !this.context) return;

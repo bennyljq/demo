@@ -1,8 +1,8 @@
-import type { XmlPhrase } from './piano-chart';
+import type { XmlPhrase } from '../gameplay/piano-chart';
 import { GREENSLEEVES_CHART } from './greensleeves-chart';
 import { TURKISH_CHART } from './turkish-chart';
 import { TWINKLE_THEME_CHART } from './twinkle-theme-chart';
-import { SONGS } from './song-manifest.generated';
+import { SONGS } from '../song-manifest.generated';
 
 export type ChartCoverage = 'full' | 'opening' | 'listen';
 export interface SongChart { readonly unitsPerQuarter: number; readonly phrases: readonly XmlPhrase[]; readonly coverage: ChartCoverage }

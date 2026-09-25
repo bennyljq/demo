@@ -1,8 +1,8 @@
-import type { ImportedScore } from './musicxml-import';
-import type { PianoTimeline } from './piano-timeline';
-import { ChartLocation, resolveChartLocation } from './piano-chart-time';
-import { TURKISH_CHART } from './turkish-chart';
-export { TURKISH_CHART as XML_CHART } from './turkish-chart';
+import type { ImportedScore } from '../music/musicxml-import';
+import type { PianoTimeline } from '../music/piano-timeline';
+import { ChartLocation, resolveChartLocation } from '../music/piano-chart-time';
+import { TURKISH_CHART } from '../charts/turkish-chart';
+export { TURKISH_CHART as XML_CHART } from '../charts/turkish-chart';
 
 export interface TypingTarget {
   readonly id: string;

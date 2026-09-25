@@ -76,16 +76,15 @@ same two-units-per-quarter ruler; all twelve variations and the complete
 collection are intentionally uncharted. Its words and hold choices need human
 musical review.
 
-The Twinkle source collection has explicit `THEME.` and `VAR. I.` through
-`VAR. XII.` headings. Run `python src/app/piano/extract-twinkle.py` to
-regenerate the 13 standalone `.musicxml` files, or add `--check` to verify
-them. The script validates heading order, movement repeat boundaries and
-cross-boundary spanners, preserves each original measure body, and inserts
-inherited opening score state and source-index provenance. The 325 source
-measures partition into 24 Theme, 25 Variation I, 24 each for II–XI, and
-36 for XII; the extra Variation I measure is an alternate ending, not an
-extraction duplicate. Repeated **performance** visits are expanded by the
-importer, not copied into the extracted XML.
+The committed Twinkle source collection has explicit `THEME.` and `VAR. I.`
+through `VAR. XII.` headings. The 13 standalone `.musicxml` files in
+`src/assets/piano/tracks/` preserve the original measure bodies, inherited
+opening score state, and source-index provenance. The 325 source measures
+partition into 24 Theme, 25 Variation I, 24 each for II?XI, and 36 for XII;
+the extra Variation I measure is an alternate ending, not an extraction
+duplicate. Repeated **performance** visits are expanded by the importer.
+`song-library.spec.ts` checks the committed files through the same importer
+and chart compiler used by the game.
 
 The importer follows encoded note durations, tempo changes, dynamics, ties,
 repeats and alternate endings, grace timing, arpeggio marks and pedal controller

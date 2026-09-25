@@ -1,9 +1,9 @@
 import { SONGS } from './song-manifest.generated';
-import { songChartFor } from './song-charts';
-import { readMxlRootfile } from './mxl-container';
-import { importMusicXml } from './musicxml-import';
-import { buildXmlTypingChart } from './piano-chart';
-import { metricGrouping, scoreBeatGrid } from './piano-metronome';
+import { songChartFor } from './charts/song-charts';
+import { readMxlRootfile } from './music/mxl-container';
+import { importMusicXml } from './music/musicxml-import';
+import { buildXmlTypingChart } from './gameplay/piano-chart';
+import { metricGrouping, scoreBeatGrid } from './audio/piano-metronome';
 
 describe('generated song library', () => {
   it('keeps the four curated scores in order while loading both score formats', async () => {

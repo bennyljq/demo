@@ -1,6 +1,6 @@
 import { buildTypingChart, TypingTarget } from './piano-chart';
 import { isGameplayKey, TypingRound } from './piano-judgement';
-import { extractPianoTimeline } from './piano-timeline';
+import { extractPianoTimeline } from '../music/piano-timeline';
 
 const targets = (times = [1, 1.25, 2]): TypingTarget[] => times.map((time, index) => ({
   time, index, wordIndex: 0, word: 'ABC', letter: 'ABC'[index], id: `test:${index}`,
@@ -64,12 +64,63 @@ describe('typing judgement', () => {
     round.key('z', 1);
     expect(round.results).toEqual(['pending', 'pending', 'pending']);
     expect(round.wrong).toBeTrue();
+    expect(round.rawPoints).toBe(-100);
     round.key('A', 1.01);
     expect(round.results[0]).toBe('perfect');
     expect(round.wrong).toBeFalse();
     round.key('z', 1.25);
     round.advance(1.76);
     expect(round.wrong).toBeFalse();
+  });
+
+  it('penalises extra and gap keys while preserving negative score debt', () => {
+    const round = new TypingRound(targets([1, 1.5, 2]));
+    round.key('z', 1);
+    round.keyUp('z', 1);
+    round.key('x', 1.01);
+    round.keyUp('x', 1.01);
+    round.key('a', 1.02);
+    expect(round.results[0]).toBe('perfect');
+    expect(round.rawPoints).toBe(-100);
+    expect(round.totalPoints).toBe(0);
+    round.keyUp('a', 1.02);
+    round.key('a', 1.03); // The nearby target is already resolved.
+    expect(round.wrongCount).toBe(3);
+    round.keyUp('a', 1.03);
+    round.key('q', 1.25); // No attack window in this chart gap.
+    expect(round.wrongCount).toBe(4);
+    round.keyUp('q', 1.25);
+    round.key('b', 1.5);
+    round.keyUp('b', 1.5);
+    round.key('c', 2);
+    expect(round.rawPoints).toBe(-100);
+    expect(round.totalPoints).toBe(0);
+  });
+
+  it('ignores alphabetic input outside the active chart interval', () => {
+    const round = new TypingRound(targets([1]));
+    round.key('z', 0.83);
+    expect(round.wrongCount).toBe(0);
+    round.key('z', 1);
+    expect(round.wrongCount).toBe(1);
+    round.keyUp('z', 1);
+    round.advance(1.161);
+    round.key('z', 1.17);
+    expect(round.wrongCount).toBe(1);
+  });
+
+  it('charges alphabet smashing once per physical keydown and keeps simultaneous different keys valid', () => {
+    const round = new TypingRound(targets([1, 1.05, 1.1]));
+    for (const key of 'xyzqwerty') { round.key(key, 1); round.keyUp(key, 1); }
+    expect(round.wrongCount).toBe(9);
+    round.key('a', 1);
+    round.key('b', 1.05);
+    round.key('c', 1.1);
+    expect(round.results).toEqual(['perfect', 'perfect', 'perfect']);
+    expect(round.rawPoints).toBe(-600);
+    expect(round.totalPoints).toBe(0);
+    round.key('c', 1.1); // Still held: no second penalty.
+    expect(round.wrongCount).toBe(9);
   });
 
   it('expires missed letters without blocking later input, including a delayed update', () => {
