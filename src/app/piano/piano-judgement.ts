@@ -2,6 +2,7 @@ import type { TypingTarget } from './piano-chart';
 import { attackWindowSeconds, DEFAULT_SCORING_SETTINGS, holdBufferSeconds, ScoringSettings } from './piano-scoring-settings';
 
 export const TIMING_WINDOWS = { perfect: 0.080, good: 0.160, wrongFeedback: 0.5 } as const;
+export const SCORING_POINTS = { perfect: 100, good: 70, miss: 0, hold: 100 } as const;
 export type LetterResult = 'pending' | 'holding' | 'skipped' | 'perfect' | 'good' | 'miss';
 type Grade = 'perfect' | 'good';
 const EPSILON = 1e-9;
@@ -29,14 +30,14 @@ export class TypingRound {
   constructor(readonly targets: readonly TypingTarget[], public settings: ScoringSettings = DEFAULT_SCORING_SETTINGS) { this.reset(); }
 
   get availablePoints(): number {
-    return this.targets.reduce((sum, target) => sum + (this.results[target.index] === 'skipped' ? 0 : 100 + (target.holdEnd === undefined ? 0 : 100)), 0);
+    return this.targets.reduce((sum, target) => sum + (this.results[target.index] === 'skipped' ? 0 : SCORING_POINTS.perfect + (target.holdEnd === undefined ? 0 : SCORING_POINTS.hold)), 0);
   }
   get availableSustainPoints(): number {
-    return this.targets.reduce((sum, target) => sum + (target.holdEnd !== undefined && this.results[target.index] !== 'skipped' ? 100 : 0), 0);
+    return this.targets.reduce((sum, target) => sum + (target.holdEnd !== undefined && this.results[target.index] !== 'skipped' ? SCORING_POINTS.hold : 0), 0);
   }
   get earnedSustainPoints(): number { return this.sustainPoints.reduce((sum, points) => sum + points, 0); }
   get totalPoints(): number {
-    return this.attackGrades.reduce<number>((sum, grade) => sum + (grade === 'perfect' ? 100 : grade === 'good' ? 70 : 0), 0) + this.earnedSustainPoints;
+    return this.attackGrades.reduce<number>((sum, grade) => sum + (grade === 'perfect' ? SCORING_POINTS.perfect : grade === 'good' ? SCORING_POINTS.good : 0), 0) + this.earnedSustainPoints;
   }
 
   reset(destination = 0): void {
@@ -122,7 +123,7 @@ export class TypingRound {
       const target = this.targets[index], end = target.holdEnd!;
       const buffer = holdBufferSeconds(this.settings.holdReleaseMs, rate, end - target.time);
       const full = time >= end - buffer - EPSILON;
-      this.sustainPoints[index] = full ? 100 : this.proportional(target, time);
+      this.sustainPoints[index] = full ? SCORING_POINTS.hold : this.proportional(target, time);
       this.finishHold(index, full);
     }
   }
@@ -137,7 +138,7 @@ export class TypingRound {
 
   private proportional(target: TypingTarget, time: number): number {
     if (target.holdEnd === undefined) return 0;
-    return 100 * Math.max(0, Math.min(target.holdEnd, time) - target.time) / (target.holdEnd - target.time);
+    return SCORING_POINTS.hold * Math.max(0, Math.min(target.holdEnd, time) - target.time) / (target.holdEnd - target.time);
   }
   private finishHold(index: number, full: boolean): void {
     const held = this.held.get(index);
@@ -145,7 +146,7 @@ export class TypingRound {
     this.held.delete(index);
     this.down.delete(held.key);
     this.results[index] = this.attackGrades[index]!;
-    if (full) this.sustainPoints[index] = 100;
+    if (full) this.sustainPoints[index] = SCORING_POINTS.hold;
     this.revision++;
   }
   private setFeedback(kind: Grade | 'miss' | 'wrong', index: number): void {

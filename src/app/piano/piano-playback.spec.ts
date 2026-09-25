@@ -6,21 +6,24 @@ describe('song selection', () => {
     const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
     try {
       expect(service.source()).toBe(service.songs[0].id);
-      expect(service.source()).toBe('greensleeves');
+      expect(service.source()).toBe('twinkle-theme');
+    } finally { service.ngOnDestroy(); }
+  });
+
+  it('accepts a speed choice before any song is loaded', () => {
+    const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
+    try {
+      service.setPlaybackRate(0.75);
+      expect(service.playbackRate()).toBe(0.75);
     } finally { service.ngOnDestroy(); }
   });
 
   it('does not let a stale score request replace the latest selection', async () => {
     const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
-    (service as any).soundFont = new ArrayBuffer(1);
-    (service as any).metronomeValue.set(false);
-    (service as any).context = { state: 'running', close: async () => {} };
     let finishPreparation!: () => void;
     const preparation = new Promise<void>(resolve => { finishPreparation = resolve; });
-    spyOn(service as any, 'initialiseAudio').and.callFake(async (_midi: ArrayBuffer, id: string) => {
-      await preparation;
-      (service as any).loadedSongId = id;
-    });
+    (service as any).enginePromise = preparation;
+    (service as any).sequencer = { pause: () => {}, currentTime: 0 };
     spyOn(service as any, 'queueSequence').and.callFake(async (_midi: ArrayBuffer, id: string) => {
       (service as any).loadedSongId = id;
     });

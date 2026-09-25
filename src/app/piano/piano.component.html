@@ -1,172 +1,228 @@
-<section aria-labelledby="piano-title">
-  <header class="page-heading">
-    <div>
-      <h1 id="piano-title">How to Piano</h1>
-      <p>MusicXML songs · Acoustic grand piano</p>
-    </div>
-    <button class="theme-toggle" type="button" (click)="toggleTheme()"
-    [attr.aria-label]="theme() === 'light' ? 'Switch to dark theme' : 'Switch to light theme'">
-    {{ theme() === 'light' ? 'Dark theme' : 'Light theme' }}
-  </button>
-</header>
+<section class="game-shell" [attr.data-stage]="stage()">
+  <div class="global-actions">
+    @if (stage() !== 'home') { <button type="button" class="quiet-button" (click)="goHome()">Home</button> }
+    <button #settingsTrigger type="button" class="quiet-button settings-shortcut" (click)="openSettings()">Settings</button>
+  </div>
 
-<p class="status" role="status" aria-live="polite" [attr.data-status]="playback.status()">{{ statusLabel() }}
-  @if (playback.countIn() !== null) { - {{ playback.countIn() }} }
-  @if (playback.status() === 'enable-audio') {
-    <button type="button" (click)="playback.enableAudio()">Enable audio</button>
+  @if (stage() === 'home') {
+    <div class="stage-screen home-screen">
+      <p class="eyebrow">A little music, one letter at a time</p>
+      <h1 id="piano-title">How to <em>Piano</em></h1>
+      <p class="home-intro">Listen, read ahead, and meet the melody at the playhead.</p>
+      <svg class="home-art" viewBox="0 0 560 180" aria-hidden="true" focusable="false" draggable="false">
+        <path d="M16 39h528M16 57h528M16 75h528M16 93h528M16 111h528" fill="none" stroke="currentColor" stroke-width="1" opacity=".25"/>
+        <path d="M72 102q13-22 26 0t26 0m192-35q13-22 26 0t26 0" fill="none" stroke="currentColor" stroke-width="2" opacity=".65"/>
+        <circle cx="172" cy="75" r="7" fill="currentColor"/><path d="M179 75V29" stroke="currentColor" stroke-width="2"/>
+        <circle cx="384" cy="93" r="7" fill="currentColor"/><path d="M391 93V47" stroke="currentColor" stroke-width="2"/>
+        <g class="hero-keys" transform="translate(142 126)">
+          <path d="M0 0h276v45H0z" fill="var(--control)" stroke="var(--border)"/>
+          <path d="M39 0v45m39-45v45m39-45v45m39-45v45m39-45v45m39-45v45" stroke="var(--border)"/>
+          <path d="M29 0h20v25H29zm39 0h20v25H68zm78 0h20v25h-20zm39 0h20v25h-20zm39 0h20v25h-20z" fill="var(--roll-playhead)"/>
+        </g>
+      </svg>
+      <div class="home-actions">
+        <button type="button" class="primary-button" (click)="enterLibrary()">Start</button>
+        <button type="button" (click)="openSettings()">Settings</button>
+        <button type="button" (click)="enterTutorial()">How to Play</button>
+      </div>
+      @if (playback.engineStatus() === 'preparing') { <p class="home-audio-status" role="status">Preparing piano audio…</p> }
+      @if (playback.engineStatus() === 'error') {
+        <p class="error" role="alert">{{ playback.engineError() }}</p>
+        <button type="button" (click)="retryAudio()">Retry audio</button>
+      }
+    </div>
   }
-</p>
 
-<div class="control-panel">
-  <div class="transport-controls">
-    <button type="button" (click)="play()" [disabled]="playback.status() !== 'ready'">Play</button>
-    <button type="button" (click)="stop()"
-    [disabled]="playback.status() !== 'playing' && playback.status() !== 'count-in' && playback.status() !== 'starting' && !(playback.status() === 'ready' && displayedTime() > 0)">Stop</button>
-    <label class="song-selector" for="piano-song">Song
-      <select id="piano-song" [value]="playback.source()" (change)="selectSong($event)">
-        @for (song of playback.songs; track song.id) { <option [value]="song.id">{{ song.title }}</option> }
-      </select>
-    </label>
-  </div>
-  <div class="setting-grid">
-    <label class="setting" for="piano-speed">Speed
-      <select id="piano-speed" [value]="playback.playbackRate()" [disabled]="playback.status() !== 'ready'"
-      (change)="playback.setPlaybackRate(+$any($event.target).value)">
-      @for (rate of playback.speedOptions; track rate) {
-        <option [value]="rate" [selected]="rate === playback.playbackRate()">{{ rate }}×</option>
+  @if (stage() === 'library') {
+    <div class="stage-screen menu-screen library-screen">
+      <header class="menu-heading"><div>
+        <p class="eyebrow">Choose a piece</p><h1 id="piano-title">Music library</h1>
+        <p>Difficulty rates the typing chart, not piano performance.</p>
+      </div></header>
+      @if (playback.engineStatus() === 'preparing') { <p class="status" data-status="loading" role="status">Preparing piano audio…</p> }
+      @if (playback.engineStatus() === 'error') {
+        <div class="error" role="alert">{{ playback.engineError() }} <button type="button" (click)="retryAudio()">Retry audio</button></div>
       }
-    </select>
-  </label>
-  <label class="setting metronome-setting" for="piano-metronome">Metronome
-    <input id="piano-metronome" type="checkbox" [checked]="playback.metronome()"
-    [disabled]="playback.status() !== 'ready'" (change)="setMetronome($event)">
-  </label>
-  <div class="setting volume-control">
-    <label for="piano-volume">Volume <strong>{{ playback.volume() }}%</strong></label>
-    <input id="piano-volume" type="range" min="0" max="500" step="25" list="piano-volume-ticks"
-    [value]="playback.volume()" (input)="playback.setVolume(+$any($event.target).value)"
-    [attr.aria-valuetext]="playback.volume() + '%'">
-    <datalist id="piano-volume-ticks">
-      @for (tick of [0,25,50,75,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500]; track tick) {
-        <option [value]="tick"></option>
-      }
-    </datalist>
-    <div class="volume-ticks" aria-hidden="true">
-      @for (tick of [0,25,50,75,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500]; track tick) {
-        <i [style.left]="volumeMarkPosition(tick)" [class.major]="tick % 100 === 0"></i>
-      }
+      <div class="song-list">
+        @for (song of librarySongs; track song.id) {
+          <button type="button" class="song-card" (click)="chooseSong(song.id)"
+            [class.selected]="playback.score() && playback.source() === song.id"
+            [class.loading]="playback.status() === 'loading' && playback.source() === song.id && playback.score() === null"
+            [attr.aria-pressed]="playback.score() && playback.source() === song.id ? 'true' : 'false'">
+            <span class="song-card-main"><strong>{{ song.title }}</strong><span>{{ song.composer }}</span>
+              @if (song.credit) { <small>{{ song.credit }}</small> }</span>
+            <span class="song-card-meta"><span>{{ song.difficulty }}</span><span>{{ coverageLabelFor(song.id) }}</span></span>
+            <span class="card-arrow" aria-hidden="true">→</span>
+          </button>
+        }
+      </div>
     </div>
-    <div class="volume-labels" aria-hidden="true">
-      @for (tick of [0,100,200,300,400,500]; track tick) {
-        <span [style.left]="volumeMarkPosition(tick)">{{ tick }}%</span>
-      }
-    </div>
-  </div>
-  <div class="setting volume-control">
-    <label for="piano-click-volume">Metronome volume <strong>{{ playback.metronomeVolume() }}%</strong></label>
-    <input id="piano-click-volume" type="range" min="0" max="150" step="5" [value]="playback.metronomeVolume()"
-    (input)="playback.setMetronomeVolume(+$any($event.target).value)" [attr.aria-valuetext]="playback.metronomeVolume() + '%'">
-  </div>
-  <div class="setting view-control">
-    <label for="piano-look-ahead">Look ahead <strong>{{ lookAhead() }} s</strong></label>
-    <input id="piano-look-ahead" type="range" min="2" max="10" step="0.5" [value]="lookAhead()"
-    (input)="setLookAhead($event)">
-  </div>
-</div>
-<div class="seek-controls">
-  <label for="piano-seek">Seek</label>
-  <span>{{ displayedTime().toFixed(1) }} / {{ playback.duration().toFixed(1) }} s</span>
-  <input id="piano-seek" type="range" min="0" [max]="playback.duration()" step="0.01"
-  [value]="displayedTime()" [disabled]="playback.status() === 'loading' || playback.status() === 'error'"
-  (pointerdown)="beginSeek()" (input)="previewSeek($event)" (change)="commitSeek($event)">
-</div>
-</div>
+  }
 
-@if (playback.error()) { <p class="error" role="alert">{{ playback.error() }}</p> }
-<details class="developer-settings">
-  <summary>Developer settings</summary>
-  <p>Real-time tolerances scale with speed. Numeric settings are fixed during an attempt; overlays can change live.</p>
-  <div class="developer-grid">
-    <label>Perfect tolerance (ms) <input type="number" min="0" step="1" [value]="settings().perfectMs"
-      [disabled]="playback.status() !== 'ready'" (change)="setScoringNumber('perfectMs', $event)"></label>
-      <label>Good tolerance (ms) <input type="number" min="0" step="1" [value]="settings().goodMs"
-        [disabled]="playback.status() !== 'ready'" (change)="setScoringNumber('goodMs', $event)"></label>
-        <label>Hold release buffer (ms) <input type="number" min="0" step="1" [value]="settings().holdReleaseMs"
-          [disabled]="playback.status() !== 'ready'" (change)="setScoringNumber('holdReleaseMs', $event)"></label>
-          <label><input type="checkbox" [checked]="settings().showAttackWindows" (change)="setScoringOverlay('showAttackWindows', $event)"> Show attack timing windows</label>
-          <label><input type="checkbox" [checked]="settings().showHoldBuffer" (change)="setScoringOverlay('showHoldBuffer', $event)"> Show hold-release buffer</label>
+  @if (stage() === 'tutorial') {
+    <div class="stage-screen tutorial-screen" [class.example-open]="tutorialMode() !== null">
+      <header class="menu-heading"><div><p class="eyebrow">How to Play</p><h1 id="piano-title">Follow the letters</h1></div></header>
+      <p>Read the stable passage above the roll. Each letter approaches the vertical playhead; press its key when it reaches that line. Spaces need no input.</p>
+      <p>The thin bar above a letter shows a hold: keep its key down until the bar fills. A correct attack earns
+        {{ scoringPoints.perfect }} points within {{ settings().perfectMs }} ms (Perfect), or
+        {{ scoringPoints.good }} within {{ settings().goodMs }} ms (Good). A missed attack earns
+        {{ scoringPoints.miss }}. Wrong keys break combo without deducting points. A completed hold adds up to
+        {{ scoringPoints.hold }} sustain points; the final {{ settings().holdReleaseMs }} ms have a release allowance.</p>
+      <p>Adjust metronome and speed in Settings. Watch the actual Twinkle opening, then try it yourself.</p>
+      <div class="tutorial-actions">
+        <button type="button" [class.selected]="tutorialMode() === 'watch'" (click)="selectTutorialMode('watch')">Watch example <span class="demo-label">Demonstration</span></button>
+        <button type="button" [class.selected]="tutorialMode() === 'try'" (click)="selectTutorialMode('try')">Try example</button>
+        <button type="button" class="quiet-button" (click)="leaveTutorial()">Back to Homepage</button>
+      </div>
+      @if (tutorialOutcome() === 'complete') {
+        <div class="tutorial-outcome" role="status">
+          <strong>{{ tutorialMode() === 'watch' ? 'Demonstration complete' : 'Example complete' }}</strong>
+          <span>{{ attempt().total.toFixed(0) }} / {{ attempt().available }} points · {{ counts().perfect }} Perfect · {{ counts().good }} Good · {{ counts().miss }} Miss</span>
+          <button type="button" (click)="retryTutorial()">Try again</button>
         </div>
-        @if (settingsError()) { <p class="error" role="alert">{{ settingsError() }}</p> }
-      </details>
-      @if (playback.metronomeError()) { <p class="error" role="alert">{{ playback.metronomeError() }}</p> }
-      
+      }
+    </div>
+  }
 
-      
-      <div class="track-controls">
-  <label for="piano-track">Visualise score group</label>
-  <select id="piano-track" [value]="selectedTrack()" (change)="selectTrack($event)">
-    <option value="-1">All staves and voices ({{ playback.timeline().notes.length }} notes)</option>
-    @for (track of playback.timeline().tracks; track track.index) {
-      <option [value]="track.index">{{ track.name }} ({{ track.notes.length }} notes)</option>
+  <div class="stage-screen play-stage" #gameplay tabindex="-1"
+    [hidden]="stage() !== 'play' && !(stage() === 'tutorial' && tutorialMode())">
+    <header class="play-header">
+      <div class="play-identity"><h1 [id]="stage() === 'play' ? 'piano-title' : 'example-title'">{{ stage() === 'tutorial' ? 'Twinkle opening example' : selectedSong()?.title }}</h1>
+        <span>{{ playback.playbackRate() }}× · {{ stage() === 'tutorial' ? (tutorialMode() === 'watch' ? 'Watch demonstration' : 'Try it') : runContext() }}</span></div>
+      @if (stage() === 'play') { <button type="button" class="exit-button" (click)="exitRun()">Exit to Library</button> }
+      @else { <button type="button" class="exit-button" (click)="retryTutorial()">Stop example</button> }
+    </header>
+    @if (!runStarted() && !tutorialOutcome()) {
+      <div class="armed-panel">
+        <p class="status" role="status" aria-live="polite" [attr.data-status]="playback.status()">
+          {{ playback.status() === 'loading' ? 'Preparing score and audio' : statusLabel() }}
+        </p>
+        @if (playback.error()) { <p class="error" role="alert">{{ playback.error() }}</p> }
+        @if (playback.engineError()) { <p class="error" role="alert">{{ playback.engineError() }}</p> }
+        @if (playback.status() === 'error' || playback.engineStatus() === 'error') {
+          <button type="button" (click)="retryPreparation()">Retry preparation</button>
+        }
+        <button type="button" class="primary-button" (click)="play()" [disabled]="playback.status() !== 'ready' || !playback.score()">
+          {{ stage() === 'tutorial' ? (tutorialMode() === 'watch' ? 'Start demonstration' : 'Start example') : coverage() === 'listen' ? 'Start listening' : 'Start run' }}
+        </button>
+        @if (runStartPosition() > 0.001 && stage() === 'play') { <span class="practice-note">Practice segment from {{ runStartPosition().toFixed(1) }} s</span> }
+      </div>
     }
-  </select>
-</div>
-<p class="score-markings" aria-live="polite">{{ currentMarkings() }}</p>
+    <div #passage class="passage-measure">
+    @if (playback.score()) {
+      <div class="play-hud">
+        @if (chartedRun()) {
+          <span>Score <strong>{{ attempt().total.toFixed(0) }}</strong> / {{ attempt().available }}</span>
+          <span>Combo <strong>{{ attempt().combo }}</strong></span>
+        } @else { <span>Listening</span> }
+        <span>{{ displayedTime().toFixed(1) }} / {{ playback.duration().toFixed(1) }} s</span>
+        <div class="progress-track" role="progressbar" [attr.aria-valuenow]="progress().toFixed(0)" aria-valuemin="0" aria-valuemax="100" aria-label="Run progress"><span [style.width.%]="progress()"></span></div>
+      </div>
+      <div class="play-feedback" aria-live="off">
+        @if (!runStarted()) { <span>{{ tutorialOutcome() ? 'Example finished' : 'Ready when you are' }}</span> }
+        @else if (playback.status() === 'count-in') {
+          @if (playback.countIn(); as count) { <strong class="countdown">{{ count }}</strong> }
+          <span>Listen for the downbeat</span>
+        } @else if (!chartedRun()) { <span>Listen to the piece</span> }
+        @else if (attempt().listening) { <span>Listen for your first letter</span> }
+        @else if (attempt().complete) { <span>Let the music finish</span> }
+        @else if (feedback()) { <span class="judgement" [attr.data-result]="feedback()?.kind">{{ feedback()?.label }}</span> }
+        @else { <span>Type at the playhead</span> }
+      </div>
+      <div class="typing-area" aria-label="Typing passage" [class.listening-variant]="!chartedRun()">
+        @if (chartedRun()) {
+          <div class="passage">
+            @for (line of visibleLines(); track line[0][0].id) {
+              <div class="passage-line">
+                @for (word of line; track word[0].wordIndex) {
+                  <span class="word" [class.current-word]="word[0].wordIndex === attempt().wordIndex">
+                    @for (target of word; track target.id) {
+                      <span [class]="'letter ' + attempt().results[target.index]" [class.target]="target.index === attempt().current"
+                        [class.has-hold]="target.holdEnd !== undefined" [style.--hold-progress]="(attempt().sustainPoints[target.index] || 0) + '%'"
+                        [attr.aria-current]="target.index === attempt().current ? 'true' : null">{{ target.letter }}</span>
+                    }
+                  </span>
+                }
+              </div>
+            }
+          </div>
+        } @else { <div class="listening-message">{{ coverage() === 'listen' ? 'Follow the score as you listen.' : 'This practice segment is beyond the chart.' }}</div> }
+      </div>
+    } @else { <div class="loading-playfield">Preparing the score…</div> }
+    </div>
+    <canvas #roll [hidden]="!playback.score()" role="img" aria-label="Scrolling score notes and typing targets">The score scrolls toward the playhead.</canvas>
+  </div>
 
-<div class="typing-area" #passage aria-label="Typing passage">
-  @if (chartError()) {
-    <p class="error" role="alert">{{ chartError() }}</p>
-  } @else if (!chart().length && playback.score()) {
-    <p>No typing chart yet.</p>
-  } @else if (chart().length) {
-    <p class="typing-feedback" aria-live="polite">
-      @if (playback.status() === 'count-in') {
-        Count in {{ playback.countIn() }} - Listen for the downbeat
-      } @else if (attempt().current < 0 && counts().perfect + counts().good + counts().miss === 0) {
-        No charted letters ahead
-      } @else if (attempt().complete) {
-        Passage complete: Perfect {{ counts().perfect }} / Good {{ counts().good }} / Miss {{ counts().miss }} / Wrong {{ attempt().wrongCount }} / Best combo {{ attempt().bestCombo }}
-      } @else if (attempt().listening) {
-        Listen
+  @if (stage() === 'results') {
+    <div class="stage-screen menu-screen results-screen">
+      <p class="eyebrow">{{ selectedSong()?.title }}</p>
+      @if (result(); as summary) {
+        <h1 id="piano-title">{{ summary.coverage === 'opening' && summary.startPosition < 0.001 ? 'Opening passage complete.' : 'Run complete' }}</h1>
+        <p>{{ summary.startPosition > 0.001 ? 'Practice segment' : coverageLabel(summary.coverage) }} · {{ summary.speed }}×</p>
+        <div class="result-score"><span>Total score</span><strong>{{ summary.total.toFixed(0) }} / {{ summary.available }}</strong></div>
+        <dl class="result-stats">
+          <div><dt>Perfect</dt><dd>{{ summary.perfect }}</dd></div><div><dt>Good</dt><dd>{{ summary.good }}</dd></div>
+          <div><dt>Miss</dt><dd>{{ summary.miss }}</dd></div><div><dt>Wrong</dt><dd>{{ summary.wrong }}</dd></div>
+          <div><dt>Best combo</dt><dd>{{ summary.bestCombo }}</dd></div><div><dt>Sustain</dt><dd>{{ summary.sustain.toFixed(0) }} / {{ summary.sustainAvailable }}</dd></div>
+        </dl>
       } @else {
-        Type at the line - Combo {{ attempt().combo }} / Best {{ attempt().bestCombo }} / Wrong {{ attempt().wrongCount }}
+        <h1 id="piano-title">Finished listening</h1><p>{{ selectedSong()?.title }} · {{ playback.playbackRate() }}×</p>
+        @if (runStartPosition() > 0.001 && coverage() !== 'listen') { <p>Practice segment beyond the chart; no typing score was available from this position.</p> }
       }
-    </p>
-    <p class="hold-legend">The bar above a letter fills while you hold its key. Underline marks the current letter.</p>
-    <details class="scoring-help">
-      <summary>How scoring works</summary>
-      <p>Perfect attack: 100 points. Good attack: 70. Miss: 0. A successful hold adds up to 100 more, proportional to held song time. A release within the final {{ settings().holdReleaseMs }} ms at the selected speed receives full credit; the allowance never exceeds half the hold. Wrong keys break combo without a point deduction.</p>
-    </details>
-    @if (attempt().complete) {
-      <p class="result-points">Total score {{ attempt().total.toFixed(0) }} / {{ attempt().available }} - Sustain {{ attempt().sustain.toFixed(0) }} / {{ attempt().sustainAvailable }}</p>
-    }
-  }
-  <div class="judgement-label" role="status" aria-live="polite" [attr.data-result]="feedback()?.kind">
-    @if (feedback()) { <span class="judged-letter">{{ feedback().letter }}</span> }
-    {{ feedback()?.label }}
-  </div>
-  @if (chart().length) {
-    <div class="passage">
-      @for (line of visibleLines(); track $index) {
-        <div class="passage-line">
-          @for (word of line; track word[0].wordIndex) {
-            <span class="word" [class.current-word]="word[0].wordIndex === attempt().wordIndex">
-              @for (target of word; track target.id) {
-                <span [class]="'letter ' + attempt().results[target.index]" [class.target]="target.index === attempt().current"
-                  [class.has-hold]="target.holdEnd !== undefined"
-                  [style.--hold-progress]="(attempt().sustainPoints[target.index] || 0) + '%'"
-                  [attr.aria-current]="target.index === attempt().current ? 'true' : null"
-                  [title]="target.letter + ': ' + attempt().results[target.index]">{{ target.letter }}</span>
-              }
-            </span>
-          }
-        </div>
-      }
+      <div class="result-actions">
+        <button type="button" class="primary-button" (click)="retry()">Replay</button>
+        <button type="button" (click)="chooseLibrary()">Library</button>
+        <button type="button" class="quiet-button" (click)="goHome()">Homepage</button>
+      </div>
     </div>
   }
-</div>
-<canvas #roll role="img" aria-label="Scrolling score notes and independent typing targets" aria-describedby="roll-help">
-  Score notes and letters scroll toward a fixed playhead.
-</canvas>
-<p id="roll-help" class="roll-help">Letters use the upper lane and their own chart times. Note bars below show the music; track selection changes only those bars.</p>
+
+  @if (settingsOpen()) {
+    <div class="modal-backdrop" (mousedown)="onBackdropMouseDown($event)">
+      <div class="settings-dialog" #settingsDialog tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="settings-title" (keydown)="onModalKeyDown($event)">
+        <header><div><p class="eyebrow">How to Piano</p><h2 id="settings-title">Settings</h2></div>
+          <button type="button" class="modal-close" (click)="closeSettings()" aria-label="Close Settings">Close</button></header>
+        @if (runStarted()) { <p class="modal-running-note">Playback continues while Settings is open. Letter input is suspended; held keys are released.</p> }
+        <div class="settings-groups">
+          <fieldset><legend>Audio</legend>
+            <label>Master volume <strong>{{ playback.volume() }}%</strong><input type="range" min="0" max="500" step="25" [value]="playback.volume()" (input)="playback.setVolume(+$any($event.target).value)"></label>
+            <label class="checkbox-setting">Metronome <input type="checkbox" [checked]="playback.metronome()" [disabled]="runStarted()" (change)="setMetronome($event)"></label>
+            @if (runStarted()) { <small>Change the metronome between runs.</small> }
+            <label>Metronome volume <strong>{{ playback.metronomeVolume() }}%</strong><input type="range" min="0" max="150" step="5" [value]="playback.metronomeVolume()" (input)="playback.setMetronomeVolume(+$any($event.target).value)"></label>
+            @if (playback.metronomeError()) { <p class="error" role="alert">{{ playback.metronomeError() }}</p> }
+          </fieldset>
+          <fieldset><legend>Gameplay &amp; view</legend>
+            <label>Playback speed <select [value]="playback.playbackRate()" [disabled]="runStarted()" (change)="playback.setPlaybackRate(+$any($event.target).value)">
+              @for (rate of playback.speedOptions; track rate) { <option [value]="rate" [selected]="rate === playback.playbackRate()">{{ rate }}×</option> }
+            </select></label>
+            <label>Look ahead <strong>{{ lookAhead() }} s</strong><input type="range" min="2" max="10" step="0.5" [value]="lookAhead()" (input)="setLookAhead($event)"></label>
+            <div class="theme-setting"><span>Appearance</span><button type="button" (click)="toggleTheme()">{{ theme() === 'dark' ? 'Light theme' : 'Dark theme' }}</button></div>
+          </fieldset>
+          <fieldset><legend>Practice</legend>
+            @if (playback.score() && stage() !== 'tutorial') {
+              <p>Seeking starts a fresh practice segment and excludes skipped letters. During playback, it does not pause the song.</p>
+              <label>Seek · {{ displayedTime().toFixed(1) }} / {{ playback.duration().toFixed(1) }} s
+                <input type="range" min="0" [max]="playback.duration()" step="0.01" [value]="displayedTime()"
+                  [disabled]="playback.status() !== 'ready' && playback.status() !== 'playing' && playback.status() !== 'count-in'"
+                  (pointerdown)="beginSeek()" (input)="previewSeek($event)" (change)="commitSeek($event)"></label>
+              <label>Visualise score group <select [value]="selectedTrack()" (change)="selectTrack($event)">
+                <option value="-1">All staves and voices ({{ playback.timeline().notes.length }} notes)</option>
+                @for (track of playback.timeline().tracks; track track.index) { <option [value]="track.index">{{ track.name }} ({{ track.notes.length }} notes)</option> }
+              </select></label>
+              <p class="score-markings">{{ currentMarkings() }}</p>
+            } @else { <p>Choose and prepare a song to use seek and staff inspection. The tutorial excerpt starts at the beginning.</p> }
+          </fieldset>
+          <fieldset><legend>Developer</legend>
+            <p>Numeric scoring settings are fixed during a run. View overlays can change live.</p>
+            <label>Perfect tolerance (ms) <input type="number" min="0" step="1" [value]="settings().perfectMs" [disabled]="runStarted()" (change)="setScoringNumber('perfectMs', $event)"></label>
+            <label>Good tolerance (ms) <input type="number" min="0" step="1" [value]="settings().goodMs" [disabled]="runStarted()" (change)="setScoringNumber('goodMs', $event)"></label>
+            <label>Hold release buffer (ms) <input type="number" min="0" step="1" [value]="settings().holdReleaseMs" [disabled]="runStarted()" (change)="setScoringNumber('holdReleaseMs', $event)"></label>
+            <label class="checkbox-setting"><input type="checkbox" [checked]="settings().showAttackWindows" (change)="setScoringOverlay('showAttackWindows', $event)"> Attack windows</label>
+            <label class="checkbox-setting"><input type="checkbox" [checked]="settings().showHoldBuffer" (change)="setScoringOverlay('showHoldBuffer', $event)"> Hold buffer overlay</label>
+            @if (settingsError()) { <p class="error" role="alert">{{ settingsError() }}</p> }
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  }
 </section>

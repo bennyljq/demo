@@ -9,6 +9,7 @@ import { buildXmlTypingChart, TypingTarget } from './piano-chart';
 import { songChartFor } from './song-charts';
 
 type PlaybackStatus = 'loading' | 'enable-audio' | 'ready' | 'starting' | 'count-in' | 'playing' | 'error';
+type EngineStatus = 'idle' | 'preparing' | 'ready' | 'error';
 export type PianoSource = string;
 
 @Injectable()
@@ -16,9 +17,15 @@ export class PianoPlaybackService implements OnDestroy {
   private readonly document = inject(DOCUMENT);
   private readonly lifetime = new AbortController();
   private readonly statusValue = signal<PlaybackStatus>('loading');
+  private readonly naturalEndValue = signal(0);
+  readonly naturalEnd = this.naturalEndValue.asReadonly();
   private readonly errorValue = signal('');
   readonly status = this.statusValue.asReadonly();
   readonly error = this.errorValue.asReadonly();
+  private readonly engineStatusValue = signal<EngineStatus>('idle');
+  readonly engineStatus = this.engineStatusValue.asReadonly();
+  private readonly engineErrorValue = signal('');
+  readonly engineError = this.engineErrorValue.asReadonly();
   private readonly timelineValue = signal<PianoTimeline>({ tracks: [], notes: [] });
   readonly timeline = this.timelineValue.asReadonly();
   readonly songs = SONGS;
@@ -58,6 +65,9 @@ export class PianoPlaybackService implements OnDestroy {
   private beatGrid: BeatPulse[] = [];
   private nextBeat = 0;
   private clockTimer?: ReturnType<typeof setTimeout>;
+  private naturalEndTimer?: ReturnType<typeof setTimeout>;
+  private ending = false;
+  private endingAt = 0;
   private transportRun = 0;
   
   setVolume(percent: number): void {
@@ -85,22 +95,26 @@ export class PianoPlaybackService implements OnDestroy {
   }
 
   setPlaybackRate(rate: number): void {
-    if (this.status() === 'ready' && this.speedOptions.some(option => option === rate)) this.rateValue.set(rate);
+    if (this.status() !== 'playing' && this.status() !== 'starting' && this.status() !== 'count-in' &&
+        this.speedOptions.some(option => option === rate)) this.rateValue.set(rate);
   }
   
   /** Shared time source for Canvas and typing; no independent visual/game clock. */
   get playbackPosition(): number {
-    return this.scrubPreview ?? this.pendingSeek ?? (this.status() === 'playing' ? Math.max(0, this.sequencer?.currentTime ?? this.positionValue()) : this.positionValue());
+    return this.scrubPreview ?? this.pendingSeek ?? (this.ending && this.context
+      ? this.duration() + Math.max(0, this.context.currentTime - this.endingAt) * this.playbackRate()
+      : this.status() === 'playing' ? Math.max(0, this.sequencer?.currentTime ?? this.positionValue()) : this.positionValue());
   }
   
   async setMetronome(enabled: boolean): Promise<void> {
-    if (this.status() !== 'ready') return;
+    if (this.status() === 'playing' || this.status() === 'count-in' || this.status() === 'starting') return;
     this.metronomeValue.set(enabled);
     this.metronomeErrorValue.set('');
-    if (enabled && !this.clickBuffer) {
-      this.statusValue.set('loading');
+    if (enabled && !this.clickBuffer && this.context) {
+      const songWasReady = this.status() === 'ready';
+      if (songWasReady) this.statusValue.set('loading');
       await this.prepareClick();
-      if (!this.lifetime.signal.aborted && this.status() === 'loading') this.statusValue.set('ready');
+      if (songWasReady && !this.lifetime.signal.aborted && this.status() === 'loading') this.statusValue.set('ready');
     }
   }
   
@@ -141,6 +155,9 @@ export class PianoPlaybackService implements OnDestroy {
   
   commitSeek(seconds: number): void {
     if (this.status() !== 'ready' && this.status() !== 'playing' && this.status() !== 'count-in') return;
+    clearTimeout(this.naturalEndTimer);
+    this.naturalEndTimer = undefined;
+    this.ending = false;
     const destination = Math.max(0, Math.min(Math.max(0, this.duration() - 0.001), Number(seconds) || 0));
     const resume = this.scrubPreview !== null ? this.resumeAfterScrub : this.status() === 'playing';
     this.mute();
@@ -166,28 +183,53 @@ export class PianoPlaybackService implements OnDestroy {
   private sequencer?: Sequencer;
   private enginePromise?: Promise<void>;
   private loadedSongId = '';
-  private loadStarted = false;
 
-  async load(): Promise<void> {
-    if (this.loadStarted) return;
-    this.loadStarted = true;
+  /** Call from Start or How to Play click: context creation/resume runs before any await. */
+  activateAudio(): void {
+    if (this.lifetime.signal.aborted) return;
     try {
-      this.soundFont = await this.fetchAsset('SalC5Light2.sf2', 'RIFF');
-      // this.soundFont = await this.fetchAsset('TimGM6mb.sf2', 'RIFF');
-      if (!this.lifetime.signal.aborted) await this.selectSong(this.source());
-    } catch (error) { this.fail(error); }
+      this.context ??= new AudioContext();
+      const resume = this.context.resume();
+      this.engineStatusValue.set('preparing');
+      this.engineErrorValue.set('');
+      if (this.sequencer) {
+        void resume.then(() => this.engineStatusValue.set('ready'), error => {
+          this.engineErrorValue.set(`Could not resume audio: ${error instanceof Error ? error.message : error}`);
+          this.engineStatusValue.set('error');
+        });
+        return;
+      }
+      this.enginePromise ??= (async () => {
+        await this.waitFor(resume, 'Could not enable browser audio.');
+        this.soundFont ??= await this.fetchAsset('SalC5Light2.sf2', 'RIFF');
+        if (this.metronome()) await this.prepareClick();
+        await this.initialiseAudio();
+        this.soundFont = undefined;
+        this.engineStatusValue.set('ready');
+      })().catch(error => {
+        if (this.lifetime.signal.aborted) return;
+        this.engineErrorValue.set(error instanceof Error ? error.message : String(error));
+        this.engineStatusValue.set('error');
+        this.releaseAudio();
+        this.enginePromise = undefined;
+        throw error;
+      });
+      // A homepage entry need not await this promise; selection does await it.
+      void this.enginePromise.catch(() => {});
+    } catch (error) {
+      this.engineErrorValue.set(error instanceof Error ? error.message : String(error));
+      this.engineStatusValue.set('error');
+    }
   }
 
   async selectSong(id: string): Promise<void> {
     const song = SONGS.find(entry => entry.id === id);
     if (!song || this.lifetime.signal.aborted) return;
-    if (!this.soundFont && !this.synth) {
-      // A selection made while the shared SF2 is still downloading becomes
-      // the initial song; the normal load path will fetch only that score.
-      this.sourceValue.set(id);
-      return;
-    }
+    if (!this.enginePromise && !this.sequencer) this.activateAudio();
     const version = ++this.selectionVersion;
+    clearTimeout(this.naturalEndTimer);
+    this.naturalEndTimer = undefined;
+    this.ending = false;
     this.selectionAbort?.abort();
     const controller = new AbortController();
     this.selectionAbort = controller;
@@ -221,17 +263,8 @@ export class PianoPlaybackService implements OnDestroy {
       this.timelineValue.set(score.timeline);
       this.durationValue.set(score.duration);
       this.beatGrid = scoreBeatGrid(score);
-      if (this.metronome()) await this.prepareClick();
-      if (version !== this.selectionVersion || controller.signal.aborted) return;
-      if (!this.sequencer && !this.enginePromise) {
-        this.context ??= new AudioContext();
-        if (this.context.state === 'suspended') {
-          this.statusValue.set('enable-audio');
-          return;
-        }
-        this.enginePromise = this.initialiseAudio(score.midi, id);
-      }
       if (this.enginePromise) await this.enginePromise;
+      if (!this.sequencer) throw new Error(this.engineError() || 'Audio engine is not ready. Return home and retry Start.');
       if (version !== this.selectionVersion || controller.signal.aborted) return;
       if (this.loadedSongId !== id) await this.queueSequence(score.midi, id);
       if (version !== this.selectionVersion || controller.signal.aborted) return;
@@ -242,23 +275,6 @@ export class PianoPlaybackService implements OnDestroy {
         this.statusValue.set('error');
       }
     }
-  }
-
-  /** Browser gesture required only when background AudioContext activation was blocked. */
-  async enableAudio(): Promise<void> {
-    if (this.status() !== 'enable-audio' || !this.context || !this.score()) return;
-    const version = this.selectionVersion;
-    this.statusValue.set('loading');
-    try {
-      // Resume immediately in the click handler, before any await.
-      await this.waitFor(this.context.resume(), 'Could not enable browser audio.');
-      if (version !== this.selectionVersion) return;
-      this.enginePromise ??= this.initialiseAudio(this.score()!.midi, this.source());
-      await this.enginePromise;
-      if (version !== this.selectionVersion) return;
-      if (this.loadedSongId !== this.source()) await this.queueSequence(this.score()!.midi, this.source());
-      if (version === this.selectionVersion) this.statusValue.set('ready');
-    } catch (error) { this.fail(error); }
   }
 
   async play(): Promise<void> {
@@ -282,6 +298,9 @@ export class PianoPlaybackService implements OnDestroy {
   
   stop(): void {
     if (this.status() !== 'playing' && this.status() !== 'count-in' && this.status() !== 'starting' && this.status() !== 'ready') return;
+    clearTimeout(this.naturalEndTimer);
+    this.naturalEndTimer = undefined;
+    this.ending = false;
     this.cancelClicks();
     this.scrubPreview = null;
     this.pendingSeek = null;
@@ -290,6 +309,18 @@ export class PianoPlaybackService implements OnDestroy {
     this.positionValue.set(0);
     this.statusValue.set('ready');
   }
+
+  /** Fade an opening-passage ending on the audio clock before transport cleanup. */
+  async fadeOutAndStop(milliseconds = 180): Promise<void> {
+    if (this.status() !== 'playing' || !this.context || !this.output) return;
+    const run = this.transportRun;
+    const at = this.context.currentTime;
+    this.output.gain.cancelScheduledValues(at);
+    this.output.gain.setValueAtTime(this.output.gain.value, at);
+    this.output.gain.linearRampToValueAtTime(0, at + milliseconds / 1000);
+    await new Promise(resolve => setTimeout(resolve, milliseconds + 15));
+    if (run === this.transportRun && this.status() === 'playing') this.stop();
+  }
   
   ngOnDestroy(): void {
     this.selectionAbort?.abort();
@@ -297,7 +328,7 @@ export class PianoPlaybackService implements OnDestroy {
     this.releaseAudio();
   }
   
-  private async initialiseAudio(midi: ArrayBuffer, id: string): Promise<void> {
+  private async initialiseAudio(): Promise<void> {
     const context = this.context;
     if (!context.audioWorklet) {
       throw new Error('This browser needs AudioWorklet support and HTTPS or localhost.');
@@ -339,10 +370,18 @@ export class PianoPlaybackService implements OnDestroy {
       if (this.pendingSeek !== null && Math.abs(at - this.pendingSeek) < 0.05) this.pendingSeek = null;
     });
     sequencer.eventHandler.addEvent('songEnded', 'piano-ended', () => {
-      if (this.status() === 'playing') this.stop();
+      if (this.status() !== 'playing' || this.naturalEndTimer) return;
+      this.ending = true;
+      this.endingAt = this.context.currentTime;
+      // Leave the last real-time attack/release window available after the
+      // sequencer finishes; the audio tail is not cut by the results screen.
+      this.naturalEndTimer = setTimeout(() => {
+        this.naturalEndTimer = undefined;
+        if (this.status() !== 'playing') return;
+        this.stop();
+        this.naturalEndValue.update(value => value + 1);
+      }, 220);
     });
-    await this.queueSequence(midi, id);
-    this.soundFont = undefined;
   }
   
   private mute(): void {
@@ -475,6 +514,7 @@ export class PianoPlaybackService implements OnDestroy {
   }
   
   private releaseAudio(): void {
+    clearTimeout(this.naturalEndTimer);
     this.cancelClicks();
     this.silenceAndRewind();
     this.synth?.destroy();

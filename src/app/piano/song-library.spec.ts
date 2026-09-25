@@ -6,12 +6,14 @@ import { buildXmlTypingChart } from './piano-chart';
 import { metricGrouping, scoreBeatGrid } from './piano-metronome';
 
 describe('generated song library', () => {
-  it('discovers compressed and uncompressed songs and parses every extraction', async () => {
-    expect(SONGS.length).toBe(17);
-    expect(SONGS.map(song => song.id).slice(4)).toEqual([
-      'twinkle-theme', ...Array.from({ length: 12 }, (_, index) => `twinkle-variation-${String(index + 1).padStart(2, '0')}`),
+  it('keeps the four curated scores in order while loading both score formats', async () => {
+    expect(SONGS.map(song => song.id)).toEqual([
+      'twinkle-theme', 'greensleeves', 'wa-mozart-marche-turque-turkish-march-fingered', 'liebestraum-no-3-in-a-major',
     ]);
-    expect(SONGS[3].title).toContain('Complete collection');
+    expect(SONGS.map(song => song.difficulty)).toEqual(['Beginner', 'Intermediate', 'Advanced', 'Not rated']);
+    expect(SONGS.map(song => song.composer)).toEqual([
+      'Wolfgang Amadeus Mozart', 'Traditional', 'Wolfgang Amadeus Mozart', 'Franz Liszt',
+    ]);
     for (const song of SONGS) {
       const response = await fetch(`/assets/piano/tracks/${encodeURIComponent(song.file)}`);
       expect(response.ok).withContext(song.file).toBeTrue();
@@ -37,7 +39,7 @@ describe('generated song library', () => {
         expect(chart.length).toBe(98);
         expect(chart.filter(target => target.holdEnd !== undefined).length).toBe(10);
         expect(score.measures.length).toBe(48); // encoded repeats, not extraction duplication
-      } else if (song.id.startsWith('liebestraum') || song.id.startsWith('twinkle') || song.id.startsWith('12-variations')) {
+      } else if (song.id.startsWith('liebestraum')) {
         expect(chart).toEqual([]);
       } else expect(chart.length).toBeGreaterThan(0);
       expect(scoreBeatGrid(score).length).toBeGreaterThan(0);
@@ -45,8 +47,7 @@ describe('generated song library', () => {
   });
 
   it('partitions the collection at its printed headings without losing musical measures', async () => {
-    const collection = SONGS[3];
-    const sourceXml = await readMxlRootfile(await (await fetch(`/assets/piano/tracks/${collection.file}`)).arrayBuffer());
+    const sourceXml = await readMxlRootfile(await (await fetch('/assets/piano/tracks/12_Variations_of_Twinkle_Twinkle_Little_Star.mxl')).arrayBuffer());
     const source = new DOMParser().parseFromString(sourceXml, 'application/xml');
     const sourceMeasures = Array.from(source.querySelectorAll('part > measure'));
     const headings = sourceMeasures.flatMap((measure, index) => {
@@ -57,35 +58,35 @@ describe('generated song library', () => {
     expect(headings[0]).toBe(0);
     let total = 0;
     for (let index = 0; index < 13; index++) {
-      const entry = SONGS[index + 4];
-      const xml = await (await fetch(`/assets/piano/tracks/${entry.file}`)).text();
+      const file = index === 0 ? 'Twinkle_Theme.musicxml' : `Twinkle_Variation_${String(index).padStart(2, '0')}.musicxml`;
+      const xml = await (await fetch(`/assets/piano/tracks/${file}`)).text();
       const section = new DOMParser().parseFromString(xml, 'application/xml');
       const measures = Array.from(section.querySelectorAll('part > measure'));
       const originals = sourceMeasures.slice(headings[index], headings[index + 1] ?? sourceMeasures.length);
       total += measures.length;
-      expect(measures.length).withContext(entry.file).toBe(originals.length);
+      expect(measures.length).withContext(file).toBe(originals.length);
       expect(measures.map(measure => measure.getAttribute('number'))).toEqual(originals.map(measure => measure.getAttribute('number')));
       measures.forEach((measure, at) => {
         const sourceMeasure = originals[at];
         for (const element of ['note', 'backup', 'forward', 'barline']) {
           expect(Array.from(measure.querySelectorAll(element), node => node.outerHTML))
-            .withContext(`${entry.file} measure ${at + 1} ${element}`)
+            .withContext(`${file} measure ${at + 1} ${element}`)
             .toEqual(Array.from(sourceMeasure.querySelectorAll(element), node => node.outerHTML));
         }
       });
       if (index > 0) {
         const attributes = measures[0].querySelector('attributes');
         for (const name of ['divisions', 'key', 'time', 'clef'])
-          expect(attributes?.querySelector(name)).withContext(`${entry.file} inherited ${name}`).not.toBeNull();
+          expect(attributes?.querySelector(name)).withContext(`${file} inherited ${name}`).not.toBeNull();
         const prior = sourceMeasures.slice(0, headings[index]);
         for (const selector of ['divisions', 'key > fifths', 'time > beats', 'time > beat-type']) {
           const previous = prior.flatMap(measure => Array.from(measure.querySelectorAll(`attributes > ${selector}`))).at(-1);
-          expect(attributes?.querySelector(selector)?.textContent).withContext(`${entry.file} ${selector}`)
+          expect(attributes?.querySelector(selector)?.textContent).withContext(`${file} ${selector}`)
             .toBe(previous?.textContent);
         }
         const priorTempo = prior.flatMap(measure => Array.from(measure.querySelectorAll('sound[tempo]'))).at(-1);
         if (priorTempo) expect(measures[0].querySelector('sound[tempo]')?.getAttribute('tempo'))
-          .withContext(`${entry.file} inherited tempo`).toBe(priorTempo.getAttribute('tempo'));
+          .withContext(`${file} inherited tempo`).toBe(priorTempo.getAttribute('tempo'));
       }
     }
     expect(total).toBe(sourceMeasures.length);

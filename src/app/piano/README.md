@@ -1,4 +1,42 @@
-# How to Piano — audio and MIDI visualiser prototype
+# How to Piano
+
+## Current flow (Phase 12)
+
+Run `npm start` and open `http://localhost:4200/piano`. The homepage **Start**
+prepares the reusable SoundFont engine and opens the library. Choose one of four
+curated songs to load its score, then press **Start run** (or **Start listening**).
+Selection and Replay leave the song armed at its start; they never autoplay.
+Exit returns to the library, and Home stops the run while retaining the audio
+engine. **How to Play** on the homepage prepares audio too; Watch/Try then load
+the short Twinkle example. Settings is available from every stage. During a run,
+opening Settings releases held typing keys and suspends game input while music
+continues. Escape closes Settings before leaving Play or Tutorial.
+
+The curated order, titles, verified composer/arrangement credits, and provisional
+**typing chart** difficulty labels live in `song-library.config.cjs`. Run
+`node src/app/piano/generate-song-manifest.cjs` to regenerate the four-entry
+manifest. The generator preserves this list; extra scores remain on disk for
+import tests. Liebestraum is listen-only and therefore “Not rated.” The current
+lighter `SalC5Light2.sf2` remains the instrument.
+
+The tutorial uses the first 11 authored Twinkle targets, including a hold.
+Watch mode feeds deterministic attacks/releases to the normal `TypingRound`
+using the sequencer position sampled by the existing Canvas frame loop. Try
+mode uses the same excerpt and normal keyboard judgement. Neither modifies the
+production chart. Full charts reach Results at natural song end, opening charts
+fade out when the authored passage completes, and listen-only songs finish at
+natural end. Results Replay returns to armed Play.
+
+Phase 12 verification: manifest regeneration was byte-stable with exactly four
+entries; production build and 51 focused piano tests passed. Headless Chrome
+checked Homepage, Library, Settings before loading and during playback, a song
+remaining armed until Start, Watch completion (11 Perfect including the hold),
+Try cancellation, listen-only Results/Replay, Home/Library navigation, both
+themes, and no browser console errors. Screenshots of Homepage, Library,
+Settings, armed/running Play, Tutorial and Results were inspected. Automated
+checks did not assess audible musical feel or human typing latency.
+
+## Earlier prototype notes (historical)
 
 Run `npm start`, open `http://localhost:4200/piano`, wait for **ready**, then click
 **Play**. The initial download includes the supplied 139 MB SoundFont. First Play
@@ -419,3 +457,31 @@ also exercised fresh suspended-context activation, first Play, rapid song
 selection, a full Theme run at 3x, and playback starts for Variations I, XI
 and XII. Analyser measurements found nonzero PCM for Theme, Variation I and
 Variation XII. No human listening or judgement of musical feel has been done.
+
+## Phase 11
+
+The feature has four presentation stages: Library, Setup, Play and Results.
+The Library labels chart coverage from explicit metadata without fetching
+scores. Selecting a piece opens Setup and starts just-in-time preparation; the
+reusable SoundFont engine stays mounted across screens. Setup has speed,
+metronome and look-ahead controls, with volume in secondary Settings. Practice
+and developer tools are collapsed. Play keeps a three-line passage directly
+above the roll, plus a compact HUD and live audio controls. Listen-only songs
+omit the passage and scoring. Escape or Exit stops and returns to Setup.
+
+Results copy the resolved attempt before resetting it. Turkish March's opening
+passage fades out at chart completion; full charts wait for the musical ending
+and a 220 ms final input window. Seeking beyond the chart follows a listening
+path without a zero-target score. Retry keeps the same settings and start
+position without reloading the SF2. Listen-only sessions finish with Replay
+and Back. Authored charts and scoring formulas are unchanged.
+
+Focused tests cover stage changes, releasing a held key when controls open,
+immutable result snapshots and existing music/scoring regressions. Headless
+Chrome exercised fresh Library selection and audio enablement, exits during
+count-in and playback, a complete Twinkle Theme run and Retry, the Turkish
+opening ending, a seek-based practice result, a beyond-chart listening finish,
+and Listen-only natural completion and Replay. Screenshots of Library, Setup,
+Play, Results and the light listening view were inspected at desktop and
+smaller viewports with reduced motion. This is automated verification, not
+human playtesting or listening review.

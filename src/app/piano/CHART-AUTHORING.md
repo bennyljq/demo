@@ -9,6 +9,11 @@ independent of filenames. The
 Turkish chart is in `turkish-chart.ts`; the complete Greensleeves chart is in
 `greensleeves-chart.ts`; Liebestraum deliberately has an empty chart.
 
+Each registered chart declares coverage explicitly. Greensleeves and Twinkle
+Theme are `full`; Turkish March is `opening`. Unregistered songs are `listen`.
+The Library uses this label without fetching or parsing score assets. Do not
+infer full-song coverage from a nonempty phrase list.
+
 Each `XmlPhrase` has one explicit `letters` entry per character. The chart is
 independent of notes: the compiler never snaps a target to a pitch, voice or
 sounding note. `measure` is the source measure label. `occurrence` defaults to
