@@ -6,13 +6,15 @@ import { buildXmlTypingChart } from './gameplay/piano-chart';
 import { metricGrouping, scoreBeatGrid } from './audio/piano-metronome';
 
 describe('generated song library', () => {
-  it('keeps the four curated scores in order while loading both score formats', async () => {
+  it('keeps the curated scores in order while loading both score formats', async () => {
     expect(SONGS.map(song => song.id)).toEqual([
-      'twinkle-theme', 'greensleeves', 'wa-mozart-marche-turque-turkish-march-fingered', 'liebestraum-no-3-in-a-major',
+      'twinkle-theme', 'twinkle-variation-01', 'greensleeves',
+      'wa-mozart-marche-turque-turkish-march-fingered', 'liebestraum-no-3-in-a-major',
     ]);
-    expect(SONGS.map(song => song.difficulty)).toEqual(['Beginner', 'Intermediate', 'Advanced', 'Not rated']);
+    expect(SONGS.map(song => song.difficulty)).toEqual(['Beginner', 'Intermediate', 'Intermediate', 'Advanced', 'Not rated']);
+    expect(SONGS.map(song => song.defaultLookAhead)).toEqual([6, 4, 6, 6, 6]);
     expect(SONGS.map(song => song.composer)).toEqual([
-      'Wolfgang Amadeus Mozart', 'Traditional', 'Wolfgang Amadeus Mozart', 'Franz Liszt',
+      'Wolfgang Amadeus Mozart', 'Wolfgang Amadeus Mozart', 'Traditional', 'Wolfgang Amadeus Mozart', 'Franz Liszt',
     ]);
     for (const song of SONGS) {
       const response = await fetch(`/assets/piano/tracks/${encodeURIComponent(song.file)}`);
@@ -33,6 +35,10 @@ describe('generated song library', () => {
         expect(chart.filter(target => target.holdEnd !== undefined).length).toBe(17);
         expect(chart[0].source?.start.measure).toBe(2);
         expect(chart.at(-1)?.source?.start.measure).toBe(33);
+      } else if (song.id === 'twinkle-variation-01') {
+        expect(score.measureCount).toBe(25);
+        expect(score.measures.length).toBe(48);
+        expect(chart.length).toBe(322);
       } else if (song.id === 'twinkle-theme') {
         expect(score.measureCount).toBe(24);
         expect(score.duration).toBeCloseTo(48, 5);

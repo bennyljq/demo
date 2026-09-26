@@ -5,15 +5,11 @@ const action = (time: number, key: string, targetIndex: number, release = false,
   ({ time, key, targetIndex, release, hold });
 
 describe('QWERTY demo keyboard presentation', () => {
-  it('keeps a stable full typing block with all letters, digits and modifiers', () => {
-    expect(DEMO_KEYBOARD_ROWS.length).toBe(5);
+  it('keeps three stable QWERTY rows containing only the 26 letters', () => {
+    expect(DEMO_KEYBOARD_ROWS.length).toBe(3);
     const ids = DEMO_KEYBOARD_ROWS.flat().map(key => key.id);
-    expect('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').every(letter => ids.includes(letter))).toBeTrue();
-    expect('1234567890'.split('').every(digit => ids.includes(digit))).toBeTrue();
-    expect(ids).toContain('Space');
-    expect(ids).toContain('Backspace');
-    expect(ids).toContain('ShiftLeft');
-    expect(ids).toContain('Enter');
+    expect(DEMO_KEYBOARD_ROWS.map(row => row.map(key => key.id).join(''))).toEqual(['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM']);
+    expect(ids.length).toBe(26);
     expect(new Set(ids).size).toBe(ids.length);
   });
 

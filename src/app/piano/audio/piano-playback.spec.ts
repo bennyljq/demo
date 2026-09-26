@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { PianoPlaybackService } from './piano-playback.service';
 import { importMusicXml } from '../music/musicxml-import';
+import { SONGS } from '../song-manifest.generated';
 
 describe('song selection', () => {
   it('starts with the first visible song selected for loading', () => {
@@ -81,7 +82,7 @@ describe('song selection', () => {
       internal.loadedSongId = id;
     });
     try {
-      for (const song of service.songs.filter(song => song.id !== 'twinkle-theme')) {
+      for (const song of SONGS.filter(song => !song.playerPerformedMelody)) {
         await service.selectSong(song.id);
         expect(service.status()).withContext(song.id).toBe('ready');
         expect(queued).withContext(song.id).toBe(service.score()?.midi);
@@ -185,16 +186,18 @@ describe('song selection', () => {
     } finally { service.ngOnDestroy(); }
   });
 
-  it('schedules demo audio before any UI frame and cancels the pending clock fill', () => {
+  it('queues the complete demo on the audio clock and retires pending channels on Stop', () => {
     const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
     const internal = service as any;
     const perform = jasmine.createSpy('perform');
     const releaseAll = jasmine.createSpy('releaseAll');
     internal.context = { currentTime: 9.8, close: async () => {} };
     internal.countInPlan = { songAt: 10, plan: { songStart: 0 } };
-    internal.playerPerformance = { perform, releaseAll };
+    const retireUntil = jasmine.createSpy('retireUntil').and.returnValue([3]);
+    internal.playerPerformance = { perform, releaseAll, retireUntil };
     internal.sequencer = { pause: () => {}, currentTime: 0 };
-    internal.synth = { stopAll: () => {}, reset: () => {}, destroy: () => {} };
+    const controllerChange = jasmine.createSpy('controllerChange');
+    internal.synth = { stopAll: () => {}, reset: () => {}, destroy: () => {}, controllerChange };
     internal.statusValue.set('count-in');
     try {
       service.startDemo([
@@ -202,10 +205,14 @@ describe('song selection', () => {
         { time: 0.13, key: 'A', targetIndex: 0, release: true, hold: false },
         { time: 1, key: 'B', targetIndex: 1, release: false, hold: false },
       ]);
-      expect(perform).toHaveBeenCalledOnceWith(0, 'perfect', 'demo:A', 0, 1, 10);
+      expect(perform.calls.allArgs()).toEqual([
+        [0, 'perfect', 'demo:A', 0, 1, 10],
+        [1, 'perfect', 'demo:B', 1, 1, 11],
+      ]);
       service.stop();
       expect(releaseAll).toHaveBeenCalled();
-      expect(internal.demoTimer).toBeUndefined();
+      expect(retireUntil).toHaveBeenCalled();
+      expect(controllerChange).toHaveBeenCalledWith(3, 7, 0);
       expect(internal.demoActions).toEqual([]);
     } finally { service.ngOnDestroy(); }
   });

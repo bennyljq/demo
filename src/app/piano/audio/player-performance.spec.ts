@@ -106,4 +106,22 @@ describe('player melody voices', () => {
     ]);
     expect(player.snapshot(0.9)).toEqual([]);
   });
+
+  it('does not reuse a retired demo channel just because the next queued attack is far ahead', () => {
+    let clock = 10, nextChannel = 3;
+    const events: number[] = [];
+    const retired = new Set<number>();
+    const sink: PlayerNoteSink = {
+      now: () => clock, newChannel: () => nextChannel++, canUseChannel: channel => !retired.has(channel),
+      noteOn: channel => { events.push(channel); }, noteOff: () => {},
+    };
+    const player = new PlayerPerformance(targets, sink);
+    player.perform(0, 'perfect', 'demo:A', 1, 1, 12);
+    for (const channel of player.retireUntil(20)) retired.add(channel);
+    player.perform(1, 'perfect', 'demo:B', 2, 1, 22);
+    expect(events).toEqual([3, 4]);
+    clock = 21;
+    retired.clear();
+    expect(player.retireUntil(21)).toContain(3);
+  });
 });

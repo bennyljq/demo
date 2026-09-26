@@ -11,7 +11,7 @@ export interface CoupledTarget {
 }
 
 /** One chart letter per performed staff-1 attack, including each repeat visit. */
-export function coupleTwinkleMelody(score: ImportedScore, targets: readonly TypingTarget[]): CoupledTarget[] {
+export function coupleStaffMelody(score: ImportedScore, targets: readonly TypingTarget[]): CoupledTarget[] {
   const attacks = new Map<number, SoundingNote[]>();
   for (const note of score.soundingNotes.filter(note => note.staff === 1)) {
     const at = Math.round(note.start * 1e8);
@@ -46,6 +46,8 @@ export function coupleTwinkleMelody(score: ImportedScore, targets: readonly Typi
       start: target.time, hold: target.holdEnd !== undefined, notes: group };
   });
   const missing = score.soundingNotes.filter(note => note.staff === 1 && !used.has(note.id));
-  if (missing.length) throw new Error(`Twinkle has ${missing.length} unmapped staff-1 sounding attacks, first ${missing[0].id}.`);
+  if (missing.length) throw new Error(`Chart has ${missing.length} unmapped staff-1 sounding attacks, first ${missing[0].id}.`);
   return coupled;
 }
+
+export const coupleTwinkleMelody = coupleStaffMelody;

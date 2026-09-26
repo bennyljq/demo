@@ -3,6 +3,26 @@ import { PianoComponent } from './piano.component';
 import { TypingRound } from './gameplay/piano-judgement';
 
 describe('piano stages', () => {
+  it('applies each song look-ahead default on selection without discarding an in-song adjustment on retry', () => {
+    TestBed.configureTestingModule({ imports: [PianoComponent] });
+    const fixture = TestBed.createComponent(PianoComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    const select = spyOn(component.playback, 'selectSong').and.resolveTo();
+    spyOn(component.playback, 'activateAudio');
+    spyOn(component.playback, 'stop');
+    try {
+      component.chooseSong('twinkle-variation-01');
+      expect(component.lookAhead()).toBe(4);
+      component.setLookAhead({ target: { value: '8' } } as unknown as Event);
+      component.retryPreparation();
+      expect(component.lookAhead()).toBe(8);
+      component.chooseSong('twinkle-theme');
+      expect(component.lookAhead()).toBe(6);
+      expect(select).toHaveBeenCalledWith('twinkle-theme');
+    } finally { fixture.destroy(); }
+  });
+
   it('arms a selected song before Play and returns to Library on Exit', () => {
     TestBed.configureTestingModule({ imports: [PianoComponent] });
     const fixture = TestBed.createComponent(PianoComponent);
@@ -224,7 +244,7 @@ describe('piano stages', () => {
     } finally { fixture.destroy(); }
   });
 
-  it('ignores physical typing during a demo and cancels it when Settings opens', () => {
+  it('ignores physical typing while Settings and blur leave a demo running; Escape cancels it', () => {
     TestBed.configureTestingModule({ imports: [PianoComponent] });
     const fixture = TestBed.createComponent(PianoComponent);
     fixture.detectChanges();
@@ -250,9 +270,15 @@ describe('piano stages', () => {
       expect(round.results[0]).toBe('pending');
       expect(perform).not.toHaveBeenCalled();
       component.openSettings();
+      expect(component.demoActive()).toBeTrue();
+      expect(component.runStarted()).toBeTrue();
+      expect(component.settingsOpen()).toBeTrue();
+      window.dispatchEvent(new Event('blur'));
+      expect(component.demoActive()).toBeTrue();
+      component.onModalKeyDown(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
       expect(component.demoActive()).toBeFalse();
       expect(component.runStarted()).toBeFalse();
-      expect(component.settingsOpen()).toBeTrue();
+      expect(component.settingsOpen()).toBeFalse();
     } finally { fixture.destroy(); }
   });
 });

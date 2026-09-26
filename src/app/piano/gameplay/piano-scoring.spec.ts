@@ -5,6 +5,40 @@ import { attackWindowSeconds, DEFAULT_SCORING_SETTINGS, holdBufferSeconds, valid
 const hold: TypingTarget = { id: 'hold', word: 'A', letter: 'A', time: 1, holdEnd: 2, wordIndex: 0, index: 0 };
 
 describe('hold score', () => {
+  it('uses linear combo bonuses, separate miss/wrong debt and an attempt-fixed speed', () => {
+    const targets: TypingTarget[] = [0, 1, 2, 3].map(index => ({
+      id: `hit-${index}`, word: 'ABCD', letter: 'ABCD'[index], time: index + 1, index, wordIndex: 0,
+    }));
+    const round = new TypingRound(targets);
+    round.reset(0, 1.5);
+    expect(round.availablePoints).toBe(1.5 * (400 + 12));
+    round.key('a', 1); round.keyUp('a', 1);
+    round.key('b', 2); round.keyUp('b', 2);
+    round.key('c', 3); round.keyUp('c', 3);
+    expect(round.comboBonus).toBe(6); // +0, +2, +4
+    round.key('x', 4); round.keyUp('x', 4);
+    round.advance(4.161);
+    expect(round.combo).toBe(0);
+    expect(round.missPenalty).toBe(-50);
+    expect(round.wrongPenalty).toBe(-50);
+    expect(round.rawPoints).toBe(206);
+    expect(round.totalPoints).toBe(309);
+    round.settings = { ...round.settings, goodMs: 200 };
+    expect(round.speed).toBe(1.5);
+    expect(round.totalPoints).toBe(309);
+  });
+
+  it('does not count hold progress as another attack or combo bonus', () => {
+    const round = new TypingRound([hold]);
+    round.key('a', 1);
+    round.advance(1.5);
+    round.keyUp('a', 2);
+    round.advance(3);
+    expect(round.combo).toBe(1);
+    expect(round.comboBonus).toBe(0);
+    expect(round.missPenalty).toBe(0);
+    expect(round.rawPoints).toBe(200);
+  });
   it('retains a judged attack and combo after partial release', () => {
     const round = new TypingRound([hold]);
     round.key('a', 1);

@@ -1,8 +1,8 @@
 <section class="game-shell" [attr.data-stage]="stage()">
-  <div class="global-actions">
+  @if (stage() !== 'play') { <div class="global-actions">
     @if (stage() !== 'home') { <button type="button" class="quiet-button" (click)="goHome()">Home</button> }
     <button #settingsTrigger type="button" class="quiet-button settings-shortcut" (click)="openSettings()">Settings</button>
-  </div>
+  </div> }
   
   @if (stage() === 'home') {
     <div class="stage-screen home-screen">
@@ -59,31 +59,38 @@
   [hidden]="stage() !== 'play'">
   <header class="play-header">
     <div class="play-identity"><h1 id="piano-title">{{ selectedSong()?.title }}</h1>
-      <span>{{ playback.playbackRate() }}× · {{ demoActive() ? 'Demo' : runContext() }}</span></div>
-      <div class="play-actions">
-        <button type="button" class="exit-button" (click)="exitRun()">Exit to Library</button>
+      @if (demoActive()) { <span class="demo-indicator">Demo</span> }
+    </div>
+      <div class="play-navigation" aria-label="Navigation and settings">
+        <button type="button" class="quiet-button" (click)="goHome()" [disabled]="demoActive()">Home</button>
+        <button type="button" class="quiet-button" (click)="exitRun()" [disabled]="demoActive()">Library</button>
+        <button #settingsTrigger type="button" class="quiet-button" (click)="openSettings()">Settings</button>
       </div>
     </header>
       <div class="armed-panel">
-        <div class="armed-status-slot"><p class="status" role="status" aria-live="polite" [attr.data-status]="playback.status()">
-            {{ playback.status() === 'loading' ? 'Preparing score and audio' : statusLabel() }}
-          </p></div>
         <div class="armed-control-slot">
-          @if (runStarted()) {
-            <button type="button" (click)="restart()" title="Restart from the beginning (Escape)">Restart <span aria-hidden="true">(Esc)</span></button>
-          } @else {
+          @if (runStarted()) { <button type="button" class="restart-button" (click)="restart()" title="Restart from the beginning (Escape)">Restart</button> }
+          @else {
             <button type="button" class="primary-button" (click)="play()" [disabled]="playback.status() !== 'ready' || !playback.score()">
               {{ coverage() === 'listen' ? 'Start listening' : 'Start run' }}
             </button>
-            <button type="button" (click)="startDemo()" [disabled]="playback.status() !== 'ready' || !playback.score() || !chart().length">Start Demo</button>
-            <button type="button" (click)="reroll()" [disabled]="playback.status() !== 'ready' || !playback.score()">Reroll</button>
           }
+          <button type="button" class="secondary-run" (click)="startDemo()" [disabled]="runStarted() || playback.status() !== 'ready' || !playback.score() || !chart().length">Demo</button>
+          <button type="button" class="secondary-run" (click)="reroll()" [disabled]="runStarted() || playback.status() !== 'ready' || !playback.score()">Reroll</button>
         </div>
-        <div class="armed-hint-slot">
-          @if (playback.status() === 'ready' && playback.score()) {
-            <span class="keyboard-start-hint">Press any key to start</span>
-          }
-          @if (runStartPosition() > 0.001) { <span class="practice-note">Practice segment from {{ runStartPosition().toFixed(1) }} s</span> }
+        <div class="armed-speed-slot">
+          <label for="play-speed">Speed</label>
+          <select id="play-speed" [value]="playback.playbackRate()" [disabled]="runStarted() || playback.status() !== 'ready'" (change)="setPlaybackSpeed($event)">
+            @for (rate of playback.speedOptions; track rate) { <option [value]="rate" [selected]="rate === playback.playbackRate()">{{ rate }}×</option> }
+          </select>
+          <span class="speed-multiplier">Score ×{{ playback.playbackRate() }}</span>
+        </div>
+        <div class="armed-status-slot"><p class="status" role="status" aria-live="polite" [attr.data-status]="playback.status()">
+          {{ playback.audioSuspended() && runStarted() ? 'Audio paused by browser' : playback.status() === 'loading' ? 'Preparing score and audio' : statusLabel() }}
+        </p></div>
+        <div class="armed-hint-slot">@if (playback.audioSuspended() && runStarted()) { <button type="button" (click)="playback.activateAudio()">Resume audio</button> }
+          @else if (!runStarted() && playback.status() === 'ready' && playback.score()) { <span>Any key starts</span> }
+          @if (runStartPosition() > 0.001) { <span class="practice-note">From {{ runStartPosition().toFixed(1) }} s</span> }
         </div>
         @if (playback.error() || playback.engineError() || playback.status() === 'error' || playback.engineStatus() === 'error') {
           <div class="armed-messages">
@@ -99,11 +106,13 @@
       @if (playback.score()) {
         <div class="play-hud">
           @if (chartedRun()) {
-            <span>Score <strong>{{ attempt().total.toFixed(0) }}</strong> / {{ attempt().available }}</span>
-            <span>Combo <strong>{{ attempt().combo }}</strong></span>
-            <span>Wrong <strong>{{ attempt().wrongCount }}</strong></span>
+            <span class="hud-score">Score <strong>{{ attempt().total }}</strong><small> / {{ attempt().available.toFixed(0) }} · ×{{ playback.playbackRate() }}</small></span>
+            <span class="combo-shell" [attr.data-tier]="comboTier()"><span class="flames" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+              <span class="combo-face">Combo <strong>{{ attempt().combo }}</strong></span>
+              @for (pulse of feedback() && (feedback()?.kind === 'perfect' || feedback()?.kind === 'good') && attempt().combo >= 5 ? [feedback()?.started] : []; track pulse) { <span class="combo-feed" aria-hidden="true"></span> }
+            </span>
           } @else { <span>Listening</span> }
-          <span>{{ displayedTime().toFixed(1) }} / {{ playback.duration().toFixed(1) }} s</span>
+          <span class="hud-secondary">{{ displayedTime().toFixed(1) }} / {{ playback.duration().toFixed(1) }} s · {{ counts().perfect }} Perfect · {{ counts().good }} Good · {{ counts().miss }} Miss</span>
           <div class="progress-track" role="progressbar" [attr.aria-valuenow]="progress().toFixed(0)" aria-valuemin="0" aria-valuemax="100" aria-label="Run progress"><span [style.width.%]="progress()"></span></div>
         </div>
         <div class="play-feedback" aria-live="off">
@@ -170,12 +179,17 @@
       @if (result(); as summary) {
         <h1 id="piano-title">{{ summary.coverage === 'opening' && summary.startPosition < 0.001 ? 'Opening passage complete.' : 'Run complete' }}</h1>
         <p>{{ summary.startPosition > 0.001 ? 'Practice segment' : coverageLabel(summary.coverage) }} · {{ summary.speed }}×</p>
-        <div class="result-score"><span>Total score</span><strong>{{ summary.total.toFixed(0) }} / {{ summary.available }}</strong></div>
+        <div class="result-score"><span>Total score</span><strong>{{ summary.total }} / {{ summary.available.toFixed(0) }}</strong></div>
         <dl class="result-stats">
           <div><dt>Perfect</dt><dd>{{ summary.perfect }}</dd></div><div><dt>Good</dt><dd>{{ summary.good }}</dd></div>
           <div><dt>Miss</dt><dd>{{ summary.miss }}</dd></div><div><dt>Wrong</dt><dd>{{ summary.wrong }}</dd></div>
+          <div><dt>Attacks</dt><dd>+{{ summary.attackPoints }}</dd></div>
+          <div><dt>Sustain</dt><dd>+{{ summary.sustain.toFixed(0) }} / {{ summary.sustainAvailable }}</dd></div>
+          <div><dt>Combo bonus</dt><dd>+{{ summary.comboBonus }}</dd></div>
+          <div><dt>Miss penalty</dt><dd>{{ summary.missPenalty }}</dd></div>
           <div><dt>Wrong-key penalty</dt><dd>{{ summary.wrongPenalty }}</dd></div>
-          <div><dt>Best combo</dt><dd>{{ summary.bestCombo }}</dd></div><div><dt>Sustain</dt><dd>{{ summary.sustain.toFixed(0) }} / {{ summary.sustainAvailable }}</dd></div>
+          <div><dt>Speed multiplier</dt><dd>×{{ summary.speed }}</dd></div>
+          <div><dt>Best combo</dt><dd>{{ summary.bestCombo }}</dd></div>
         </dl>
         <section class="result-review" aria-labelledby="result-review-title">
           <h2 id="result-review-title">Your passage</h2>
@@ -213,9 +227,9 @@
   @if (settingsOpen()) {
     <div class="modal-backdrop" (mousedown)="onBackdropMouseDown($event)">
       <div class="settings-dialog" #settingsDialog tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="settings-title" (keydown)="onModalKeyDown($event)">
-        <header><div><p class="eyebrow">How to Piano</p><h2 id="settings-title">Settings</h2></div>
+        <header><div><p class="eyebrow">HARD Pianist</p><h2 id="settings-title">Settings</h2></div>
           <button type="button" class="modal-close" (click)="closeSettings()" aria-label="Close Settings">Close</button></header>
-          @if (runStarted()) { <p class="modal-running-note">Playback continues while Settings is open. Letter input is suspended; held keys are released.</p> }
+          @if (runStarted()) { <p class="modal-running-note">Playback continues while Settings is open. @if (demoActive()) { The demo keeps playing. } @else { Letter input is suspended; held keys are released. }</p> }
           <div class="settings-groups">
             <fieldset><legend>Audio</legend>
               <label>Master volume <strong>{{ playback.volume() }}%</strong><input type="range" min="0" max="500" step="25" [value]="playback.volume()" (input)="playback.setVolume(+$any($event.target).value)"></label>
@@ -226,10 +240,8 @@
               @if (playback.metronomeError()) { <p class="error" role="alert">{{ playback.metronomeError() }}</p> }
             </fieldset>
             <fieldset><legend>Gameplay &amp; view</legend>
-              <label>Playback speed <select [value]="playback.playbackRate()" [disabled]="runStarted()" (change)="playback.setPlaybackRate(+$any($event.target).value)">
-                @for (rate of playback.speedOptions; track rate) { <option [value]="rate" [selected]="rate === playback.playbackRate()">{{ rate }}×</option> }
-              </select></label>
               <label>Look ahead <strong>{{ lookAhead() }} s</strong><input type="range" min="2" max="10" step="0.5" [value]="lookAhead()" (input)="setLookAhead($event)"></label>
+              <label class="checkbox-setting">Stagger streaming letters <input type="checkbox" [checked]="staggerLetters()" (change)="setStaggerLetters($event)"></label>
               <div class="theme-setting"><span>Appearance</span><button type="button" (click)="toggleTheme()">{{ theme() === 'dark' ? 'Light theme' : 'Dark theme' }}</button></div>
             </fieldset>
             <fieldset><legend>Practice</legend>
@@ -248,7 +260,7 @@
               </fieldset>
               <fieldset><legend>Developer</legend>
                 <p>Numeric scoring settings are fixed during a run. View overlays can change live.</p>
-                <p>Wrong keys cost {{ -scoringPoints.wrong }} points each. Negative score debt carries forward; the displayed score stops at zero.</p>
+                <p>Perfect +{{ scoringPoints.perfect }}, Good +{{ scoringPoints.good }}, Miss {{ scoringPoints.miss }}, Wrong {{ scoringPoints.wrong }}. Each successive hit adds {{ scoringPoints.comboStep }} more combo points; holds earn up to +{{ scoringPoints.hold }}. The selected speed multiplies the raw total. Negative debt carries forward while the displayed score stops at zero.</p>
                 <label>Perfect tolerance (ms) <input type="number" min="0" step="1" [value]="settings().perfectMs" [disabled]="runStarted()" (change)="setScoringNumber('perfectMs', $event)"></label>
                 <label>Good tolerance (ms) <input type="number" min="0" step="1" [value]="settings().goodMs" [disabled]="runStarted()" (change)="setScoringNumber('goodMs', $event)"></label>
                 <label>Hold release buffer (ms) <input type="number" min="0" step="1" [value]="settings().holdReleaseMs" [disabled]="runStarted()" (change)="setScoringNumber('holdReleaseMs', $event)"></label>

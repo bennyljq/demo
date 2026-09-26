@@ -21,6 +21,9 @@ export interface JudgementFeedback {
 interface HitBurst { readonly x: number; readonly y: number; readonly letter: string;
   readonly kind: 'perfect' | 'good'; readonly started: number }
 
+const LETTER_LINE_Y = 82;
+const STAGGERED_LETTER_Y = [67, 96] as const;
+
 /** RAF only paints the score position supplied by the sequencer. */
 export class PianoRoll {
   private readonly ctx: CanvasRenderingContext2D;
@@ -44,6 +47,7 @@ export class PianoRoll {
     private readonly readScore: () => ImportedScore | null,
     private readonly readLookAhead: () => number,
     private readonly readSettings: () => ScoringSettings,
+    private readonly readStaggerLetters: () => boolean,
     private readonly readRate: () => number,
     private readonly readCountIn: () => CountInVisual | null,
     private readonly readSongBeats: () => readonly number[],
@@ -64,11 +68,15 @@ export class PianoRoll {
 
   flashHit(target: TypingTarget, kind: 'perfect' | 'good', position: number, lookAhead: number): void {
     this.hitBursts.push({ x: timeToX(target.time, position, this.width, lookAhead),
-      y: target.index % 2 ? 96 : 67, letter: target.letter, kind, started: performance.now() });
+      y: this.letterY(target.index), letter: target.letter, kind, started: performance.now() });
     if (this.hitBursts.length > 8) this.hitBursts.shift();
   }
 
   clearEffects(): void { this.hitBursts = []; }
+
+  private letterY(index: number): number {
+    return this.readStaggerLetters() ? STAGGERED_LETTER_Y[index % 2] : LETTER_LINE_Y;
+  }
 
   private resize(): void {
     const box = this.canvas.getBoundingClientRect();
@@ -102,7 +110,6 @@ export class PianoRoll {
     const top = 145, bottom = this.height - 18;
     const row = (bottom - top) / (this.high - this.low + 1);
     const y = (pitch: number) => top + (this.high - pitch) * row;
-    const laneRows = [67, 96];
     const targets = this.readTargets();
     const settings = this.readSettings();
     const rate = this.readRate();
@@ -224,7 +231,7 @@ export class PianoRoll {
       const at = x(target.time);
       const end = target.holdEnd === undefined ? at : x(target.holdEnd);
       if (at > this.width + 12 || end < 30) continue;
-      const center = laneRows[target.index % 2];
+      const center = this.letterY(target.index);
       if (settings.showAttackWindows) {
         const good = attackWindowSeconds(settings.goodMs, rate);
         const perfect = attackWindowSeconds(settings.perfectMs, rate);

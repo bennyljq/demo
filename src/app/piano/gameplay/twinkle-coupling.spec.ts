@@ -65,7 +65,7 @@ describe('Twinkle player melody coupling', () => {
       .toEqual(next.coupling.map(target => target.notes.map(note => note.id)));
     const round = new TypingRound(first.targets);
     round.advance(score.duration + 1);
-    const snapshot = captureRunResult(round, 'twinkle-theme', 'Twinkle Twinkle Little Star', 'full', 1, 0)!;
+    const snapshot = captureRunResult(round, 'twinkle-theme', 'Twinkle Twinkle Little Star', 'full', 0)!;
     expect(snapshot.letters.map(letter => letter.word)).toEqual(first.targets.map(target => target.word));
     expect(snapshot.letters.map(letter => letter.word)).not.toEqual(next.targets.map(target => target.word));
     for (let seed = 0; seed < 32; seed++) {

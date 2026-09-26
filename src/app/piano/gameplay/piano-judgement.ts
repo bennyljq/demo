@@ -2,7 +2,7 @@ import type { TypingTarget } from './piano-chart';
 import { attackWindowSeconds, DEFAULT_SCORING_SETTINGS, holdBufferSeconds, ScoringSettings } from './piano-scoring-settings';
 
 export const TIMING_WINDOWS = { perfect: 0.080, good: 0.160, wrongFeedback: 0.5 } as const;
-export const SCORING_POINTS = { perfect: 100, good: 70, miss: 0, hold: 100, wrong: -100 } as const;
+export const SCORING_POINTS = { perfect: 100, good: 70, miss: -10, hold: 100, wrong: -10, comboStep: 2 } as const;
 export type LetterResult = 'pending' | 'holding' | 'skipped' | 'perfect' | 'good' | 'miss';
 type Grade = 'perfect' | 'good';
 const EPSILON = 1e-9;
@@ -17,8 +17,10 @@ export class TypingRound {
   wrongUntil = -Infinity;
   wrong = false;
   wrongCount = 0;
+  speed = 1;
   combo = 0;
   bestCombo = 0;
+  comboBonus = 0;
   revision = 0;
   feedbackSerial = 0;
   feedbackKind: Grade | 'miss' | 'wrong' | undefined;
@@ -30,25 +32,35 @@ export class TypingRound {
   constructor(readonly targets: readonly TypingTarget[], public settings: ScoringSettings = DEFAULT_SCORING_SETTINGS) { this.reset(); }
 
   get availablePoints(): number {
-    return this.targets.reduce((sum, target) => sum + (this.results[target.index] === 'skipped' ? 0 : SCORING_POINTS.perfect + (target.holdEnd === undefined ? 0 : SCORING_POINTS.hold)), 0);
+    const eligible = this.targets.filter(target => this.results[target.index] !== 'skipped');
+    const holds = eligible.filter(target => target.holdEnd !== undefined).length;
+    return this.speed * (SCORING_POINTS.perfect * eligible.length + SCORING_POINTS.hold * holds +
+      SCORING_POINTS.comboStep * eligible.length * (eligible.length - 1) / 2);
   }
   get availableSustainPoints(): number {
     return this.targets.reduce((sum, target) => sum + (target.holdEnd !== undefined && this.results[target.index] !== 'skipped' ? SCORING_POINTS.hold : 0), 0);
   }
   get earnedSustainPoints(): number { return this.sustainPoints.reduce((sum, points) => sum + points, 0); }
-  get rawPoints(): number {
-    return this.attackGrades.reduce<number>((sum, grade) => sum + (grade === 'perfect' ? SCORING_POINTS.perfect : grade === 'good' ? SCORING_POINTS.good : 0), 0)
-      + this.earnedSustainPoints + this.wrongCount * SCORING_POINTS.wrong;
+  get attackPoints(): number {
+    return this.attackGrades.reduce<number>((sum, grade) => sum +
+      (grade === 'perfect' ? SCORING_POINTS.perfect : grade === 'good' ? SCORING_POINTS.good : 0), 0);
   }
-  get totalPoints(): number { return Math.max(0, this.rawPoints); }
+  get missCount(): number { return this.results.filter(result => result === 'miss').length; }
+  get missPenalty(): number { return this.missCount * SCORING_POINTS.miss; }
+  get wrongPenalty(): number { return this.wrongCount * SCORING_POINTS.wrong; }
+  get rawPoints(): number {
+    return this.attackPoints + this.earnedSustainPoints + this.comboBonus + this.missPenalty + this.wrongPenalty;
+  }
+  get totalPoints(): number { return Math.round(Math.max(0, this.rawPoints * this.speed)); }
 
-  reset(destination = 0): void {
+  reset(destination = 0, speed = this.speed): void {
+    this.speed = speed;
     this.results = this.targets.map(target => target.time < destination ? 'skipped' : 'pending');
     this.attackGrades = this.targets.map(() => undefined);
     this.sustainPoints = this.targets.map(() => 0);
     this.held.clear(); this.down.clear();
     this.complete = false; this.listening = true; this.wrong = false;
-    this.wrongUntil = -Infinity; this.wrongCount = 0; this.combo = 0; this.bestCombo = 0;
+    this.wrongUntil = -Infinity; this.wrongCount = 0; this.combo = 0; this.bestCombo = 0; this.comboBonus = 0;
     this.feedbackKind = undefined; this.feedbackIndex = -1; this.feedbackLetter = '';
     this.revision++;
     this.advance(destination);
@@ -106,6 +118,7 @@ export class TypingRound {
       const grade: Grade = distance <= attackWindowSeconds(this.settings.perfectMs, rate) + EPSILON ? 'perfect' : 'good';
       this.attackGrades[nearest.index] = grade;
       this.combo++; this.bestCombo = Math.max(this.bestCombo, this.combo);
+      this.comboBonus += SCORING_POINTS.comboStep * (this.combo - 1);
       if (nearest.holdEnd !== undefined) {
         this.results[nearest.index] = 'holding';
         this.held.set(nearest.index, { key: upper, lastPosition: Math.max(nearest.time, time) });

@@ -7,7 +7,7 @@ import { preparePulsePlan, scoreBeatGrid, BeatPulse, PreparedPulsePlan } from '.
 import { SONGS } from '../song-manifest.generated';
 import { buildXmlTypingChart, TypingTarget } from '../gameplay/piano-chart';
 import { songChartFor } from '../charts/song-charts';
-import { CoupledTarget, coupleTwinkleMelody } from '../gameplay/twinkle-coupling';
+import { CoupledTarget, coupleStaffMelody } from '../gameplay/twinkle-coupling';
 import { PerformedBar, PerformanceKind, PlayerPerformance } from './player-performance';
 import { prepareTwinkleRun } from '../charts/prepare-twinkle-run';
 import type { DemoAction } from '../gameplay/piano-demo-controller';
@@ -35,11 +35,13 @@ export class PianoPlaybackService implements OnDestroy {
   readonly error = this.errorValue.asReadonly();
   private readonly engineStatusValue = signal<EngineStatus>('idle');
   readonly engineStatus = this.engineStatusValue.asReadonly();
+  private readonly audioSuspendedValue = signal(false);
+  readonly audioSuspended = this.audioSuspendedValue.asReadonly();
   private readonly engineErrorValue = signal('');
   readonly engineError = this.engineErrorValue.asReadonly();
   private readonly timelineValue = signal<PianoTimeline>({ tracks: [], notes: [] });
   readonly timeline = this.timelineValue.asReadonly();
-  readonly songs = SONGS.slice(0, 1);
+  readonly songs = SONGS.filter(song => ['twinkle-theme', 'twinkle-variation-01'].includes(song.id));
   private readonly sourceValue = signal<PianoSource>(SONGS[0]?.id ?? '');
   readonly source = this.sourceValue.asReadonly();
   private readonly scores = new Map<PianoSource, ImportedScore>();
@@ -53,13 +55,11 @@ export class PianoPlaybackService implements OnDestroy {
   private readonly couplingValue = signal<readonly CoupledTarget[]>([]);
   readonly melodyCoupling = this.couplingValue.asReadonly();
   private playerPerformance?: PlayerPerformance;
-  private twinklePerformance?: PlayerPerformance;
-  private previousTwinkleWords: readonly string[] = [];
+  private readonly previousTwinkleWords = new Map<string, readonly string[]>();
   private seedSerial = 0;
   private demoActions: readonly DemoAction[] = [];
-  private nextDemoAudio = 0;
-  private demoTimer?: ReturnType<typeof setTimeout>;
-  private demoGeneration = 0;
+  private demoScheduledUntil = 0;
+  private readonly retiredDemoChannels = new Map<number, number>();
   readonly speedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3] as const;
   private readonly rateValue = signal(1);
   readonly playbackRate = this.rateValue.asReadonly();
@@ -88,6 +88,7 @@ export class PianoPlaybackService implements OnDestroy {
   private beatGrid: BeatPulse[] = [];
   private nextBeat = 0;
   private clockTimer?: ReturnType<typeof setTimeout>;
+  private countInWake?: () => void;
   private naturalEndTimer?: ReturnType<typeof setTimeout>;
   private ending = false;
   private endingAt = 0;
@@ -186,9 +187,9 @@ export class PianoPlaybackService implements OnDestroy {
     if (!score || this.status() !== 'ready') return false;
     this.statusValue.set('loading');
     try {
-      if (this.source() === 'twinkle-theme') {
-        const prepared = prepareTwinkleRun(score, this.previousTwinkleWords, seed ?? this.nextWordSeed());
-        this.previousTwinkleWords = prepared.words;
+      if (this.songs.find(song => song.id === this.source())?.playerPerformedMelody) {
+        const prepared = prepareTwinkleRun(score, this.previousTwinkleWords.get(this.source()) ?? [], seed ?? this.nextWordSeed(), this.source());
+        this.previousTwinkleWords.set(this.source(), prepared.words);
         this.chartValue.set(prepared.targets);
         this.couplingValue.set(prepared.coupling);
       }
@@ -211,42 +212,37 @@ export class PianoPlaybackService implements OnDestroy {
   startDemo(actions: readonly DemoAction[]): void {
     this.clearDemo();
     this.demoActions = actions;
-    this.nextDemoAudio = 0;
-    this.fillDemoAudio();
+    this.scheduleDemoAudio();
   }
 
   clearDemo(): void {
-    this.demoGeneration++;
-    clearTimeout(this.demoTimer);
-    this.demoTimer = undefined;
+    const now = this.context?.currentTime ?? 0;
+    if (this.demoScheduledUntil > now && this.playerPerformance && this.synth) {
+      for (const channel of this.playerPerformance.retireUntil(this.demoScheduledUntil + 0.05)) {
+        this.retiredDemoChannels.set(channel, this.demoScheduledUntil + 0.05);
+        this.synth.controllerChange(channel, 7, 0);
+      }
+    }
     this.demoActions = [];
-    this.nextDemoAudio = 0;
+    this.demoScheduledUntil = 0;
   }
 
-  private fillDemoAudio(): void {
-    if (!this.demoActions.length || !this.context) return;
-    const generation = this.demoGeneration;
+  /** Queue the bounded score on SpessaSynth's audio clock before the count-in. */
+  private scheduleDemoAudio(): void {
+    if (!this.demoActions.length || !this.context || !this.countInPlan) return;
     const context = this.context;
-    const fill = () => {
-      if (generation !== this.demoGeneration || !this.context ||
-          (this.status() !== 'count-in' && this.status() !== 'playing')) return;
-      const now = context.currentTime;
-      const rate = this.playbackRate();
-      const sourceNow = this.status() === 'count-in' && this.countInPlan
-        ? this.countInPlan.plan.songStart + (now - this.countInPlan.songAt) * rate
-        : this.sequencer?.currentTime ?? 0;
-      const horizon = sourceNow + 0.25 * rate;
-      while (this.nextDemoAudio < this.demoActions.length && this.demoActions[this.nextDemoAudio].time <= horizon) {
-        const action = this.demoActions[this.nextDemoAudio++];
-        const at = now + (action.time - sourceNow) / rate;
-        const physical = `demo:${action.key}`;
-        if (action.release) {
-          if (action.hold) this.playerPerformance?.releasePhysical(physical, action.time, Math.max(now, at));
-        } else this.playerPerformance?.perform(action.targetIndex, 'perfect', physical, action.time, rate, Math.max(now, at));
-      }
-      if (this.nextDemoAudio < this.demoActions.length) this.demoTimer = setTimeout(fill, 40);
-    };
-    fill();
+    const { songAt, plan } = this.countInPlan;
+    const rate = this.playbackRate();
+    for (const action of this.demoActions) {
+      const at = songAt + (action.time - plan.songStart) / rate;
+      const physical = `demo:${action.key}`;
+      if (action.release) {
+        if (action.hold) this.playerPerformance?.releasePhysical(physical, action.time, at);
+      } else this.playerPerformance?.perform(action.targetIndex, 'perfect', physical, action.time, rate, at);
+      this.demoScheduledUntil = Math.max(this.demoScheduledUntil, at);
+    }
+    // Keep the actual transport position independent of the pre-queued notes.
+    if (this.demoScheduledUntil <= context.currentTime) this.demoScheduledUntil = 0;
   }
   
   private async prepareClick(): Promise<void> {
@@ -296,6 +292,7 @@ export class PianoPlaybackService implements OnDestroy {
     if (this.sequencer) {
       this.pendingSeek = destination;
       this.sequencer.currentTime = destination;
+      this.remuteRetiredDemoChannels();
     }
     this.positionValue.set(destination);
     this.prepareVisualPlan();
@@ -319,6 +316,11 @@ export class PianoPlaybackService implements OnDestroy {
     if (this.lifetime.signal.aborted) return;
     try {
       this.context ??= new AudioContext();
+      this.context.onstatechange = () => {
+        this.audioSuspendedValue.set(this.context?.state === 'suspended');
+        if (this.context?.state === 'running') this.countInWake?.();
+      };
+      this.audioSuspendedValue.set(this.context.state === 'suspended');
       const resume = this.context.resume();
       this.engineStatusValue.set('preparing');
       this.engineErrorValue.set('');
@@ -391,10 +393,11 @@ export class PianoPlaybackService implements OnDestroy {
       }
       if (version !== this.selectionVersion || controller.signal.aborted) return;
       const chart = songChartFor(id);
-      const prepared = id === 'twinkle-theme' ? prepareTwinkleRun(score, this.previousTwinkleWords, this.nextWordSeed()) : null;
+      const prepared = song.playerPerformedMelody
+        ? prepareTwinkleRun(score, this.previousTwinkleWords.get(id) ?? [], this.nextWordSeed(), id) : null;
       const targets = prepared?.targets ?? buildXmlTypingChart(score, chart.phrases, chart.unitsPerQuarter);
-      const coupling = prepared?.coupling ?? (song.playerPerformedMelody ? coupleTwinkleMelody(score, targets) : []);
-      if (prepared) this.previousTwinkleWords = prepared.words;
+      const coupling = prepared?.coupling ?? (song.playerPerformedMelody ? coupleStaffMelody(score, targets) : []);
+      if (prepared) this.previousTwinkleWords.set(id, prepared.words);
       const playbackMidi = song.playerPerformedMelody
         ? buildScoreMidi(score, new Set(coupling.flatMap(target => target.notes.map(note => note.id)))) : score.midi;
       this.chartValue.set(targets);
@@ -410,8 +413,7 @@ export class PianoPlaybackService implements OnDestroy {
       if (this.loadedSongId !== id) await this.queueSequence(playbackMidi, id);
       if (version !== this.selectionVersion || controller.signal.aborted) return;
       if (song.playerPerformedMelody) {
-        this.twinklePerformance ??= this.createPlayerPerformance(score, coupling);
-        this.playerPerformance = this.twinklePerformance;
+        this.playerPerformance = this.createPlayerPerformance(score, coupling);
         this.playerPerformance.releaseAll(0, true);
       }
       this.statusValue.set('ready');
@@ -554,7 +556,7 @@ export class PianoPlaybackService implements OnDestroy {
     this.countInValue.set(null);
     this.countInPlan = undefined;
     this.statusValue.set('playing');
-    if (this.metronome() && this.clickBuffer) this.scheduleBeatGrid();
+    if (this.metronome() && this.clickBuffer && !this.demoActions.length) this.scheduleBeatGrid();
   }
   
   private startCountIn(): void {
@@ -567,6 +569,7 @@ export class PianoPlaybackService implements OnDestroy {
     if (this.sequencer) {
       this.pendingSeek = this.positionValue();
       this.sequencer.currentTime = this.positionValue();
+      this.remuteRetiredDemoChannels();
     }
     const plan = this.preparedPulsePlan!;
     const { offsets } = plan;
@@ -577,18 +580,25 @@ export class PianoPlaybackService implements OnDestroy {
     this.countInPlan = { firstAt, songAt, plan };
     this.countInValue.set(offsets.length);
     this.statusValue.set('count-in');
-    this.fillDemoAudio();
+    this.scheduleDemoAudio();
     this.rampVolume();
     offsets.forEach(offset => this.scheduleClick(firstAt + offset));
     this.scheduleClick(songAt); // downbeat coincides with the song start
+    if (this.demoActions.length && this.metronome()) {
+      for (const beat of this.beatGrid) if (beat.sourceTime > plan.songStart + 1e-7)
+        this.scheduleClick(songAt + (beat.sourceTime - plan.songStart) / this.playbackRate());
+    }
     const wake = () => {
       if (run !== this.transportRun || this.status() !== 'count-in') return;
+      if (context.state === 'suspended') { this.audioSuspendedValue.set(true); return; }
       const remaining = Math.min(offsets.length, Math.max(1, Math.ceil((songAt - context.currentTime) / spacing)));
       if (remaining !== this.countIn()) this.countInValue.set(remaining);
       if (context.currentTime >= songAt - 0.004) {
+        this.countInWake = undefined;
         this.startSequence();
       } else this.clockTimer = setTimeout(wake, Math.max(1, Math.min(10, (songAt - context.currentTime) * 500)));
     };
+    this.countInWake = wake;
     wake();
   }
   
@@ -638,6 +648,7 @@ export class PianoPlaybackService implements OnDestroy {
   
   private cancelClicks(): void {
     this.transportRun++;
+    this.countInWake = undefined;
     clearTimeout(this.clockTimer);
     this.clockTimer = undefined;
     for (const source of this.clickSources) {
@@ -667,6 +678,7 @@ export class PianoPlaybackService implements OnDestroy {
       sequencer.loadNewSongList([{ binary: buffer, fileName: `${source}.mid` }]);
     }), 'Could not prepare the supplied MIDI for playback.');
     this.loadedSongId = source;
+    this.remuteRetiredDemoChannels();
   }
 
   private async queueSequence(buffer: ArrayBuffer, source: PianoSource): Promise<void> {
@@ -683,6 +695,7 @@ export class PianoPlaybackService implements OnDestroy {
     this.synth?.stopAll(true);
     this.synth?.reset();
     if (this.sequencer) this.sequencer.currentTime = 0;
+    this.remuteRetiredDemoChannels();
   }
   
   private releaseAudio(): void {
@@ -699,16 +712,16 @@ export class PianoPlaybackService implements OnDestroy {
     this.output = undefined;
     this.clickGain = undefined;
     this.context = undefined;
+    this.audioSuspendedValue.set(false);
     this.soundFont = undefined;
     this.playerPerformance = undefined;
-    this.twinklePerformance = undefined;
   }
 
   private createPlayerPerformance(score: ImportedScore, targets: readonly CoupledTarget[]): PlayerPerformance {
     const synth = this.synth!, context = this.context!;
-    // The sequencer uses one channel per staff/voice track. Reserve only channels
-    // outside that set: the worklet's initial 16 channels already exist on both
-    // sides, whereas dynamically adding one is not synchronous in this version.
+    // The sequencer uses one channel per staff/voice track. Player channels
+    // stay separate from its controller and pedal state. Cancelled demo
+    // channels remain unavailable while old audio-clock events are queued.
     const sequencerChannels = new Set(
       [...new Set(score.soundingNotes.map(note => `${note.staff}:${note.voice}`))].sort()
         .map((_, index) => index),
@@ -719,15 +732,39 @@ export class PianoPlaybackService implements OnDestroy {
     return new PlayerPerformance(targets, {
       now: () => context.currentTime,
       newChannel: () => {
-        const channel = playerChannels[nextChannel++];
-        if (channel === undefined) return -1;
+        let channel: number | undefined;
+        while (nextChannel < playerChannels.length && channel === undefined) {
+          const candidate = playerChannels[nextChannel++];
+          if ((this.retiredDemoChannels.get(candidate) ?? 0) <= context.currentTime) channel = candidate;
+        }
+        if (channel === undefined) {
+          channel = synth.channelCount;
+          synth.addNewChannel();
+        }
+        this.retiredDemoChannels.delete(channel);
         synth.programChange(channel, 0);
         synth.controllerChange(channel, 64, 0);
+        synth.controllerChange(channel, 7, 100);
         return channel;
       },
+      prepareChannel: channel => {
+        if ((this.retiredDemoChannels.get(channel) ?? 0) <= context.currentTime) {
+          this.retiredDemoChannels.delete(channel);
+          synth.controllerChange(channel, 7, 100);
+        }
+      },
+      canUseChannel: channel => (this.retiredDemoChannels.get(channel) ?? 0) <= context.currentTime,
       noteOn: (channel, pitch, velocity, at) => synth.noteOn(channel, pitch, velocity, { time: at }),
       noteOff: (channel, pitch, at) => synth.noteOff(channel, pitch, { time: at }),
     });
+  }
+
+  private remuteRetiredDemoChannels(): void {
+    if (!this.synth || !this.context) return;
+    for (const [channel, until] of this.retiredDemoChannels) {
+      if (until <= this.context.currentTime) this.retiredDemoChannels.delete(channel);
+      else this.synth.controllerChange(channel, 7, 0);
+    }
   }
   
   private fail(error: unknown): void {

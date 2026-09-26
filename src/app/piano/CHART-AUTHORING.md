@@ -41,7 +41,7 @@ pulse.
 ```
 
 A hold is a letter with `end`. The judgement accepts its attack in the same
-Perfect/Good windows as a tap: 100 points for Perfect, 70 for Good, 0 for Miss.
+Perfect/Good windows as a tap: 100 points for Perfect, 70 for Good, −50 for a missed attack.
 A successful hold adds up to 100 fractional sustain points, computed as
 `100 * credited held source duration / authored hold source duration`. The
 attack updates combo immediately. Accepted early or late attacks receive hold
@@ -72,8 +72,8 @@ Liebestraum is a playback/inspection source until a chart is authored.
 
 The Twinkle Theme chart has 49 written upper-staff attacks expanded over its
 encoded repeats to 98 performed letters, with 6 current holds. Its 2/4 bars use
-the same two-units-per-quarter ruler; all twelve variations and the complete
-collection are intentionally uncharted. The immutable authored template has
+the same two-units-per-quarter ruler; Variations II–XII and the complete
+collection remain uncharted. The immutable authored template has
 twelve phrases: eleven four-letter slots and one five-letter slot.
 prepare-twinkle-run.ts draws seeded words from the common-word bank, then
 compiles and couples them before Ready. It rejects identical consecutive
@@ -81,16 +81,50 @@ assignments and retries boundedly when a word choice conflicts with a held key,
 including across phrase boundaries. Both repeat visits share each word. The
 authored placeholder words and hold choices still need human musical review.
 
-For `twinkle-theme`, each target must coincide with exactly one performed
-staff-1 sounding attack. `coupleTwinkleMelody` checks the target's source
+For both playable Twinkle songs, each target must coincide with exactly one performed
+staff-1 sounding attack. `coupleStaffMelody` checks the target's source
 measure and repeat occurrence, maps its complete pitch bundle by retained
 sounding-note IDs, verifies hold endpoints, and rejects missing or duplicate
-attacks. Tied continuations are not new attacks. The coupled note, rather than
+attacks. Tied continuations are not new attacks. Chord attacks retain every
+pitch in the bundle. The coupled note, rather than
 a separate hand-authored pitch list, supplies velocity and original sounding
-end to player audio. When editing this chart, keep full staff-1 coverage across
-both repeat visits; a mismatch prevents Twinkle from loading instead of
+end to player audio. When editing either chart, keep full staff-1 coverage across
+every performed visit; a mismatch prevents the song from loading instead of
 silently autoplaying or omitting melody notes. Other charts do not use this
 coupling.
+
+Variation I uses `twinkle-variation-01-chart.ts`: 25 written measures (25–49)
+expand to 48 performed measures through the 25–32 first ending, measure 33
+second ending, and the repeat of measures 34–49. The chart covers all 322
+performed upper-staff attacks in 25 authored word slots, with eight holds at
+the cadence notes in measures 32, 33 and 49 and the longer notes in measure
+41 (including repeat visits). Measures 29, 30, 46 and 47 begin with tied
+continuations, so their first **new** attack is at beat 0.5. There are no
+grace notes in this extracted variation; the lower staff has two voices.
+Each complete eighth-note bar uses one common eight-letter word; measures 29,
+30, 46 and 47 use seven-letter words because their first note is a tied
+continuation. The two alternate-ending single-note cadences use one-letter
+words. Those phrase choices and the holds
+are provisional musical interpretations. At 120 BPM the piece lasts 48 seconds,
+averaging 6.7 attacks per second and peaking at eight per second in its
+eighth-note runs. Eight holds remain isolated from those dense runs.
+
+The established audio endpoint rule is unchanged: a tap sounds only until its
+original note-off. At 1×, 290 of Variation I's non-hold targets have notes
+shorter than the 160 ms Good late window, so an accepted hit late enough in
+that window can be silent. At 0.5× the count is zero; at 3× it is 314. This
+is a timing and feel limitation to review by ear, not a different grading rule.
+Per-run rerolls change only words; source locations, repeat expansion, note
+bundles, velocities and holds remain fixed. The compiler retries any assignment
+that creates an overlapping same-key hold.
+
+Phase 18 scoring uses Perfect +100, Good +70, Miss −50 and Wrong −50.
+Successful attacks increment the combo once and earn `2 × (combo − 1)`;
+hold progress adds only its existing proportional bonus, up to +100. Raw
+attack, sustain and combo points retain negative penalty debt before the
+attempt's fixed speed multiplier; only the displayed score is clamped and
+rounded. For N eligible attacks and H holds, maximum score is
+`speed × [100N + 100H + N(N − 1)]`. Skipped practice targets do not count.
 
 The committed Twinkle source collection has explicit `THEME.` and `VAR. I.`
 through `VAR. XII.` headings. The 13 standalone `.musicxml` files in

@@ -2,6 +2,7 @@ import type { XmlPhrase } from '../gameplay/piano-chart';
 import { GREENSLEEVES_CHART } from './greensleeves-chart';
 import { TURKISH_CHART } from './turkish-chart';
 import { TWINKLE_THEME_CHART } from './twinkle-theme-chart';
+import { TWINKLE_VARIATION_01_CHART } from './twinkle-variation-01-chart';
 import { SONGS } from '../song-manifest.generated';
 
 export type ChartCoverage = 'full' | 'opening' | 'listen';
@@ -11,6 +12,7 @@ const charts: Readonly<Record<string, SongChart>> = {
   greensleeves: { unitsPerQuarter: 2, phrases: GREENSLEEVES_CHART, coverage: 'full' },
   'wa-mozart-marche-turque-turkish-march-fingered': { unitsPerQuarter: 2, phrases: TURKISH_CHART, coverage: 'opening' },
   'twinkle-theme': { unitsPerQuarter: 2, phrases: TWINKLE_THEME_CHART, coverage: 'full' },
+  'twinkle-variation-01': { unitsPerQuarter: 2, phrases: TWINKLE_VARIATION_01_CHART, coverage: 'full' },
 };
 
 export function songChartFor(id: string): SongChart {

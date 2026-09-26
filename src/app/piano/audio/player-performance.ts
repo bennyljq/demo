@@ -15,6 +15,8 @@ export interface PlayerNoteSink {
   newChannel(): number;
   noteOn(channel: number, pitch: number, velocity: number, at: number): void;
   noteOff(channel: number, pitch: number, at: number): void;
+  prepareChannel?(channel: number): void;
+  canUseChannel?(channel: number): boolean;
 }
 interface Voice {
   id: number;
@@ -94,12 +96,20 @@ export class PlayerPerformance {
 
   snapshot(position: number): readonly PerformedBar[] {
     this.reap(this.sink.now());
-    return this.bars.filter(bar => bar.start <= position).map(bar => ({ ...bar, end: bar.end ?? Math.min(position, bar.plannedEnd ?? position) }));
+    return this.bars.filter(bar => bar.start <= position).map(bar => ({ ...bar,
+      end: Math.min(position, bar.end ?? bar.plannedEnd ?? position) }));
+  }
+
+  /** Keep channels with queued demo attacks unavailable until those events have passed. */
+  retireUntil(audioAt: number): readonly number[] {
+    for (const channel of this.channels) channel.busyUntil = Math.max(channel.busyUntil, audioAt);
+    return this.channels.map(channel => channel.number);
   }
 
   private acquire(now: number): number {
-    const reusable = this.channels.find(channel => channel.busyUntil <= now);
-    if (reusable) return reusable.number;
+    const reusable = this.channels.find(channel => channel.busyUntil <= now &&
+      (this.sink.canUseChannel?.(channel.number) ?? true));
+    if (reusable) { this.sink.prepareChannel?.(reusable.number); return reusable.number; }
     const number = this.sink.newChannel();
     if (number < 0) return -1;
     this.channels.push({ number, busyUntil: now });

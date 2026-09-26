@@ -1,4 +1,4 @@
-import { LetterResult, SCORING_POINTS, TypingRound } from './piano-judgement';
+import { LetterResult, TypingRound } from './piano-judgement';
 import { ChartCoverage } from '../charts/song-charts';
 
 export interface ResultLetter {
@@ -26,6 +26,9 @@ export interface RunResult {
   readonly miss: number;
   readonly wrong: number;
   readonly wrongPenalty: number;
+  readonly missPenalty: number;
+  readonly comboBonus: number;
+  readonly attackPoints: number;
   readonly bestCombo: number;
   readonly sustain: number;
   readonly sustainAvailable: number;
@@ -34,7 +37,7 @@ export interface RunResult {
 
 /** Copy primitive values before transport cleanup resets the active round. */
 export function captureRunResult(round: TypingRound, songId: string, songTitle: string,
-  coverage: Exclude<ChartCoverage, 'listen'>, speed: number, startPosition: number): RunResult | null {
+  coverage: Exclude<ChartCoverage, 'listen'>, startPosition: number): RunResult | null {
   if (!round.complete || !round.results.some(result => result !== 'skipped')) return null;
   const letters = Object.freeze(round.targets.map(target => Object.freeze({
     id: target.id, letter: target.letter, word: target.word, wordIndex: target.wordIndex,
@@ -43,12 +46,12 @@ export function captureRunResult(round: TypingRound, songId: string, songTitle: 
     sustainPoints: round.sustainPoints[target.index], hasHold: target.holdEnd !== undefined,
   })));
   return Object.freeze({
-    songId, songTitle, coverage, speed, startPosition,
+    songId, songTitle, coverage, speed: round.speed, startPosition,
     total: round.totalPoints, raw: round.rawPoints, available: round.availablePoints,
     perfect: round.results.filter(result => result === 'perfect').length,
     good: round.results.filter(result => result === 'good').length,
-    miss: round.results.filter(result => result === 'miss').length,
-    wrong: round.wrongCount, wrongPenalty: round.wrongCount * SCORING_POINTS.wrong, bestCombo: round.bestCombo,
+    miss: round.missCount, missPenalty: round.missPenalty, attackPoints: round.attackPoints,
+    wrong: round.wrongCount, wrongPenalty: round.wrongPenalty, comboBonus: round.comboBonus, bestCombo: round.bestCombo,
     sustain: round.earnedSustainPoints, sustainAvailable: round.availableSustainPoints,
     letters,
   });

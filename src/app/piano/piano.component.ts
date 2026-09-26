@@ -28,6 +28,8 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   readonly settingsOpen = signal(false);
   readonly runStarted = signal(false);
   readonly demoActive = signal(false);
+  readonly comboTier = computed(() => Math.min(4, this.attempt().combo < 5 ? 0 :
+    this.attempt().combo < 10 ? 1 : this.attempt().combo < 20 ? 2 : this.attempt().combo < 40 ? 3 : 4));
   readonly demoKeyboardRows = DEMO_KEYBOARD_ROWS;
   readonly demoKeyStates = signal<Readonly<Record<string, DemoKeyVisual>>>({});
   private readonly demoKeyboard = new DemoKeyboardPresenter();
@@ -53,6 +55,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   readonly librarySongs = this.playback.songs;
   readonly selectedTrack = signal(-1);
   readonly lookAhead = signal(6);
+  readonly staggerLetters = signal(false);
   readonly theme = signal<'light' | 'dark'>('dark');
   readonly statusLabel = computed(() => ({
     loading: 'Preparing', 'enable-audio': 'Enable audio to prepare', ready: 'Ready',
@@ -69,7 +72,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   @ViewChild('passage', { static: true }) private passage: ElementRef<HTMLElement>;
   @ViewChild('gameplay', { static: true }) private gameplay: ElementRef<HTMLElement>;
   @ViewChild('settingsDialog') private settingsDialog?: ElementRef<HTMLElement>;
-  @ViewChild('settingsTrigger', { static: true }) private settingsTrigger: ElementRef<HTMLButtonElement>;
+  @ViewChild('settingsTrigger') private settingsTrigger?: ElementRef<HTMLButtonElement>;
   private focusBeforeSettings: HTMLElement | null = null;
   private passageObserver?: ResizeObserver;
   readonly passageWidth = signal(800);
@@ -131,7 +134,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       try {
         this.chart.set(targets);
         this.round = new TypingRound(targets, untracked(() => this.settings()));
-        this.round.reset(untracked(() => this.runStartPosition()));
+        this.round.reset(untracked(() => this.runStartPosition()), untracked(() => this.playback.playbackRate()));
         this.chartedRun.set(targets.length > 0);
         this.chartError.set('');
         this.publishedRevision = -1;
@@ -162,7 +165,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       this.pianoRoll = new PianoRoll(this.canvas.nativeElement, this.visibleNotes, () => this.playback.visualPosition,
         () => this.chart().map(target => ({ ...target, result: this.round?.results[target.index] ?? 'pending', attackGrade: this.round?.attackGrades[target.index] })),
         () => this.updateAttempt(this.playback.playbackPosition), () => this.playback.score(), () => this.lookAhead(),
-        () => this.settings(), () => this.playback.playbackRate(), () => this.playback.countInVisual,
+        () => this.settings(), () => this.staggerLetters(), () => this.playback.playbackRate(), () => this.playback.countInVisual,
         () => this.playback.songBeatPositions, () => this.playback.melodyCoupling(), () => this.playback.performedBars);
       document.addEventListener('keydown', this.onKey);
       document.addEventListener('keyup', this.onKeyUp);
@@ -188,6 +191,9 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   }
 
   chooseSong(id: string): void {
+    if (this.demoActive()) return;
+    const song = this.playback.songs.find(entry => entry.id === id);
+    if (song) this.lookAhead.set(song.defaultLookAhead);
     this.cancelDemo();
     this.playback.stop();
     this.feedback.set(null);
@@ -225,6 +231,15 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   }
 
   setLookAhead(event: Event): void { this.lookAhead.set(Number((event.target as HTMLInputElement).value)); }
+  setStaggerLetters(event: Event): void {
+    this.staggerLetters.set((event.target as HTMLInputElement).checked);
+    this.pianoRoll?.clearEffects();
+  }
+  setPlaybackSpeed(event: Event): void {
+    if (this.runStarted() || this.playback.status() !== 'ready') return;
+    this.playback.setPlaybackRate(Number((event.target as HTMLSelectElement).value));
+    this.resetAttempt(this.runStartPosition());
+  }
   toggleTheme(): void { this.theme.update(theme => theme === 'light' ? 'dark' : 'light'); }
   setMetronome(event: Event): void { void this.playback.setMetronome((event.target as HTMLInputElement).checked); }
 
@@ -306,7 +321,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   }
 
   exitRun(): void {
-    if (this.stage() !== 'play') return;
+    if (this.stage() !== 'play' || this.demoActive()) return;
     this.runVersion++;
     this.cancelDemo();
     this.round?.blur();
@@ -327,6 +342,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   }
 
   chooseLibrary(): void {
+    if (this.demoActive()) return;
     this.runVersion++;
     this.cancelDemo();
     this.round?.blur();
@@ -336,6 +352,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   }
 
   goHome(): void {
+    if (this.demoActive()) return;
     this.chooseLibrary();
     this.stage.set('home');
   }
@@ -350,11 +367,12 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
 
   openSettings(): void {
     if (this.settingsOpen()) return;
-    if (this.demoActive()) this.restart();
     this.focusBeforeSettings = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    this.playback.releasePlayerVoices();
-    this.round?.blur();
-    this.publishAttempt();
+    if (!this.demoActive()) {
+      this.playback.releasePlayerVoices();
+      this.round?.blur();
+      this.publishAttempt();
+    }
     this.settingsOpen.set(true);
     this.changeDetector.detectChanges();
     this.settingsDialog?.nativeElement.focus({ preventScroll: true });
@@ -364,7 +382,8 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     if (!this.settingsOpen()) return;
     this.settingsOpen.set(false);
     this.changeDetector.detectChanges();
-    const target = this.focusBeforeSettings?.isConnected ? this.focusBeforeSettings : this.settingsTrigger.nativeElement;
+    const target = this.focusBeforeSettings?.isConnected ? this.focusBeforeSettings :
+      this.settingsTrigger?.nativeElement ?? this.gameplay.nativeElement;
     target.focus({ preventScroll: true });
     this.focusBeforeSettings = null;
   }
@@ -375,7 +394,9 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
 
   onModalKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
-      event.preventDefault(); event.stopPropagation(); this.closeSettings(); return;
+      event.preventDefault(); event.stopPropagation();
+      if (this.demoActive()) this.restart();
+      this.closeSettings(); return;
     }
     if (event.key !== 'Tab' || !this.settingsDialog) return;
     const items = Array.from(this.settingsDialog.nativeElement.querySelectorAll<HTMLElement>(
@@ -418,7 +439,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     const song = this.selectedSong();
     const coverage = this.coverage();
     if (!song || !this.round || coverage === 'listen') return null;
-    return captureRunResult(this.round, song.id, song.title, coverage, this.playback.playbackRate(), this.runStartPosition());
+    return captureRunResult(this.round, song.id, song.title, coverage, this.runStartPosition());
   }
 
   private maybeCompleteOpening(): void {
@@ -439,7 +460,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   private resetAttempt(destination = 0): void {
     this.feedback.set(null);
     this.pianoRoll?.clearEffects();
-    this.round?.reset(destination);
+    this.round?.reset(destination, this.playback.playbackRate());
     this.feedbackSerial = this.round?.feedbackSerial ?? 0;
     this.publishAttempt();
   }
@@ -505,7 +526,10 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   }
 
   private readonly onKey = (event: KeyboardEvent): void => {
-    if (this.settingsOpen()) { if (event.key === 'Escape') { event.preventDefault(); this.zone.run(() => this.closeSettings()); } return; }
+    if (this.settingsOpen()) { if (event.key === 'Escape') { event.preventDefault(); this.zone.run(() => {
+      if (this.demoActive()) this.restart();
+      this.closeSettings();
+    }); } return; }
     if (event.key === 'Escape' && this.stage() === 'play') {
       event.preventDefault();
       if (!event.repeat) this.zone.run(() => this.restart());
@@ -545,7 +569,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   };
   private readonly onBlur = (): void => {
     this.suppressedStartKeys.clear();
-    if (this.demoActive()) { this.zone.run(() => this.restart()); return; }
+    if (this.demoActive()) return;
     this.playback.releasePlayerVoices();
     this.round?.blur();
     this.publishAttempt();
@@ -599,12 +623,14 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       const now = performance.now();
       const kind = round.feedbackKind;
       const target = round.targets[round.feedbackIndex];
-      if (target && (kind === 'perfect' || kind === 'good'))
+      const fresh = !this.demoActive() || !target ||
+        this.playback.playbackPosition - target.time <= 0.5 * this.playback.playbackRate();
+      if (fresh && target && (kind === 'perfect' || kind === 'good'))
         this.pianoRoll?.flashHit(target, kind, this.playback.visualPosition, this.lookAhead());
-      this.zone.run(() => this.feedback.set({ kind, started: now, until: now + 500,
+      this.zone.run(() => this.feedback.set(fresh ? { kind, started: now, until: now + 500,
         letter: round.feedbackLetter,
         targetId: kind === 'perfect' || kind === 'good' ? target?.id : undefined,
-        label: { perfect: 'Perfect', good: 'Good', miss: 'Miss', wrong: 'Wrong key' }[kind] }));
+        label: { perfect: 'Perfect', good: 'Good', miss: 'Miss', wrong: 'Wrong key' }[kind] } : null));
     }
     const pending = round.results.findIndex(r => r === 'pending' || r === 'holding');
     const current = pending < 0 ? -1 : pending;
