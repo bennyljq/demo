@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { PianoPlaybackService } from './piano-playback.service';
+import { importMusicXml } from '../music/musicxml-import';
 
 describe('song selection', () => {
   it('starts with the first visible song selected for loading', () => {
@@ -131,6 +132,81 @@ describe('song selection', () => {
       expect(releasePhysical.calls.mostRecent().args[1]).toBeCloseTo(-0.12, 8);
       internal.sourceValue.set('greensleeves');
       expect(service.leadInPosition).toBeNull();
+    } finally { service.ngOnDestroy(); }
+  });
+
+  it('does not reset the synth at the downbeat after an early first-note attack', () => {
+    const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
+    const internal = service as any;
+    let seekCount = 0;
+    let firstVoiceActive = false;
+    const perform = jasmine.createSpy('perform').and.callFake(() => { firstVoiceActive = true; });
+    internal.context = { currentTime: 9.8, close: async () => {} };
+    internal.scoreValue.set({});
+    internal.clickBuffer = {};
+    internal.couplingValue.set([{ start: 0 }]);
+    internal.playerPerformance = { perform, releaseAll: () => {} };
+    internal.sequencer = {
+      get currentTime() { return 0; },
+      set currentTime(_time: number) { seekCount++; firstVoiceActive = false; },
+      play: jasmine.createSpy('play'), pause: () => {},
+    };
+    spyOn(internal, 'prepareVisualPlan').and.callFake(() => {
+      internal.preparedPulsePlan = { songStart: 0, barStart: -2, beatSeconds: 0.5, offsets: [0, 0.5, 1, 1.5] };
+    });
+    spyOn(internal, 'scheduleClick');
+    try {
+      internal.startCountIn();
+      expect(seekCount).toBe(1);
+      internal.context.currentTime = internal.countInPlan.songAt - 0.05;
+      service.performMelodyInput(0, 'perfect', 'KeyT', service.leadInPosition!);
+      expect(firstVoiceActive).toBeTrue();
+      internal.startSequence();
+      expect(internal.sequencer.play).toHaveBeenCalled();
+      expect(seekCount).toBe(1);
+      expect(firstVoiceActive).toBeTrue();
+    } finally { service.ngOnDestroy(); }
+  });
+
+  it('prepares fresh words on request without fetching audio or changing score locations', async () => {
+    const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
+    const internal = service as any;
+    const score = importMusicXml(await (await fetch('/assets/piano/tracks/Twinkle_Theme.musicxml')).text());
+    internal.scoreValue.set(score);
+    internal.statusValue.set('ready');
+    try {
+      expect(service.prepareRunChart(42)).toBeTrue();
+      const first = service.chart();
+      expect(service.prepareRunChart(42)).toBeTrue();
+      expect(service.chart().map(target => target.letter)).not.toEqual(first.map(target => target.letter));
+      expect(service.chart().map(target => target.time)).toEqual(first.map(target => target.time));
+      expect(service.score()).toBe(score);
+      expect(service.status()).toBe('ready');
+    } finally { service.ngOnDestroy(); }
+  });
+
+  it('schedules demo audio before any UI frame and cancels the pending clock fill', () => {
+    const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
+    const internal = service as any;
+    const perform = jasmine.createSpy('perform');
+    const releaseAll = jasmine.createSpy('releaseAll');
+    internal.context = { currentTime: 9.8, close: async () => {} };
+    internal.countInPlan = { songAt: 10, plan: { songStart: 0 } };
+    internal.playerPerformance = { perform, releaseAll };
+    internal.sequencer = { pause: () => {}, currentTime: 0 };
+    internal.synth = { stopAll: () => {}, reset: () => {}, destroy: () => {} };
+    internal.statusValue.set('count-in');
+    try {
+      service.startDemo([
+        { time: 0, key: 'A', targetIndex: 0, release: false, hold: false },
+        { time: 0.13, key: 'A', targetIndex: 0, release: true, hold: false },
+        { time: 1, key: 'B', targetIndex: 1, release: false, hold: false },
+      ]);
+      expect(perform).toHaveBeenCalledOnceWith(0, 'perfect', 'demo:A', 0, 1, 10);
+      service.stop();
+      expect(releaseAll).toHaveBeenCalled();
+      expect(internal.demoTimer).toBeUndefined();
+      expect(internal.demoActions).toEqual([]);
     } finally { service.ngOnDestroy(); }
   });
 });

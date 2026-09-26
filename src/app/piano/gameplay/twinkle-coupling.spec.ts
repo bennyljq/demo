@@ -5,6 +5,9 @@ import { buildXmlTypingChart } from './piano-chart';
 import { TWINKLE_THEME_CHART } from '../charts/twinkle-theme-chart';
 import { randomizeTwinkleWords } from '../charts/twinkle-word-randomizer';
 import { coupleTwinkleMelody } from './twinkle-coupling';
+import { prepareTwinkleRun } from '../charts/prepare-twinkle-run';
+import { TypingRound } from './piano-judgement';
+import { captureRunResult } from './piano-run-result';
 
 describe('Twinkle player melody coupling', () => {
   it('maps every performed staff-1 attack across both repeat visits and removes only those notes from MIDI', async () => {
@@ -46,5 +49,30 @@ describe('Twinkle player melody coupling', () => {
     expect(randomized.every(phrase => phrase.word.length === phrase.letters.length && /^[A-Z]+$/.test(phrase.word))).toBeTrue();
     expect(new Set(randomized.map(phrase => phrase.word)).size).toBe(randomized.length);
     expect(randomized.filter(phrase => phrase.word.length === 5).length).toBe(1);
+  });
+
+  it('prepares seeded, playable words without changing coupling or an earlier result snapshot', async () => {
+    const score = importMusicXml(await (await fetch('/assets/piano/tracks/Twinkle_Theme.musicxml')).text());
+    const first = prepareTwinkleRun(score, [], 42);
+    const again = prepareTwinkleRun(score, [], 42);
+    const next = prepareTwinkleRun(score, first.words, 42);
+    expect(again.words).toEqual(first.words);
+    expect(next.words).not.toEqual(first.words);
+    expect(new Set(next.words).size).toBe(12);
+    expect(first.targets.map(target => [target.id, target.time, target.holdEnd]))
+      .toEqual(next.targets.map(target => [target.id, target.time, target.holdEnd]));
+    expect(first.coupling.map(target => target.notes.map(note => note.id)))
+      .toEqual(next.coupling.map(target => target.notes.map(note => note.id)));
+    const round = new TypingRound(first.targets);
+    round.advance(score.duration + 1);
+    const snapshot = captureRunResult(round, 'twinkle-theme', 'Twinkle Twinkle Little Star', 'full', 1, 0)!;
+    expect(snapshot.letters.map(letter => letter.word)).toEqual(first.targets.map(target => target.word));
+    expect(snapshot.letters.map(letter => letter.word)).not.toEqual(next.targets.map(target => target.word));
+    for (let seed = 0; seed < 32; seed++) {
+      const prepared = prepareTwinkleRun(score, [], seed);
+      expect(new Set(prepared.words).size).withContext(`seed ${seed}`).toBe(12);
+      expect(prepared.targets.length).withContext(`seed ${seed}`).toBe(98);
+      expect(prepared.coupling.length).withContext(`seed ${seed}`).toBe(98);
+    }
   });
 });

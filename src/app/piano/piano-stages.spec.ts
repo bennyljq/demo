@@ -184,4 +184,75 @@ describe('piano stages', () => {
       expect(perform.calls.mostRecent().args[3]).toBeCloseTo(-0.05, 8);
     } finally { fixture.destroy(); }
   });
+
+  it('keeps prepared words for Start and Demo, but rerolls human Restart and Results Replay', () => {
+    TestBed.configureTestingModule({ imports: [PianoComponent] });
+    const fixture = TestBed.createComponent(PianoComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    const playback = component.playback as any;
+    spyOn(component.playback, 'selectSong').and.resolveTo();
+    spyOn(component.playback, 'play').and.resolveTo();
+    spyOn(component.playback, 'restart');
+    spyOn(component.playback, 'stop');
+    spyOn(component.playback, 'commitSeek');
+    spyOn(component.playback, 'startDemo');
+    const prepare = spyOn(component.playback, 'prepareRunChart').and.returnValue(true);
+    try {
+      component.chooseSong('twinkle-theme');
+      playback.scoreValue.set({ measures: [], annotations: [] });
+      playback.statusValue.set('ready');
+      const target = { index: 0, id: 'a', word: 'A', letter: 'A', time: 0, wordIndex: 0 };
+      component.chart.set([target]);
+      (component as any).round = new TypingRound([target]);
+      component.play();
+      expect(prepare).not.toHaveBeenCalled();
+      component.restart();
+      expect(prepare).toHaveBeenCalledTimes(1);
+      component.reroll();
+      expect(prepare).toHaveBeenCalledTimes(2);
+      component.startDemo();
+      expect(component.demoActive()).toBeTrue();
+      expect(component.playback.startDemo).toHaveBeenCalled();
+      expect(prepare).toHaveBeenCalledTimes(2);
+      component.restart();
+      expect(component.demoActive()).toBeFalse();
+      expect(prepare).toHaveBeenCalledTimes(2);
+      component.stage.set('results');
+      component.retry();
+      expect(prepare).toHaveBeenCalledTimes(3);
+    } finally { fixture.destroy(); }
+  });
+
+  it('ignores physical typing during a demo and cancels it when Settings opens', () => {
+    TestBed.configureTestingModule({ imports: [PianoComponent] });
+    const fixture = TestBed.createComponent(PianoComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    const playback = component.playback as any;
+    spyOn(component.playback, 'selectSong').and.resolveTo();
+    spyOn(component.playback, 'play').and.resolveTo();
+    spyOn(component.playback, 'commitSeek');
+    spyOn(component.playback, 'startDemo');
+    spyOn(component.playback, 'restart');
+    const perform = spyOn(component.playback, 'performMelodyInput');
+    try {
+      component.chooseSong('twinkle-theme');
+      playback.scoreValue.set({ measures: [], annotations: [] });
+      playback.statusValue.set('ready');
+      const target = { index: 0, id: 'a', word: 'A', letter: 'A', time: 0, wordIndex: 0 };
+      component.chart.set([target]);
+      const round = new TypingRound([target]);
+      (component as any).round = round;
+      component.startDemo();
+      playback.statusValue.set('playing');
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', code: 'KeyA', bubbles: true }));
+      expect(round.results[0]).toBe('pending');
+      expect(perform).not.toHaveBeenCalled();
+      component.openSettings();
+      expect(component.demoActive()).toBeFalse();
+      expect(component.runStarted()).toBeFalse();
+      expect(component.settingsOpen()).toBeTrue();
+    } finally { fixture.destroy(); }
+  });
 });

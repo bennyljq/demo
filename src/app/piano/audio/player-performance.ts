@@ -46,10 +46,10 @@ export class PlayerPerformance {
     return new Set(this.targets.flatMap(target => target.notes.map(note => note.id)));
   }
 
-  perform(targetIndex: number, kind: PerformanceKind, physical: string, position: number, rate: number): boolean {
+  perform(targetIndex: number, kind: PerformanceKind, physical: string, position: number, rate: number, audioAt = this.sink.now()): boolean {
     const target = this.targets[targetIndex];
     if (!target || !Number.isFinite(position) || rate <= 0) return false;
-    const now = this.sink.now();
+    const now = audioAt;
     this.reap(now);
     const old = this.active.get(targetIndex);
     if (old) this.releaseVoice(old, position, now);
@@ -78,10 +78,10 @@ export class PlayerPerformance {
     return true;
   }
 
-  releasePhysical(physical: string, position: number): void {
+  releasePhysical(physical: string, position: number, audioAt = this.sink.now()): void {
     const voice = this.physical.get(physical);
     if (voice && this.active.get(voice.targetIndex)?.id === voice.id)
-      this.releaseVoice(voice, position, this.sink.now());
+      this.releaseVoice(voice, position, audioAt);
   }
 
   releaseAll(position: number, clearBars = false): void {
@@ -94,7 +94,7 @@ export class PlayerPerformance {
 
   snapshot(position: number): readonly PerformedBar[] {
     this.reap(this.sink.now());
-    return this.bars.map(bar => ({ ...bar, end: bar.end ?? Math.min(position, bar.plannedEnd ?? position) }));
+    return this.bars.filter(bar => bar.start <= position).map(bar => ({ ...bar, end: bar.end ?? Math.min(position, bar.plannedEnd ?? position) }));
   }
 
   private acquire(now: number): number {

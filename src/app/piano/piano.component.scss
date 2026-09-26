@@ -219,7 +219,7 @@ h1 { margin: 0 0 4px; font-size: 2rem; }
     .main-settings, .secondary-grid, .practice-grid { grid-template-columns: 1fr; }
     .play-identity h1 { max-width: 42vw; }
   }
-  /* Phase 12: a quiet front door, a four-piece library, and shared settings. */
+  /* A quiet front door, one-piece library, and shared settings. */
   input, textarea { user-select: text; }
   .game-shell { position: relative; min-height: calc(100dvh - 58px); }
   .global-actions { position: relative; display: flex; justify-content: flex-end; gap: 8px; z-index: 2; min-height: 34px; }
@@ -233,7 +233,7 @@ h1 { margin: 0 0 4px; font-size: 2rem; }
   .home-art circle { animation: note-drift 4s ease-in-out infinite alternate; }
   .home-art circle:nth-of-type(2) { animation-delay: -2s; }
   @keyframes note-drift { to { transform: translateY(-3px); } }
-  .home-actions, .tutorial-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; }
+  .home-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; }
   .home-actions button { min-width: 128px; min-height: 44px; }
   .home-audio-status { color: var(--muted); }
   .library-screen { padding-bottom: 40px; }
@@ -245,26 +245,39 @@ h1 { margin: 0 0 4px; font-size: 2rem; }
   .song-card-main span, .song-card-main small { color: var(--muted); }
   .song-card-meta { display: flex; flex-direction: column; gap: 5px; flex: 0 0 135px; color: var(--muted); font-size: .86rem; }
   .card-arrow { color: var(--accent); font-size: 1.5rem; }
-  .tutorial-screen { max-width: 850px; margin-left: auto; margin-right: auto; }
-  .tutorial-screen > p { color: var(--muted); line-height: 1.55; }
-  .tutorial-screen .performance-legend { padding: 9px 12px; border-left: 3px solid var(--accent); background: var(--panel); font-size: .86rem; }
-  .tutorial-screen.example-open { margin-bottom: 20px; }
-  .tutorial-actions { justify-content: flex-start; margin: 20px 0; }
-  .tutorial-actions button.selected { border-color: var(--accent); background: var(--panel); }
-  .demo-label { display: block; color: var(--muted); font-size: .75rem; }
-  .tutorial-outcome { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 14px; border: 1px solid var(--accent); border-radius: 10px; }
-  .tutorial-outcome span { color: var(--muted); }
   .exit-button { flex: none; }
-  .armed-panel { display: grid; grid-template-columns: minmax(205px, 1fr) 205px minmax(190px, 1fr); align-items: center;
+  .armed-panel { display: grid; grid-template-columns: minmax(140px, 1fr) auto minmax(140px, 1fr); align-items: center;
     column-gap: 18px; min-height: 88px; box-sizing: border-box; padding: 13px 16px; margin: 14px 0;
     border: 1px solid var(--border); border-radius: 10px; background: var(--panel); }
     .armed-status-slot, .armed-control-slot, .armed-hint-slot { min-height: 44px; display: flex; align-items: center; }
-    .armed-control-slot button { width: 100%; min-height: 44px; font-weight: 800; }
+    .armed-control-slot { gap: 7px; }
+    .armed-control-slot button { min-height: 44px; padding: 7px 10px; white-space: nowrap; font-weight: 800; }
+    .armed-control-slot button:first-child { min-width: 114px; }
     .armed-hint-slot { gap: 12px; justify-content: flex-end; text-align: right; }
     .armed-panel .status, .armed-panel .error { margin: 0; }
     .armed-messages { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding-top: 7px; }
     .armed-messages .error { flex-basis: 100%; }
     .passage-measure { width: 100%; }
+    .demo-keyboard { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden;
+      transition: grid-template-rows 220ms ease, opacity 180ms ease, visibility 0s linear 220ms; }
+    .demo-keyboard.active { grid-template-rows: 1fr; opacity: 1; visibility: visible;
+      transition: grid-template-rows 220ms ease, opacity 180ms ease, visibility 0s; }
+    .demo-keyboard-inner { min-height: 0; overflow: hidden; }
+    .demo-keyboard-layout { width: min(100%, 760px); box-sizing: border-box; margin: 0 auto; padding: 7px 0 9px; }
+    .demo-key-row { display: flex; gap: 3px; margin-top: 3px; align-items: center; justify-content: center; }
+    .demo-key-row:first-child { margin-top: 0; }
+    .demo-key { position: relative; display: grid; place-items: center; flex: 1 1 0; min-width: 0; max-width: 5em;
+      height: clamp(23px, 2.8vw, 31px); box-sizing: border-box; overflow: visible;
+      border: 1px solid var(--border); border-radius: 4px; background: var(--control); color: var(--text);
+      box-shadow: inset 0 -2px 0 var(--panel); font: 700 clamp(9px, 1.1vw, 11px)/1 system-ui, sans-serif;
+      transition: background-color 110ms ease-out, color 110ms ease-out, border-color 110ms ease-out, box-shadow 110ms ease-out; }
+    .demo-key-label { min-width: 0; overflow: hidden; white-space: nowrap; }
+    .demo-key.pressed, .demo-key.held { border-color: var(--accent); background: var(--accent); color: var(--surface); transition: none; }
+    .demo-key.held { box-shadow: inset 0 0 0 2px var(--surface); }
+    .demo-key-pulse { position: absolute; inset: -2px; border: 2px solid var(--accent); border-radius: 5px;
+      pointer-events: none; animation: demo-key-outline 220ms ease-out both; }
+    @keyframes demo-key-outline { from { opacity: .9; } to { opacity: 0; } }
+    @media (max-width: 520px) { .demo-key { font-size: 8px; } }
     .loading-playfield { padding: 24px; color: var(--muted); background: var(--panel); border-radius: 8px; }
     .modal-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px; background: #0d1015a8; }
     .settings-dialog { width: min(850px, 100%); max-height: calc(100dvh - 32px); overflow-y: auto; padding: 20px; box-sizing: border-box; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 20px 60px #0007; outline: none; }
@@ -292,7 +305,8 @@ h1 { margin: 0 0 4px; font-size: 2rem; }
       .play-header { align-items: start; }
       .play-hud { grid-template-columns: repeat(3, auto) 1fr; gap: 6px; }
       .settings-dialog { padding: 14px; }
-      .armed-panel { grid-template-columns: minmax(110px, 1fr) minmax(135px, 170px); min-height: 116px; gap: 8px 12px; }
+      .armed-panel { grid-template-columns: 1fr; min-height: 150px; gap: 8px 12px; }
+      .armed-control-slot { justify-content: flex-start; flex-wrap: wrap; }
       .armed-hint-slot { grid-column: 1 / -1; min-height: 22px; justify-content: flex-start; text-align: left; }
     }
     .keyboard-start-hint { color: var(--accent); font-size: .88rem; font-weight: 700; }
@@ -314,8 +328,10 @@ h1 { margin: 0 0 4px; font-size: 2rem; }
     .result-letter:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .result-review .result-detail { min-height: 1.4em; margin: 8px 0 0; color: var(--muted); font-size: .8rem; }
     @media (prefers-reduced-motion: reduce) {
+      .demo-keyboard, .demo-keyboard.active { transition: none; }
+      .demo-key { transition: none; }
+      .demo-key-pulse { display: none; }
       .letter, .stage-screen, .result-score, .result-stats, .countdown, .passage-line { animation: none !important; }
       .home-art circle { animation: none; }
       button, summary, .song-card, .progress-track span { transition: none !important; }
     }
-    

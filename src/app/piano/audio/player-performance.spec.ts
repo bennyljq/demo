@@ -92,4 +92,18 @@ describe('player melody voices', () => {
     expect(new PlayerPerformance(targets, noChannel).perform(0, 'perfect', 'KeyA', 1, 1)).toBeFalse();
     expect(player.snapshot(1)).toEqual([]);
   });
+
+  it('schedules a demo tap and authored hold release ahead of the current audio clock', () => {
+    const { player, events } = setup();
+    player.perform(0, 'perfect', 'demo:A', 1, 1, 12);
+    player.perform(1, 'perfect', 'demo:B', 2, 1, 13);
+    player.releasePhysical('demo:B', 2.5, 13.5);
+    expect(events).toEqual([
+      { type: 'on', channel: 16, pitch: 72, at: 12 },
+      { type: 'off', channel: 16, pitch: 72, at: 12.5 },
+      { type: 'on', channel: 16, pitch: 76, at: 13 },
+      { type: 'off', channel: 16, pitch: 76, at: 13.5 },
+    ]);
+    expect(player.snapshot(0.9)).toEqual([]);
+  });
 });

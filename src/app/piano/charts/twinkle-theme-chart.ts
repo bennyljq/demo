@@ -1,8 +1,7 @@
 import type { XmlPhrase } from '../gameplay/piano-chart';
-import { randomizeTwinkleWords } from './twinkle-word-randomizer';
 
-/** Explicit upper-staff Theme locations. Words are picked once per page load for both repeat visits. */
-export const TWINKLE_THEME_CHART: readonly XmlPhrase[] = randomizeTwinkleWords([
+/** Immutable authored locations. Run words are prepared when entering Play or rerolling. */
+export const TWINKLE_THEME_CHART: readonly XmlPhrase[] = [
   { id: 'theme-1', word: 'FROG', occurrence: 'all', letters: [ // twinkle twinkle
     { start: { measure: 1, beat: 0 } },
     { start: { measure: 1, beat: 2 } },
@@ -77,4 +76,4 @@ export const TWINKLE_THEME_CHART: readonly XmlPhrase[] = randomizeTwinkleWords([
     { start: { measure: 23, beat: 3.5 } },
     { start: { measure: 24, beat: 0 }, end: { measure: 24, beat: 2 } },
   ] },
-]);
+];

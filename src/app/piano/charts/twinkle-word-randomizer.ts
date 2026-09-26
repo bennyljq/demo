@@ -17,6 +17,17 @@ const WORDS: Readonly<Record<4 | 5, readonly string[]>> = {
   ],
 };
 
+/** A reproducible source for chart tests; runtime callers supply a fresh seed. */
+export function seededWordRandom(seed: number): () => number {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let value = Math.imul(state ^ state >>> 15, 1 | state);
+    value ^= value + Math.imul(value ^ value >>> 7, 61 | value);
+    return ((value ^ value >>> 14) >>> 0) / 0x100000000;
+  };
+}
+
 /** Changes words only; source locations, holds, IDs and repeat expansion stay authored. */
 export function randomizeTwinkleWords(phrases: readonly XmlPhrase[], random = Math.random): XmlPhrase[] {
   const unused = new Map<number, string[]>(Object.entries(WORDS).map(([length, words]) => [Number(length), [...words]]));
