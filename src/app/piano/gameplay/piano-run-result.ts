@@ -1,5 +1,6 @@
 import { LetterResult, TypingRound } from './piano-judgement';
 import { ChartCoverage } from '../charts/song-charts';
+import { calculateScoreGrade, ScoreGrade } from './piano-result-grade';
 
 export interface ResultLetter {
   readonly id: string;
@@ -21,6 +22,9 @@ export interface RunResult {
   readonly total: number;
   readonly raw: number;
   readonly available: number;
+  readonly grade: ScoreGrade;
+  readonly gradeRatio: number;
+  readonly earnedFinalScore: number;
   readonly perfect: number;
   readonly good: number;
   readonly miss: number;
@@ -39,6 +43,8 @@ export interface RunResult {
 export function captureRunResult(round: TypingRound, songId: string, songTitle: string,
   coverage: Exclude<ChartCoverage, 'listen'>, startPosition: number): RunResult | null {
   if (!round.complete || !round.results.some(result => result !== 'skipped')) return null;
+  const grade = calculateScoreGrade(round.rawPoints, round.speed, round.availablePoints);
+  if (!grade) return null;
   const letters = Object.freeze(round.targets.map(target => Object.freeze({
     id: target.id, letter: target.letter, word: target.word, wordIndex: target.wordIndex,
     result: round.results[target.index],
@@ -48,6 +54,7 @@ export function captureRunResult(round: TypingRound, songId: string, songTitle: 
   return Object.freeze({
     songId, songTitle, coverage, speed: round.speed, startPosition,
     total: round.totalPoints, raw: round.rawPoints, available: round.availablePoints,
+    grade: grade.grade, gradeRatio: grade.ratio, earnedFinalScore: grade.earned,
     perfect: round.results.filter(result => result === 'perfect').length,
     good: round.results.filter(result => result === 'good').length,
     miss: round.missCount, missPenalty: round.missPenalty, attackPoints: round.attackPoints,

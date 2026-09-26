@@ -56,7 +56,12 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   readonly selectedTrack = signal(-1);
   readonly lookAhead = signal(6);
   readonly staggerLetters = signal(false);
+  readonly backgroundMotion = signal(true);
+  readonly comboEffects = signal(true);
+  readonly pageVisible = signal(!document.hidden);
   readonly theme = signal<'light' | 'dark'>('dark');
+  readonly resultScoreDisplay = signal(0);
+  readonly resultRevealDone = signal(true);
   readonly statusLabel = computed(() => ({
     loading: 'Preparing', 'enable-audio': 'Enable audio to prepare', ready: 'Ready',
     starting: 'Starting', 'count-in': 'Count in', playing: 'Playing', error: 'Error',
@@ -121,6 +126,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   private lastNaturalEnd = 0;
   private demo?: PianoDemoController;
   private readonly suppressedStartKeys = new Set<string>();
+  private resultRevealFrame = 0;
 
   constructor() {
     effect(() => {
@@ -170,6 +176,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       document.addEventListener('keydown', this.onKey);
       document.addEventListener('keyup', this.onKeyUp);
       window.addEventListener('blur', this.onBlur);
+      document.addEventListener('visibilitychange', this.onVisibilityChange);
     });
   }
 
@@ -235,15 +242,28 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.staggerLetters.set((event.target as HTMLInputElement).checked);
     this.pianoRoll?.clearEffects();
   }
-  setPlaybackSpeed(event: Event): void {
+  stepPlaybackSpeed(direction: -1 | 1): void {
+    const options = this.playback.speedOptions;
+    const next = options.indexOf(this.playback.playbackRate() as typeof options[number]) + direction;
+    if (next >= 0 && next < options.length) this.applyPlaybackSpeed(options[next]);
+  }
+  onPlayPointerDown(event: PointerEvent): void {
+    if (this.stage() !== 'play' || this.settingsOpen()) return;
+    const target = event.target;
+    if (target instanceof HTMLElement &&
+      (target.isContentEditable || target.closest('input, textarea, select, [contenteditable="true"]'))) return;
+    event.preventDefault();
+  }
+  private applyPlaybackSpeed(rate: number): void {
     if (this.runStarted() || this.playback.status() !== 'ready') return;
-    this.playback.setPlaybackRate(Number((event.target as HTMLSelectElement).value));
+    this.playback.setPlaybackRate(rate);
     this.resetAttempt(this.runStartPosition());
   }
   toggleTheme(): void { this.theme.update(theme => theme === 'light' ? 'dark' : 'light'); }
   setMetronome(event: Event): void { void this.playback.setMetronome((event.target as HTMLInputElement).checked); }
 
   ngOnDestroy(): void {
+    this.finishResultReveal();
     this.cancelDemo();
     this.playback.releasePlayerVoices();
     this.feedback.set(null);
@@ -252,6 +272,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     document.removeEventListener('keydown', this.onKey);
     document.removeEventListener('keyup', this.onKeyUp);
     window.removeEventListener('blur', this.onBlur);
+    document.removeEventListener('visibilitychange', this.onVisibilityChange);
   }
 
   play(): void {
@@ -262,6 +283,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.resetAttempt(this.runStartPosition());
     this.chartedRun.set(!!this.round?.results.some(result => result !== 'skipped'));
     this.result.set(null);
+    this.finishResultReveal();
     this.reviewDetail.set('');
     this.finishedListening.set(false);
     this.runStarted.set(true);
@@ -310,6 +332,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.chartedRun.set(!!this.round?.results.some(result => result !== 'skipped'));
     this.runStarted.set(false);
     this.result.set(null);
+    this.finishResultReveal();
     this.reviewDetail.set('');
     this.finishedListening.set(false);
   }
@@ -332,6 +355,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
 
   retry(): void {
     if (this.stage() !== 'results') return;
+    this.finishResultReveal();
     this.reviewDetail.set('');
     this.playback.commitSeek(this.runStartPosition());
     this.playback.prepareRunChart();
@@ -343,6 +367,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
 
   chooseLibrary(): void {
     if (this.demoActive()) return;
+    this.finishResultReveal();
     this.runVersion++;
     this.cancelDemo();
     this.round?.blur();
@@ -428,7 +453,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       this.round.advance(this.playback.duration() + 1, this.playback.playbackRate());
       this.publishAttempt();
       const result = this.captureResult();
-      if (result) { this.result.set(result); this.runStarted.set(false); this.stage.set('results'); return; }
+      if (result) { this.showResult(result); this.runStarted.set(false); this.stage.set('results'); return; }
     }
     this.finishedListening.set(true);
     this.runStarted.set(false);
@@ -451,7 +476,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     const version = this.runVersion;
     void this.playback.fadeOutAndStop().then(() => {
       if (this.stage() !== 'play' || version !== this.runVersion) return;
-      this.result.set(result);
+      this.showResult(result);
       this.runStarted.set(false);
       this.stage.set('results');
     });
@@ -574,6 +599,35 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.round?.blur();
     this.publishAttempt();
   };
+  private readonly onVisibilityChange = (): void => {
+    this.pageVisible.set(!document.hidden);
+  };
+
+  private showResult(result: RunResult): void {
+    this.finishResultReveal();
+    this.result.set(result);
+    this.resultScoreDisplay.set(0);
+    this.resultRevealDone.set(false);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      this.finishResultReveal();
+      return;
+    }
+    const start = performance.now();
+    const frame = (now: number): void => {
+      const progress = Math.max(0, Math.min(1, (now - start - 260) / 850));
+      this.resultScoreDisplay.set(Math.round(result.total * (1 - Math.pow(1 - progress, 3))));
+      if (progress < 1) this.resultRevealFrame = requestAnimationFrame(frame);
+      else { this.resultRevealFrame = 0; this.resultRevealDone.set(true); }
+    };
+    this.resultRevealFrame = requestAnimationFrame(frame);
+  }
+
+  finishResultReveal(): void {
+    if (this.resultRevealFrame) cancelAnimationFrame(this.resultRevealFrame);
+    this.resultRevealFrame = 0;
+    this.resultScoreDisplay.set(this.result()?.total ?? 0);
+    this.resultRevealDone.set(true);
+  }
 
   private acceptGameplayKey(key: string, physical: string, judgementTime: number, audioPosition: number): void {
     const round = this.round;
@@ -625,8 +679,8 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       const target = round.targets[round.feedbackIndex];
       const fresh = !this.demoActive() || !target ||
         this.playback.playbackPosition - target.time <= 0.5 * this.playback.playbackRate();
-      if (fresh && target && (kind === 'perfect' || kind === 'good'))
-        this.pianoRoll?.flashHit(target, kind, this.playback.visualPosition, this.lookAhead());
+      if (fresh)
+        this.pianoRoll?.flashJudgement(kind, target, this.playback.visualPosition, this.lookAhead(), round.feedbackLetter);
       this.zone.run(() => this.feedback.set(fresh ? { kind, started: now, until: now + 500,
         letter: round.feedbackLetter,
         targetId: kind === 'perfect' || kind === 'good' ? target?.id : undefined,

@@ -1,4 +1,6 @@
-<section class="game-shell" [attr.data-stage]="stage()">
+<section class="game-shell" [attr.data-stage]="stage()" [attr.data-combo-tier]="comboEffects() ? comboTier() : 0"
+  (pointerdown)="onPlayPointerDown($event)"
+  [class.motion-paused]="!backgroundMotion() || !pageVisible()">
   @if (stage() !== 'play') { <div class="global-actions">
     @if (stage() !== 'home') { <button type="button" class="quiet-button" (click)="goHome()">Home</button> }
     <button #settingsTrigger type="button" class="quiet-button settings-shortcut" (click)="openSettings()">Settings</button>
@@ -7,7 +9,6 @@
   @if (stage() === 'home') {
     <div class="stage-screen home-screen">
       <h1 id="piano-title"><strong>HARD </strong><em>Pianist</em></h1>
-      <p class="home-intro">a musical typing game</p>
       <svg class="home-art" viewBox="0 0 560 180" aria-hidden="true" focusable="false" draggable="false">
         <path d="M16 39h528M16 57h528M16 75h528M16 93h528M16 111h528" fill="none" stroke="currentColor" stroke-width="1" opacity=".25"/>
         <path d="M72 102q13-22 26 0t26 0m192-35q13-22 26 0t26 0" fill="none" stroke="currentColor" stroke-width="2" opacity=".65"/>
@@ -32,9 +33,7 @@
   
   @if (stage() === 'library') {
     <div class="stage-screen menu-screen library-screen">
-      <header class="menu-heading"><div>
-        <p class="eyebrow">Choose a piece</p><h1 id="piano-title">Music library</h1>
-      </div></header>
+      <header class="menu-heading"><h1 id="piano-title">Music library</h1></header>
       @if (playback.engineStatus() === 'preparing') { <p class="status" data-status="loading" role="status">Preparing piano audio…</p> }
       @if (playback.engineStatus() === 'error') {
         <div class="error" role="alert">{{ playback.engineError() }} <button type="button" (click)="retryAudio()">Retry audio</button></div>
@@ -42,9 +41,10 @@
       <div class="song-list">
         @for (song of librarySongs; track song.id) {
           <button type="button" class="song-card" (click)="chooseSong(song.id)"
-          [class.selected]="playback.score() && playback.source() === song.id"
+          /* [class.selected]="playback.score() && playback.source() === song.id" */
           [class.loading]="playback.status() === 'loading' && playback.source() === song.id && playback.score() === null"
           [attr.aria-pressed]="playback.score() && playback.source() === song.id ? 'true' : 'false'">
+          <span class="song-index" aria-hidden="true">{{ $index + 1 < 10 ? '0' : '' }}{{ $index + 1 }}</span>
           <span class="song-card-main"><strong>{{ song.title }}</strong><span>{{ song.composer }}</span>
           @if (song.credit) { <small>{{ song.credit }}</small> }</span>
           <span class="song-card-meta"><span>{{ song.difficulty }}</span><span>{{ coverageLabelFor(song.id) }}</span></span>
@@ -75,14 +75,18 @@
               {{ coverage() === 'listen' ? 'Start listening' : 'Start run' }}
             </button>
           }
-          <button type="button" class="secondary-run" (click)="startDemo()" [disabled]="runStarted() || playback.status() !== 'ready' || !playback.score() || !chart().length">Demo</button>
-          <button type="button" class="secondary-run" (click)="reroll()" [disabled]="runStarted() || playback.status() !== 'ready' || !playback.score()">Reroll</button>
+          <button type="button" class="secondary-run" (click)="startDemo()" [disabled]="runStarted() || playback.status() !== 'ready' || !playback.score() || !chart().length"><span aria-hidden="true">▶</span> Demo</button>
+          <button type="button" class="secondary-run" (click)="reroll()" [disabled]="runStarted() || playback.status() !== 'ready' || !playback.score()"><span aria-hidden="true">↻</span> Reroll</button>
         </div>
         <div class="armed-speed-slot">
-          <label for="play-speed">Speed</label>
-          <select id="play-speed" [value]="playback.playbackRate()" [disabled]="runStarted() || playback.status() !== 'ready'" (change)="setPlaybackSpeed($event)">
-            @for (rate of playback.speedOptions; track rate) { <option [value]="rate" [selected]="rate === playback.playbackRate()">{{ rate }}×</option> }
-          </select>
+          <span id="play-speed-label">Speed</span>
+          <div class="speed-stepper" role="group" aria-labelledby="play-speed-label">
+            <button type="button" aria-label="Decrease speed" (click)="stepPlaybackSpeed(-1)"
+              [disabled]="runStarted() || playback.status() !== 'ready' || playback.playbackRate() === playback.speedOptions[0]">−</button>
+            <strong aria-live="polite">{{ playback.playbackRate() }}×</strong>
+            <button type="button" aria-label="Increase speed" (click)="stepPlaybackSpeed(1)"
+              [disabled]="runStarted() || playback.status() !== 'ready' || playback.playbackRate() === playback.speedOptions[playback.speedOptions.length - 1]">+</button>
+          </div>
           <span class="speed-multiplier">Score ×{{ playback.playbackRate() }}</span>
         </div>
         <div class="armed-status-slot"><p class="status" role="status" aria-live="polite" [attr.data-status]="playback.status()">
@@ -106,10 +110,15 @@
       @if (playback.score()) {
         <div class="play-hud">
           @if (chartedRun()) {
-            <span class="hud-score">Score <strong>{{ attempt().total }}</strong><small> / {{ attempt().available.toFixed(0) }} · ×{{ playback.playbackRate() }}</small></span>
-            <span class="combo-shell" [attr.data-tier]="comboTier()"><span class="flames" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-              <span class="combo-face">Combo <strong>{{ attempt().combo }}</strong></span>
-              @for (pulse of feedback() && (feedback()?.kind === 'perfect' || feedback()?.kind === 'good') && attempt().combo >= 5 ? [feedback()?.started] : []; track pulse) { <span class="combo-feed" aria-hidden="true"></span> }
+            <span class="hud-score"><span>Score</span><strong>{{ attempt().total }}</strong><small>/ {{ attempt().available.toFixed(0) }}</small></span>
+            <span class="combo-shell" [attr.data-tier]="comboEffects() ? comboTier() : 0" [class.combo-effects-off]="!comboEffects()">
+              <span class="flames" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              <span class="ember-field" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              <span class="combo-core" aria-hidden="true"></span>
+              <span class="combo-face"><strong>{{ attempt().combo }}</strong><small>Combo</small></span>
+              @for (pulse of comboEffects() && feedback() && (feedback()?.kind === 'perfect' || feedback()?.kind === 'good') && attempt().combo >= 5 ? [feedback()?.started] : []; track pulse) {
+                <span class="combo-feed" [class.milestone]="attempt().combo === 10 || attempt().combo === 20 || attempt().combo === 40" aria-hidden="true"></span>
+              }
             </span>
           } @else { <span>Listening</span> }
           <span class="hud-secondary">{{ displayedTime().toFixed(1) }} / {{ playback.duration().toFixed(1) }} s · {{ counts().perfect }} Perfect · {{ counts().good }} Good · {{ counts().miss }} Miss</span>
@@ -121,7 +130,7 @@
             @if (playback.countIn(); as count) { <strong class="countdown">{{ count }}</strong> }
             <span>Listen for the downbeat</span>
           } @else if (!chartedRun()) { <span>Listen to the piece</span> }
-          @else if (demoActive()) { <span>Demo</span> }
+          @else if (demoActive() && attempt().listening) { <span>Listen for the first note</span> }
           @else if (attempt().listening) { <span>Listen for your first letter</span> }
           @else if (attempt().complete) { <span>Let the music finish</span> }
           @else if (feedback()) { <span class="judgement" [attr.data-result]="feedback()?.kind">{{ feedback()?.label }}</span> }
@@ -174,12 +183,25 @@
   </div>
   
   @if (stage() === 'results') {
-    <div class="stage-screen menu-screen results-screen">
-      <p class="eyebrow">{{ selectedSong()?.title }}</p>
+    <div class="stage-screen menu-screen results-screen" [class.reveal-done]="resultRevealDone()"
+      (pointerdown)="finishResultReveal()" (keydown)="finishResultReveal()">
       @if (result(); as summary) {
-        <h1 id="piano-title">{{ summary.coverage === 'opening' && summary.startPosition < 0.001 ? 'Opening passage complete.' : 'Run complete' }}</h1>
-        <p>{{ summary.startPosition > 0.001 ? 'Practice segment' : coverageLabel(summary.coverage) }} · {{ summary.speed }}×</p>
-        <div class="result-score"><span>Total score</span><strong>{{ summary.total }} / {{ summary.available.toFixed(0) }}</strong></div>
+        <p class="result-song">{{ selectedSong()?.title }}</p>
+        <h1 id="piano-title">{{ summary.coverage === 'opening' && summary.startPosition < 0.001 ? 'Opening passage complete' : 'Run complete' }}</h1>
+        <div class="result-hero" [attr.data-grade]="summary.grade">
+          <div class="grade-emblem" [attr.aria-label]="(summary.startPosition > 0.001 ? 'Practice score grade ' : 'Score grade ') + summary.grade">
+            <span>{{ summary.startPosition > 0.001 ? 'Practice grade' : 'Score grade' }}</span>
+            <strong>{{ summary.grade }}</strong>
+            @if (summary.coverage === 'opening' && summary.startPosition < 0.001) { <small>Opening passage</small> }
+          </div>
+          <div class="result-score"><span>Total score</span><strong>{{ resultScoreDisplay() }}</strong>
+            <small>/ {{ summary.available.toFixed(0) }} · {{ summary.speed }}× speed</small></div>
+        </div>
+        <div class="result-actions">
+          <button type="button" class="primary-button" (click)="retry()">Replay</button>
+          <button type="button" (click)="chooseLibrary()">Library</button>
+          <button type="button" class="quiet-button" (click)="goHome()">Homepage</button>
+        </div>
         <dl class="result-stats">
           <div><dt>Perfect</dt><dd>{{ summary.perfect }}</dd></div><div><dt>Good</dt><dd>{{ summary.good }}</dd></div>
           <div><dt>Miss</dt><dd>{{ summary.miss }}</dd></div><div><dt>Wrong</dt><dd>{{ summary.wrong }}</dd></div>
@@ -215,12 +237,12 @@
       } @else {
         <h1 id="piano-title">Finished listening</h1><p>{{ selectedSong()?.title }} · {{ playback.playbackRate() }}×</p>
         @if (runStartPosition() > 0.001 && coverage() !== 'listen') { <p>Practice segment beyond the chart; no typing score was available from this position.</p> }
+        <div class="result-actions">
+          <button type="button" class="primary-button" (click)="retry()">Replay</button>
+          <button type="button" (click)="chooseLibrary()">Library</button>
+          <button type="button" class="quiet-button" (click)="goHome()">Homepage</button>
+        </div>
       }
-      <div class="result-actions">
-        <button type="button" class="primary-button" (click)="retry()">Replay</button>
-        <button type="button" (click)="chooseLibrary()">Library</button>
-        <button type="button" class="quiet-button" (click)="goHome()">Homepage</button>
-      </div>
     </div>
   }
   
@@ -242,6 +264,8 @@
             <fieldset><legend>Gameplay &amp; view</legend>
               <label>Look ahead <strong>{{ lookAhead() }} s</strong><input type="range" min="2" max="10" step="0.5" [value]="lookAhead()" (input)="setLookAhead($event)"></label>
               <label class="checkbox-setting">Stagger streaming letters <input type="checkbox" [checked]="staggerLetters()" (change)="setStaggerLetters($event)"></label>
+              <label class="checkbox-setting">Background motion <input type="checkbox" [checked]="backgroundMotion()" (change)="backgroundMotion.set($any($event.target).checked)"></label>
+              <label class="checkbox-setting">Combo effects <input type="checkbox" [checked]="comboEffects()" (change)="comboEffects.set($any($event.target).checked)"></label>
               <div class="theme-setting"><span>Appearance</span><button type="button" (click)="toggleTheme()">{{ theme() === 'dark' ? 'Light theme' : 'Dark theme' }}</button></div>
             </fieldset>
             <fieldset><legend>Practice</legend>

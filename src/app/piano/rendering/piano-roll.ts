@@ -19,7 +19,7 @@ export interface JudgementFeedback {
 }
 
 interface HitBurst { readonly x: number; readonly y: number; readonly letter: string;
-  readonly kind: 'perfect' | 'good'; readonly started: number }
+  readonly targetId?: string; readonly kind: JudgementFeedback['kind']; readonly started: number }
 
 const LETTER_LINE_Y = 82;
 const STAGGERED_LETTER_Y = [67, 96] as const;
@@ -66,10 +66,13 @@ export class PianoRoll {
     this.observer.disconnect();
   }
 
-  flashHit(target: TypingTarget, kind: 'perfect' | 'good', position: number, lookAhead: number): void {
-    this.hitBursts.push({ x: timeToX(target.time, position, this.width, lookAhead),
-      y: this.letterY(target.index), letter: target.letter, kind, started: performance.now() });
-    if (this.hitBursts.length > 8) this.hitBursts.shift();
+  flashJudgement(kind: JudgementFeedback['kind'], target: TypingTarget | undefined,
+    position: number, lookAhead: number, letter: string): void {
+    const mapped = target ? timeToX(target.time, position, this.width, lookAhead) : ROLL_PLAYHEAD_X;
+    this.hitBursts.push({ x: Math.max(49, Math.min(this.width - 20, mapped)),
+      y: target ? this.letterY(target.index) : LETTER_LINE_Y,
+      targetId: target?.id, letter: letter || target?.letter || '', kind, started: performance.now() });
+    if (this.hitBursts.length > 12) this.hitBursts.shift();
   }
 
   clearEffects(): void { this.hitBursts = []; }
@@ -116,7 +119,7 @@ export class PianoRoll {
 
     c.fillStyle = color('--roll-surface');
     c.fillRect(0, 0, this.width, this.height);
-    c.font = '12px sans-serif';
+    c.font = '12px Consolas, monospace';
     c.textBaseline = 'middle';
     c.fillStyle = color('--roll-muted');
     c.fillText(countIn ? 'Count-in' : `${position.toFixed(1)} s`, ROLL_PLAYHEAD_X - 14, 13);
@@ -218,11 +221,27 @@ export class PianoRoll {
       if (at > this.width || end < 42) continue;
       c.fillStyle = color(`--roll-played-${bar.kind}`);
       c.fillRect(at, y(bar.pitch) + 1, Math.max(2, end - at), Math.max(2, row - 2));
-      c.strokeStyle = color('--roll-active-note-edge');
-      c.lineWidth = 1;
-      c.strokeRect(at + 0.5, y(bar.pitch) + 1.5, Math.max(1, end - at - 1), Math.max(1, row - 3));
+      c.strokeStyle = color(`--roll-played-${bar.kind}`);
+      c.lineWidth = 2;
+      c.strokeRect(at + 0.5, y(bar.pitch) + 0.5, Math.max(1, end - at - 1), Math.max(1, row - 1));
+      c.fillStyle = color('--roll-played-core');
+      c.fillRect(at + 1, y(bar.pitch) + Math.max(1, row / 2), Math.max(1, end - at - 2), 1);
     }
     c.restore();
+
+    const now = performance.now();
+    this.hitBursts = this.hitBursts.filter(burst => now - burst.started < this.impactDuration(burst.kind));
+    const punch = new Map(this.hitBursts.filter(burst => burst.targetId &&
+      (burst.kind === 'perfect' || burst.kind === 'good') && now - burst.started < 140)
+      .map(burst => [burst.targetId, burst.started]));
+    const latest = this.hitBursts.at(-1);
+    if (latest && now - latest.started < 180) {
+      c.save();
+      c.globalAlpha = (1 - (now - latest.started) / 180) * (latest.kind === 'perfect' ? .34 : .2);
+      c.fillStyle = color(`--roll-${latest.kind === 'wrong' ? 'miss' : latest.kind}`);
+      c.fillRect(ROLL_PLAYHEAD_X - 5, 34, 10, 78);
+      c.restore();
+    }
 
     c.save();
     c.beginPath(); c.rect(42, 34, Math.max(0, this.width - 42), 78); c.clip();
@@ -259,6 +278,8 @@ export class PianoRoll {
       }
       c.save();
       c.translate(at, center);
+      if (!this.reducedMotion.matches && punch.has(target.id))
+        c.scale(1.14, 1.14);
       c.fillStyle = target.wordIndex % 2 === 0 ? color('--roll-word-a') : color('--roll-word-b');
       c.strokeStyle = { pending: color('--roll-letter-edge'), holding: color(`--roll-${target.attackGrade ?? 'hold'}`),
         skipped: color('--roll-muted'), perfect: color('--roll-perfect'), good: color('--roll-good'),
@@ -266,7 +287,7 @@ export class PianoRoll {
       c.lineWidth = target.result === 'pending' ? 1 : 2.5;
       c.beginPath(); c.roundRect(-12, -12, 24, 24, 5); c.fill(); c.stroke();
       c.fillStyle = color('--roll-letter-text');
-      c.font = 'bold 15px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.font = 'bold 15px Consolas, monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
       c.fillText(target.letter, 0, 0);
       c.restore();
     }
@@ -280,37 +301,64 @@ export class PianoRoll {
       this.drawBell(c, at, 42, color('--roll-annotation'), active);
     }
 
-    const now = performance.now();
-    this.hitBursts = this.hitBursts.filter(burst => now - burst.started < 560);
-    for (const burst of this.hitBursts) {
-      const age = (now - burst.started) / 560;
-      const strong = burst.kind === 'perfect';
-      const hue = color(strong ? '--roll-perfect' : '--roll-good');
-      c.save();
-      c.globalAlpha = Math.max(0, 1 - age);
-      c.translate(burst.x, burst.y);
-      if (!this.reducedMotion.matches) c.scale(1 + (strong ? 0.28 : 0.15) * Math.sin(Math.PI * Math.min(1, age * 2)),
-        1 + (strong ? 0.28 : 0.15) * Math.sin(Math.PI * Math.min(1, age * 2)));
-      c.fillStyle = color('--roll-surface'); c.strokeStyle = hue; c.lineWidth = strong ? 4 : 3;
-      c.beginPath(); c.roundRect(-14, -14, 28, 28, 6); c.fill(); c.stroke();
-      c.fillStyle = hue; c.font = 'bold 17px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
-      c.fillText(burst.letter, 0, 0);
-      if (!this.reducedMotion.matches) {
-        c.strokeStyle = hue; c.lineWidth = strong ? 3 : 2;
-        c.beginPath(); c.arc(0, 0, 17 + age * (strong ? 21 : 14), 0, Math.PI * 2); c.stroke();
-      }
-      c.restore();
-    }
     c.strokeStyle = color('--roll-playhead');
     c.lineWidth = 2;
     c.beginPath(); c.moveTo(ROLL_PLAYHEAD_X, 34); c.lineTo(ROLL_PLAYHEAD_X, bottom); c.stroke();
     c.lineWidth = 1;
+    for (const burst of this.hitBursts) this.drawImpact(c, burst, now, color);
     if (!notes.length) {
       c.fillStyle = color('--roll-muted');
       c.fillText('No notes in this group.', ROLL_PLAYHEAD_X + 16, this.height / 2);
     }
     this.frame = requestAnimationFrame(this.draw);
   };
+
+  private impactDuration(kind: HitBurst['kind']): number {
+    return { perfect: 350, good: 290, wrong: 270, miss: 210 }[kind];
+  }
+
+  private drawImpact(c: CanvasRenderingContext2D, burst: HitBurst, now: number,
+    color: (name: string) => string): void {
+    const age = now - burst.started;
+    const progress = Math.min(1, age / this.impactDuration(burst.kind));
+    const hue = color(`--roll-${burst.kind === 'wrong' ? 'miss' : burst.kind}`);
+    const strong = burst.kind === 'perfect';
+    c.save();
+    c.translate(burst.x, burst.y);
+    c.globalAlpha = Math.max(0, 1 - progress);
+    c.strokeStyle = hue;
+    c.lineWidth = strong ? 3 : 2;
+    if (!this.reducedMotion.matches) {
+      const radius = 16 + progress * (strong ? 25 : burst.kind === 'good' ? 16 : 11);
+      c.beginPath();
+      if (burst.kind === 'wrong') {
+        c.arc(0, 0, radius, -.85 * Math.PI, -.15 * Math.PI);
+        c.moveTo(radius * Math.cos(.15 * Math.PI), radius * Math.sin(.15 * Math.PI));
+        c.arc(0, 0, radius, .15 * Math.PI, .85 * Math.PI);
+      } else if (burst.kind !== 'miss') c.arc(0, 0, radius, 0, 2 * Math.PI);
+      else { c.moveTo(-radius, radius); c.lineTo(radius, -radius); }
+      c.stroke();
+      if (burst.kind === 'perfect' || burst.kind === 'good') {
+        const count = strong ? 6 : 3;
+        for (let index = 0; index < count; index++) {
+          const angle = 2 * Math.PI * index / count - Math.PI / 4;
+          const inner = radius + 2, outer = inner + (strong ? 9 : 5);
+          c.beginPath(); c.moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner);
+          c.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer); c.stroke();
+        }
+      }
+    }
+    c.fillStyle = color('--roll-surface');
+    c.beginPath(); c.roundRect(-14, -14, 28, 28, 5); c.fill(); c.stroke();
+    if (burst.kind === 'wrong') {
+      c.beginPath(); c.moveTo(-16, 17); c.lineTo(16, -17); c.stroke();
+    } else if (burst.kind === 'miss') {
+      c.beginPath(); c.moveTo(-7, 17); c.lineTo(7, 17); c.stroke();
+    }
+    c.fillStyle = hue; c.font = 'bold 17px Consolas, monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText(burst.letter, 0, 0);
+    c.restore();
+  }
 
   private drawBell(c: CanvasRenderingContext2D, x: number, y: number, color: string, active: boolean): void {
     c.save(); c.translate(x, y);

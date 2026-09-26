@@ -1,4 +1,4 @@
-import { TypingRound } from './piano-judgement';
+import { SCORING_POINTS, TypingRound } from './piano-judgement';
 import { captureRunResult } from './piano-run-result';
 
 describe('run result snapshot', () => {
@@ -15,16 +15,20 @@ describe('run result snapshot', () => {
     round.advance(3.2);
     expect(round.complete).toBeTrue();
     const result = captureRunResult(round, 'example', 'Example', 'opening', 0)!;
-    expect(result).toEqual(jasmine.objectContaining({ total: 113, available: 226.5, raw: 150,
+    expect(result).toEqual(jasmine.objectContaining({ total: 143, available: 226.5, raw: 190,
       perfect: 1, miss: 1, sustain: 100, sustainAvailable: 100, speed: 0.75 }));
+    expect(result.grade).toBe('C');
+    expect(result.gradeRatio).toBeCloseTo(142.5 / 226.5, 8);
+    expect(result.earnedFinalScore).toBe(142.5);
     expect(Object.isFrozen(result)).toBeTrue();
     expect(Object.isFrozen(result.letters)).toBeTrue();
     expect(result.letters.map(letter => letter.result)).toEqual(['perfect', 'miss']);
     expect(result.letters[0].sustainPoints).toBe(100);
     round.reset();
-    expect(result.total).toBe(113);
+    expect(result.total).toBe(143);
     expect(result.miss).toBe(1);
     expect(result.letters[0].result).toBe('perfect');
+    expect(result.grade).toBe('C');
   });
 
   it('keeps skipped targets and a wrong-key penalty in the snapshot', () => {
@@ -36,8 +40,16 @@ describe('run result snapshot', () => {
     round.advance(3.2);
     const result = captureRunResult(round, 'example', 'Example', 'full', 1.5)!;
     expect(result.letters.map(letter => letter.result)).toEqual(['skipped', 'perfect']);
-    expect(result.raw).toBe(50);
-    expect(result.wrongPenalty).toBe(-50);
+    expect(result.raw).toBe(90);
+    expect(result.wrongPenalty).toBe(SCORING_POINTS.wrong);
+    expect(result.startPosition).toBe(1.5);
+    expect(result.grade).toBe('A');
+    expect(result.gradeRatio).toBeCloseTo(90 / 100, 8);
+    round.reset(0, 3);
+    expect(result.startPosition).toBe(1.5);
+    expect(result.speed).toBe(1);
+    expect(result.grade).toBe('A');
+    expect(result.earnedFinalScore).toBe(90);
   });
 
   it('freezes partial hold credit before a later replay resets the round', () => {

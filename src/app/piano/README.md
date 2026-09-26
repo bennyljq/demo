@@ -694,3 +694,55 @@ say 6 seconds and Intermediate. Regenerating the manifest will replace those
 generated-file values with the config values. Resolve that difference before
 using a full-suite pass as verification. No listening assessment was performed
 for these follow-up changes.
+
+## Phase 19: HARD Pianist visual identity and score grades
+
+Play now uses a compact command strip, large score and combo numerals, a calm
+three-line passage immediately above the streaming lane, and a multi-tier flame
+crown. Home, Library, Settings, the demo keyboard and Results share aubergine
+and pale-lavender themes through component-scoped semantic colour tokens. Two
+slow CSS gradient fields provide the ambient background; **Settings → Gameplay
+& view → Background motion** pauses them, as does hiding the tab. Reduced-motion
+preferences keep a static composition and static hit feedback. The existing
+**Combo effects** switch also suppresses the flame crown. Ambient motion and
+Canvas drawing do not schedule audio or change judgement.
+
+The existing PianoRoll RAF now draws bounded Perfect, Good, Wrong and Miss
+impacts at judged letter positions. Perfect has a mint core, ring and sparks;
+Good is smaller and gold; Wrong uses a fractured coral ring; Miss is restrained.
+The pool is capped at 12 effects, each lasting at most 350 ms. Performed-note
+colours, hold progress, the playhead, and the optional stagger geometry remain
+driven by the existing score and transport position.
+
+Results snapshot an immutable **score grade** along with the attempt's speed
+and unrounded, zero-floored final score. The ratio divides that score by the
+existing maximum, which already includes the possible uninterrupted combo,
+holds and speed multiplier. Thresholds live in
+`gameplay/piano-result-grade.ts`: S ≥95%, A ≥85%, B ≥70%, C ≥50%, D below 50%.
+The displayed integer score still follows the original scoring formula; its
+rounding cannot move a grade boundary. A seeked attempt says **Practice grade**;
+an authored opening says **Opening passage**. Listen-only, demo and zero-target
+sessions do not get a player grade. The grade lands, the score counts up and
+the unchanged breakdown and letter review follow. Replay, Library and Homepage
+remain immediately usable. Reduced motion or interacting with Results finishes
+the cosmetic reveal at once.
+
+The manifest was regenerated from `song-library.config.cjs`, resolving the
+stale metadata noted above: Theme look-ahead is 6 seconds and Variation I is
+Intermediate. No song config, chart, audio scheduling, randomisation or score
+formula changed for this visual pass. Old tests that still expected −50
+Miss/Wrong penalties were corrected to the existing −10 scoring constants.
+
+Representative browser captures are in [phase19-review](./phase19-review):
+dark Home, armed Play, dense 3× Variation I demo, S Results, light Play at
+1920×1080 and 800×700, and dark Play at 375×812. Development fixtures exercised all S/A/B/C/D result
+presentations and the Practice label without changing real attempt scores.
+Chrome keyboard input produced Perfect and Good feedback; a wrong key produced
+the coral effect. The command strip and passage kept the same measured vertical
+positions through Ready, count-in and Playing. At 3× in a 1366×768 headless
+Chrome Variation I demo, 4.5-second samples measured Canvas draw time at
+2.17 ms average / 4.1 ms p95 with hit effects and 2.03 ms / 3.8 ms with the
+hit-effect call disabled. These are short samples on this machine, not a device
+benchmark. The demo advanced from roughly 0.2 to 14.1 seconds of song time
+without browser exceptions. Browser playback and scheduling were inspected;
+I could not listen to audio or assess musical feel in this environment.

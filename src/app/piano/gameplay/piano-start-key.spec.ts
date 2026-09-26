@@ -8,8 +8,21 @@ describe('keyboard start', () => {
       expect(isStartKey(new KeyboardEvent('keydown', { key: 'a', ...options }))).toBeFalse();
   });
 
-  it('leaves native and editable controls alone', () => {
-    for (const tag of ['button', 'a', 'input', 'textarea', 'select']) {
+  it('starts from focused buttons on letters while preserving native activation keys', () => {
+    for (const tag of ['button', 'a']) {
+      const letter = new KeyboardEvent('keydown', { key: 'a' });
+      spyOn(letter, 'composedPath').and.returnValue([document.createElement(tag)]);
+      expect(isStartKey(letter)).withContext(tag).toBeTrue();
+      for (const key of ['Enter', ' ']) {
+        const event = new KeyboardEvent('keydown', { key });
+        spyOn(event, 'composedPath').and.returnValue([document.createElement(tag)]);
+        expect(isStartKey(event)).withContext(`${tag} ${key}`).toBeFalse();
+      }
+    }
+  });
+
+  it('leaves editable controls alone', () => {
+    for (const tag of ['input', 'textarea', 'select']) {
       const event = new KeyboardEvent('keydown', { key: 'Enter' });
       spyOn(event, 'composedPath').and.returnValue([document.createElement(tag)]);
       expect(isStartKey(event)).withContext(tag).toBeFalse();

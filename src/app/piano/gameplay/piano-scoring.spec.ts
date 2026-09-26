@@ -1,4 +1,4 @@
-import { TypingRound } from './piano-judgement';
+import { SCORING_POINTS, TypingRound } from './piano-judgement';
 import type { TypingTarget } from './piano-chart';
 import { attackWindowSeconds, DEFAULT_SCORING_SETTINGS, holdBufferSeconds, validateScoringSettings } from './piano-scoring-settings';
 
@@ -19,13 +19,13 @@ describe('hold score', () => {
     round.key('x', 4); round.keyUp('x', 4);
     round.advance(4.161);
     expect(round.combo).toBe(0);
-    expect(round.missPenalty).toBe(-50);
-    expect(round.wrongPenalty).toBe(-50);
-    expect(round.rawPoints).toBe(206);
-    expect(round.totalPoints).toBe(309);
+    expect(round.missPenalty).toBe(SCORING_POINTS.miss);
+    expect(round.wrongPenalty).toBe(SCORING_POINTS.wrong);
+    expect(round.rawPoints).toBe(286);
+    expect(round.totalPoints).toBe(429);
     round.settings = { ...round.settings, goodMs: 200 };
     expect(round.speed).toBe(1.5);
-    expect(round.totalPoints).toBe(309);
+    expect(round.totalPoints).toBe(429);
   });
 
   it('does not count hold progress as another attack or combo bonus', () => {
