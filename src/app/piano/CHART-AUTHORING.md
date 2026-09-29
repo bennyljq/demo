@@ -41,7 +41,7 @@ pulse.
 ```
 
 A hold is a letter with `end`. The judgement accepts its attack in the same
-Perfect/Good windows as a tap: 100 points for Perfect, 70 for Good, −50 for a missed attack.
+Perfect/Good windows as a tap: 100 points for Perfect, 70 for Good, −10 for a missed attack.
 A successful hold adds up to 100 fractional sustain points, computed as
 `100 * credited held source duration / authored hold source duration`. The
 attack updates combo immediately. Accepted early or late attacks receive hold
@@ -118,7 +118,35 @@ Per-run rerolls change only words; source locations, repeat expansion, note
 bundles, velocities and holds remain fixed. The compiler retries any assignment
 that creates an overlapping same-key hold.
 
-Phase 18 scoring uses Perfect +100, Good +70, Miss −50 and Wrong −50.
+## Phase 21 mode patterns and demand
+
+Rhythm Only compiles the original authored phrases with their attack and hold coordinates; it needs no word draw. Word Concert draws words at each human run boundary. Eight Keys replaces only each phrase's `word` with its manually editable QWER/UIOP pattern in `charts/eight-keys-chart.ts`. The existing XML chart compiler expands repeat visits and validates hold/key conflicts, then the same staff-1 coupler checks complete sounding-attack coverage. To edit a pattern, inspect the source pitch contour, pickup, ties, repeat and neighboring phrase transitions; change the matching phrase string; run `eight-keys-chart.spec.ts` and a full demo check. Repeat visits must reuse the pattern.
+
+The initial Theme mapping covers 49 written attacks over 12 phrases, expanded to 98 performed attacks with six holds. Most phrases have four attacks across two measures; phrase 8 has five. The left hand uses QWER in the opening and return, and the right hand uses UIOP in the middle section. Variation I maps 25 written phrase slots to 322 performed attacks and eight holds. Most bars have eight attacks; measures 29, 30, 46 and 47 have seven new attacks after a tied continuation; 31 and 48 have four; 32, 33 and 49 have one; 41 has three. The pattern changes hands at phrase sections and compresses wide pitch ranges into each four-key hand. These are provisional ergonomic assignments, not literal piano fingering or a fixed pitch-to-key map; human playtesting should refine phrase transitions and fast same-finger attacks.
+
+Initial patterns, in authored phrase order (the source file is authoritative):
+
+These strings are finger slots, not physical-key requirements. Settings maps
+QWER to L1-L4 and UIOP to R1-R4 by default and can bind each slot to another
+distinct A-Z letter. Canvas targets show the slot numbers 1-4, using the
+orange and green fills to distinguish hands. The authored patterns and melody
+coupling remain unchanged when a player changes bindings.
+
+| Phrase IDs | Eight Keys patterns |
+| --- | --- |
+| Theme 1-4 | `QQEE`, `RREE`, `EEWW`, `WWEQ` |
+| Theme 5-8 | `PPOO`, `IIUU`, `PPOO`, `IIOIU` |
+| Theme 9-12 | `QQEE`, `RREE`, `EEWW`, `WWEQ` |
+| Variation I 25-28 | `EWQWQWQW`, `REWEWEWE`, `UIOPPOIU`, `POPOIUIU` |
+| Variation I 29-33 | `PPOIIUU`, `PPOIIUU`, `WROQ`, `Q`, `Q` |
+| Variation I 34-38 | `POIOIOPO`, `OIUIUIOI`, `OIUIUIOI`, `OIUIUIOI`, `POIOPOIU` |
+| Variation I 39-41 | `OIUIPOIU`, `OIUIPOIU`, `PIU` |
+| Variation I 42-45 | `EWQWQWQW`, `REWEWEWE`, `UIOPPOIU`, `POPOIUIU` |
+| Variation I 46-49 | `PPOIIUU`, `PPOIIUU`, `WROQ`, `Q` |
+
+Run `node src/app/piano/generate-demand-metadata.cjs` after editing a visible chart. Its focused Karma report uses the existing importer, chart builders and coupling and writes `song-demand.generated.ts`; do not edit the generated values. Demand counts required attacks including performed repeat visits, excluding spaces and hold duration as characters. The active span starts at the first attack and ends at the later of the last required coupled note's sounding end and the final hold endpoint. Average WPM is `12 × count / active span`. Peak is `12 × maximum attack count / window length` for a sliding five-source-second half-open interval `[start, start + 5)`; use active span if shorter. These are rhythm-constrained attack rates, not free-typing benchmarks. Initial generated Theme demand is 98 attacks over 47.5 s: average 24.76, peak 26.4 WPM. Variation I is 322 over 47.5 s: average 81.35, peak 96 WPM. All three current modes share these densities because they share attack locations.
+
+Phase 18 scoring uses Perfect +100, Good +70, Miss −10 and Wrong −10.
 Successful attacks increment the combo once and earn `2 × (combo − 1)`;
 hold progress adds only its existing proportional bonus, up to +100. Raw
 attack, sustain and combo points retain negative penalty debt before the

@@ -1,6 +1,8 @@
 import { LetterResult, TypingRound } from './piano-judgement';
 import { ChartCoverage } from '../charts/song-charts';
 import { calculateScoreGrade, ScoreGrade } from './piano-result-grade';
+import { PianoMode } from './piano-mode';
+import { TypingTarget } from './piano-chart';
 
 export interface ResultLetter {
   readonly id: string;
@@ -16,6 +18,9 @@ export interface ResultLetter {
 export interface RunResult {
   readonly songId: string;
   readonly songTitle: string;
+  readonly mode: PianoMode;
+  readonly eightKeyBindings: string | null;
+  readonly chart: readonly TypingTarget[];
   readonly coverage: Exclude<ChartCoverage, 'listen'>;
   readonly speed: number;
   readonly startPosition: number;
@@ -51,8 +56,15 @@ export function captureRunResult(round: TypingRound, songId: string, songTitle: 
     attack: round.attackGrades[target.index] ?? null,
     sustainPoints: round.sustainPoints[target.index], hasHold: target.holdEnd !== undefined,
   })));
+  const chart = Object.freeze(round.targets.map(target => Object.freeze({ ...target,
+    source: target.source ? Object.freeze({ ...target.source,
+      start: Object.freeze({ ...target.source.start }),
+      end: target.source.end ? Object.freeze({ ...target.source.end }) : undefined,
+    }) : undefined,
+  })));
   return Object.freeze({
-    songId, songTitle, coverage, speed: round.speed, startPosition,
+    songId, songTitle, mode: round.mode, eightKeyBindings: round.mode === 'eight-keys' ? round.eightKeyBindings : null,
+    chart, coverage, speed: round.speed, startPosition,
     total: round.totalPoints, raw: round.rawPoints, available: round.availablePoints,
     grade: grade.grade, gradeRatio: grade.ratio, earnedFinalScore: grade.earned,
     perfect: round.results.filter(result => result === 'perfect').length,

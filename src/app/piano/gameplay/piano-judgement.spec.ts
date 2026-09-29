@@ -1,12 +1,66 @@
 import { buildTypingChart, TypingTarget } from './piano-chart';
 import { isGameplayKey, SCORING_POINTS, TypingRound } from './piano-judgement';
 import { extractPianoTimeline } from '../music/piano-timeline';
+import { DEFAULT_SCORING_SETTINGS } from './piano-scoring-settings';
 
 const targets = (times = [1, 1.25, 2]): TypingTarget[] => times.map((time, index) => ({
   time, index, wordIndex: 0, word: 'ABC', letter: 'ABC'[index], id: `test:${index}`,
 }));
 
 describe('typing judgement', () => {
+  it('accepts any letter on the nearest Rhythm target once per physical press', () => {
+    const round = new TypingRound(targets([1, 1.05]), DEFAULT_SCORING_SETTINGS, 'rhythm');
+    round.key('z', 1.04, 1, 1.04, 'KeyZ');
+    expect(round.results).toEqual(['pending', 'perfect']);
+    round.key('z', 1.04, 1, 1.04, 'KeyZ');
+    expect(round.results).toEqual(['pending', 'perfect']);
+    round.keyUp('z', 1.04, 1, 'KeyZ');
+    round.key('z', 1.04, 1, 1.04, 'KeyZ');
+    expect(round.results).toEqual(['perfect', 'perfect']);
+    round.keyUp('z', 1.04, 1, 'KeyZ');
+    round.key('z', 1.1, 1, 1.1, 'KeyZ');
+    expect(round.wrongCount).toBe(1);
+  });
+
+  it('ignores other letters in Eight Keys and penalises a wrong eligible key', () => {
+    const round = new TypingRound([{ ...targets([1])[0], letter: 'Q' }], DEFAULT_SCORING_SETTINGS, 'eight-keys');
+    round.key('a', 1, 1, 1, 'KeyA');
+    expect(round.wrongCount).toBe(0);
+    round.key('w', 1, 1, 1, 'KeyW');
+    expect(round.wrongCount).toBe(1);
+    expect(round.feedbackIndex).toBe(0);
+    round.keyUp('w', 1, 1, 'KeyW');
+    round.key('q', 1, 1, 1, 'KeyQ');
+    expect(round.results[0]).toBe('perfect');
+  });
+
+  it('uses custom Eight Keys letters for eligibility, matching and hold ownership', () => {
+    const round = new TypingRound([{ ...targets([1])[0], letter: 'Q', holdEnd: 2 }],
+      DEFAULT_SCORING_SETTINGS, 'eight-keys', 'ASDFJKLZ');
+    round.key('q', 1, 1, 1, 'KeyQ');
+    expect(round.wrongCount).toBe(0); // Authored slot letter is no longer a bound physical key.
+    round.key('s', 1, 1, 1, 'KeyS');
+    expect(round.wrongCount).toBe(1);
+    round.keyUp('s', 1, 1, 'KeyS');
+    round.key('A', 1, 1, 1, 'KeyA');
+    expect(round.results[0]).toBe('holding');
+    round.keyUp('s', 1.5, 1, 'KeyS');
+    expect(round.results[0]).toBe('holding');
+    round.keyUp('a', 2, 1, 'KeyA');
+    expect(round.results[0]).toBe('perfect');
+    expect(round.sustainPoints[0]).toBe(100);
+  });
+
+  it('keeps a Rhythm hold attached to its starting physical key', () => {
+    const round = new TypingRound([{ ...targets([1])[0], holdEnd: 2 }], DEFAULT_SCORING_SETTINGS, 'rhythm');
+    round.key('j', 1, 1, 1, 'KeyJ');
+    round.keyUp('f', 1.5, 1, 'KeyF');
+    expect(round.results[0]).toBe('holding');
+    round.advance(1.75);
+    round.keyUp('j', 1.75, 1, 'KeyJ');
+    expect(round.results[0]).toBe('perfect');
+    expect(round.sustainPoints[0]).toBe(75);
+  });
   it('judges equal real-time errors equally at normal, slow and fast playback rates', () => {
     for (const rate of [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3]) {
       for (const [realError, expected] of [[0.08, 'perfect'], [0.10, 'good'], [0.16, 'good']] as const) {

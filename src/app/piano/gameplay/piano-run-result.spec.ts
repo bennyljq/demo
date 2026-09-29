@@ -64,6 +64,21 @@ describe('run result snapshot', () => {
     expect(result.letters[0].sustainPoints).toBeCloseTo(40, 6);
   });
 
+  it('retains its mode and copied pattern after the source chart changes', () => {
+    const pattern = [{ ...targets[0], letter: 'Q', word: 'Q' }];
+    const round = new TypingRound(pattern, undefined, 'eight-keys', 'ASDFJKLZ');
+    round.key('a', 1);
+    round.keyUp('a', 2);
+    round.advance(2.2);
+    const result = captureRunResult(round, 'example', 'Example', 'full', 0)!;
+    pattern[0].letter = 'W';
+    expect(result.mode).toBe('eight-keys');
+    expect(result.eightKeyBindings).toBe('ASDFJKLZ');
+    expect(result.chart[0].letter).toBe('Q');
+    expect(result.letters[0].letter).toBe('Q');
+    expect(Object.isFrozen(result.chart[0])).toBeTrue();
+  });
+
   it('does not award a zero-target victory after seeking beyond the chart', () => {
     const round = new TypingRound(targets);
     round.reset(4);

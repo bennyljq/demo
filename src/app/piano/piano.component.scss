@@ -39,7 +39,7 @@
   --roll-played-wrong: #d74760;
   --roll-played-core: #fffdf4;
   --roll-playhead: #6532a6;
-  --roll-word-a: #d0b1f0;
+  --roll-word-a: #ffd2a0;
   --roll-word-b: #b4e5d9;
   --roll-letter-text: #231630;
   --roll-letter-edge: #684496;
@@ -97,9 +97,9 @@
   --roll-played-wrong: #f66c7c;
   --roll-played-core: #fff3da;
   --roll-playhead: #ffcf8e;
-  --roll-word-a: #ffbf75;
-  --roll-word-b: #9be1d2;
-  --roll-letter-text: #201620;
+  --roll-word-a: #85400f;
+  --roll-word-b: #126456;
+  --roll-letter-text: #fff9ef;
   --roll-letter-edge: #f6d09b;
   --roll-hold: #dfa071;
   --roll-hold-progress: #79e0aa;
@@ -256,6 +256,10 @@ h1 { margin: 0; }
 .song-card-main span, .song-card-main small, .song-card-meta { color: var(--muted); font-size: .76rem; }
 .song-card-meta { display: flex; flex-direction: column; gap: 6px; text-align: right; }
 .card-arrow { color: var(--accent); font-size: 1.6rem; }
+.library-demand-help { max-width: 68ch; margin: 17px 0 0; color: var(--muted); font-size: .76rem; line-height: 1.5; }
+.mode-screen { padding: clamp(24px, 5vh, 60px) 0 60px; }
+.mode-song { margin: 0 0 7px; color: var(--accent); font: 700 .8rem var(--mono-font); text-transform: uppercase; letter-spacing: .09em; }
+.mode-back { margin-top: 22px; }
 
 /* One performance surface replaces the old stack of outlined cards. */
 .play-stage {
@@ -272,6 +276,7 @@ h1 { margin: 0; }
 .play-header { min-height: 42px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .play-identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .play-identity h1 { font-size: clamp(1.35rem, 2.2vw, 2rem); line-height: 1.1; overflow-wrap: anywhere; }
+.mode-badge { flex: none; color: var(--accent); font: 700 .7rem var(--mono-font); border: 1px solid var(--edge); border-radius: 3px; padding: 4px 6px; }
 .demo-indicator {
   flex: none;
   color: var(--accent-ink);
@@ -299,6 +304,8 @@ h1 { margin: 0; }
   border-radius: 5px;
 }
 .armed-control-slot { display: grid; grid-template-columns: minmax(142px, 165px) 98px 100px; gap: 6px; align-items: center; }
+.game-shell[data-mode='rhythm'] .armed-control-slot,
+.game-shell[data-mode='eight-keys'] .armed-control-slot { grid-template-columns: minmax(142px, 165px) 98px; }
 .armed-control-slot button { min-height: 38px; white-space: nowrap; }
 .restart-button { border-color: var(--edge); background: var(--control); font-weight: 700; }
 .secondary-run { border-color: transparent; background: transparent; color: var(--accent); font-size: .8rem; }
@@ -395,6 +402,9 @@ h1 { margin: 0; }
 .judgement[data-result=good] { color: var(--good); }
 .judgement[data-result=wrong], .judgement[data-result=miss] { color: var(--miss); }
 .typing-area { margin: 0; }
+.key-legend { display: flex; gap: 18px; margin: 4px 0 1px; color: var(--muted); font-size: .72rem; }
+.key-legend strong { color: var(--accent); font-family: var(--mono-font); letter-spacing: .09em; }
+.result-bindings { color: var(--muted); font-size: .76rem; }
 .passage {
   display: flex;
   flex-direction: column;
@@ -438,6 +448,7 @@ h1 { margin: 0; }
 .demo-key-label { min-width: 0; white-space: nowrap; }
 .demo-key.pressed, .demo-key.held { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); transition: none; }
 .demo-key.held { box-shadow: inset 0 0 0 2px var(--performance); }
+.demo-key.mode-key { border-color: var(--accent); }
 .demo-key-pulse { position: absolute; inset: -3px; border: 2px solid var(--accent); border-radius: 5px; pointer-events: none; animation: demo-key-outline 220ms ease-out both; }
 @keyframes demo-key-outline { to { opacity: 0; } }
 canvas { display: block; width: 100%; height: clamp(285px, 40vh, 430px); margin-top: 5px; border: 0; border-top: 2px solid color-mix(in srgb, var(--accent), transparent 45%); border-radius: 2px 2px 8px 8px; }
@@ -531,6 +542,11 @@ canvas { display: block; width: 100%; height: clamp(285px, 40vh, 430px); margin-
 .settings-groups input[type=number] { max-width: 115px; }
 .settings-groups p, .settings-groups small { margin: 0; color: var(--muted); line-height: 1.5; font-size: .76rem; }
 .settings-groups .error { color: var(--miss); }
+.eight-key-groups { display: grid; gap: 12px; }
+.eight-key-groups > div > strong { display: block; margin-bottom: 6px; color: var(--text); font-size: .78rem; }
+.eight-key-inputs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.eight-key-inputs label { align-items: center; text-align: center; }
+.eight-key-inputs input { width: 100%; max-width: 52px; height: 38px; text-align: center; text-transform: uppercase; color: var(--text); background: var(--control); border: 1px solid var(--edge); border-radius: 4px; font-weight: 800; }
 .score-markings { color: var(--muted); font-size: .75rem; }
 .theme-setting { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .82rem; }
 
@@ -545,6 +561,8 @@ canvas { display: block; width: 100%; height: clamp(285px, 40vh, 430px); margin-
   .play-navigation { flex-wrap: wrap; justify-content: flex-end; }
   .armed-panel { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto auto; min-height: 136px; }
   .armed-control-slot { grid-template-columns: minmax(120px, 1fr) 78px 85px; }
+  .game-shell[data-mode='rhythm'] .armed-control-slot,
+  .game-shell[data-mode='eight-keys'] .armed-control-slot { grid-template-columns: minmax(120px, 1fr) 78px; }
   .armed-speed-slot, .armed-status-slot, .armed-hint-slot { grid-column: 1; grid-row: auto; text-align: left; }
   .armed-hint-slot { min-height: 16px; }
   .play-hud { grid-template-columns: minmax(0, 1fr) 140px; grid-template-rows: 70px auto 4px; }
@@ -562,6 +580,8 @@ canvas { display: block; width: 100%; height: clamp(285px, 40vh, 430px); margin-
   .play-identity h1 { font-size: 1.16rem; max-width: 46vw; }
   .play-navigation button { padding: 5px 6px; font-size: .68rem; }
   .armed-control-slot { grid-template-columns: minmax(106px, 1fr) 65px 70px; gap: 3px; }
+  .game-shell[data-mode='rhythm'] .armed-control-slot,
+  .game-shell[data-mode='eight-keys'] .armed-control-slot { grid-template-columns: minmax(106px, 1fr) 65px; }
   .armed-control-slot button { padding-inline: 5px; font-size: .72rem; }
   .passage { font-size: 18px; }
   .result-stats { gap: 0 10px; }

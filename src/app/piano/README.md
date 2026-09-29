@@ -3,16 +3,27 @@
 ## Current Play flow
 
 Run npm start and open http://localhost:4200/piano. Start opens the library;
-Twinkle Twinkle Little Star and Twinkle — Variation I are exposed. Selecting one prepares
-the local MusicXML score, the SF2 piano and a fresh playable word chart before
-the armed Play panel becomes ready. The Settings shortcut is available on every
-screen. Start run uses the displayed chart. Start Demo uses the same chart and
-begins at song time zero after the normal count-in. Reroll replaces words while
-armed without reloading the score or audio. Restart or Escape from a human run,
-and Replay from human Results, prepare fresh words. Demo completion, Restart or
-Escape during Demo return to armed Play with the same words. Settings and loss
-of focus leave Demo running. A practice seek keeps the current words; Demo
-starts at zero even after a seek. Exit and Home silence the run.
+Twinkle Twinkle Little Star and Twinkle — Variation I are exposed. Selecting one
+opens mode selection while its local MusicXML score and SF2 piano prepare.
+Choose Rhythm Only (`rhythm`), Eight Keys (`eight-keys`) or Word Concert
+(`word-concert`) to enter armed Play. Ready appears only after that mode's chart
+and melody coupling are prepared. Mode changes reuse the imported score and
+audio. Start run uses the displayed chart; Demo uses the same chart and the
+normal count-in. Word Concert alone draws per-run words and offers Reroll.
+Human Restart/Escape and Results Replay refresh those words; Demo completion or
+cancellation keeps them. Settings and loss of focus leave Demo running. A
+practice seek keeps the current chart. Exit and Home silence the run.
+
+Eight Keys streams hand-coloured finger numbers 1–4. Settings maps the eight
+slots L1–L4 and R1–R4 to distinct A–Z letters (initially QWER/UIOP). Reusing
+a letter swaps its two slots; bindings lock during a run and are recorded with
+human Results. The larger canvas targets keep light text on dark colours in
+the dark theme and dark text on light colours in the light theme.
+
+Library demand tags show Word Concert average and peak WPM at 1×, generated
+from required musical attacks. They use five attacks per word and are not
+free-typing benchmarks. Play shows live WPM from successful attacks in a rolling
+ten real playback seconds; non-word modes label this equivalent WPM.
 
 Each score's `defaultLookAhead` is set in `song-library.config.cjs` (2–10 seconds
 in 0.5-second steps). Selecting a song applies that value; the Settings slider

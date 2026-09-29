@@ -18,7 +18,7 @@ export const SONGS: readonly SongEntry[] = [
     "file": "Twinkle_Variation_01.musicxml",
     "composer": "Wolfgang Amadeus Mozart",
     "credit": "arr. Solángel",
-    "difficulty": "Intermediate",
+    "difficulty": "Expert",
     "visible": true,
     "playerPerformedMelody": true,
     "defaultLookAhead": 4

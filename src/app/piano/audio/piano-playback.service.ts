@@ -7,9 +7,11 @@ import { preparePulsePlan, scoreBeatGrid, BeatPulse, PreparedPulsePlan } from '.
 import { SONGS } from '../song-manifest.generated';
 import { buildXmlTypingChart, TypingTarget } from '../gameplay/piano-chart';
 import { songChartFor } from '../charts/song-charts';
-import { CoupledTarget } from '../gameplay/twinkle-coupling';
+import { CoupledTarget, coupleStaffMelody } from '../gameplay/twinkle-coupling';
 import { PerformedBar, PerformanceKind, PlayerPerformance } from './player-performance';
 import { prepareTwinkleRun, PreparedTwinkleRun } from '../charts/prepare-twinkle-run';
+import { buildEightKeysChart } from '../charts/eight-keys-chart';
+import { PianoMode } from '../gameplay/piano-mode';
 import type { DemoAction } from '../gameplay/piano-demo-controller';
 
 type PlaybackStatus = 'loading' | 'enable-audio' | 'ready' | 'starting' | 'count-in' | 'playing' | 'error';
@@ -48,6 +50,8 @@ export class PianoPlaybackService implements OnDestroy {
   readonly songs = SONGS.filter(song => song.visible);
   private readonly sourceValue = signal<PianoSource>(this.songs[0]?.id ?? '');
   readonly source = this.sourceValue.asReadonly();
+  private readonly modeValue = signal<PianoMode>('word-concert');
+  readonly mode = this.modeValue.asReadonly();
   private readonly scores = new Map<PianoSource, ImportedScore>();
   private selectionVersion = 0;
   private selectionAbort?: AbortController;
@@ -187,7 +191,7 @@ export class PianoPlaybackService implements OnDestroy {
   /** Reword the loaded chart without fetching or replacing the score/audio sequence. */
   prepareRunChart(seed?: number): boolean {
     const score = this.score();
-    if (!score || this.status() !== 'ready') return false;
+    if (!score || this.status() !== 'ready' || this.mode() !== 'word-concert') return false;
     this.statusValue.set('loading');
     try {
       if (this.songs.find(song => song.id === this.source())?.playerPerformedMelody) {
@@ -207,6 +211,38 @@ export class PianoPlaybackService implements OnDestroy {
 
   private prepareTwinkleChart(score: ImportedScore, id: string, seed?: number): PreparedTwinkleRun {
     return prepareTwinkleRun(score, this.previousTwinkleWords.get(id) ?? [], seed ?? this.nextWordSeed(), id);
+  }
+
+  private prepareModeChart(score: ImportedScore, id: string, mode: PianoMode): PreparedChart & { words?: readonly string[] } {
+    if (mode === 'word-concert') return this.prepareTwinkleChart(score, id);
+    const chart = songChartFor(id);
+    const targets = mode === 'eight-keys'
+      ? buildEightKeysChart(score, id)
+      : buildXmlTypingChart(score, chart.phrases, chart.unitsPerQuarter);
+    return { targets, coupling: coupleStaffMelody(score, targets) };
+  }
+
+  /** Change input rules without reloading the imported score or MIDI sequence. */
+  selectMode(mode: PianoMode): boolean {
+    if (this.status() === 'playing' || this.status() === 'count-in' || this.status() === 'starting') return false;
+    if (mode === this.mode() && this.status() === 'ready' && this.chart().length) return true;
+    this.modeValue.set(mode);
+    const score = this.score();
+    if (!score) return this.status() === 'loading';
+    if (this.status() !== 'ready') return false;
+    this.statusValue.set('loading');
+    try {
+      const prepared = this.prepareModeChart(score, this.source(), mode);
+      if (prepared.words) this.previousTwinkleWords.set(this.source(), prepared.words);
+      this.preparedChartValue.set(prepared);
+      this.errorValue.set('');
+      this.statusValue.set('ready');
+      return true;
+    } catch (error) {
+      this.errorValue.set(`Could not prepare mode: ${error instanceof Error ? error.message : error}`);
+      this.statusValue.set('error');
+      return false;
+    }
   }
 
   private nextWordSeed(): number {
@@ -398,23 +434,23 @@ export class PianoPlaybackService implements OnDestroy {
       }
       if (version !== this.selectionVersion || controller.signal.aborted) return;
       const chart = songChartFor(id);
-      const prepared = song.playerPerformedMelody ? this.prepareTwinkleChart(score, id) : null;
-      const run: PreparedChart = prepared ?? {
-        targets: buildXmlTypingChart(score, chart.phrases, chart.unitsPerQuarter), coupling: [],
-      };
+      const melodyTargets = buildXmlTypingChart(score, chart.phrases, chart.unitsPerQuarter);
+      const melodyCoupling = song.playerPerformedMelody ? coupleStaffMelody(score, melodyTargets) : [];
       const playbackMidi = song.playerPerformedMelody
-        ? buildScoreMidi(score, new Set(run.coupling.flatMap(target => target.notes.map(note => note.id)))) : score.midi;
+        ? buildScoreMidi(score, new Set(melodyCoupling.flatMap(target => target.notes.map(note => note.id)))) : score.midi;
       if (this.enginePromise) await this.enginePromise;
       if (!this.sequencer) throw new Error(this.engineError() || 'Audio engine is not ready. Return home and retry Start.');
       if (version !== this.selectionVersion || controller.signal.aborted) return;
       if (this.loadedSongId !== id) await this.queueSequence(playbackMidi, id);
       if (version !== this.selectionVersion || controller.signal.aborted) return;
+      const prepared = song.playerPerformedMelody ? this.prepareModeChart(score, id, this.mode()) :
+        { targets: melodyTargets, coupling: [] };
       if (song.playerPerformedMelody) {
-        this.playerPerformance = this.createPlayerPerformance(score, run.coupling);
+        this.playerPerformance = this.createPlayerPerformance(score, prepared.coupling);
         this.playerPerformance.releaseAll(0, true);
       }
-      if (prepared) this.previousTwinkleWords.set(id, prepared.words);
-      this.preparedChartValue.set(run);
+      if (prepared.words) this.previousTwinkleWords.set(id, prepared.words);
+      this.preparedChartValue.set(prepared);
       this.scoreValue.set(score);
       this.timelineValue.set(score.timeline);
       this.durationValue.set(score.duration);

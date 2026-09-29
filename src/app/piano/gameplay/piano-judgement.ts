@@ -1,5 +1,6 @@
 import type { TypingTarget } from './piano-chart';
 import { attackWindowSeconds, DEFAULT_SCORING_SETTINGS, holdBufferSeconds, ScoringSettings } from './piano-scoring-settings';
+import { EIGHT_KEYS, PianoMode } from './piano-mode';
 
 export const TIMING_WINDOWS = { perfect: 0.080, good: 0.160, wrongFeedback: 0.5 } as const;
 export const SCORING_POINTS = { perfect: 100, good: 70, miss: -10, hold: 100, wrong: -10, comboStep: 2 } as const;
@@ -29,7 +30,8 @@ export class TypingRound {
   private readonly held = new Map<number, { key: string; lastPosition: number }>();
   private readonly down = new Set<string>();
 
-  constructor(readonly targets: readonly TypingTarget[], public settings: ScoringSettings = DEFAULT_SCORING_SETTINGS) { this.reset(); }
+  constructor(readonly targets: readonly TypingTarget[], public settings: ScoringSettings = DEFAULT_SCORING_SETTINGS,
+    readonly mode: PianoMode = 'word-concert', readonly eightKeyBindings = EIGHT_KEYS) { this.reset(); }
 
   get availablePoints(): number {
     const eligible = this.targets.filter(target => this.results[target.index] !== 'skipped');
@@ -91,16 +93,18 @@ export class TypingRound {
     this.listening = listening; this.complete = complete; this.wrong = wrong;
   }
 
-  key(key: string, time: number, rate = 1, cosmeticTime = time): void {
+  key(key: string, time: number, rate = 1, cosmeticTime = time, physical = key): void {
     const upper = key.toUpperCase();
-    if (this.down.has(upper)) return;
+    const slot = this.mode === 'eight-keys' ? EIGHT_KEYS[this.eightKeyBindings.indexOf(upper)] : upper;
+    if (!slot) return;
+    if (this.down.has(physical)) return;
     this.advance(time, rate, cosmeticTime);
     const good = attackWindowSeconds(this.settings.goodMs, rate);
     const eligible = this.targets.filter(target => this.results[target.index] !== 'skipped');
     const first = eligible[0], last = eligible.at(-1);
     if (!first || !last || time < first.time - good - EPSILON ||
         time > Math.max(last.time + good, last.holdEnd ?? 0) + EPSILON || this.complete) return;
-    this.down.add(upper);
+    this.down.add(physical);
     let nearest: TypingTarget | undefined;
     let distance = Infinity;
     for (const target of this.targets) {
@@ -109,7 +113,7 @@ export class TypingRound {
         nearest = target; distance = delta;
       }
     }
-    if (!nearest || upper !== nearest.letter) {
+    if (!nearest || (this.mode !== 'rhythm' && slot !== nearest.letter)) {
       this.wrongCount++; this.combo = 0;
       this.wrongUntil = cosmeticTime + TIMING_WINDOWS.wrongFeedback;
       this.wrong = true;
@@ -121,7 +125,7 @@ export class TypingRound {
       this.comboBonus += SCORING_POINTS.comboStep * (this.combo - 1);
       if (nearest.holdEnd !== undefined) {
         this.results[nearest.index] = 'holding';
-        this.held.set(nearest.index, { key: upper, lastPosition: Math.max(nearest.time, time) });
+        this.held.set(nearest.index, { key: physical, lastPosition: Math.max(nearest.time, time) });
         this.sustainPoints[nearest.index] = this.proportional(nearest, time);
       } else this.results[nearest.index] = grade;
       this.setFeedback(grade, nearest.index);
@@ -130,11 +134,10 @@ export class TypingRound {
     this.revision++;
   }
 
-  keyUp(key: string, time: number, rate = 1): void {
-    const upper = key.toUpperCase();
-    this.down.delete(upper);
+  keyUp(key: string, time: number, rate = 1, physical = key): void {
+    this.down.delete(physical);
     for (const [index, held] of [...this.held]) {
-      if (held.key !== upper) continue;
+      if (held.key !== physical) continue;
       const target = this.targets[index], end = target.holdEnd!;
       const buffer = holdBufferSeconds(this.settings.holdReleaseMs, rate, end - target.time);
       const full = time >= end - buffer - EPSILON;

@@ -9,8 +9,11 @@ import { ChartCoverage, songChartFor } from './charts/song-charts';
 import { DemoAction, PianoDemoController } from './gameplay/piano-demo-controller';
 import { isStartKey } from './gameplay/piano-start-key';
 import { DEMO_KEYBOARD_ROWS, DemoKeyboardPresenter, DemoKeyVisual } from './rendering/demo-keyboard';
+import { EIGHT_KEYS, EIGHT_KEY_SLOTS, eightKeyNumber, modeName, PIANO_MODES, PianoMode } from './gameplay/piano-mode';
+import { calculateLiveWpm } from './gameplay/piano-wpm';
+import { SONG_DEMAND } from './song-demand.generated';
 
-type PianoStage = 'home' | 'library' | 'play' | 'results';
+type PianoStage = 'home' | 'library' | 'mode' | 'play' | 'results';
 
 @Component({
   selector: 'app-piano',
@@ -23,6 +26,13 @@ type PianoStage = 'home' | 'library' | 'play' | 'results';
 })
 export class PianoComponent implements AfterViewInit, OnDestroy {
   readonly playback = inject(PianoPlaybackService);
+  readonly modes = PIANO_MODES;
+  readonly mode = this.playback.mode;
+  readonly modeName = modeName;
+  readonly eightKeyNumber = eightKeyNumber;
+  readonly eightKeySlots = EIGHT_KEY_SLOTS;
+  readonly eightKeyBindings = signal(EIGHT_KEYS);
+  readonly eightKeyError = signal('');
   readonly scoringPoints = SCORING_POINTS;
   readonly stage = signal<PianoStage>('home');
   readonly settingsOpen = signal(false);
@@ -88,6 +98,11 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   readonly chartError = signal('');
   readonly attempt = signal({ results: [] as LetterResult[], attackGrades: [] as ('perfect' | 'good' | undefined)[], sustainPoints: [] as number[], current: -1, wordIndex: 0, listening: true, complete: false, wrong: false, wrongCount: 0, combo: 0, bestCombo: 0, total: 0, available: 0, sustain: 0, sustainAvailable: 0 });
   readonly displayedTime = signal(0);
+  readonly liveWpm = signal<number | null>(null);
+  private readonly successfulTargets = new Set<number>();
+  private readonly successfulSeconds: number[] = [];
+  private firstLiveTarget = 0;
+  private lastLiveBucket = -1;
   private lastTimePublish = -1;
   readonly words = computed(() => {
     const words: TypingTarget[][] = [];
@@ -139,7 +154,9 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       }
       try {
         this.chart.set(targets);
-        this.round = new TypingRound(targets, untracked(() => this.settings()));
+        const mode = this.playback.mode();
+        this.round = new TypingRound(targets, untracked(() => this.settings()), mode,
+          mode === 'eight-keys' ? this.eightKeyBindings() : EIGHT_KEYS);
         this.round.reset(untracked(() => this.runStartPosition()), untracked(() => this.playback.playbackRate()));
         this.chartError.set('');
         this.publishedRevision = -1;
@@ -171,7 +188,8 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
         () => this.chart().map(target => ({ ...target, result: this.round?.results[target.index] ?? 'pending', attackGrade: this.round?.attackGrades[target.index] })),
         () => this.updateAttempt(this.playback.playbackPosition), () => this.playback.score(), () => this.lookAhead(),
         () => this.settings(), () => this.staggerLetters(), () => this.playback.playbackRate(), () => this.playback.countInVisual,
-        () => this.playback.songBeatPositions, () => this.playback.melodyCoupling(), () => this.playback.performedBars);
+        () => this.playback.songBeatPositions, () => this.playback.melodyCoupling(), () => this.playback.performedBars,
+        () => this.mode());
       document.addEventListener('keydown', this.onKey);
       document.addEventListener('keyup', this.onKeyUp);
       window.addEventListener('blur', this.onBlur);
@@ -183,6 +201,13 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     return { full: 'Full chart', opening: 'Opening passage', listen: 'Listen only' }[coverage];
   }
   coverageLabelFor(id: string): string { return this.coverageLabel(songChartFor(id).coverage); }
+  demandFor(id: string) { return SONG_DEMAND[id]?.['word-concert']; }
+  modeDifficulty(mode: PianoMode): string {
+    if (mode === 'word-concert') return this.selectedSong()?.difficulty ?? '';
+    const variation = this.playback.source() === 'twinkle-variation-01';
+    return mode === 'rhythm' ? (variation ? 'Intermediate' : 'Beginner') :
+      (variation ? 'Advanced' : 'Beginner');
+  }
 
   enterLibrary(): void {
     this.playback.activateAudio();
@@ -211,8 +236,28 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.result.set(null);
     this.reviewDetail.set('');
     this.finishedListening.set(false);
-    this.stage.set('play');
+    this.stage.set('mode');
     void this.playback.selectSong(id);
+  }
+
+  chooseMode(mode: PianoMode): void {
+    if (this.stage() !== 'mode') return;
+    this.playback.selectMode(mode);
+    this.stage.set('play');
+  }
+
+  changeMode(): void {
+    if ((this.stage() !== 'play' || this.runStarted()) && this.stage() !== 'results') return;
+    this.finishResultReveal();
+    this.runVersion++;
+    this.cancelDemo();
+    this.round?.blur();
+    this.playback.stop();
+    this.runStartPosition.set(0);
+    this.displayedTime.set(0);
+    this.runStarted.set(false);
+    this.liveWpm.set(null);
+    this.stage.set('mode');
   }
 
   setScoringNumber(key: 'perfectMs' | 'goodMs' | 'holdReleaseMs', event: Event): void {
@@ -230,6 +275,25 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     const next = { ...this.settings(), [key]: (event.target as HTMLInputElement).checked };
     this.settings.set(next);
     if (this.round) this.round.settings = next;
+  }
+
+  setEightKeyBinding(index: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const letter = input.value.trim().toUpperCase();
+    const current = this.eightKeyBindings();
+    if (this.runStarted() || !/^[A-Z]$/.test(letter) || index < 0 || index >= EIGHT_KEYS.length) {
+      input.value = current[index] ?? '';
+      this.eightKeyError.set('Choose one letter from A to Z while armed.');
+      return;
+    }
+    const keys = [...current];
+    const previous = keys[index];
+    const other = keys.indexOf(letter);
+    keys[index] = letter;
+    if (other >= 0 && other !== index) keys[other] = previous;
+    this.eightKeyBindings.set(keys.join(''));
+    this.eightKeyError.set('');
+    input.value = letter;
   }
 
   selectTrack(event: Event): void {
@@ -298,12 +362,13 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.demoActive.set(true);
     this.demoKeyboard.clear();
     this.demoKeyStates.set({});
-    this.demo = new PianoDemoController(this.chart(), this.round, this.playback.playbackRate(), action => this.applyDemoAction(action));
+    this.demo = new PianoDemoController(this.chart(), this.round, this.playback.playbackRate(),
+      action => this.applyDemoAction(action), this.mode(), this.eightKeyBindings());
     this.playback.startDemo(this.demo.actions);
   }
 
   reroll(): void {
-    if (this.stage() !== 'play' || this.runStarted() || this.playback.status() !== 'ready') return;
+    if (this.stage() !== 'play' || this.mode() !== 'word-concert' || this.runStarted() || this.playback.status() !== 'ready') return;
     this.feedback.set(null);
     this.pianoRoll?.clearEffects();
     this.playback.prepareRunChart();
@@ -360,6 +425,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.round?.blur();
     this.playback.stop();
     this.runStarted.set(false);
+    this.liveWpm.set(null);
     this.stage.set('library');
   }
 
@@ -440,10 +506,11 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       this.round.advance(this.playback.duration() + 1, this.playback.playbackRate());
       this.publishAttempt();
       const result = this.captureResult();
-      if (result) { this.showResult(result); this.runStarted.set(false); this.stage.set('results'); return; }
+      if (result) { this.showResult(result); this.runStarted.set(false); this.liveWpm.set(null); this.stage.set('results'); return; }
     }
     this.finishedListening.set(true);
     this.runStarted.set(false);
+    this.liveWpm.set(null);
     this.stage.set('results');
   }
 
@@ -465,6 +532,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       if (this.stage() !== 'play' || version !== this.runVersion) return;
       this.showResult(result);
       this.runStarted.set(false);
+      this.liveWpm.set(null);
       this.stage.set('results');
     });
   }
@@ -473,6 +541,11 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.feedback.set(null);
     this.pianoRoll?.clearEffects();
     this.round?.reset(destination, this.playback.playbackRate());
+    this.successfulTargets.clear();
+    this.successfulSeconds.length = 0;
+    this.firstLiveTarget = this.round?.targets.find(target => target.time >= destination)?.time ?? destination;
+    this.lastLiveBucket = -1;
+    this.liveWpm.set(null);
     this.feedbackSerial = this.round?.feedbackSerial ?? 0;
     this.publishAttempt();
   }
@@ -496,7 +569,21 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     }
     this.round.advance(time, this.playback.playbackRate(), performance.now() / 1000);
     this.publishAttempt();
+    const observed = Math.max(0, (time - this.firstLiveTarget) / this.playback.playbackRate());
+    const bucket = Math.floor(observed * 4);
+    if (bucket !== this.lastLiveBucket) {
+      this.lastLiveBucket = bucket;
+      this.zone.run(() => this.liveWpm.set(calculateLiveWpm(this.successfulSeconds, observed)));
+    }
     this.maybeCompleteOpening();
+  }
+
+  private recordSuccessfulAttack(position: number): void {
+    const round = this.round;
+    if (!round || (round.feedbackKind !== 'perfect' && round.feedbackKind !== 'good') ||
+      round.feedbackIndex < 0 || this.successfulTargets.has(round.feedbackIndex)) return;
+    this.successfulTargets.add(round.feedbackIndex);
+    this.successfulSeconds.push(Math.max(0, (position - this.firstLiveTarget) / this.playback.playbackRate()));
   }
 
   private applyDemoAction(action: DemoAction): void {
@@ -505,6 +592,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       this.round.keyUp(action.key, action.time, this.playback.playbackRate());
     } else {
       this.round.key(action.key, action.time, this.playback.playbackRate(), action.time / this.playback.playbackRate());
+      this.recordSuccessfulAttack(action.time);
     }
     this.demoKeyboard.apply(action, this.playback.playbackPosition, this.playback.playbackRate(), performance.now());
   }
@@ -620,9 +708,10 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     const round = this.round;
     if (!round) return;
     const before = round.feedbackSerial;
-    round.key(key, judgementTime, this.playback.playbackRate(), performance.now() / 1000);
+    round.key(key, judgementTime, this.playback.playbackRate(), performance.now() / 1000, physical);
     if (round.feedbackSerial !== before && round.feedbackIndex >= 0 &&
         (round.feedbackKind === 'perfect' || round.feedbackKind === 'good' || round.feedbackKind === 'wrong')) {
+      this.recordSuccessfulAttack(judgementTime);
       this.playback.performMelodyInput(round.feedbackIndex, round.feedbackKind, physical, audioPosition);
     }
     this.publishAttempt();
@@ -630,7 +719,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
 
   private releaseGameplayKey(key: string, physical: string, position: number): void {
     this.playback.releasePlayerKey(physical);
-    this.round?.keyUp(key, position, this.playback.playbackRate());
+    this.round?.keyUp(key, position, this.playback.playbackRate(), physical);
     this.publishAttempt();
   }
 
@@ -666,7 +755,9 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       const fresh = !this.demoActive() || !target ||
         this.playback.playbackPosition - target.time <= 0.5 * this.playback.playbackRate();
       if (fresh)
-        this.pianoRoll?.flashJudgement(kind, target, this.playback.visualPosition, this.lookAhead(), round.feedbackLetter);
+        this.pianoRoll?.flashJudgement(kind, target, this.playback.visualPosition, this.lookAhead(),
+          this.mode() === 'rhythm' ? '●' : this.mode() === 'eight-keys' && target ?
+            eightKeyNumber(target.letter) : round.feedbackLetter);
       this.zone.run(() => this.feedback.set(fresh ? { kind, started: now, until: now + 500,
         letter: round.feedbackLetter,
         targetId: kind === 'perfect' || kind === 'good' ? target?.id : undefined,

@@ -38,6 +38,8 @@ describe('piano stages', () => {
       component.enterLibrary();
       expect(component.stage()).toBe('library');
       component.chooseSong('twinkle-theme');
+      expect(component.stage()).toBe('mode');
+      component.chooseMode('word-concert');
       expect(component.stage()).toBe('play');
       expect(select).toHaveBeenCalledOnceWith('twinkle-theme');
       expect(play).not.toHaveBeenCalled();
@@ -89,6 +91,7 @@ describe('piano stages', () => {
     const stage = fixture.nativeElement.querySelector('.play-stage') as HTMLElement;
     try {
       component.chooseSong('twinkle-theme');
+      component.chooseMode('word-concert');
       (component.playback as any).scoreValue.set({ measures: [], annotations: [] });
       (component.playback as any).statusValue.set('ready');
       fixture.detectChanges();
@@ -119,6 +122,7 @@ describe('piano stages', () => {
     const restart = spyOn(component.playback, 'restart');
     try {
       component.chooseSong('twinkle-theme');
+      component.chooseMode('word-concert');
       component.runStartPosition.set(5);
       component.runStarted.set(true);
       fixture.detectChanges();
@@ -147,6 +151,7 @@ describe('piano stages', () => {
     const releaseAll = spyOn(component.playback, 'releasePlayerVoices');
     try {
       component.chooseSong('twinkle-theme');
+      component.chooseMode('word-concert');
       const target = { index: 0, id: 'a', word: 'A', letter: 'A', time: 0, holdEnd: 1, wordIndex: 0 };
       (component as any).round = new TypingRound([target]);
       component.runStarted.set(true);
@@ -174,6 +179,7 @@ describe('piano stages', () => {
     const perform = spyOn(component.playback, 'performMelodyInput');
     try {
       component.chooseSong('twinkle-theme');
+      component.chooseMode('word-concert');
       const target = { index: 0, id: 'first', word: 'T', letter: 'T', time: 0, wordIndex: 0 };
       const round = new TypingRound([target]);
       (component as any).round = round;
@@ -220,6 +226,7 @@ describe('piano stages', () => {
     const prepare = spyOn(component.playback, 'prepareRunChart').and.returnValue(true);
     try {
       component.chooseSong('twinkle-theme');
+      component.chooseMode('word-concert');
       playback.scoreValue.set({ measures: [], annotations: [] });
       playback.statusValue.set('ready');
       const target = { index: 0, id: 'a', word: 'A', letter: 'A', time: 0, wordIndex: 0 };
@@ -244,6 +251,89 @@ describe('piano stages', () => {
     } finally { fixture.destroy(); }
   });
 
+  it('offers Reroll only for Word Concert and clears live WPM when changing mode', () => {
+    TestBed.configureTestingModule({ imports: [PianoComponent] });
+    const fixture = TestBed.createComponent(PianoComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    spyOn(component.playback, 'selectSong').and.resolveTo();
+    spyOn(component.playback, 'stop');
+    const prepare = spyOn(component.playback, 'prepareRunChart').and.returnValue(true);
+    try {
+      component.chooseSong('twinkle-theme');
+      component.chooseMode('rhythm');
+      component.liveWpm.set(24);
+      component.reroll();
+      expect(prepare).not.toHaveBeenCalled();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.typing-area')).toBeNull();
+      expect(fixture.nativeElement.querySelector('.secondary-run:last-child')?.textContent).not.toContain('Reroll');
+      component.changeMode();
+      expect(component.stage()).toBe('mode');
+      expect(component.liveWpm()).toBeNull();
+    } finally { fixture.destroy(); }
+  });
+
+  it('edits Eight Keys slots by swapping duplicates and locks them during a run', () => {
+    TestBed.configureTestingModule({ imports: [PianoComponent] });
+    const fixture = TestBed.createComponent(PianoComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    spyOn(component.playback, 'selectSong').and.resolveTo();
+    spyOn(component.playback, 'stop');
+    try {
+      component.chooseSong('twinkle-theme');
+      component.chooseMode('eight-keys');
+      component.openSettings();
+      fixture.detectChanges();
+      const inputs = fixture.nativeElement.querySelectorAll('.eight-key-inputs input') as NodeListOf<HTMLInputElement>;
+      expect(inputs.length).toBe(8);
+      inputs[0].value = 'u';
+      inputs[0].dispatchEvent(new Event('change'));
+      fixture.detectChanges();
+      expect(component.eightKeyBindings()).toBe('UWERQIOP');
+      expect(inputs[4].value).toBe('Q');
+      inputs[1].value = '1';
+      inputs[1].dispatchEvent(new Event('change'));
+      expect(component.eightKeyBindings()).toBe('UWERQIOP');
+      expect(inputs[1].value).toBe('W');
+      component.runStarted.set(true);
+      fixture.detectChanges();
+      expect(inputs[0].disabled).toBeTrue();
+      inputs[0].value = 'a';
+      component.setEightKeyBinding(0, { target: inputs[0] } as unknown as Event);
+      expect(component.eightKeyBindings()).toBe('UWERQIOP');
+    } finally { fixture.destroy(); }
+  });
+
+  it('derives live WPM from source time at each speed and resets it on seek', () => {
+    TestBed.configureTestingModule({ imports: [PianoComponent] });
+    const fixture = TestBed.createComponent(PianoComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    const playback = component.playback as any;
+    spyOn(component.playback, 'commitSeek');
+    try {
+      component.stage.set('play');
+      component.runStarted.set(true);
+      playback.statusValue.set('playing');
+      for (const rate of [0.5, 2]) {
+        playback.rateValue.set(rate);
+        const target = { index: 0, id: 'a', word: 'A', letter: 'A', time: 1, wordIndex: 0 };
+        const round = new TypingRound([target]);
+        (component as any).round = round;
+        (component as any).resetAttempt(0);
+        round.key('a', 1, rate);
+        (component as any).recordSuccessfulAttack(1);
+        (component as any).updateAttempt(1 + rate);
+        expect(component.liveWpm()).withContext(`${rate}×`).toBe(12);
+        component.commitSeek({ target: { value: '2' } } as unknown as Event);
+        expect(component.liveWpm()).toBeNull();
+        expect((component as any).successfulSeconds).toEqual([]);
+      }
+    } finally { fixture.destroy(); }
+  });
+
   it('switches to listen-only when a practice seek skips every chart target', () => {
     TestBed.configureTestingModule({ imports: [PianoComponent] });
     const fixture = TestBed.createComponent(PianoComponent);
@@ -254,6 +344,7 @@ describe('piano stages', () => {
     spyOn(component.playback, 'commitSeek');
     try {
       component.chooseSong('twinkle-theme');
+      component.chooseMode('word-concert');
       const target = { index: 0, id: 'a', word: 'A', letter: 'A', time: 1, wordIndex: 0 };
       (component as any).round = new TypingRound([target]);
       component.commitSeek({ target: { value: '2' } } as unknown as Event);
@@ -279,6 +370,7 @@ describe('piano stages', () => {
     const perform = spyOn(component.playback, 'performMelodyInput');
     try {
       component.chooseSong('twinkle-theme');
+      component.chooseMode('word-concert');
       playback.scoreValue.set({ measures: [], annotations: [] });
       playback.statusValue.set('ready');
       const target = { index: 0, id: 'a', word: 'A', letter: 'A', time: 0, wordIndex: 0 };

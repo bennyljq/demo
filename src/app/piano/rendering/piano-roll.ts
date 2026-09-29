@@ -8,6 +8,7 @@ import { ROLL_PLAYHEAD_X, timeToX } from './piano-roll-geometry';
 import { attackWindowSeconds, holdBufferSeconds, ScoringSettings } from '../gameplay/piano-scoring-settings';
 import type { CoupledTarget } from '../gameplay/twinkle-coupling';
 import type { PerformedBar } from '../audio/player-performance';
+import { eightKeyNumber, type PianoMode } from '../gameplay/piano-mode';
 
 export interface JudgementFeedback {
   kind: 'perfect' | 'good' | 'miss' | 'wrong';
@@ -21,8 +22,9 @@ export interface JudgementFeedback {
 interface HitBurst { readonly x: number; readonly y: number; readonly letter: string;
   readonly targetId?: string; readonly kind: JudgementFeedback['kind']; readonly started: number }
 
-const LETTER_LINE_Y = 82;
-const STAGGERED_LETTER_Y = [67, 96] as const;
+const LETTER_LINE_Y = 88;
+const STAGGERED_LETTER_Y = [77, 97] as const;
+const TARGET_HALF_SIZE = 18;
 
 /** RAF only paints the score position supplied by the sequencer. */
 export class PianoRoll {
@@ -53,6 +55,7 @@ export class PianoRoll {
     private readonly readSongBeats: () => readonly number[],
     private readonly readCoupling: () => readonly CoupledTarget[],
     private readonly readPerformedBars: () => readonly PerformedBar[],
+    private readonly readMode: () => PianoMode,
   ) {
     this.ctx = canvas.getContext('2d');
     this.observer = new ResizeObserver(() => this.resize());
@@ -110,12 +113,13 @@ export class PianoRoll {
     const css = getComputedStyle(this.canvas);
     const color = (name: string) => css.getPropertyValue(name).trim();
     const c = this.ctx;
-    const top = 145, bottom = this.height - 18;
+    const top = 167, bottom = this.height - 18;
     const row = (bottom - top) / (this.high - this.low + 1);
     const y = (pitch: number) => top + (this.high - pitch) * row;
     const targets = this.readTargets();
     const settings = this.readSettings();
     const rate = this.readRate();
+    const mode = this.readMode();
 
     c.fillStyle = color('--roll-surface');
     c.fillRect(0, 0, this.width, this.height);
@@ -125,9 +129,9 @@ export class PianoRoll {
     c.fillText(countIn ? 'Count-in' : `${position.toFixed(1)} s`, ROLL_PLAYHEAD_X - 14, 13);
     c.fillText(`+${ahead} s`, Math.max(ROLL_PLAYHEAD_X + 36, this.width - 46), 13);
     c.fillStyle = color('--roll-lane');
-    c.fillRect(42, 34, Math.max(0, this.width - 42), 78);
+    c.fillRect(42, 34, Math.max(0, this.width - 42), 100);
     c.strokeStyle = color('--roll-grid-strong');
-    c.beginPath(); c.moveTo(42, 122); c.lineTo(this.width, 122); c.stroke();
+    c.beginPath(); c.moveTo(42, 144); c.lineTo(this.width, 144); c.stroke();
 
     for (let pitch = this.low; pitch <= this.high; pitch++) {
       c.strokeStyle = pitch % 12 === 0 ? color('--roll-grid-strong') : color('--roll-grid');
@@ -145,11 +149,11 @@ export class PianoRoll {
         const at = x(measure.start);
         if (at < 42 || at > this.width - 2) continue;
         c.strokeStyle = color('--roll-barline');
-        c.beginPath(); c.moveTo(at, 118); c.lineTo(at, bottom); c.stroke();
+        c.beginPath(); c.moveTo(at, 140); c.lineTo(at, bottom); c.stroke();
         c.fillStyle = color('--roll-text');
         c.textAlign = 'left';
         const label = `${measure.number}${measure.occurrence > 1 ? `×${measure.occurrence}` : ''}`;
-        c.fillText(label, Math.max(42, Math.min(at + 3, this.width - c.measureText(label).width - 3)), 134);
+        c.fillText(label, Math.max(42, Math.min(at + 3, this.width - c.measureText(label).width - 3)), 156);
       }
       c.save();
       c.beginPath(); c.rect(42, 19, Math.max(0, this.width - 42), 14); c.clip();
@@ -187,7 +191,7 @@ export class PianoRoll {
         c.beginPath(); c.moveTo(at, 34); c.lineTo(at, bottom); c.stroke();
       }
       c.fillStyle = color('--roll-annotation'); c.textAlign = 'left'; c.font = 'bold 12px sans-serif';
-      c.fillText('Count-in', Math.max(46, Math.min(left + 6, this.width - 72)), 134);
+      c.fillText('Count-in', Math.max(46, Math.min(left + 6, this.width - 72)), 156);
     }
 
     c.save();
@@ -244,20 +248,20 @@ export class PianoRoll {
     }
 
     c.save();
-    c.beginPath(); c.rect(42, 34, Math.max(0, this.width - 42), 78); c.clip();
-    for (const target of targets) {
+    c.beginPath(); c.rect(42, 34, Math.max(0, this.width - 42), 100); c.clip();
+    for (const [index, target] of targets.entries()) {
       if (countIn && target.time < countIn.songStart - 1e-7) continue;
       const at = x(target.time);
       const end = target.holdEnd === undefined ? at : x(target.holdEnd);
-      if (at > this.width + 12 || end < 30) continue;
+      if (at > this.width + TARGET_HALF_SIZE || end < 42 - TARGET_HALF_SIZE) continue;
       const center = this.letterY(target.index);
       if (settings.showAttackWindows) {
         const good = attackWindowSeconds(settings.goodMs, rate);
         const perfect = attackWindowSeconds(settings.perfectMs, rate);
         c.fillStyle = color('--roll-good-window');
-        c.fillRect(x(target.time - good), center - 13, x(target.time + good) - x(target.time - good), 26);
+        c.fillRect(x(target.time - good), center - TARGET_HALF_SIZE, x(target.time + good) - x(target.time - good), TARGET_HALF_SIZE * 2);
         c.fillStyle = color('--roll-perfect-window');
-        c.fillRect(x(target.time - perfect), center - 13, x(target.time + perfect) - x(target.time - perfect), 26);
+        c.fillRect(x(target.time - perfect), center - TARGET_HALF_SIZE, x(target.time + perfect) - x(target.time - perfect), TARGET_HALF_SIZE * 2);
       }
       if (target.holdEnd !== undefined) {
         c.strokeStyle = color('--roll-hold');
@@ -280,15 +284,21 @@ export class PianoRoll {
       c.translate(at, center);
       if (!this.reducedMotion.matches && punch.has(target.id))
         c.scale(1.14, 1.14);
-      c.fillStyle = target.wordIndex % 2 === 0 ? color('--roll-word-a') : color('--roll-word-b');
+      const previousAt = index ? x(targets[index - 1].time) : -Infinity;
+      const nextAt = index + 1 < targets.length ? x(targets[index + 1].time) : Infinity;
+      // Keep the larger glyph while narrowing only its coloured tile when dense notes meet.
+      const halfWidth = Math.max(8, Math.min(TARGET_HALF_SIZE, (Math.min(at - previousAt, nextAt - at) - 2) / 2));
+      c.fillStyle = mode === 'eight-keys'
+        ? color('QWER'.includes(target.letter) ? '--roll-word-a' : '--roll-word-b')
+        : target.wordIndex % 2 === 0 ? color('--roll-word-a') : color('--roll-word-b');
       c.strokeStyle = { pending: color('--roll-letter-edge'), holding: color(`--roll-${target.attackGrade ?? 'hold'}`),
         skipped: color('--roll-muted'), perfect: color('--roll-perfect'), good: color('--roll-good'),
         miss: color('--roll-miss') }[target.result];
       c.lineWidth = target.result === 'pending' ? 1 : 2.5;
-      c.beginPath(); c.roundRect(-12, -12, 24, 24, 5); c.fill(); c.stroke();
+      c.beginPath(); c.roundRect(-halfWidth, -TARGET_HALF_SIZE, halfWidth * 2, TARGET_HALF_SIZE * 2, 6); c.fill(); c.stroke();
       c.fillStyle = color('--roll-letter-text');
-      c.font = 'bold 15px Consolas, monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
-      c.fillText(target.letter, 0, 0);
+      c.font = 'bold 22.5px Consolas, monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.fillText(mode === 'rhythm' ? '●' : mode === 'eight-keys' ? eightKeyNumber(target.letter) : target.letter, 0, 0);
       c.restore();
     }
     c.restore();
@@ -349,13 +359,13 @@ export class PianoRoll {
       }
     }
     c.fillStyle = color('--roll-surface');
-    c.beginPath(); c.roundRect(-14, -14, 28, 28, 5); c.fill(); c.stroke();
+    c.beginPath(); c.roundRect(-18, -18, 36, 36, 6); c.fill(); c.stroke();
     if (burst.kind === 'wrong') {
       c.beginPath(); c.moveTo(-16, 17); c.lineTo(16, -17); c.stroke();
     } else if (burst.kind === 'miss') {
       c.beginPath(); c.moveTo(-7, 17); c.lineTo(7, 17); c.stroke();
     }
-    c.fillStyle = hue; c.font = 'bold 17px Consolas, monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillStyle = hue; c.font = 'bold 22.5px Consolas, monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
     c.fillText(burst.letter, 0, 0);
     c.restore();
   }

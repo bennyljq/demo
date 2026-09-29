@@ -101,6 +101,36 @@ describe('song selection', () => {
     } finally { service.ngOnDestroy(); }
   });
 
+  it('publishes the mode chosen during loading without reimporting the score', async () => {
+    const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
+    const internal = service as any;
+    const score = importMusicXml(await (await fetch('/assets/piano/tracks/Twinkle_Theme.musicxml')).text());
+    internal.scores.set('twinkle-theme', score);
+    let finish!: () => void;
+    internal.enginePromise = new Promise<void>(resolve => { finish = resolve; });
+    internal.sequencer = { pause: () => {}, currentTime: 0 };
+    spyOn(internal, 'queueSequence').and.callFake(async (_midi: ArrayBuffer, id: string) => { internal.loadedSongId = id; });
+    spyOn(internal, 'createPlayerPerformance').and.returnValue({ releaseAll: () => {} });
+    try {
+      const loading = service.selectSong('twinkle-theme');
+      expect(service.selectMode('rhythm')).toBeTrue();
+      expect(service.selectMode('eight-keys')).toBeTrue();
+      expect(service.status()).toBe('loading');
+      finish();
+      await loading;
+      expect(service.status()).toBe('ready');
+      expect(service.mode()).toBe('eight-keys');
+      expect(service.chart().length).toBe(98);
+      expect(service.chart().every(target => 'QWERUIOP'.includes(target.letter))).toBeTrue();
+      expect(service.score()).toBe(score);
+      expect(internal.previousTwinkleWords.size).toBe(0);
+      const chart = service.chart();
+      expect(service.selectMode('rhythm')).toBeTrue();
+      expect(service.chart().map(target => target.time)).toEqual(chart.map(target => target.time));
+      expect(service.score()).toBe(score);
+    } finally { service.ngOnDestroy(); }
+  });
+
   it('queues the untouched imported MIDI and no player voices for other songs', async () => {
     const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
     const internal = service as any;

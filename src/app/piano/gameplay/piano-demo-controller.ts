@@ -1,5 +1,6 @@
 import type { TypingTarget } from './piano-chart';
 import { TypingRound } from './piano-judgement';
+import { EIGHT_KEYS, PianoMode } from './piano-mode';
 
 export interface DemoAction {
   readonly time: number;
@@ -16,11 +17,21 @@ export class PianoDemoController {
   private cancelled = false;
 
   constructor(targets: readonly TypingTarget[], private readonly round: TypingRound, private readonly rate: number,
-    private readonly onAction?: (action: DemoAction) => void) {
-    this.actions = targets.flatMap(target => [
-      { time: target.time, key: target.letter, targetIndex: target.index, release: false, hold: target.holdEnd !== undefined },
+    private readonly onAction?: (action: DemoAction) => void, mode: PianoMode = round.mode,
+    eightKeyBindings = round.eightKeyBindings) {
+    const heldUntil = new Map<string, number>();
+    const keys = targets.map((target, index) => {
+      if (mode === 'eight-keys') return eightKeyBindings[EIGHT_KEYS.indexOf(target.letter)];
+      if (mode !== 'rhythm') return target.letter;
+      const choices = index % 2 ? ['J', 'F', 'K', 'D', 'L', 'S'] : ['F', 'J', 'D', 'K', 'S', 'L'];
+      const key = choices.find(candidate => (heldUntil.get(candidate) ?? -Infinity) <= target.time) ?? choices[0];
+      if (target.holdEnd !== undefined) heldUntil.set(key, target.holdEnd);
+      return key;
+    });
+    this.actions = targets.flatMap((target, index) => [
+      { time: target.time, key: keys[index], targetIndex: target.index, release: false, hold: target.holdEnd !== undefined },
       { time: target.holdEnd ?? Math.min(target.time + 0.13 * rate,
-          targets.find(next => next.time > target.time + 1e-9 && next.letter === target.letter)?.time ?? Infinity), key: target.letter,
+          targets.find((next, nextIndex) => nextIndex > index && next.time > target.time + 1e-9 && keys[nextIndex] === keys[index])?.time ?? Infinity), key: keys[index],
         targetIndex: target.index, release: true, hold: target.holdEnd !== undefined },
     ]).sort((a, b) => a.time - b.time || Number(b.release) - Number(a.release) || a.targetIndex - b.targetIndex);
   }

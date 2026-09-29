@@ -5,7 +5,7 @@ module.exports = [
     composer: 'Wolfgang Amadeus Mozart', credit: 'arr. Solángel', difficulty: 'Beginner', visible: true, playerPerformedMelody: true,
     defaultLookAhead: 6 },
   { id: 'twinkle-variation-01', title: 'Twinkle — Variation I', file: 'Twinkle_Variation_01.musicxml',
-    composer: 'Wolfgang Amadeus Mozart', credit: 'arr. Solángel', difficulty: 'Intermediate', visible: true, playerPerformedMelody: true,
+    composer: 'Wolfgang Amadeus Mozart', credit: 'arr. Solángel', difficulty: 'Expert', visible: true, playerPerformedMelody: true,
     defaultLookAhead: 4 },
   { id: 'greensleeves', title: 'Greensleeves', file: 'Greensleeves.mxl',
     composer: 'Traditional', credit: 'arr. Dominique Makowski', difficulty: 'Intermediate', defaultLookAhead: 6 },

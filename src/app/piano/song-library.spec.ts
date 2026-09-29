@@ -14,7 +14,7 @@ describe('generated song library', () => {
     expect(SONGS.filter(song => song.visible).map(song => song.id)).toEqual([
       'twinkle-theme', 'twinkle-variation-01',
     ]);
-    expect(SONGS.map(song => song.difficulty)).toEqual(['Beginner', 'Intermediate', 'Intermediate', 'Advanced', 'Not rated']);
+    expect(SONGS.map(song => song.difficulty)).toEqual(['Beginner', 'Expert', 'Intermediate', 'Advanced', 'Not rated']);
     expect(SONGS.map(song => song.defaultLookAhead)).toEqual([6, 4, 6, 6, 6]);
     expect(SONGS.map(song => song.composer)).toEqual([
       'Wolfgang Amadeus Mozart', 'Wolfgang Amadeus Mozart', 'Traditional', 'Wolfgang Amadeus Mozart', 'Franz Liszt',
