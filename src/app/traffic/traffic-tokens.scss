@@ -1,0 +1,34 @@
+// Import from the route component stylesheet. Do not include in global styles.
+:host {
+  --traffic-bg: #0d1824;
+  --traffic-surface: #172a38;
+  --traffic-road: #2a3d49;
+  --traffic-marking: #bdc5c4;
+  --traffic-text: #f3eddb;
+  --traffic-muted: #b1c2c8;
+  --traffic-flow: #7ce8bd;
+  --traffic-wait: #ffd071;
+  --traffic-danger: #ff8578;
+  --traffic-focus: #b7deff;
+  --traffic-radius-control: 0.375rem;
+  --traffic-radius-panel: 0.75rem;
+  --traffic-space-1: 0.25rem;
+  --traffic-space-2: 0.5rem;
+  --traffic-space-3: 0.75rem;
+  --traffic-space-4: 1rem;
+  --traffic-space-6: 1.5rem;
+  --traffic-motion-hit: 90ms;
+  --traffic-motion-ui: 180ms;
+  --traffic-motion-scene: 320ms;
+  --traffic-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --traffic-font-ui: system-ui, sans-serif;
+  --traffic-font-numeric: ui-monospace, monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    --traffic-motion-hit: 0ms;
+    --traffic-motion-ui: 0ms;
+    --traffic-motion-scene: 0ms;
+  }
+}

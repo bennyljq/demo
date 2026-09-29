@@ -184,7 +184,7 @@ describe('piano stages', () => {
         songStart: 0, barStart: -1, beatSeconds: 0.5, offsets: [0, 0.5],
         countInPositions: [-1, -0.5, 0], songPositions: [0],
       } };
-      playback.couplingValue.set([{ start: 0 }]);
+      playback.preparedChartValue.set({ targets: [], coupling: [{ start: 0 }] });
       playback.statusValue.set('count-in');
       document.dispatchEvent(new KeyboardEvent('keydown', { key: 't', code: 'KeyT', bubbles: true }));
       expect(round.results[0]).toBe('pending');
@@ -241,6 +241,27 @@ describe('piano stages', () => {
       component.stage.set('results');
       component.retry();
       expect(prepare).toHaveBeenCalledTimes(3);
+    } finally { fixture.destroy(); }
+  });
+
+  it('switches to listen-only when a practice seek skips every chart target', () => {
+    TestBed.configureTestingModule({ imports: [PianoComponent] });
+    const fixture = TestBed.createComponent(PianoComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    spyOn(component.playback, 'selectSong').and.resolveTo();
+    spyOn(component.playback, 'stop');
+    spyOn(component.playback, 'commitSeek');
+    try {
+      component.chooseSong('twinkle-theme');
+      const target = { index: 0, id: 'a', word: 'A', letter: 'A', time: 1, wordIndex: 0 };
+      (component as any).round = new TypingRound([target]);
+      component.commitSeek({ target: { value: '2' } } as unknown as Event);
+      expect(component.chartedRun()).toBeFalse();
+      expect(component.attempt().results).toEqual(['skipped']);
+      component.commitSeek({ target: { value: '0' } } as unknown as Event);
+      expect(component.chartedRun()).toBeTrue();
+      expect(component.attempt().results).toEqual(['pending']);
     } finally { fixture.destroy(); }
   });
 

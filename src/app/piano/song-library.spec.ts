@@ -11,6 +11,9 @@ describe('generated song library', () => {
       'twinkle-theme', 'twinkle-variation-01', 'greensleeves',
       'wa-mozart-marche-turque-turkish-march-fingered', 'liebestraum-no-3-in-a-major',
     ]);
+    expect(SONGS.filter(song => song.visible).map(song => song.id)).toEqual([
+      'twinkle-theme', 'twinkle-variation-01',
+    ]);
     expect(SONGS.map(song => song.difficulty)).toEqual(['Beginner', 'Intermediate', 'Intermediate', 'Advanced', 'Not rated']);
     expect(SONGS.map(song => song.defaultLookAhead)).toEqual([6, 4, 6, 6, 6]);
     expect(SONGS.map(song => song.composer)).toEqual([

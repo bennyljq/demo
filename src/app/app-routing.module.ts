@@ -76,6 +76,7 @@ const routes: Routes = [
   { path: 'test', component: KeyboardWizardWebComponent },
   { path: 'gravity-slop', component: GravitySlopComponent },
   { path: 'sort', component: SortComponent },
+  { path: 'traffic', loadComponent: () => import('./traffic/traffic.component').then(m => m.TrafficComponent) },
   { path: 'piano', component: PianoComponent },
   { path: '**', redirectTo: '', pathMatch: 'full'},  // Wildcard route for a 404 page, have not gotten to this
 ];

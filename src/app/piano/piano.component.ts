@@ -45,7 +45,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   readonly coverage = computed(() => this.selectedSong() ? songChartFor(this.playback.source()).coverage : 'listen');
   readonly runStartPosition = signal(0);
   readonly runContext = computed(() => this.runStartPosition() > 0.001 ? 'Practice segment' : this.coverageLabel(this.coverage()));
-  readonly chartedRun = signal(false);
+  readonly chartedRun = computed(() => this.attempt().results.some(result => result !== 'skipped'));
   readonly progress = computed(() => {
     const chart = this.chart();
     const last = chart.at(-1);
@@ -141,7 +141,6 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
         this.chart.set(targets);
         this.round = new TypingRound(targets, untracked(() => this.settings()));
         this.round.reset(untracked(() => this.runStartPosition()), untracked(() => this.playback.playbackRate()));
-        this.chartedRun.set(targets.length > 0);
         this.chartError.set('');
         this.publishedRevision = -1;
         this.publishAttempt();
@@ -281,7 +280,6 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.completionPending = false;
     this.runStartPosition.set(this.playback.playbackPosition);
     this.resetAttempt(this.runStartPosition());
-    this.chartedRun.set(!!this.round?.results.some(result => result !== 'skipped'));
     this.result.set(null);
     this.finishResultReveal();
     this.reviewDetail.set('');
@@ -311,11 +309,6 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.playback.prepareRunChart();
   }
 
-  stop(): void {
-    this.playback.stop();
-    this.resetAttempt();
-  }
-
   restart(): void {
     if (this.stage() !== 'play') return;
     const wasDemo = this.demoActive();
@@ -329,7 +322,6 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.lastTimePublish = -1;
     if (!wasDemo) this.playback.prepareRunChart();
     this.resetAttempt(0);
-    this.chartedRun.set(!!this.round?.results.some(result => result !== 'skipped'));
     this.runStarted.set(false);
     this.result.set(null);
     this.finishResultReveal();
@@ -345,12 +337,8 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
 
   exitRun(): void {
     if (this.stage() !== 'play' || this.demoActive()) return;
-    this.runVersion++;
-    this.cancelDemo();
-    this.round?.blur();
-    this.stop();
-    this.runStarted.set(false);
-    this.stage.set('library');
+    this.chooseLibrary();
+    this.resetAttempt();
   }
 
   retry(): void {
@@ -360,7 +348,6 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.playback.commitSeek(this.runStartPosition());
     this.playback.prepareRunChart();
     this.resetAttempt(this.runStartPosition());
-    this.chartedRun.set(!!this.round?.results.some(result => result !== 'skipped'));
     this.runStarted.set(false);
     this.stage.set('play');
   }
@@ -663,7 +650,6 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
       this.runVersion++;
       this.completionPending = false;
       this.runStartPosition.set(time);
-      this.chartedRun.set(!!this.round?.results.some(result => result !== 'skipped'));
     }
     this.displayedTime.set(time);
   }

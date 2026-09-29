@@ -27,7 +27,9 @@
       </div>
     </div>
     
-    @if (project.id === 'snowpiercer') {
+    @if (project.id === 'traffic') {
+      <div class="logo traffic-logo" aria-hidden="true"><span>+</span><i></i><i></i><i></i><i></i></div>
+    } @else if (project.id === 'snowpiercer') {
       <div class="logo" [ngStyle]="project.customLogoStyles">
         <img [src]="project.imgSrc" [class]="project.imgClass" [class.logo-hover]="project.isHovered">
       </div>
@@ -60,6 +62,10 @@
 <!-- ============================================== -->
 <!-- TEXT CONTENT TEMPLATES                         -->
 <!-- ============================================== -->
+
+<ng-template #desc_traffic>
+  <strong>Greenwave</strong> is a playable traffic-control prototype. Switch a four-way signal, clear cars to earn credits, and buy faster dispatch to improve the flow.
+</ng-template>
 
 <ng-template #desc_potong>
   <a href="https://potong.io" target="_blank">potong.io</a> is a minimalist geometry puzzle game that tests your spatial awareness.

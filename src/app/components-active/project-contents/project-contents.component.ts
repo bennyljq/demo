@@ -32,6 +32,10 @@ export class ProjectContentsComponent implements OnInit {
   // Configuration Array
   projects: Project[] = [
     {
+      id: 'traffic', titleHtml: 'Greenwave', subtitle: '2026',
+      linkText: 'Run the junction', linkIcon: '→', actionType: 'route', actionTarget: '/traffic'
+    },
+    {
       id: 'potong', titleHtml: 'potong.io', subtitle: '2026', imgSrc: 'assets/potong/potong.gif', imgClass: 'logo',
       linkText: 'Play POTONG', linkIcon: '→', actionType: 'external', actionTarget: 'https://potong.io'
     },
@@ -140,6 +144,7 @@ export class ProjectContentsComponent implements OnInit {
   @ViewChild('desc_switchyon', { static: true }) desc_switchyon!: TemplateRef<any>;
   @ViewChild('desc_keyboard_wizard', { static: true }) desc_keyboard_wizard!: TemplateRef<any>;
   @ViewChild('desc_sort', { static: true }) desc_sort!: TemplateRef<any>;
+  @ViewChild('desc_traffic', { static: true }) desc_traffic!: TemplateRef<any>;
 
   getTemplateForId(id: string): TemplateRef<any> {
     return (this as any)[`desc_${id}`];

@@ -1,0 +1,48 @@
+@use './traffic-tokens';
+
+:host { display: block; min-height: 100vh; background: var(--traffic-bg); color: var(--traffic-text); font-family: var(--traffic-font-ui); }
+* { box-sizing: border-box; }
+.traffic { max-width: 1440px; margin: auto; padding: clamp(1rem, 3vw, 3rem); outline: none; }
+.topbar { display: flex; justify-content: space-between; align-items: end; gap: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #41606b; }
+.home { color: var(--traffic-muted); text-decoration: none; font-size: .9rem; }
+.home:hover { color: var(--traffic-text); }
+.eyebrow { margin: 1.5rem 0 .25rem; color: var(--traffic-flow); font-size: .72rem; font-weight: 800; letter-spacing: .2em; }
+h1 { margin: 0; font-size: clamp(2.5rem, 5vw, 5rem); line-height: 1; letter-spacing: -.06em; }
+.meters { display: flex; gap: clamp(1rem, 3vw, 3rem); font-variant-numeric: tabular-nums; }
+.meters div { display: grid; gap: .3rem; min-width: 5.5rem; }
+.meters span { color: var(--traffic-muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; }
+.meters strong { font-family: var(--traffic-font-numeric); font-size: 1.6rem; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(270px, 330px); gap: clamp(1rem, 3vw, 3rem); padding-top: 1.5rem; }
+.map-area { min-width: 0; }
+.board-wrap { position: relative; max-width: 760px; margin: auto; border: 1px solid #49616b; box-shadow: 0 18px 48px #0007; }
+canvas { display: block; width: 100%; aspect-ratio: 1; }
+.paused-label { position: absolute; inset: 0; display: grid; place-items: center; background: #0d1824aa; font-size: 2rem; font-weight: 800; letter-spacing: .2em; }
+.map-caption { display: flex; justify-content: space-between; gap: 1rem; max-width: 760px; margin: .6rem auto 0; color: var(--traffic-muted); font-size: .8rem; }
+.controls { padding: .5rem 0; }
+.section-heading { display: flex; gap: .8rem; align-items: baseline; border-bottom: 1px solid #49616b; }
+.section-heading span { color: var(--traffic-flow); font: 700 .8rem var(--traffic-font-numeric); }
+h2 { margin: .2rem 0 .8rem; font-size: 1.4rem; }
+.status { margin: 1.2rem 0 .3rem; font-size: 1.1rem; font-weight: 700; color: var(--traffic-flow); }
+.status.clearance { color: var(--traffic-wait); }
+.pending { min-height: 1.3rem; color: var(--traffic-muted); font-size: .82rem; }
+.phase-buttons { display: grid; gap: .6rem; margin: 1.2rem 0; }
+button { min-height: 44px; cursor: pointer; border: 1px solid #64808b; border-radius: var(--traffic-radius-control); background: var(--traffic-surface); color: var(--traffic-text); font: 700 .95rem var(--traffic-font-ui); transition: transform var(--traffic-motion-hit), background var(--traffic-motion-ui); }
+button:hover:not(:disabled) { background: #274654; }
+button:active:not(:disabled) { transform: translateY(2px); }
+button:focus-visible, .home:focus-visible { outline: 3px solid var(--traffic-focus); outline-offset: 3px; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.phase-buttons button, .operations button { display: flex; justify-content: space-between; align-items: center; padding: .7rem .9rem; }
+.phase-buttons button[aria-pressed="true"] { border-color: var(--traffic-flow); box-shadow: inset 4px 0 var(--traffic-flow); }
+kbd { color: var(--traffic-muted); font: .75rem var(--traffic-font-numeric); }
+.hint { color: var(--traffic-muted); line-height: 1.5; font-size: .85rem; }
+.upgrade-heading { margin-top: 2rem; }
+.headway { margin: 1rem 0 .2rem; color: var(--traffic-flow); font: 700 2rem var(--traffic-font-numeric); }
+.headway small { color: var(--traffic-muted); font: .82rem var(--traffic-font-ui); }
+.purchase { width: 100%; padding: .75rem; margin-top: .6rem; display: flex; justify-content: space-between; gap: .5rem; background: #275448; border-color: var(--traffic-flow); }
+.purchase span { font: .8rem var(--traffic-font-numeric); white-space: nowrap; }
+.maxed { color: var(--traffic-flow); }
+.operations { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-top: 2rem; }
+.queue-readout { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #49616b; color: var(--traffic-muted); font: .8rem var(--traffic-font-numeric); }
+.queue-readout b { color: var(--traffic-text); }
+@media (max-width: 800px) { .layout { grid-template-columns: 1fr; } .topbar { align-items: start; flex-direction: column; gap: 1rem; } .meters { width: 100%; justify-content: space-between; } .controls { max-width: 760px; width: 100%; margin: auto; } }
+@media (max-width: 420px) { .traffic { padding: 1rem; } .meters strong { font-size: 1.25rem; } .meters span { font-size: .65rem; } }

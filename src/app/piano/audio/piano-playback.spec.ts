@@ -71,6 +71,36 @@ describe('song selection', () => {
     } finally { service.ngOnDestroy(); }
   });
 
+  it('publishes only the latest prepared chart after delayed engine readiness', async () => {
+    const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
+    const internal = service as any;
+    for (const song of service.songs) {
+      const xml = await (await fetch(`/assets/piano/tracks/${song.file}`)).text();
+      internal.scores.set(song.id, importMusicXml(xml));
+    }
+    let finishPreparation!: () => void;
+    internal.enginePromise = new Promise<void>(resolve => { finishPreparation = resolve; });
+    internal.sequencer = { pause: () => {}, currentTime: 0 };
+    spyOn(internal, 'queueSequence').and.callFake(async (_midi: ArrayBuffer, id: string) => {
+      internal.loadedSongId = id;
+    });
+    spyOn(internal, 'createPlayerPerformance').and.returnValue({ releaseAll: () => {} });
+    try {
+      const stale = service.selectSong('twinkle-theme');
+      const latest = service.selectSong('twinkle-variation-01');
+      expect(service.chart()).toEqual([]);
+      expect(service.melodyCoupling()).toEqual([]);
+      expect(internal.previousTwinkleWords.size).toBe(0);
+      finishPreparation();
+      await Promise.all([stale, latest]);
+      expect(service.source()).toBe('twinkle-variation-01');
+      expect(service.status()).toBe('ready');
+      expect(service.chart().length).toBe(322);
+      expect(service.melodyCoupling().length).toBe(322);
+      expect([...internal.previousTwinkleWords.keys()]).toEqual(['twinkle-variation-01']);
+    } finally { service.ngOnDestroy(); }
+  });
+
   it('queues the untouched imported MIDI and no player voices for other songs', async () => {
     const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
     const internal = service as any;
@@ -117,7 +147,7 @@ describe('song selection', () => {
     const releasePhysical = jasmine.createSpy('releasePhysical');
     internal.context = { currentTime: 9.88, close: async () => {} };
     internal.countInPlan = { songAt: 10, plan: { songStart: 0 } };
-    internal.couplingValue.set([{ start: 0 }]);
+    internal.preparedChartValue.set({ targets: [], coupling: [{ start: 0 }] });
     internal.playerPerformance = { perform, releasePhysical, releaseAll: () => {}, snapshot: (at: number) => [{ start: at }] };
     internal.statusValue.set('count-in');
     try {
@@ -145,7 +175,7 @@ describe('song selection', () => {
     internal.context = { currentTime: 9.8, close: async () => {} };
     internal.scoreValue.set({});
     internal.clickBuffer = {};
-    internal.couplingValue.set([{ start: 0 }]);
+    internal.preparedChartValue.set({ targets: [], coupling: [{ start: 0 }] });
     internal.playerPerformance = { perform, releaseAll: () => {} };
     internal.sequencer = {
       get currentTime() { return 0; },

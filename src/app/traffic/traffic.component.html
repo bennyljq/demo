@@ -1,0 +1,51 @@
+<main class="traffic" tabindex="0" (keydown)="onKeydown($event)">
+  <header class="topbar">
+    <div>
+      <a routerLink="/" class="home">← Home</a>
+      <p class="eyebrow">INTERSECTION 01 / LIVE CONTROL</p>
+      <h1>Greenwave</h1>
+    </div>
+    <div class="meters" aria-live="polite">
+      <div><span>Completed trips</span><strong>{{ hud().completed }}</strong></div>
+      <div><span>Credits</span><strong>{{ hud().credits }}</strong></div>
+      <div><span>Elapsed</span><strong>{{ hud().seconds }}s</strong></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <section class="map-area" aria-label="Traffic intersection">
+      <div class="board-wrap">
+        <canvas #board aria-label="Four way traffic intersection with north, south, east and west approaches"></canvas>
+        @if (paused()) { <div class="paused-label">PAUSED</div> }
+      </div>
+      <div class="map-caption"><span>One junction · straight through traffic</span><span>Seed 12345</span></div>
+    </section>
+
+    <aside class="controls">
+      <div class="section-heading"><span>01</span><h2>Signal control</h2></div>
+      <p class="status" [class.clearance]="hud().clearing">
+        @if (hud().clearing) { All red · clearing junction }
+        @else { Green: {{ hud().phase === 'ns' ? 'North / South' : 'East / West' }} }
+      </p>
+      <p class="pending">@if (hud().pending) { Requested: {{ hud().pending === 'ns' ? 'North / South' : 'East / West' }} } @else { Automatic cycle · 8 seconds per phase }</p>
+      <div class="phase-buttons">
+        <button type="button" (click)="request('ns')" [attr.aria-pressed]="hud().phase === 'ns' && !hud().clearing">North / South <kbd>1</kbd></button>
+        <button type="button" (click)="request('ew')" [attr.aria-pressed]="hud().phase === 'ew' && !hud().clearing">East / West <kbd>2</kbd></button>
+      </div>
+      <p class="hint">Requests wait for 3 seconds of green and an all-red clearance. Cars already crossing finish first.</p>
+
+      <div class="section-heading upgrade-heading"><span>02</span><h2>Dispatch</h2></div>
+      <p class="headway">{{ hud().headway.toFixed(2) }}s <small>release headway</small></p>
+      <p class="hint">Shorter spacing releases queued cars faster.</p>
+      @if (costs[hud().level]; as cost) {
+        <button type="button" class="purchase" [disabled]="hud().credits < cost" (click)="buy()">Buy faster dispatch <span>{{ cost }} credits</span></button>
+      } @else { <p class="maxed">Dispatch fully upgraded</p> }
+
+      <div class="operations">
+        <button type="button" (click)="togglePause()">{{ paused() ? 'Resume' : 'Pause' }} <kbd>Space</kbd></button>
+        <button type="button" (click)="restart()">Restart</button>
+      </div>
+      <p class="queue-readout">Queued <b>{{ hud().queues }}</b> · Waiting off map <b>{{ hud().backlog }}</b></p>
+    </aside>
+  </div>
+</main>

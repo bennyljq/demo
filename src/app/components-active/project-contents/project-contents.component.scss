@@ -16,6 +16,22 @@ $project-font-size: clamp(18px, 1.5vw, 22px);
   transition-timing-function: ease-in-out;
   object-fit: cover;
 }
+.traffic-logo {
+  aspect-ratio: 1;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #0d1824;
+  color: #7ce8bd;
+  font: 700 clamp(130px, 28vw, 260px) monospace;
+}
+.traffic-logo span { line-height: 1; }
+.traffic-logo i { position: absolute; width: 8%; height: 3%; background: #ffd071; border-radius: 3px; }
+.traffic-logo i:nth-of-type(1) { left: 16%; top: 41%; }
+.traffic-logo i:nth-of-type(2) { right: 16%; bottom: 41%; }
+.traffic-logo i:nth-of-type(3) { top: 16%; right: 41%; transform: rotate(90deg); }
+.traffic-logo i:nth-of-type(4) { bottom: 16%; left: 41%; transform: rotate(90deg); }
 .logo-title {
 	height: auto;
 	width: auto;
