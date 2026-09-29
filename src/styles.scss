@@ -134,7 +134,7 @@ $desc-font-size: min(4.5vw, calc(1200px * 0.045), 4.5vh);
 $desc: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;
 @each $i in $desc {
   // Sync the CSS delay perfectly with your old TS logic: 4s + (0.25s per item)
-  $delay: 4 + ($i - 1) * 0.25; 
+  $delay: 3 + ($i - 1) * 0.25; 
   $alpha: 1 - ($i * 0.07);
   
   #desc#{$i} {

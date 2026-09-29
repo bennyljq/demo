@@ -227,7 +227,7 @@ h1 { margin: 0; }
 .menu-screen { width: min(100%, 940px); margin: 0 auto; }
 .library-screen { padding: clamp(24px, 5vh, 60px) 0 60px; }
 .menu-heading { margin-bottom: 34px; }
-.menu-heading h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); }
+.menu-heading h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1; }
 .song-list { display: grid; gap: 10px; }
 .song-card {
   display: grid;

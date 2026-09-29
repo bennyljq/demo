@@ -20,8 +20,8 @@ export class HomepageV2Component {
 
   name = "Benny";
   descLine1 = ["Physicist", "Mathematician"];
-  descLine2 = ["Software Engineer", "Web Developer"];
-  descLine3 = ["Data Scientist", "Pianist", "Godfather", "Baker", "Gamer"];
+  descLine2 = ["Frontend Architect", "Game Developer"];
+  descLine3 = ["Software Engineer", "Pianist", "Godfather", "Baker", "Gamer"];
   
   contentClass: string = '';
 

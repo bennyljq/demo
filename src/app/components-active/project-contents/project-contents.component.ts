@@ -32,21 +32,25 @@ export class ProjectContentsComponent implements OnInit {
   // Configuration Array
   projects: Project[] = [
     {
-      id: 'traffic', titleHtml: 'Greenwave', subtitle: '2026',
-      linkText: 'Run the junction', linkIcon: '→', actionType: 'route', actionTarget: '/traffic'
-    },
-    {
       id: 'potong', titleHtml: 'potong.io', subtitle: '2026', imgSrc: 'assets/potong/potong.gif', imgClass: 'logo',
       linkText: 'Play POTONG', linkIcon: '→', actionType: 'external', actionTarget: 'https://potong.io'
+    },
+    {
+      id: 'piano', titleHtml: 'Keysmash Maestro', subtitle: '2026', imgSrc: 'assets\\piano\\piano-3.gif', imgClass: 'logo',
+      linkText: 'Play the piano', linkIcon: '→', actionType: 'route', actionTarget: '/piano'
     },
     {
       id: 'sort', titleHtml: 'Sorting Algorithm Visualiser', subtitle: '2026', imgSrc: 'assets\\sort-profile-pic.png', imgClass: 'logo',
       linkText: 'Go sorting', linkIcon: '→', actionType: 'route', actionTarget: '/sort'
     },
-    {
-      id: 'keyboard_wizard', titleHtml: 'Keyboard Wizard', subtitle: '2026', imgSrc: 'assets\\keyboard-wizard-demo\\keyboard-wizard.png', imgClass: 'logo',
-      linkText: 'Play the demo', linkIcon: '→', actionType: 'route', actionTarget: '/keyboard-wizard'
-    },
+    // {
+    //   id: 'traffic', titleHtml: 'Greenwave', subtitle: '2026',
+    //   linkText: 'Run the junction', linkIcon: '→', actionType: 'route', actionTarget: '/traffic'
+    // },
+    // {
+    //   id: 'keyboard_wizard', titleHtml: 'Keyboard Wizard', subtitle: '2026', imgSrc: 'assets\\keyboard-wizard-demo\\keyboard-wizard.png', imgClass: 'logo',
+    //   linkText: 'Play the demo', linkIcon: '→', actionType: 'route', actionTarget: '/keyboard-wizard'
+    // },
     {
       id: 'switchyon', titleHtml: 'switchyon.llc', subtitle: '2026', imgSrc: 'assets/switchyon.png', imgClass: 'logo', customLogoStyles: { 'padding': '24px', 'background': 'white'}, 
       linkText: 'Visit Switchyon', linkIcon: '→', actionType: 'external', actionTarget: 'https://switchyon.llc'
@@ -145,6 +149,7 @@ export class ProjectContentsComponent implements OnInit {
   @ViewChild('desc_keyboard_wizard', { static: true }) desc_keyboard_wizard!: TemplateRef<any>;
   @ViewChild('desc_sort', { static: true }) desc_sort!: TemplateRef<any>;
   @ViewChild('desc_traffic', { static: true }) desc_traffic!: TemplateRef<any>;
+  @ViewChild('desc_piano', { static: true }) desc_piano!: TemplateRef<any>;
 
   getTemplateForId(id: string): TemplateRef<any> {
     return (this as any)[`desc_${id}`];
