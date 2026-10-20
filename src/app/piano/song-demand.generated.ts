@@ -48,5 +48,28 @@ export const SONG_DEMAND: Readonly<Record<string, Readonly<Record<PianoMode, Dem
       "peakWpm": 96,
       "peakAttacks": 40
     }
+  },
+  "chopin-nocturne-op-9-no-2": {
+    "rhythm": {
+      "attackCount": 331,
+      "activeSpanSeconds": 213.82500101405282,
+      "averageWpm": 18.575938179179317,
+      "peakWpm": 45.6,
+      "peakAttacks": 19
+    },
+    "eight-keys": {
+      "attackCount": 331,
+      "activeSpanSeconds": 213.82500101405282,
+      "averageWpm": 18.575938179179317,
+      "peakWpm": 45.6,
+      "peakAttacks": 19
+    },
+    "word-concert": {
+      "attackCount": 331,
+      "activeSpanSeconds": 213.82500101405282,
+      "averageWpm": 18.575938179179317,
+      "peakWpm": 45.6,
+      "peakAttacks": 19
+    }
   }
 };

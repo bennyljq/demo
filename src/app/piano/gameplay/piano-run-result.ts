@@ -3,6 +3,7 @@ import { ChartCoverage } from '../charts/song-charts';
 import { calculateScoreGrade, ScoreGrade } from './piano-result-grade';
 import { PianoMode } from './piano-mode';
 import { TypingTarget } from './piano-chart';
+import { ScoringSettings } from './piano-scoring-settings';
 
 export interface ResultLetter {
   readonly id: string;
@@ -23,6 +24,11 @@ export interface RunResult {
   readonly chart: readonly TypingTarget[];
   readonly coverage: Exclude<ChartCoverage, 'listen'>;
   readonly speed: number;
+  readonly multiplier: number;
+  readonly scoring: ScoringSettings;
+  readonly eligible: number;
+  readonly notesHitPercent: number;
+  readonly perfectNotesPercent: number;
   readonly startPosition: number;
   readonly total: number;
   readonly raw: number;
@@ -48,7 +54,7 @@ export interface RunResult {
 export function captureRunResult(round: TypingRound, songId: string, songTitle: string,
   coverage: Exclude<ChartCoverage, 'listen'>, startPosition: number): RunResult | null {
   if (!round.complete || !round.results.some(result => result !== 'skipped')) return null;
-  const grade = calculateScoreGrade(round.rawPoints, round.speed, round.availablePoints);
+  const grade = calculateScoreGrade(round.rawPoints, round.multiplier, round.availablePoints);
   if (!grade) return null;
   const letters = Object.freeze(round.targets.map(target => Object.freeze({
     id: target.id, letter: target.letter, word: target.word, wordIndex: target.wordIndex,
@@ -64,7 +70,12 @@ export function captureRunResult(round: TypingRound, songId: string, songTitle: 
   })));
   return Object.freeze({
     songId, songTitle, mode: round.mode, eightKeyBindings: round.mode === 'eight-keys' ? round.eightKeyBindings : null,
-    chart, coverage, speed: round.speed, startPosition,
+    chart, coverage, speed: round.speed, multiplier: round.multiplier, scoring: round.attemptSettings, startPosition,
+    eligible: round.results.filter(result => result !== 'skipped').length,
+    notesHitPercent: 100 * (round.results.filter(result => result === 'perfect' || result === 'good').length) /
+      round.results.filter(result => result !== 'skipped').length,
+    perfectNotesPercent: 100 * round.results.filter(result => result === 'perfect').length /
+      round.results.filter(result => result !== 'skipped').length,
     total: round.totalPoints, raw: round.rawPoints, available: round.availablePoints,
     grade: grade.grade, gradeRatio: grade.ratio, earnedFinalScore: grade.earned,
     perfect: round.results.filter(result => result === 'perfect').length,

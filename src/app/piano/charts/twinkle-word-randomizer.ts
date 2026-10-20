@@ -1,8 +1,9 @@
 import type { XmlPhrase } from '../gameplay/piano-chart';
 
 // Familiar words only. Keep enough choices to avoid repeats in one chart.
-const WORDS: Readonly<Record<1 | 3 | 4 | 5 | 7 | 8, readonly string[]>> = {
+const WORDS: Readonly<Record<1 | 2 | 3 | 4 | 5 | 7 | 8, readonly string[]>> = {
   1: ['A', 'I'],
+  2: ['AN', 'AS', 'AT', 'BE', 'BY', 'DO', 'GO', 'HE', 'IF', 'IN', 'IS', 'IT', 'ME', 'MY', 'NO', 'OF', 'ON', 'OR', 'SO', 'TO', 'UP', 'US', 'WE'],
   3: ['ANT', 'BAG', 'BAT', 'BED', 'BEE', 'BOX', 'BUS', 'CAR', 'CAT', 'COW',
     'CUP', 'DAY', 'DOG', 'EGG', 'FAN', 'FOX', 'FUN', 'HAT', 'HEN', 'HIT',
     'HOT', 'ICE', 'JAM', 'JET', 'KEY', 'LEG', 'LIP', 'MAP', 'MOM', 'MUD',
@@ -49,16 +50,23 @@ export function seededWordRandom(seed: number): () => number {
 /** Changes words only; source locations, holds, IDs and repeat expansion stay authored. */
 export function randomizeTwinkleWords(phrases: readonly XmlPhrase[], random = Math.random): XmlPhrase[] {
   const unused = new Map<number, string[]>(Object.entries(WORDS).map(([length, words]) => [Number(length), [...words]]));
+  let previous = '';
   return phrases.map(phrase => {
     const length = phrase.letters.length;
-    if (phrase.word.length !== length) throw new Error(`Twinkle phrase ${phrase.id} has a word/letter-count mismatch.`);
-    const pool = unused.get(length);
-    if (!pool) throw new Error(`Twinkle phrase ${phrase.id} needs a ${length}-letter word bank.`);
-    const choices = pool.filter(word => word !== phrase.word.toUpperCase());
-    if (!choices.length) throw new Error(`Twinkle has too many ${length}-letter phrases for its word bank.`);
+    if (phrase.word.length !== length) throw new Error(`Phrase ${phrase.id} has a word/letter-count mismatch.`);
+    let pool = unused.get(length);
+    if (!pool) throw new Error(`Phrase ${phrase.id} needs a ${length}-letter word bank.`);
+    let choices = pool.filter(word => word !== phrase.word.toUpperCase() && word !== previous);
+    if (!choices.length) {
+      pool = [...WORDS[length as keyof typeof WORDS]];
+      unused.set(length, pool);
+      choices = pool.filter(word => word !== phrase.word.toUpperCase() && word !== previous);
+    }
+    if (!choices.length) throw new Error(`No ${length}-letter word remains for phrase ${phrase.id}.`);
     const word = choices[Math.floor(random() * choices.length)];
-    if (!word) throw new Error('Twinkle word random source must return a value from 0 through 1 (exclusive).');
+    if (!word) throw new Error('Word random source must return a value from 0 through 1 (exclusive).');
     if (length > 1) pool.splice(pool.indexOf(word), 1);
+    previous = word;
     return { ...phrase, word };
   });
 }

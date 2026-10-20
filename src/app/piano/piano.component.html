@@ -8,7 +8,7 @@
   
   @if (stage() === 'home') {
     <div class="stage-screen home-screen">
-      <h1 id="piano-title"><strong>Keysmash </strong><em>Maestro</em></h1>
+      <h1 id="piano-title"><strong>HARD </strong><em>Pianist</em></h1>
       <svg class="home-art" viewBox="0 0 560 180" aria-hidden="true" focusable="false" draggable="false">
         <path d="M16 39h528M16 57h528M16 75h528M16 93h528M16 111h528" fill="none" stroke="currentColor" stroke-width="1" opacity=".25"/>
         <path d="M72 102q13-22 26 0t26 0m192-35q13-22 26 0t26 0" fill="none" stroke="currentColor" stroke-width="2" opacity=".65"/>
@@ -85,6 +85,7 @@
         <button type="button" class="quiet-button" (click)="goHome()" [disabled]="demoActive()">Home</button>
         <button type="button" class="quiet-button" (click)="exitRun()" [disabled]="demoActive()">Library</button>
         @if (!runStarted()) { <button type="button" class="quiet-button" (click)="changeMode()">Change mode</button> }
+        @if (mode() === 'eight-keys') { <button type="button" class="quiet-button" (click)="openFingerGuide()">Finger guide</button> }
         <button #settingsTrigger type="button" class="quiet-button" (click)="openSettings()">Settings</button>
       </div>
     </header>
@@ -108,7 +109,7 @@
             <button type="button" aria-label="Increase speed" (click)="stepPlaybackSpeed(1)"
               [disabled]="runStarted() || playback.status() !== 'ready' || playback.playbackRate() === playback.speedOptions[playback.speedOptions.length - 1]">+</button>
           </div>
-          <span class="speed-multiplier">Score ×{{ playback.playbackRate() }}</span>
+          <span class="speed-multiplier">Score ×{{ speedScoreMultiplier().toFixed(2) }}</span>
         </div>
         <div class="armed-status-slot"><p class="status" role="status" aria-live="polite" [attr.data-status]="playback.status()">
           {{ playback.audioSuspended() && runStarted() ? 'Audio paused by browser' : playback.status() === 'loading' ? 'Preparing score and audio' : statusLabel() }}
@@ -170,7 +171,7 @@
                         <span [class]="'letter ' + attempt().results[target.index]" [class.target]="target.index === attempt().current"
                         [class.perfect-attack]="attempt().attackGrades[target.index] === 'perfect'"
                         [class.good-attack]="attempt().attackGrades[target.index] === 'good'"
-                        [class.has-hold]="target.holdEnd !== undefined" [style.--hold-progress]="(attempt().sustainPoints[target.index] || 0) + '%'"
+                        [class.has-hold]="target.holdEnd !== undefined" [style.--hold-progress]="holdProgressPercent(attempt().sustainPoints[target.index] || 0, settings().maxHoldPoints) + '%'"
                         [attr.aria-current]="target.index === attempt().current ? 'true' : null">{{ target.letter }}</span>
                       }
                     </span>
@@ -232,6 +233,8 @@
           <button type="button" class="quiet-button" (click)="goHome()">Homepage</button>
         </div>
         <dl class="result-stats">
+          <div><dt>{{ summary.startPosition > 0.001 ? 'Practice notes hit' : 'Notes hit' }}</dt><dd>{{ summary.notesHitPercent.toFixed(1) }}% <small>{{ summary.perfect + summary.good }} / {{ summary.eligible }}</small></dd></div>
+          <div><dt>{{ summary.startPosition > 0.001 ? 'Practice perfect notes' : 'Perfect notes' }}</dt><dd>{{ summary.perfectNotesPercent.toFixed(1) }}% <small>{{ summary.perfect }} / {{ summary.eligible }}</small></dd></div>
           <div><dt>Perfect</dt><dd>{{ summary.perfect }}</dd></div><div><dt>Good</dt><dd>{{ summary.good }}</dd></div>
           <div><dt>Miss</dt><dd>{{ summary.miss }}</dd></div><div><dt>Wrong</dt><dd>{{ summary.wrong }}</dd></div>
           <div><dt>Attacks</dt><dd>+{{ summary.attackPoints }}</dd></div>
@@ -239,7 +242,7 @@
           <div><dt>Combo bonus</dt><dd>+{{ summary.comboBonus }}</dd></div>
           <div><dt>Miss penalty</dt><dd>{{ summary.missPenalty }}</dd></div>
           <div><dt>Wrong-key penalty</dt><dd>{{ summary.wrongPenalty }}</dd></div>
-          <div><dt>Speed multiplier</dt><dd>×{{ summary.speed }}</dd></div>
+          <div><dt>Speed multiplier</dt><dd>×{{ summary.multiplier.toFixed(2) }}</dd></div>
           <div><dt>Best combo</dt><dd>{{ summary.bestCombo }}</dd></div>
         </dl>
         <section class="result-review" aria-labelledby="result-review-title">
@@ -251,7 +254,7 @@
                 @for (letter of word; track letter.id) {
                   <span [class]="'result-letter ' + letter.result" [class.has-hold]="letter.hasHold"
                   [class.perfect-attack]="letter.attack === 'perfect'" [class.good-attack]="letter.attack === 'good'"
-                  [style.--hold-progress]="(letter.sustainPoints / scoringPoints.hold * 100) + '%'"
+                  [style.--hold-progress]="holdProgressPercent(letter.sustainPoints, summary.scoring.maxHoldPoints) + '%'"
                   [attr.data-detail]="resultDetail(letter)" [attr.title]="resultDetail(letter)"
                   [attr.aria-label]="(summary.mode === 'eight-keys' ? eightKeyNumber(letter.letter) : letter.letter) + ': ' + resultDetail(letter)" tabindex="0"
                   (mouseenter)="reviewDetail.set(letter.letter + ': ' + resultDetail(letter))"
@@ -299,8 +302,18 @@
               <label class="checkbox-setting">Combo effects <input type="checkbox" [checked]="comboEffects()" (change)="comboEffects.set($any($event.target).checked)"></label>
               <div class="theme-setting"><span>Appearance</span><button type="button" (click)="toggleTheme()">{{ theme() === 'dark' ? 'Light theme' : 'Dark theme' }}</button></div>
             </fieldset>
-            <fieldset class="eight-key-settings"><legend>Eight Keys letters</legend>
+            <fieldset class="eight-key-settings" id="finger-guide"><legend>Eight Keys letters</legend>
               <small>Set one letter for each finger slot. Reusing a letter swaps the two slots. Changes apply to the next run.</small>
+              <figure class="finger-guide" role="img" [attr.aria-label]="'Finger guide. Left hand: pinkie 5 ' + eightKeyBindings()[0] + ', ring 4 ' + eightKeyBindings()[1] + ', middle 3 ' + eightKeyBindings()[2] + ', index 2 ' + eightKeyBindings()[3] + '. Right hand: index 2 ' + eightKeyBindings()[4] + ', middle 3 ' + eightKeyBindings()[5] + ', ring 4 ' + eightKeyBindings()[6] + ', pinkie 5 ' + eightKeyBindings()[7] + '. Both thumbs are 1 and unused.'">
+                <div class="finger-guide-labels"><strong>Left</strong><strong>Right</strong></div>
+                <svg viewBox="0 0 260 145" focusable="false" aria-hidden="true">
+                  <path class="left-hand" d="M20 138 L18 85 Q18 81 23 79 L23 42 Q23 35 29 35 Q35 35 35 42 L35 77 L42 77 L42 29 Q42 22 48 22 Q54 22 54 29 L54 76 L61 76 L61 24 Q61 17 67 17 Q73 17 73 24 L73 77 L80 77 L80 37 Q80 30 86 30 Q92 30 92 37 L92 91 L103 73 Q108 66 113 70 Q118 74 114 81 L101 110 L99 138 Z"/>
+                  <path class="right-hand" transform="translate(260 0) scale(-1 1)" d="M20 138 L18 85 Q18 81 23 79 L23 42 Q23 35 29 35 Q35 35 35 42 L35 77 L42 77 L42 29 Q42 22 48 22 Q54 22 54 29 L54 76 L61 76 L61 24 Q61 17 67 17 Q73 17 73 24 L73 77 L80 77 L80 37 Q80 30 86 30 Q92 30 92 37 L92 91 L103 73 Q108 66 113 70 Q118 74 114 81 L101 110 L99 138 Z"/>
+                  <g class="left-text"><text x="29" y="31">5</text><text x="48" y="18">4</text><text x="67" y="13">3</text><text x="86" y="26">2</text><text x="29" y="58">{{ eightKeyBindings()[0] }}</text><text x="48" y="47">{{ eightKeyBindings()[1] }}</text><text x="67" y="42">{{ eightKeyBindings()[2] }}</text><text x="86" y="54">{{ eightKeyBindings()[3] }}</text><text class="thumb" x="113" y="66">1</text></g>
+                  <g class="right-text"><text x="174" y="26">2</text><text x="193" y="13">3</text><text x="212" y="18">4</text><text x="231" y="31">5</text><text x="174" y="54">{{ eightKeyBindings()[4] }}</text><text x="193" y="42">{{ eightKeyBindings()[5] }}</text><text x="212" y="47">{{ eightKeyBindings()[6] }}</text><text x="231" y="58">{{ eightKeyBindings()[7] }}</text><text class="thumb" x="147" y="66">1</text></g>
+                </svg>
+                <figcaption>Thumbs unused</figcaption>
+              </figure>
               <div class="eight-key-groups">
                 <div><strong>Left hand</strong><div class="eight-key-inputs">
                   @for (slot of eightKeySlots.slice(0, 4); track slot.index) {
@@ -333,10 +346,21 @@
               </fieldset>
               <fieldset><legend>Developer</legend>
                 <p>Numeric scoring settings are fixed during a run. View overlays can change live.</p>
-                <p>Perfect +{{ scoringPoints.perfect }}, Good +{{ scoringPoints.good }}, Miss {{ scoringPoints.miss }}, Wrong {{ scoringPoints.wrong }}. Each successive hit adds {{ scoringPoints.comboStep }} more combo points; holds earn up to +{{ scoringPoints.hold }}. The selected speed multiplies the raw total. Negative debt carries forward while the displayed score stops at zero.</p>
+                <p>Best combo adds one bonus based on the longest streak. Negative debt carries forward while the displayed score stops at zero.</p>
                 <label>Perfect tolerance (ms) <input type="number" min="0" step="1" [value]="settings().perfectMs" [disabled]="runStarted()" (change)="setScoringNumber('perfectMs', $event)"></label>
                 <label>Good tolerance (ms) <input type="number" min="0" step="1" [value]="settings().goodMs" [disabled]="runStarted()" (change)="setScoringNumber('goodMs', $event)"></label>
                 <label>Hold release buffer (ms) <input type="number" min="0" step="1" [value]="settings().holdReleaseMs" [disabled]="runStarted()" (change)="setScoringNumber('holdReleaseMs', $event)"></label>
+                <div class="scoring-controls"><strong>Scoring</strong>
+                  <label>Perfect points <input type="number" min="1" step="1" [value]="settings().perfectPoints" [disabled]="runStarted() || demoActive()" (change)="setScoringNumber('perfectPoints', $event)"></label>
+                  <label>Good points <input type="number" min="0" step="1" [value]="settings().goodPoints" [disabled]="runStarted() || demoActive()" (change)="setScoringNumber('goodPoints', $event)"></label>
+                  <label>Miss penalty <input type="number" min="0" step="1" [value]="settings().missPenalty" [disabled]="runStarted() || demoActive()" (change)="setScoringNumber('missPenalty', $event)"></label>
+                  <label>Wrong penalty <input type="number" min="0" step="1" [value]="settings().wrongPenalty" [disabled]="runStarted() || demoActive()" (change)="setScoringNumber('wrongPenalty', $event)"></label>
+                  <label>Maximum hold points <input type="number" min="0" step="1" [value]="settings().maxHoldPoints" [disabled]="runStarted() || demoActive()" (change)="setScoringNumber('maxHoldPoints', $event)"></label>
+                  <label>Points per best-combo hit <input type="number" min="0" step="1" [value]="settings().comboPoints" [disabled]="runStarted() || demoActive()" (change)="setScoringNumber('comboPoints', $event)"></label>
+                  <label>Speed-bonus strength <input type="number" min="0" max="3" step="0.1" [value]="settings().speedBonusStrength" [disabled]="runStarted() || demoActive()" (change)="setScoringNumber('speedBonusStrength', $event)"></label>
+                  <small>0 disables speed weighting; 1 uses playback speed. Range: 0–3. At {{ playback.playbackRate() }}×, score multiplier is ×{{ speedScoreMultiplier().toFixed(2) }}.</small>
+                  <button type="button" [disabled]="runStarted() || demoActive()" (click)="resetScoringDefaults()">Reset scoring defaults</button>
+                </div>
                 <label class="checkbox-setting"><input type="checkbox" [checked]="settings().showAttackWindows" (change)="setScoringOverlay('showAttackWindows', $event)"> Attack windows</label>
                 <label class="checkbox-setting"><input type="checkbox" [checked]="settings().showHoldBuffer" (change)="setScoringOverlay('showHoldBuffer', $event)"> Hold buffer overlay</label>
                 @if (settingsError()) { <p class="error" role="alert">{{ settingsError() }}</p> }

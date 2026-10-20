@@ -3,6 +3,31 @@ import { PianoComponent } from './piano.component';
 import { TypingRound } from './gameplay/piano-judgement';
 
 describe('piano stages', () => {
+  it('shows conventional finger numbers and current letters in the hand guide', () => {
+    TestBed.configureTestingModule({ imports: [PianoComponent] });
+    const fixture = TestBed.createComponent(PianoComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    spyOn(component.playback, 'selectSong').and.resolveTo();
+    try {
+      expect('QWERUIOP'.split('').map(component.eightKeyNumber)).toEqual(['5', '4', '3', '2', '2', '3', '4', '5']);
+      component.chooseSong('twinkle-theme');
+      component.chooseMode('eight-keys');
+      component.openFingerGuide();
+      fixture.detectChanges();
+      const guide = fixture.nativeElement.querySelector('.finger-guide') as HTMLElement;
+      expect(guide.getAttribute('aria-label')).toContain('pinkie 5 Q, ring 4 W, middle 3 E, index 2 R');
+      expect(guide.getAttribute('aria-label')).toContain('index 2 U, middle 3 I, ring 4 O, pinkie 5 P');
+      expect(guide.querySelectorAll('svg path').length).toBe(2);
+      const input = fixture.nativeElement.querySelector('input[aria-label="Eight Keys L5 letter"]') as HTMLInputElement;
+      input.value = 'A';
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+      fixture.detectChanges();
+      expect(guide.getAttribute('aria-label')).toContain('pinkie 5 A');
+      expect(guide.querySelector('svg')?.textContent).toContain('A');
+      expect(component.eightKeyBindings()).toBe('AWERUIOP');
+    } finally { fixture.destroy(); }
+  });
   it('applies each song look-ahead default on selection without discarding an in-song adjustment on retry', () => {
     TestBed.configureTestingModule({ imports: [PianoComponent] });
     const fixture = TestBed.createComponent(PianoComponent);

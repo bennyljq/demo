@@ -77,7 +77,7 @@ export interface ImportedScore {
 export function buildScoreMidi(score: Omit<ImportedScore, 'midi'>, excludedNoteIds: ReadonlySet<string> = new Set()): ArrayBuffer {
   const groups = [...new Set(score.soundingNotes.map(note => `${note.staff}:${note.voice}`))].sort();
   const builder = new MIDIBuilder({ format: 1, timeDivision: 480, initialTempo: score.tempos[0].value,
-    name: 'Turkish March MusicXML' });
+    name: 'Piano MusicXML' });
   for (const group of groups) builder.addTrack(group);
   for (const tempo of score.tempos.slice(1)) builder.setTempo(Math.round(tempo.quarter * 480), tempo.value);
   for (const note of score.soundingNotes) {
@@ -148,7 +148,7 @@ export const WRITTEN_DYNAMICS: Readonly<Record<string, number>> = {
   ppp: 32, pp: 40, p: 49, mp: 64, mf: 80, f: 96, ff: 112, fff: 120,
 };
 
-function parseMeasure(measure: Element, index: number, state: { divisions: number; expected: number; meterBeats: number; meterBeatType: number }): SourceMeasure {
+function parseMeasure(measure: Element, index: number, state: { divisions: number; expected: number; meterBeats: number; meterBeatType: number; freeTiming: boolean }): SourceMeasure {
   const numberLabel = measure.getAttribute('number') || String(index + 1);
   const notes: SourceNote[] = [];
   const directions: SourceDirection[] = [];
@@ -166,6 +166,7 @@ function parseMeasure(measure: Element, index: number, state: { divisions: numbe
         if (value(item, 'divisions')) state.divisions = positive(value(item, 'divisions'), 'divisions');
         const time = child(item, 'time');
         if (time) {
+          state.freeTiming = false;
           state.meterBeats = positive(value(time, 'beats'), 'beats');
           state.meterBeatType = positive(value(time, 'beat-type'), 'beat-type');
           state.expected = state.meterBeats * 4 / state.meterBeatType;
@@ -192,7 +193,10 @@ function parseMeasure(measure: Element, index: number, state: { divisions: numbe
               wedgeNumber: mark.getAttribute('number') || '1', wedgeType: mark.getAttribute('type') || '' });
           } else if (mark.localName === 'words' || mark.localName === 'rehearsal') {
             const label = mark.textContent?.trim();
-            if (label) directions.push({ localQuarter: at, staff, kind: 'text', label });
+            if (label) {
+              directions.push({ localQuarter: at, staff, kind: 'text', label });
+              if (/\bsenza tempo\b/i.test(label)) state.freeTiming = true;
+            }
           } else if (mark.localName === 'metronome') {
             const unit = value(mark, 'beat-unit');
             const bpm = positive(value(mark, 'per-minute'), 'metronome tempo');
@@ -291,7 +295,7 @@ function parseMeasure(measure: Element, index: number, state: { divisions: numbe
   if (!state.divisions || !Number.isFinite(maximum) || maximum <= 0) fail(`invalid timing in measure ${numberLabel}.`);
   // The Liebestraum cadenza has measured notation inside bars longer than 6/4.
   // Its actual note/forward duration, rather than a fabricated regular bar, wins.
-  if (maximum < state.expected - 1e-7 && index !== 0 && !forward && !backward && !ending && measure.getAttribute('implicit') !== 'yes') {
+  if (maximum < state.expected - 1e-7 && index !== 0 && !forward && !backward && !ending && !state.freeTiming && measure.getAttribute('implicit') !== 'yes') {
     fail(`measure ${numberLabel} is underfull without a pickup or repeat boundary.`);
   }
   // make-time creates real score time, unlike grace notes that steal from a
@@ -380,7 +384,7 @@ export function importMusicXml(xml: string): ImportedScore {
   const partId = part.getAttribute('id') || 'P1';
   const sourceElements = children(part, 'measure');
   if (!sourceElements.length) fail('score has no measures.');
-  const state = { divisions: 0, expected: 4, meterBeats: 4, meterBeatType: 4 };
+  const state = { divisions: 0, expected: 4, meterBeats: 4, meterBeatType: 4, freeTiming: false };
   const source = sourceElements.map((measure, index) => parseMeasure(measure, index, state));
   const order = traversal(source);
   const written: WrittenNote[] = [];

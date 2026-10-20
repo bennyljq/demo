@@ -3,6 +3,7 @@ import { buildXmlTypingChart, TypingTarget } from '../gameplay/piano-chart';
 import { CoupledTarget, coupleStaffMelody } from '../gameplay/twinkle-coupling';
 import { songChartFor } from './song-charts';
 import { randomizeTwinkleWords, seededWordRandom } from './twinkle-word-randomizer';
+import { coupleNocturneMelody } from './nocturne-coupling';
 
 export interface PreparedTwinkleRun {
   readonly targets: readonly TypingTarget[];
@@ -21,8 +22,10 @@ export function prepareTwinkleRun(score: ImportedScore, previousWords: readonly 
     if (words.every((word, index) => word === previousWords[index])) continue;
     try {
       const targets = buildXmlTypingChart(score, phrases, chart.unitsPerQuarter);
-      return { targets, coupling: coupleStaffMelody(score, targets), words };
+      const prepared = songId === 'chopin-nocturne-op-9-no-2'
+        ? coupleNocturneMelody(score, targets) : { targets, coupling: coupleStaffMelody(score, targets) };
+      return { ...prepared, words };
     } catch (error) { lastError = error; }
   }
-  throw new Error(`Could not prepare a playable Twinkle word chart after 64 tries. ${lastError instanceof Error ? lastError.message : 'Check the word bank and held-key constraints.'}`);
+  throw new Error(`Could not prepare a playable word chart after 64 tries. ${lastError instanceof Error ? lastError.message : 'Check the word bank and held-key constraints.'}`);
 }

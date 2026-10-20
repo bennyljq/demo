@@ -2,8 +2,8 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, c
 import { PianoPlaybackService } from './audio/piano-playback.service';
 import { PianoRoll, JudgementFeedback } from './rendering/piano-roll';
 import { TypingTarget } from './gameplay/piano-chart';
-import { attackWindowSeconds, DEFAULT_SCORING_SETTINGS, ScoringSettings, validateScoringSettings } from './gameplay/piano-scoring-settings';
-import { isGameplayKey, LetterResult, SCORING_POINTS, TypingRound } from './gameplay/piano-judgement';
+import { attackWindowSeconds, DEFAULT_SCORING_SETTINGS, holdProgressPercent, ScoringSettings, speedMultiplier, validateScoringSettings } from './gameplay/piano-scoring-settings';
+import { isGameplayKey, LetterResult, TypingRound } from './gameplay/piano-judgement';
 import { captureRunResult, ResultLetter, RunResult } from './gameplay/piano-run-result';
 import { ChartCoverage, songChartFor } from './charts/song-charts';
 import { DemoAction, PianoDemoController } from './gameplay/piano-demo-controller';
@@ -33,7 +33,8 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   readonly eightKeySlots = EIGHT_KEY_SLOTS;
   readonly eightKeyBindings = signal(EIGHT_KEYS);
   readonly eightKeyError = signal('');
-  readonly scoringPoints = SCORING_POINTS;
+  readonly speedScoreMultiplier = computed(() => speedMultiplier(this.playback.playbackRate(), this.settings()));
+  readonly holdProgressPercent = holdProgressPercent;
   readonly stage = signal<PianoStage>('home');
   readonly settingsOpen = signal(false);
   readonly runStarted = signal(false);
@@ -204,6 +205,8 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   demandFor(id: string) { return SONG_DEMAND[id]?.['word-concert']; }
   modeDifficulty(mode: PianoMode): string {
     if (mode === 'word-concert') return this.selectedSong()?.difficulty ?? '';
+    if (this.playback.source() === 'chopin-nocturne-op-9-no-2')
+      return mode === 'rhythm' ? 'Intermediate' : 'Advanced';
     const variation = this.playback.source() === 'twinkle-variation-01';
     return mode === 'rhythm' ? (variation ? 'Intermediate' : 'Beginner') :
       (variation ? 'Advanced' : 'Beginner');
@@ -260,8 +263,9 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.stage.set('mode');
   }
 
-  setScoringNumber(key: 'perfectMs' | 'goodMs' | 'holdReleaseMs', event: Event): void {
-    if (this.runStarted()) return;
+  setScoringNumber(key: keyof Pick<ScoringSettings, 'perfectMs' | 'goodMs' | 'holdReleaseMs' | 'perfectPoints' |
+    'goodPoints' | 'missPenalty' | 'wrongPenalty' | 'maxHoldPoints' | 'comboPoints' | 'speedBonusStrength'>, event: Event): void {
+    if (this.runStarted() || this.demoActive()) return;
     const input = event.target as HTMLInputElement;
     const value = input.value.trim() ? Number(input.value) : NaN;
     const next = { ...this.settings(), [key]: value };
@@ -269,7 +273,18 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
     this.settingsError.set(error);
     if (error) { input.value = String(this.settings()[key]); return; }
     this.settings.set(next);
-    if (this.round) this.round.settings = next;
+    if (this.round) { this.round.settings = next; this.resetAttempt(this.runStartPosition()); }
+  }
+  resetScoringDefaults(): void {
+    if (this.runStarted() || this.demoActive()) return;
+    this.settings.set({ ...DEFAULT_SCORING_SETTINGS,
+      showAttackWindows: this.settings().showAttackWindows, showHoldBuffer: this.settings().showHoldBuffer });
+    this.settingsError.set('');
+    if (this.round) { this.round.settings = this.settings(); this.resetAttempt(this.runStartPosition()); }
+  }
+  openFingerGuide(): void {
+    this.openSettings();
+    requestAnimationFrame(() => document.getElementById('finger-guide')?.scrollIntoView({ block: 'nearest' }));
   }
   setScoringOverlay(key: 'showAttackWindows' | 'showHoldBuffer', event: Event): void {
     const next = { ...this.settings(), [key]: (event.target as HTMLInputElement).checked };
@@ -340,6 +355,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
 
   play(): void {
     if (this.playback.status() !== 'ready' || this.runStarted()) return;
+    if (this.round) this.round.settings = { ...this.settings() };
     this.runVersion++;
     this.completionPending = false;
     this.runStartPosition.set(this.playback.playbackPosition);
@@ -397,7 +413,7 @@ export class PianoComponent implements AfterViewInit, OnDestroy {
   resultDetail(letter: ResultLetter): string {
     const attack = letter.result === 'skipped' ? 'Skipped by seek' : letter.attack ? `${letter.attack === 'perfect' ? 'Perfect' : 'Good'} attack` :
       letter.result === 'miss' ? 'Missed attack' : 'Unresolved attack';
-    return letter.hasHold ? `${attack} · Sustain ${letter.sustainPoints.toFixed(0)} / ${this.scoringPoints.hold}` : attack;
+    return letter.hasHold ? `${attack} · Sustain ${letter.sustainPoints.toFixed(0)} / ${this.result()?.scoring.maxHoldPoints ?? 0}` : attack;
   }
 
   exitRun(): void {

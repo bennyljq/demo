@@ -24,6 +24,16 @@ export const SONGS: readonly SongEntry[] = [
     "defaultLookAhead": 4
   },
   {
+    "id": "chopin-nocturne-op-9-no-2",
+    "title": "Nocturne Op. 9 No. 2",
+    "file": "Chopin_-_Nocturne_Op_9_No_2_E_Flat_Major.mxl",
+    "composer": "Frédéric Chopin",
+    "difficulty": "Advanced",
+    "visible": true,
+    "playerPerformedMelody": true,
+    "defaultLookAhead": 6
+  },
+  {
     "id": "greensleeves",
     "title": "Greensleeves",
     "file": "Greensleeves.mxl",

@@ -8,16 +8,16 @@ import { metricGrouping, scoreBeatGrid } from './audio/piano-metronome';
 describe('generated song library', () => {
   it('keeps the curated scores in order while loading both score formats', async () => {
     expect(SONGS.map(song => song.id)).toEqual([
-      'twinkle-theme', 'twinkle-variation-01', 'greensleeves',
+      'twinkle-theme', 'twinkle-variation-01', 'chopin-nocturne-op-9-no-2', 'greensleeves',
       'wa-mozart-marche-turque-turkish-march-fingered', 'liebestraum-no-3-in-a-major',
     ]);
     expect(SONGS.filter(song => song.visible).map(song => song.id)).toEqual([
-      'twinkle-theme', 'twinkle-variation-01',
+      'twinkle-theme', 'twinkle-variation-01', 'chopin-nocturne-op-9-no-2',
     ]);
-    expect(SONGS.map(song => song.difficulty)).toEqual(['Beginner', 'Expert', 'Intermediate', 'Advanced', 'Not rated']);
-    expect(SONGS.map(song => song.defaultLookAhead)).toEqual([6, 4, 6, 6, 6]);
+    expect(SONGS.map(song => song.difficulty)).toEqual(['Beginner', 'Expert', 'Advanced', 'Intermediate', 'Advanced', 'Not rated']);
+    expect(SONGS.map(song => song.defaultLookAhead)).toEqual([6, 4, 6, 6, 6, 6]);
     expect(SONGS.map(song => song.composer)).toEqual([
-      'Wolfgang Amadeus Mozart', 'Wolfgang Amadeus Mozart', 'Traditional', 'Wolfgang Amadeus Mozart', 'Franz Liszt',
+      'Wolfgang Amadeus Mozart', 'Wolfgang Amadeus Mozart', 'Frédéric Chopin', 'Traditional', 'Wolfgang Amadeus Mozart', 'Franz Liszt',
     ]);
     for (const song of SONGS) {
       const response = await fetch(`/assets/piano/tracks/${encodeURIComponent(song.file)}`);
@@ -38,6 +38,10 @@ describe('generated song library', () => {
         expect(chart.filter(target => target.holdEnd !== undefined).length).toBe(17);
         expect(chart[0].source?.start.measure).toBe(2);
         expect(chart.at(-1)?.source?.start.measure).toBe(33);
+      } else if (song.id === 'chopin-nocturne-op-9-no-2') {
+        expect(score.measureCount).toBe(38);
+        expect(chart.length).toBe(331);
+        expect(chart.filter(target => target.holdEnd !== undefined).length).toBe(7);
       } else if (song.id === 'twinkle-variation-01') {
         expect(score.measureCount).toBe(25);
         expect(score.measures.length).toBe(48);

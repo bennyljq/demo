@@ -51,6 +51,8 @@
   --roll-good-window: #edd49a;
   --roll-perfect-window: #b7dfc8;
   --roll-hold-buffer: #a7d5c8;
+  --hand-left: #a85522;
+  --hand-right: #08745b;
   display: block;
   min-height: 100dvh;
   height: 100dvh;
@@ -79,6 +81,8 @@
   --edge: #87677d;
   --hit-glow: #ff9c4c66;
   --shadow: #050208aa;
+  --hand-left: #ffbf88;
+  --hand-right: #86dec1;
   --roll-surface: #211b25;
   --roll-lane: #3c2a44;
   --roll-text: #fff1de;
@@ -547,6 +551,20 @@ canvas { display: block; width: 100%; height: clamp(285px, 40vh, 430px); margin-
 .eight-key-inputs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 .eight-key-inputs label { align-items: center; text-align: center; }
 .eight-key-inputs input { width: 100%; max-width: 52px; height: 38px; text-align: center; text-transform: uppercase; color: var(--text); background: var(--control); border: 1px solid var(--edge); border-radius: 4px; font-weight: 800; }
+.finger-guide { margin: 0; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--control); }
+.finger-guide-labels { display: grid; grid-template-columns: 1fr 1fr; text-align: center; font-size: .78rem; }
+.finger-guide-labels strong:first-child { color: var(--hand-left); }
+.finger-guide-labels strong:last-child { color: var(--hand-right); }
+.finger-guide svg { display: block; width: 100%; max-width: 390px; height: auto; margin: auto; overflow: visible; }
+.finger-guide path { fill: none; stroke-width: 2.5; stroke-linejoin: round; }
+.finger-guide .left-hand { stroke: var(--hand-left); }
+.finger-guide .right-hand { stroke: var(--hand-right); }
+.finger-guide text { fill: var(--text); font: 700 10px var(--mono-font); text-anchor: middle; }
+.finger-guide .thumb { fill: var(--muted); }
+.finger-guide figcaption { color: var(--muted); text-align: center; font-size: .76rem; }
+.scoring-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+.scoring-controls > strong, .scoring-controls > small { grid-column: 1 / -1; }
+.result-stats dd small { display: block; color: var(--muted); font-size: .69rem; font-weight: 500; }
 .score-markings { color: var(--muted); font-size: .75rem; }
 .theme-setting { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .82rem; }
 
@@ -557,8 +575,8 @@ canvas { display: block; width: 100%; height: clamp(285px, 40vh, 430px); margin-
 }
 @media (max-width: 700px) {
   section.game-shell { padding-inline: 12px; }
-  .play-header { align-items: start; }
-  .play-navigation { flex-wrap: wrap; justify-content: flex-end; }
+  .play-header { align-items: stretch; flex-direction: column; gap: 8px; }
+  .play-navigation { flex-wrap: wrap; justify-content: flex-start; }
   .armed-panel { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto auto; min-height: 136px; }
   .armed-control-slot { grid-template-columns: minmax(120px, 1fr) 78px 85px; }
   .game-shell[data-mode='rhythm'] .armed-control-slot,
@@ -577,7 +595,7 @@ canvas { display: block; width: 100%; height: clamp(285px, 40vh, 430px); margin-
   .card-arrow { grid-column: 3; grid-row: 1; }
 }
 @media (max-width: 480px) {
-  .play-identity h1 { font-size: 1.16rem; max-width: 46vw; }
+  .play-identity h1 { font-size: 1.16rem; overflow-wrap: normal; }
   .play-navigation button { padding: 5px 6px; font-size: .68rem; }
   .armed-control-slot { grid-template-columns: minmax(106px, 1fr) 65px 70px; gap: 3px; }
   .game-shell[data-mode='rhythm'] .armed-control-slot,

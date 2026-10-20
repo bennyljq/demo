@@ -36,7 +36,11 @@ export class ProjectContentsComponent implements OnInit {
       linkText: 'Play POTONG', linkIcon: '→', actionType: 'external', actionTarget: 'https://potong.io'
     },
     {
-      id: 'piano', titleHtml: 'Keysmash Maestro', subtitle: '2026', imgSrc: 'assets\\piano\\piano-3.gif', imgClass: 'logo',
+      id: 'parabola', titleHtml: 'Prime Numbers Generated From <br> Highly Composite Numbers', subtitle: '2018', imgSrc: 'assets/parabola.png', imgClass: 'logo',
+      linkText: 'Read Paper', linkIcon: '→', actionType: 'external', actionTarget: 'https://www.parabola.unsw.edu.au/sites/default/files/2024-03/vol54_no3_4.pdf'
+    },
+    {
+      id: 'piano', titleHtml: 'Hard Pianist', subtitle: '2026', imgSrc: 'assets\\piano\\piano-3.gif', imgClass: 'logo',
       linkText: 'Play the piano', linkIcon: '→', actionType: 'route', actionTarget: '/piano'
     },
     {
@@ -62,10 +66,6 @@ export class ProjectContentsComponent implements OnInit {
     {
       id: 'enterprise', titleHtml: 'Enterprise Component Library', subtitle: '2021 - 2024', imgSrc: 'assets/enterprise-lib.png', imgClass: 'logo',
       linkText: 'Browse Library', linkIcon: '→', actionType: 'route', actionTarget: '/enterprise'
-    },
-    {
-      id: 'parabola', titleHtml: 'Prime Numbers Generated From <br> Highly Composite Numbers', subtitle: '2018', imgSrc: 'assets/parabola.png', imgClass: 'logo',
-      linkText: 'Read Paper', linkIcon: '→', actionType: 'external', actionTarget: 'https://www.parabola.unsw.edu.au/sites/default/files/2024-03/vol54_no3_4.pdf'
     },
     {
       id: 'physics', titleHtml: 'Everyday Electricity', subtitle: '2023', imgSrc: 'assets/electric.png', imgClass: 'logo',

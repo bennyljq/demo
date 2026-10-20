@@ -6,6 +6,8 @@ import { buildEightKeysChart } from '../charts/eight-keys-chart';
 import { buildXmlTypingChart } from './piano-chart';
 import { songChartFor } from '../charts/song-charts';
 import type { PianoMode } from './piano-mode';
+import { readMxlRootfile } from '../music/mxl-container';
+import { coupleNocturneMelody } from '../charts/nocturne-coupling';
 
 describe('full-song demo controller', () => {
   it('hits each attack and releases an authored hold once even when a frame is late', () => {
@@ -86,5 +88,45 @@ describe('full-song demo controller', () => {
     round.advance(2);
     expect(round.results).toEqual(['perfect', 'perfect']);
     expect(round.sustainPoints[0]).toBe(100);
+  });
+
+  it('completes the Nocturne plan in all three modes, including every hold', async () => {
+    const response = await fetch('/assets/piano/tracks/Chopin_-_Nocturne_Op_9_No_2_E_Flat_Major.mxl');
+    const score = importMusicXml(await readMxlRootfile(await response.arrayBuffer()));
+    const chart = songChartFor('chopin-nocturne-op-9-no-2');
+    for (const mode of ['rhythm', 'eight-keys', 'word-concert'] as PianoMode[]) {
+      const prepared = mode === 'word-concert' ? prepareTwinkleRun(score, [], 1234, 'chopin-nocturne-op-9-no-2') :
+        coupleNocturneMelody(score, mode === 'eight-keys' ? buildEightKeysChart(score, 'chopin-nocturne-op-9-no-2') :
+          buildXmlTypingChart(score, chart.phrases, chart.unitsPerQuarter));
+      const bindings = 'ASDFJKLZ';
+      const round = new TypingRound(prepared.targets, undefined, mode, bindings);
+      const demo = new PianoDemoController(prepared.targets, round, 1, undefined, mode, bindings);
+      expect(demo.actions.length).withContext(mode).toBe(662);
+      for (let time = 0; time <= score.duration + 2; time += 5) { demo.step(time); round.advance(time); }
+      demo.step(score.duration + 2);
+      round.advance(score.duration + 2);
+      expect(round.results.every(result => result === 'perfect')).withContext(mode).toBeTrue();
+      expect(round.earnedSustainPoints).withContext(mode).toBe(round.availableSustainPoints);
+      expect(round.wrongCount).withContext(mode).toBe(0);
+    }
+  });
+
+  it('cancels a Nocturne demo without applying later attacks and can restart cleanly', async () => {
+    const response = await fetch('/assets/piano/tracks/Chopin_-_Nocturne_Op_9_No_2_E_Flat_Major.mxl');
+    const score = importMusicXml(await readMxlRootfile(await response.arrayBuffer()));
+    const targets = prepareTwinkleRun(score, [], 42, 'chopin-nocturne-op-9-no-2').targets;
+    const round = new TypingRound(targets);
+    const first = new PianoDemoController(targets, round, 1);
+    first.step(score.duration / 2);
+    const judged = round.results.filter(result => result === 'perfect').length;
+    expect(judged).toBeGreaterThan(0);
+    first.cancel();
+    first.step(score.duration + 1);
+    expect(round.results.filter(result => result === 'perfect').length).toBe(judged);
+    round.reset();
+    const restarted = new PianoDemoController(targets, round, 1);
+    restarted.step(score.duration + 1);
+    round.advance(score.duration + 1);
+    expect(round.results.every(result => result === 'perfect')).toBeTrue();
   });
 });

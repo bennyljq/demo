@@ -41,9 +41,10 @@ pulse.
 ```
 
 A hold is a letter with `end`. The judgement accepts its attack in the same
-Perfect/Good windows as a tap: 100 points for Perfect, 70 for Good, −10 for a missed attack.
-A successful hold adds up to 100 fractional sustain points, computed as
-`100 * credited held source duration / authored hold source duration`. The
+Perfect/Good windows as a tap: by default 100 points for Perfect, 70 for Good,
+and a 50-point deduction for a missed attack. A successful hold adds up to
+the configured maximum hold points, computed as
+`maximum hold points * credited held source duration / authored hold source duration`. The
 attack updates combo immediately. Accepted early or late attacks receive hold
 credit from the authored start; early release keeps partial credit without
 changing the attack grade or combo. Re-pressing cannot extend a finished hold.
@@ -56,7 +57,8 @@ excludes skipped targets from the available score.
 
 Numeric Perfect/Good tolerances and the hold buffer share the validated
 `ScoringSettings` model with roll overlays. Defaults are 80/160/120 real ms.
-Numbers are frozen during count-in and playback; overlay visibility can change
+Point values and timing numbers are frozen during count-in and playback;
+overlay visibility can change
 live. Attack overlays cover `target +/- tolerance * rate`, and the tail overlay
 shows the capped early-release region. The passage displays up to three stable
 wrapped lines directly above the Canvas. The current letter has an underline;
@@ -127,7 +129,7 @@ The initial Theme mapping covers 49 written attacks over 12 phrases, expanded to
 Initial patterns, in authored phrase order (the source file is authoritative):
 
 These strings are finger slots, not physical-key requirements. Settings maps
-QWER to L1-L4 and UIOP to R1-R4 by default and can bind each slot to another
+QWER to L5-L2 and UIOP to R2-R5 by default and can bind each slot to another
 distinct A-Z letter. Canvas targets show the slot numbers 1-4, using the
 orange and green fills to distinguish hands. The authored patterns and melody
 coupling remain unchanged when a player changes bindings.
@@ -146,13 +148,45 @@ coupling remain unchanged when a player changes bindings.
 
 Run `node src/app/piano/generate-demand-metadata.cjs` after editing a visible chart. Its focused Karma report uses the existing importer, chart builders and coupling and writes `song-demand.generated.ts`; do not edit the generated values. Demand counts required attacks including performed repeat visits, excluding spaces and hold duration as characters. The active span starts at the first attack and ends at the later of the last required coupled note's sounding end and the final hold endpoint. Average WPM is `12 × count / active span`. Peak is `12 × maximum attack count / window length` for a sliding five-source-second half-open interval `[start, start + 5)`; use active span if shorter. These are rhythm-constrained attack rates, not free-typing benchmarks. Initial generated Theme demand is 98 attacks over 47.5 s: average 24.76, peak 26.4 WPM. Variation I is 322 over 47.5 s: average 81.35, peak 96 WPM. All three current modes share these densities because they share attack locations.
 
-Phase 18 scoring uses Perfect +100, Good +70, Miss −10 and Wrong −10.
-Successful attacks increment the combo once and earn `2 × (combo − 1)`;
+Current default scoring uses Perfect +100, Good +70, Miss −50 and Wrong −50.
+The longest streak adds one bonus of `bestCombo × 5`;
 hold progress adds only its existing proportional bonus, up to +100. Raw
 attack, sustain and combo points retain negative penalty debt before the
 attempt's fixed speed multiplier; only the displayed score is clamped and
 rounded. For N eligible attacks and H holds, maximum score is
-`speed × [100N + 100H + N(N − 1)]`. Skipped practice targets do not count.
+`speed × [100N + 100H + 5N]`. Skipped practice targets do not count.
+
+## Nocturne provisional chart
+
+`nocturne-chart.ts` selects 331 attacks in source measures 0–37, with seven
+isolated cadence/coda holds. The melodic source is staff 1, voice 1, not every
+high note in both staves. Simultaneous octave or chord pitches in that voice
+are one target bundle. Written tie continuations do not create targets.
+`nocturne-coupling.ts` checks that every unselected staff-1/voice-1 sounding
+attack is explicitly decorative: 15 grace notes, 22 figuration notes each in
+measures 12 and 20, and 21, 21 and 13 cadenza figures between selected pulse
+attacks in measures 33–35 respectively (114 excluded sounding notes in all).
+The 331 targets couple 357 sounding notes because simultaneous pitches form
+bundles. The opening pickup is measure 0. Source labels, irregular
+measure lengths and tempo map stay as encoded. Grace slots shift a few sounding
+heads after their written onset; all three mode charts align to those imported
+heads before Ready. The 89 short phrase slots draw familiar words per run.
+The file has 38 written/performed measures and no repeat navigation. It begins
+in 12/8, prints 6/4 at 33 and 2/4 at 35, then returns to 12/8 at 36.
+The two 6/4 "Senza tempo" bars each encode three quarters; they are not
+padded to a nominal bar. There are ten sound tempo directions, 14 tie marks,
+15 grace notes, trill/turn/mordent ornaments, 12 pedal marks and two octave
+shift marks. Voice 5 on staff 2 is the main accompaniment; octave marks do
+not transpose encoded pitches. Ornament and rubato playback remain approximate.
+Eight Keys patterns in `eight-keys-chart.ts` are ergonomic contour proposals,
+not literal piano fingering. The fast runs in 4–6, 13–16, 21–24 and 30–35,
+the voice handoff around 11–13 and 19–21, and the cadenza exclusions in
+33–35 need manual listening and fingering review. Grace groups in 7–8, 13,
+15, 21–23 and 27 use the importer's deterministic slot timing. Written
+turn/mordent/trill marks in 2, 5, 13, 21, 26, 27 and 30 are not expanded
+beyond their explicit note data. The free-time cadenza in 33–35 follows encoded
+durations and tempo marks, without rubato interpretation. Pedal controllers
+are retained; slurs, articulations and fingerings remain visual notation.
 
 The committed Twinkle source collection has explicit `THEME.` and `VAR. I.`
 through `VAR. XII.` headings. The 13 standalone `.musicxml` files in

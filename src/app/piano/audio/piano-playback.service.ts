@@ -12,6 +12,7 @@ import { PerformedBar, PerformanceKind, PlayerPerformance } from './player-perfo
 import { prepareTwinkleRun, PreparedTwinkleRun } from '../charts/prepare-twinkle-run';
 import { buildEightKeysChart } from '../charts/eight-keys-chart';
 import { PianoMode } from '../gameplay/piano-mode';
+import { coupleNocturneMelody } from '../charts/nocturne-coupling';
 import type { DemoAction } from '../gameplay/piano-demo-controller';
 
 type PlaybackStatus = 'loading' | 'enable-audio' | 'ready' | 'starting' | 'count-in' | 'playing' | 'error';
@@ -219,7 +220,8 @@ export class PianoPlaybackService implements OnDestroy {
     const targets = mode === 'eight-keys'
       ? buildEightKeysChart(score, id)
       : buildXmlTypingChart(score, chart.phrases, chart.unitsPerQuarter);
-    return { targets, coupling: coupleStaffMelody(score, targets) };
+    return id === 'chopin-nocturne-op-9-no-2'
+      ? coupleNocturneMelody(score, targets) : { targets, coupling: coupleStaffMelody(score, targets) };
   }
 
   /** Change input rules without reloading the imported score or MIDI sequence. */
@@ -434,8 +436,11 @@ export class PianoPlaybackService implements OnDestroy {
       }
       if (version !== this.selectionVersion || controller.signal.aborted) return;
       const chart = songChartFor(id);
-      const melodyTargets = buildXmlTypingChart(score, chart.phrases, chart.unitsPerQuarter);
-      const melodyCoupling = song.playerPerformedMelody ? coupleStaffMelody(score, melodyTargets) : [];
+      const authoredTargets = buildXmlTypingChart(score, chart.phrases, chart.unitsPerQuarter);
+      const base = id === 'chopin-nocturne-op-9-no-2' ? coupleNocturneMelody(score, authoredTargets) :
+        { targets: authoredTargets, coupling: song.playerPerformedMelody ? coupleStaffMelody(score, authoredTargets) : [] };
+      const melodyTargets = base.targets;
+      const melodyCoupling = base.coupling;
       const playbackMidi = song.playerPerformedMelody
         ? buildScoreMidi(score, new Set(melodyCoupling.flatMap(target => target.notes.map(note => note.id)))) : score.midi;
       if (this.enginePromise) await this.enginePromise;
@@ -443,7 +448,7 @@ export class PianoPlaybackService implements OnDestroy {
       if (version !== this.selectionVersion || controller.signal.aborted) return;
       if (this.loadedSongId !== id) await this.queueSequence(playbackMidi, id);
       if (version !== this.selectionVersion || controller.signal.aborted) return;
-      const prepared = song.playerPerformedMelody ? this.prepareModeChart(score, id, this.mode()) :
+      const prepared: PreparedChart & { words?: readonly string[] } = song.playerPerformedMelody ? this.prepareModeChart(score, id, this.mode()) :
         { targets: melodyTargets, coupling: [] };
       if (song.playerPerformedMelody) {
         this.playerPerformance = this.createPlayerPerformance(score, prepared.coupling);

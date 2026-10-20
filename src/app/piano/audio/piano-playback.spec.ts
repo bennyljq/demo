@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { PianoPlaybackService } from './piano-playback.service';
 import { importMusicXml } from '../music/musicxml-import';
 import { SONGS } from '../song-manifest.generated';
+import { readMxlRootfile } from '../music/mxl-container';
 
 describe('song selection', () => {
   it('starts with the first visible song selected for loading', () => {
@@ -75,7 +76,8 @@ describe('song selection', () => {
     const service = TestBed.runInInjectionContext(() => new PianoPlaybackService());
     const internal = service as any;
     for (const song of service.songs) {
-      const xml = await (await fetch(`/assets/piano/tracks/${song.file}`)).text();
+      const response = await fetch(`/assets/piano/tracks/${song.file}`);
+      const xml = song.file.endsWith('.mxl') ? await readMxlRootfile(await response.arrayBuffer()) : await response.text();
       internal.scores.set(song.id, importMusicXml(xml));
     }
     let finishPreparation!: () => void;
