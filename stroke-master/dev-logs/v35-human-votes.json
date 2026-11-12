@@ -1,0 +1,247 @@
+{
+  "schema": "v35-human-votes-1",
+  "protocolSHA256": "f6d0006c1dcfc98ab90b7e803e7d22839b994d87186aec62f8acc44eef07743a",
+  "author": "human",
+  "votes": [
+    {
+      "case": "gradient42",
+      "stage": "1400",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "B",
+      "note": "best blocking, most natural strokes",
+      "mapping": {
+        "A": "v17",
+        "B": "v33",
+        "C": "v12"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:05:06.183Z"
+    },
+    {
+      "case": "ayam42",
+      "stage": "1400",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "B",
+      "note": "cleanest blocking, paint strokes are more natural, face detail emergent, clean outlines",
+      "mapping": {
+        "A": "v12",
+        "B": "v33",
+        "C": "v17"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:05:43.632Z"
+    },
+    {
+      "case": "beaver42",
+      "stage": "1400",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "A",
+      "note": "blocking might be a bit worse than B, but more natural strokes win out. B strokes too rectangular. ",
+      "mapping": {
+        "A": "v33",
+        "B": "v12",
+        "C": "v17"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:06:52.050Z"
+    },
+    {
+      "case": "forest42",
+      "stage": "1400",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "A",
+      "note": "natural strokes, even though some foundation peeks through face",
+      "mapping": {
+        "A": "v33",
+        "B": "v12",
+        "C": "v17"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:10:42.815Z"
+    },
+    {
+      "case": "mat42",
+      "stage": "1400",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "B",
+      "note": "best facial details, natural strokes",
+      "mapping": {
+        "A": "v17",
+        "B": "v33",
+        "C": "v12"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:11:21.088Z"
+    },
+    {
+      "case": "rainier42",
+      "stage": "1400",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "C",
+      "note": "natural strokes",
+      "mapping": {
+        "A": "v12",
+        "B": "v17",
+        "C": "v33"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:12:06.351Z"
+    },
+    {
+      "case": "orca42",
+      "stage": "1400",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "A",
+      "note": "best orca",
+      "mapping": {
+        "A": "v33",
+        "B": "v17",
+        "C": "v12"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:12:27.515Z"
+    },
+    {
+      "case": "pillars42",
+      "stage": "1400",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "A",
+      "note": "nice flat background, the others have brush strokes that are too noisy",
+      "mapping": {
+        "A": "v17",
+        "B": "v12",
+        "C": "v33"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:13:51.110Z"
+    },
+    {
+      "case": "ayam73",
+      "stage": "final-observed",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "A",
+      "note": "natural strokes, B has dirty outlines, C has unrealistic details, maybe strokes are too short and narrow",
+      "mapping": {
+        "A": "v33",
+        "B": "v12",
+        "C": "v17"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:16:30.549Z"
+    },
+    {
+      "case": "gradient73",
+      "stage": "final-observed",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "A",
+      "note": "contour strokes are natural -- drawn along contour parallel. Detail immaculate; B is comparable but strokes are blocky and sometimes smaller (overfitting?).",
+      "mapping": {
+        "A": "v33",
+        "B": "v12",
+        "C": "v17"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:18:40.522Z"
+    },
+    {
+      "case": "beaver73",
+      "stage": "final-observed",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "B",
+      "note": "just a more convincing oil painting to my eyes",
+      "mapping": {
+        "A": "v17",
+        "B": "v33",
+        "C": "v12"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:19:15.303Z"
+    },
+    {
+      "case": "forest73",
+      "stage": "final-observed",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "C",
+      "note": "most convincing, nice soft strokes",
+      "mapping": {
+        "A": "v12",
+        "B": "v17",
+        "C": "v33"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:22:40.362Z"
+    },
+    {
+      "case": "mat73",
+      "stage": "final-observed",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "B",
+      "note": "close contender to C, but facial stroke are more natural. A has too many small strokes.",
+      "mapping": {
+        "A": "v17",
+        "B": "v33",
+        "C": "v12"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:26:31.574Z"
+    },
+    {
+      "case": "rainier73",
+      "stage": "final-observed",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "A",
+      "note": "sky and water are the best to my eyes, natural and flowing strokes with good blending. ",
+      "mapping": {
+        "A": "v33",
+        "B": "v12",
+        "C": "v17"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:29:09.681Z"
+    },
+    {
+      "case": "orca73",
+      "stage": "final-observed",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "A",
+      "note": "well painted sky and background, good water speckles. B is a close contender, but background had too many small strokes, orca detail on par. C strokes are just too messy and unblended. ",
+      "mapping": {
+        "A": "v33",
+        "B": "v12",
+        "C": "v17"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:30:45.112Z"
+    },
+    {
+      "case": "pillars73",
+      "stage": "final-observed",
+      "appearance": "pigment",
+      "crop": 0,
+      "preference": "B",
+      "note": "wins out just by a bit. Loses in detail to C, but makes up for it with natural strokes. Visible strokes are not exactly good for astro shot, so all 3 are not great here. ",
+      "mapping": {
+        "A": "v17",
+        "B": "v33",
+        "C": "v12"
+      },
+      "identitiesRevealed": false,
+      "recordedAt": "2026-10-08T18:32:32.877Z"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+# V62 - controlled tonal deposition, blending retained
+
+V62 Controlled loading experimental is selectable. It preserves exact V58 geometry, attention, material opportunities, blending, five targets/gates and ordinary scoring. V44 remains default; V50 Baseline and V58 Benchmark remain preserved. **This is a capability finding, not an established painting-quality or economy advantage. No promotion or commit.**
+
+[Native comparison and recovery](../artifacts/v62/comparison.html), [Tay](../artifacts/v62/tay-progression.jpg), [Mat](../artifacts/v62/mat-progression.jpg), [development controls](../artifacts/v62/development.jpg), [held-out finals](../artifacts/v62/regression-finals.jpg), [native portrait crops](../artifacts/v62/native-finals.jpg), [native sky/reflection/feather crops](../artifacts/v62/native-heldout.jpg), [matched wall](../artifacts/v62/matched-time.jpg), [stage transitions](../artifacts/v62/stage-boundaries.jpg), [shared-state decisions](../artifacts/v62/construction-decisions.jpg), [capabilities](../artifacts/v62/capabilities.jpg), [Studies](../charcoal-studies.html), [recovery ZIP](../artifacts/v62/recovery-package.zip), [KIV](KIV-v62.md). V50 retains its [cold finished-quality reference](../artifacts/v59/v50-reference.html).
+
+Only **balanced/thorough slot 2**, the existing tone-guided release contact, is conditionally modified; fast depth uses its existing tonal shade slot 0. Eligibility requires a deposit with V58 tonal guidance, positive signed residual above 3 at nine probes (three positions along the existing path, centre and two lateral offsets), and current-stage target range at most 12 across those probes. Offsets use 45% of maximum width. This is sparse passage support, not a guarantee that every intervening pixel is appropriate; ordinary complete-footprint acceptance still decides. High target variation, unsupported light gaps, lift/erase/structural contacts and unguided fallbacks retain original loading. An early blurred target does not make every slot quiet.
+
+A is exact frozen V58. B uses V59 pickup pressure [.95,1,.95], breakup .12 and load bias zero, retaining original entry/release. C adds V60 loading feather .65, entry/release .015, within unchanged support. Quantity remains independently fitted once after physical pickup; it is neither prescribed low opacity nor a pressure proxy. B/C share geometry, eligibility, random draws, slot allocation and all other settings. Original broad deposit/lift, angular contact, structural pencil, erasure and every blend opportunity remain available. No V60 pencil-slot substitution, V61 tracer, new objective, gate, quota, secondary fit or hidden compound operation. Candidate ceilings remain **3/7/12**, one contact and fit per final candidate.
+
+The two development trajectories did not demonstrate a convincing finish advantage. C is retained to expose its bounded feather capability alongside blending; B remains reproducible and reviewable, without a second selector identity. Parameters were fixed on Tay42/Mat42 before the final rooster42/Rainier42/Mat73 evaluation. A support audit caught generic cubic bounds for the new contact identity; native13 now uses exact finite-face bounds. Preliminary trajectories/timings were discarded and all final comparisons rerun. Treatment parameters were unchanged, including after viewing preliminary held-out images. This was an integration correction, not held-out tuning.
+
+Authored same-path overlap studies use 66 independently fitted contacts for ramp/form and three for the dark mass/light gap, including the same subtractive eraser. Ramp vertical-gradient mismatch is **31.36 / 18.94 / 4.02** for original/B/C. Form mismatch is **23.08 / 13.29 / 3.00**, but dark-region RMS worsens B to C **13.86 to 20.21**: soft loading can weaken coverage. Gap dark RMS remains inadequate **78.37 / 58.31 / 55.19**, although erasure preserves its narrow light gap (RMS 3, reflecting the 249 paper versus 246 target). These are material demonstrations, not planner results. Reference access in these authored synthetic studies is explicit; automatic early construction uses only its current stage target.
+
+Ten shared V58 states include fixed 25/299/1399 prefixes and the first eligible early/middle opportunities on each subject. Before/all-best/isolated-slot native crops and every competing fitted quantity are available. At Tay327, B improves local mass RMS by 5.00 versus C's 4.34; C reduces grain by .32 while B changes it by +.02. At Mat302, B's mass improvement is 2.14 versus C's 2.05, and its reference-edge improvement is .118 versus .056. Quiet texture and useful tone are separate effects. Several fixed states are ineligible and reproduce original proposals exactly. Neither lower grain nor fewer blends is rewarded.
+
+| Case / accepted final | Original RMS V58 / B / C / V50 | V62 quiet contacts |
+|---|---|---|
+| Tay42 / 5600 | 6.058 / 6.066 / 6.068 / 6.372 | 13 |
+| Mat42 / 2800 | 10.945 / 10.988 / 10.899 / 7.331 | 13 |
+| Mat73 / 2800 | 10.873 / not tuned / 10.865 / 7.213 | 10 |
+| rooster42 / 2800 | 15.267 / not tuned / 15.320 / 13.900 | 3 |
+| Rainier42 / 2800 | 19.528 / not tuned / 19.525 / 18.039 | 8 |
+
+Tay remains recognisable and well modelled, with selective hair/feature marks, but there is no clear finish gain. Mat still has fragmented forehead/cheek planes; C does not replace V50's stronger modelling. Rooster's numerical loss is small; its native dark-body crop has additional horizontal contact seams rather than stronger feather modelling. Broad silhouette cleanliness is comparable, with no obvious large boundary loss. Rainier's quieter grain does not resolve diagonal sky/reflection seams or improve overall values convincingly; its snow silhouette remains comparable. Hard contacts preserve dark opportunities and silhouettes; authored feather coverage loss argues against extending quiet loading everywhere. Actual selected contacts are sparse, below .5% of accepted work on each case. The first 25/100/300, 1400/2800, Tay5600, transitions and native crops distinguish renderer capability from automatic use.
+
+| Case | V58 S2/S3/S4/S5; qualified | V62 S2/S3/S4/S5; qualified | V62 blends S1-S5 |
+|---|---|---|---|
+| Tay42 | 640/768/960/1184;1536 | 640/736/928/1216;1600 | 324/58/84/139/1392 |
+| Mat42 | 768/928/1216/1664;2144 | 800/960/1248/1664;2144 | 293/71/113/130/376 |
+| Mat73 | 768/960/1216/1664;2144 | 800/960/1216/1664;2144 | 294/58/88/153/383 |
+| rooster42 | 384/512/800/1248;unmet | 384/512/832/1280;unmet | 148/29/72/106/214 |
+| Rainier42 | 512/608/768/1088;unmet | 512/608/768/1088;unmet | 253/42/58/115/221 |
+
+The review records deposit/lift/erase/blend by actual stage for all controls, including the departing operation at a boundary. Gates remain global **11/9/7.5/6/5.5%**, regional **17/15/13/11/10%**, 95th-percentile safeguard, three accepted-evidence checks every 32 accepted operations. Stage 5 still dominates Tay refinement; its grain falls from 6.37 at entry to 1.96 at 5600, versus V58's 6.37 to 2.04. Preserved early texture does not establish a final character advantage. Tay actually uses 1997 blends versus 1944 in V58; Mat42 uses 983 versus 994. These totals do not measure avoided repair. No gates or acceptance were changed to help C win.
+
+| Case / final budget | V58 median s (range) | Steady B | V62 C | V50 |
+|---|---|---|---|---|
+| Tay / 5600 | 17.305 (17.191-17.367) | 17.392 (17.296-17.399) | 17.185 (17.121-17.328) | 21.890 (21.839-21.916) |
+| Mat / 2800 | 6.006 (5.999-6.031) | 5.968 (5.898-6.001) | 5.978 (5.940-5.986) | 7.006 (6.987-7.022) |
+
+At the common final allowances, Tay has V58/C/V50 **5540/5600/3614** operations in 17.185 s; Mat **2737/2800/1807** in 5.978 s. V50 still models Mat more coherently at matched time. These sub-1% C differences are a practical tie, not a demonstrated compute advantage. B/C are also close. There is no major slowdown, but neither useful progress per second nor fewer accepted corrections is established.
+
+| Case/model | Anchor proposals | Candidate evaluations | Fit pixels | Sample visits | Nested fit/planning s |
+|---|---:|---:|---:|---:|---|
+| Tay V58 | 5600 | 39200 | 21011083 | 227411508 | 13.279 / 13.729 |
+| Tay B | 5605 | 39235 | 20951784 | 227248200 | 13.322 / 13.774 |
+| Tay C | 5603 | 39221 | 20943202 | 225879221 | 13.161 / 13.615 |
+| Mat V58 | 2800 | 19600 | 5941956 | 65531193 | 4.085 / 4.342 |
+| Mat B | 2800 | 19600 | 5886938 | 64958618 | 4.020 / 4.284 |
+| Mat C | 2800 | 19600 | 5878748 | 64770057 | 4.029 / 4.292 |
+
+Each evaluation is one proposed contact; accepted work is 5600/2800 single contacts. V50 uses the historical raster/fit path and these native-contact counters are unavailable. Median-run nested timings are shown. All held-out proposal work and stage mixes are retained in the native review/recovery summary. Wall includes prepared-input decode/session analysis, stage filtering, nine-probe checks, proposals, fitting, ranking, raster/cache work, rejected attempts, Continue and transitions. Evidence metrics, file I/O and review replay are excluded. Engine-module loading precedes the timed session; process-launch and evidence overhead are retained separately in the timing logs. Three counterbalanced isolated processes per development case/model; median whole-run vectors determine matched-time views, with V50 included. Held-out times are single-run evidence. Fit/planning times are nested inside wall and must not be summed.
+
+Native13/material15/stick13 versions optional loading. Zero feather routes to the frozen V53 contact kernel, so original V58 opportunities avoid feather work; C precomputes entry/release spans once per contact. This preserves V60 equations pixel-for-pixel rather than approximating them. The microprofile (three rotated rounds, 100 identical warmed contacts) measures approximately 3.216 ms/contact for steady loading versus 3.495 for feathering, about 9% extra on this fixed support. Old V60 feather is 3.485 ms/contact: span precomputation does not show a major kernel speedup. The eligibility gate limits the extra loading to 45 of 5603 Tay proposals and 73 of 2800 Mat proposals; original opportunities use the frozen kernel. Geometry/material sample work and complete wall remain the relevant costs. No canvas diffusion, reference replacement, display overlay or postprocess is used.
+
+Reproduce: `node v62-reproduce.cjs`, then `--held-out`; `node v62-decisions.cjs`; `node v62-capabilities.cjs`; `node v62-profile.cjs`; `node v62-timings.cjs` and `--mat`; `node v62-build-review.cjs`; `node v62-evidence.cjs`; `python v62-sheets.py`. Hidden B uses planner charcoal62 with charcoal62Loading steady; normal C uses feather. Original prepared PNG sources and the pre62 frozen engine are in recovery. Accepted JSON recovers artwork, not a live optimiser.
+
+Checks cover historical oil and V44/V50/V53-V61 exact generation/Continue, all depths and two seeds, stage semantics, fitting/acceptance/full/tile/cache agreement, 640px finite-face support and edges, target sealing/Undo, Paint/Continue/actual targeting, native/2x exports, complete physical-equation equivalence and offline gallery bytes. `node v62-recovery-check.cjs` exactly regenerates six Tay/Mat 1400 prefixes; `node v62-held-out-check.cjs` verifies complete selected held-out streams; `python v62-package-check.py` checks extracted recovery. Optional loading cannot reinterpret native10 historical artwork. The active gallery is approximately **9.03 MB uncompressed**, itemised in gallery-bytes.json; the recovery ZIP is approximately **12.22 MB**, including cold controls and original sources. Twelve primary accepted streams and nine small authored studies have no duplicated prefixes; V50 stays cold, and bulk diagnostics remain ignored outside Git. Frozen V52/V53 material examples and V61 long-path capabilities are preserved.
