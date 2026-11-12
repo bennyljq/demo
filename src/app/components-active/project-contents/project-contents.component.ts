@@ -36,6 +36,10 @@ export class ProjectContentsComponent implements OnInit {
       linkText: 'Play POTONG', linkIcon: '→', actionType: 'external', actionTarget: 'https://potong.io'
     },
     {
+      id: 'strokemaster', titleHtml: 'Stroke Master', subtitle: '2026', imgSrc: 'assets/ayam-replay.gif', imgClass: 'logo',
+      linkText: 'Try painting', linkIcon: '→', actionType: 'external', actionTarget: '/stroke-master'
+    },
+    {
       id: 'parabola', titleHtml: 'Prime Numbers Generated From <br> Highly Composite Numbers', subtitle: '2018', imgSrc: 'assets/parabola.png', imgClass: 'logo',
       linkText: 'Read Paper', linkIcon: '→', actionType: 'external', actionTarget: 'https://www.parabola.unsw.edu.au/sites/default/files/2024-03/vol54_no3_4.pdf'
     },
@@ -150,6 +154,7 @@ export class ProjectContentsComponent implements OnInit {
   @ViewChild('desc_sort', { static: true }) desc_sort!: TemplateRef<any>;
   @ViewChild('desc_traffic', { static: true }) desc_traffic!: TemplateRef<any>;
   @ViewChild('desc_piano', { static: true }) desc_piano!: TemplateRef<any>;
+  @ViewChild('desc_strokemaster', { static: true }) desc_strokemaster!: TemplateRef<any>;
 
   getTemplateForId(id: string): TemplateRef<any> {
     return (this as any)[`desc_${id}`];
