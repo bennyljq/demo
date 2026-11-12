@@ -29,6 +29,7 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
+              { "glob": "**/*", "input": "public" },
               {
                 "glob": "spessasynth_processor.min.js",
                 "input": "node_modules/spessasynth_lib/dist",

@@ -1,0 +1,99 @@
+# V35 — The Painter's Trials
+
+Evaluation of authentic maintained V12, V17 and V33; no V35 painter, selector or corrective treatment. The artistic championship is reserved for human review. Codex's observations below are provisional and separate from human votes. No votes are populated for the user.
+
+## Frozen contest
+
+Incoming clean revision `29f92fba73d96c1654b67df6f0bdf8ae0638aa85`. [Protocol](../artifacts/v35/protocol.json) was frozen before inspecting contest paintings. The exact UI display name is **V12 legacy: planner 11 / material 2**, with internal **planner11/material2**, V17 as planner17/material2, V33 as planner33/material2. All use the current shared behaviour-preserving optimisations; V33 keeps its authentic loading. Engine, worker, planner modules and application behaviour are unchanged. No reset, automatic commit or historical evidence edits.
+
+Eight requested sources, exact filenames and identity checked from the sources, seeds42/73: 48 fresh primary runs. Long side640, preserved aspect, EXIF orientation handling, Lanczos, one prepared/decoded buffer per reference; asset/PNG/RGBA hashes retained. Mat450→640 and rooster632→640 are explicit upsamples that add no source detail. Balanced detail/search, identical enabled brushes, quiet body.25, common Neutral, no manual masks or targeted refinement. Two diagnostic crops per source were selected before seeing paintings. [Reproduction and offline use](README-v35.md).
+
+Initial1400 operations/5600 proposals; Continue up to+7000/+28000. Checkpoints300/1400/4000/8400 include foundation consistently. Operations, accepted contacts, proposals, evaluated candidates and candidate contacts remain separate. Authentic stopping is preserved, with no budget rescue. Painting is sequential in the declared rotating order, with full per-reference/planner warmups. Step-only measured work excludes setup/export/gallery; end-to-end context is separate.
+
+Equal work uses the nearest accepted prefix at the smallest initial/final measured painting time across each triple. Timing differences, actual operations and contacts are retained. Common error levels use the largest endpoint incremental error of each triple, with first observed crossings and null for unreached levels. No interpolation or extrapolation. [Measurements](../artifacts/v35/measurements.json), [prefix/crossing comparisons](../artifacts/v35/pairs.json), [machine-readable results](../artifacts/v35/results.json).
+
+The common structural objective uses the same analysis and normalisation for all three: .7 coarse/.2 fine/.1 point RGB squared error, importance weighting and uncovered-background penalty, divided by the common summed importance weight. Checkpoint full scores and incremental trajectory errors are both retained; tiny differences can arise from floating-point accumulation. Loading counts describe capabilities, not a bonus score. Raw errors across references are never averaged. Lower error is fidelity evidence, not proof of better art, and there is no weighted master score or invented semantic correctness metric.
+
+## Codex visual assessment — separate from human votes
+
+Non-blind qualitative inspection of representative whole paintings at early/late and equal-work observations, both seeds, pigment and common Neutral, plus fixed Mat-face, forest-boundary, Orca-quiet-gradient and Pillars-major-form crops against their sources. This is a provisional reading of visible evidence, not an exhaustive blind panel or a human vote record. The fixed crops remain available alongside the whole paintings for human review.
+
+**Rooster.** All three establish a recognisable bird early, and Continue develops the comb, eye, neck feathers and toes. V33 gives the cleaner connected body/tail mass; V17 keeps more conspicuous angular, varied feather marks. V12's late fine feathers are convincing but pale spill persists outside the silhouette, particularly around the legs and tail. Both seeds preserve these broad differences. Thin toes remain simplified or joined in places; there is no perfect silhouette winner at every local boundary. V33's lower-count equal-work painting remains coherent. Neutral also reveals faint long foundation relief across otherwise white background, separate from the pigment spill.
+
+**Gradient portrait.** At300 all faces are incomplete: V12's flatter coverage can look coherent before precise eyes emerge, while V17 and V33 have conspicuous mouth/nose simplifications. At1400 V33's lips, nostrils and connected modelling are attractive, but broad cheek/neck bands persist. V12 develops flatter, squared planes; V17 a more angular, varied surface. All improve substantially with Continue, and late V12/V33 are close enough for a human tie or style preference. At equal time V12 has substantially less refinement; V17's accumulated small marks compete with V33's broader connected transitions. Seed73 changes early nose/lip and eye cues, so a local early preference is not robust merely because final faces are similar. Neutral increases facial crosshatching and hair ridges that are weaker in pigment.
+
+**Beaver.** V33 connects river, banks and mountains sooner and maintains a readable beaver/log silhouette. V12 also constructs a coherent illustration and develops intricate smaller marks late, with more squared sky blocks. V17's repeated small marks leave more distracting fragmentation between important forms, particularly in water and distant mountains, in both seeds. V33's equal-work result remains convincing despite fewer operations than the fastest final endpoint. None reproduces every thin log, splash or conifer branch; body and important masses matter more than incidental mark density. Neutral adds large embossed sky/contact loops and water ridges; these should not be confused with pigment-level fragmentation.
+
+**Forest portrait.** All separate coat, red shirt, curls and dark woodland. V12's seed42 early small face offers a credible local readability preference: V33's eye region is not uniformly superior. Seed73 changes this balance, with a clearer small-eye cue in V33 but remaining angular nose/mouth modelling. Continue improves gaze, lips and curls in every planner. V33's late whole painting is more connected; V12's final face is a plausible tie, while V17 retains harsher facial patches and foliage gaps. At equal work V33 has less fine foliage than its full final but retains the subject convincingly. Fern leaflets and stems remain simplified or broken. Neutral adds visible coat/face ridges rather than causing all pigment discontinuities.
+
+**Mat.** Upsampling does not supply extra source detail. Both seeds produce readable faces at1400 and more persuasive eyes/nose/mouth with Continue. V33's face and jaw transitions are more connected; V17 retains stronger faceting, while V12's broad forehead planes are relatively flat and squared. Late V12/V33 are visually close in facial features, with different mark character. V33 remains convincing at the smaller equal-work prefix; V17 offers more accumulated detail at the fastest final endpoint but not necessarily calmer skin. Lei petals and shirt stripes sharpen without becoming fully resolved. Pigment still contains transition bands; Neutral makes forehead/cheek crosshatching more prominent. Dark background contact marks remain in all three.
+
+**Rainier.** Mountain, reflection and the tall right-hand conifer are readable early; later operations add foliage and sharper mountain/branch cues. V33 connects broad forest/mist/water masses more calmly than V17's fragmented vegetation, while V12's fine late structure is useful despite squared quiet-area patches. Neither V33 nor either older painter solves the continuous sky/lake gradients: fan-shaped or block-shaped pigment bands remain conspicuous at8400. Equal work does not erase that limitation. Neutral introduces additional large ridges/loops over sky and water. Fine branch integrity improves late but is still incomplete; a sharp mountain is not sufficient evidence of a successful quiet surface.
+
+**Orca.** All establish the dark/white body and splash, with useful late improvement to fin edges and water texture. V33 has the calmer broad mass; V17 and V12 retain more angular small marks. Quiet sky and distant-tree bands remain visibly stepped in pigment, and Neutral adds pronounced large contact relief. V12's late paintings remain recognisable, so its shortfall is not a whole-image collapse: it exhausts proposals at8059/8103 operations, leaving8400 genuinely unreached. V33's equal-work painting is already convincing; the expensive V12 initial painting must not be compared with another planner's much shorter initial run as if compute were equal. Seeds change splash and background fragments without eliminating the gradient issue.
+
+**Pillars.** The orange/blue major nebula fingers and lower dust masses matter separately from reproducing every star. All establish the major arrangement by1400, with substantial simplification. V33 joins larger coloured masses; V12 develops more intricate warm edge/detail marks late. V17's strong dark gaps and angular background strokes can distract from the nebula forms. Final star fields remain stylised scattered marks, not faithful point-by-point reconstructions; no star-count metric is invented. Both seeds keep the broad colour/form arrangement while changing incidental fragments. Late images have more structure but also more surface texture; more small stars alone does not establish an artistic improvement. Equal-work images retain major forms with differing amounts of detail.
+
+The early/late preference question remains real: V12's early coverage or small forest face can be appealing, while V33's connected late modelling is stronger elsewhere; V17's varied angular marks may be preferred to smoother masses. There is no universal visual winner across all regions and checkpoints. Seed sensitivity is most apparent in early small features and incidental texture, with broadly stable late identities. Quiet-surface bands, white-background spill and V17's fragmented Beaver construction are clear visible limitations. Several late portrait comparisons are credible artistic ties.
+
+## Numerical evidence and timing context
+
+At equal8400 operations, V12 has lower final structural error than V33 on both seeds of rooster, gradient portrait, forest portrait, Rainier and Pillars. V33 has lower final error on Beaver and Mat. Orca's8400 V12 observations are missing, so its lower-count final endpoints must not be presented as equal-operation comparisons. At1400, V12 has the lower objective on Rainier/Pillars; V33 on the other references. This is separate per-reference fidelity evidence, not an artistic quality ranking.
+
+At the nearest equal-work initial/final observations, V33 has lower structural error in both phases for every case except Mat42, where V17 is slightly lower. The count-based V12 fidelity advantage therefore changes when work is held approximately equal. Mat73 favours V33 at equal work; this small Mat42 reversal is sensitive to both seed and measured-prefix matching, and is not a precise timing claim from an unrepeated Mat benchmark. The largest absolute nearest-prefix mismatch is103.445ms, on Orca42 V12's final-work observation; all exact differences, operations and contacts are in pairs.json. No image is interpolated.
+
+All trajectories reach the declared common levels (largest initial/final endpoint error within each triple); there are no unreached crossings at these particular endpoint-derived levels. This does not imply that every painter reaches every stricter fidelity target. As one **primary observation**, gradient42's common final level .000554337 is first crossed by V33 at2816 operations/13.318s, V17 at8400/16.566s and V12 at3293/24.814s. Common levels differ across references; do not average them. These first-crossing times describe the recorded primary trajectories rather than a repeated time-to-target ranking.
+
+The predeclared repeated subset is gradient portrait, Beaver and Orca, seed42, three measured fresh sessions per planner in balanced order after full warmups. Identical stroke hashes reuse deterministic image evidence; repeats create no duplicate galleries. Repeated endpoint time ranges are reported below. Other reference/seed timings remain single observations. All primary accepted operations here contain one contact, but separate contact accounting remains implemented rather than assumed. Proposals, evaluated candidates and candidate contacts are retained, and loading telemetry is descriptive only.
+
+Measured on Windows, Node v24.20.0, Intel Core i5-14500. The repeated total endpoint ranges do not overlap: V17 is fastest, V33 next, V12 slowest on these three seed42 workloads. V33 is faster at the Orca initial endpoint than V17; initial and final conclusions therefore differ. Orca V12's90.042s median ends at8059 operations, not8400. Three repetitions support these coarse workload-specific time differences, not universal speed rankings or an artistic score. Painting/setup/export are kept separate, with per-session end-to-end context excluding shared preparation and later equal-work/gallery exports.
+
+| Reference / seed | V12 initial / final error | V17 initial / final error | V33 initial / final error | Equal-work lowest initial / final error |
+|---|---|---|---|---|
+| ayam42 | 0.0063187 / 0.00078302 | 0.0082634 / 0.0018276 | 0.0039694 / 0.00087887 | V33 / V33 |
+| ayam73 | 0.0061987 / 0.00079600 | 0.0084453 / 0.0017890 | 0.0038676 / 0.00085816 | V33 / V33 |
+| gradient42 | 0.00096165 / 0.00021464 | 0.0019680 / 0.00055434 | 0.00087358 / 0.00023136 | V33 / V33 |
+| gradient73 | 0.00098614 / 0.00022043 | 0.0020624 / 0.00055878 | 0.00091425 / 0.00022596 | V33 / V33 |
+| beaver42 | 0.0084068 / 0.0029178 | 0.016248 / 0.010244 | 0.0075059 / 0.0027639 | V33 / V33 |
+| beaver73 | 0.0084941 / 0.0029972 | 0.015799 / 0.0097821 | 0.0074708 / 0.0027140 | V33 / V33 |
+| forest42 | 0.0035769 / 0.00079367 | 0.0068077 / 0.0019183 | 0.0035264 / 0.00090797 | V33 / V33 |
+| forest73 | 0.0035440 / 0.00081838 | 0.0068755 / 0.0018670 | 0.0034904 / 0.00090699 | V33 / V33 |
+| mat42 | 0.0015796 / 0.00014786 | 0.0024303 / 0.00032021 | 0.0010148 / 0.00013246 | V17 / V17 |
+| mat73 | 0.0015373 / 0.00016040 | 0.0023436 / 0.00032842 | 0.00097433 / 0.00013215 | V33 / V33 |
+| rainier42 | 0.0040923 / 0.0014964 | 0.0089781 / 0.0044031 | 0.0043393 / 0.0018015 | V33 / V33 |
+| rainier73 | 0.0041415 / 0.0015162 | 0.0086003 / 0.0042133 | 0.0044023 / 0.0018301 | V33 / V33 |
+| orca42 | 0.0010338 / 0.00031085 @ 8059 ops | 0.0014396 / 0.00044725 | 0.00094867 / 0.00030873 | V33 / V33 |
+| orca73 | 0.0011056 / 0.00031225 @ 8103 ops | 0.0015311 / 0.00045969 | 0.00096966 / 0.00030849 | V33 / V33 |
+| pillars42 | 0.0031677 / 0.0012908 | 0.0053642 / 0.0030495 | 0.0034728 / 0.0015805 | V33 / V33 |
+| pillars73 | 0.0032429 / 0.0012818 | 0.0052082 / 0.0029805 | 0.0034061 / 0.0015661 | V33 / V33 |
+
+Final means the observed budget endpoint; missing8400 observations remain missing. Repeated painting time in seconds, median [minimum–maximum], seed42 only.
+
+| Reference | Painter | Initial | Continue | Total | Final operations |
+|---|---|---|---|---|---|
+| gradient | V12 | 20.267 [20.256–20.772] | 28.374 [27.978–28.862] | 48.641 [48.234–49.634] | 8400 |
+| gradient | V17 | 7.503 [7.470–7.612] | 9.507 [9.466–9.822] | 17.078 [17.010–17.292] | 8400 |
+| gradient | V33 | 9.633 [9.622–9.989] | 22.816 [22.470–23.181] | 32.448 [32.093–33.170] | 8400 |
+| beaver | V12 | 12.755 [12.488–12.864] | 19.136 [19.088–19.369] | 31.842 [31.625–32.233] | 8400 |
+| beaver | V17 | 4.815 [4.671–4.891] | 8.016 [7.928–8.072] | 12.831 [12.599–12.963] | 8400 |
+| beaver | V33 | 6.063 [6.015–6.183] | 13.441 [13.060–13.591] | 19.504 [19.076–19.773] | 8400 |
+| orca | V12 | 32.376 [31.995–32.516] | 57.605 [57.526–58.501] | 90.042 [89.600–90.877] | 8059 |
+| orca | V17 | 8.341 [8.246–8.462] | 9.122 [9.093–9.170] | 17.463 [17.339–17.631] | 8400 |
+| orca | V33 | 7.513 [7.335–7.675] | 18.080 [17.762–18.123] | 25.636 [25.097–25.756] | 8400 |
+
+
+## Provisional decision — human championship still open
+
+V33 offers a useful connected-construction and fidelity/work tradeoff across this set, supporting retention of the existing preferred experimental development baseline. It does **not** make the older painters universally redundant. V12's lower late equal-operation objective on five references and some local small-feature/plane preferences remain useful niches at substantial time cost; its Orca proposal shortfalls are a real protocol limitation. V17 retains a faster operation-budget endpoint and a distinctly angular mark character, with the small Mat42 equal-work fidelity exception. Human review may prefer those surfaces or call late portraits ties.
+
+Keep Stable V12/V17, retain V31 outside this contest, and leave V33 Experimental. Do not retire or alter a painter from this numerical evidence. Neither “artistic winner of this eight-image benchmark” nor “universally superior” is established: there are no human votes yet. Continue improves important features on many references; it also accumulates fragmentation/relief, so automatic artistic stopping remains deferred. No corrective features, material changes or threshold tuning were introduced during evaluation.
+
+## Offline judging and preservation
+
+The [offline gallery](../artifacts/v35/comparison.html) aligns the reference and three paintings, with stage/equal-work selection, pigment/Neutral, whole/crop views and common zoom. Anonymous A/B/C positions use a deterministic per-case shuffle and stay fixed across checkpoints. Identity/timing/version details and exact PNG/replay links appear on reveal. Human preference/tie plus notes can be downloaded as JSON; none is prefilled. Compressed previews affect presentation only; exact PNG and replay evidence remain separate and adjacent.
+
+All48 primary runs executed;46 reached all four checkpoints, while the two V12 Orca8400 observations remain missing. All190 reached live checkpoint RGB/coverage/height surfaces match exact canonical replay. All27 repeated runs match primary strokes, counts and objective values. Focused checks pass96 final/equal-work pigment PNG comparisons, declared order/provenance and all672 gallery stage/render/crop combinations, including actual stopped paintings. Anonymous details remain hidden until reveal, local links resolve and preference/tie plus downloadable JSON roundtrip without retaining synthetic votes. [Checks](../artifacts/v35/checks.json) · [Runner verification](../artifacts/v35/verification.json) · [Preservation](../artifacts/v35/preservation.json).
+
+The sandboxed Chrome GPU process initially crashed before opening the gallery; the focused check passed when run outside that sandbox. This was a browser-test environment issue, not an invalid painting case: no competition painting was rerun or corrected. Windows/Chrome remains required for the browser harness. The compact gallery embeds40.332MB of WebP85 native-size previews; exact PNGs and replay records remain adjacent rather than being disguised as lossless previews. Offline ZIP member/CRC, every preview/exact PNG decode and every generated evidence/document link are checked separately in [package checks](../artifacts/v35/package-checks.json).
+
+All115 frozen code files are unchanged, with only current README/handoff edits among existing tracked files. Historical suites, archived logs and unique references/evidence are preserved. Temporary source/contact-sheet inspection files were removed. No reset or automatic commit. [KIV-v35](KIV-v35.md) records stroke termination/edge character as a future question: distinguish pigment discontinuities from relief ridges and protect crisp focal accents. It is neither an established diagnosis nor an authorised V35 treatment.

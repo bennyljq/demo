@@ -1,0 +1,632 @@
+[
+  {
+    "file": "KIV-v18.md",
+    "bytes": 3173,
+    "sha256": "9f9b41e8ea80f316830a23961c6d1704e8bc30b9e9a92af48bc604c9872a66f9"
+  },
+  {
+    "file": "KIV-v19.md",
+    "bytes": 3149,
+    "sha256": "013af50c839bf4dad416507c440fad3665349c30dd12d648f417660596850d31"
+  },
+  {
+    "file": "KIV-v20.md",
+    "bytes": 3877,
+    "sha256": "c544dab485ec266101c85e84586daa18bb864d893d8c3d2b831f757d2aea89b7"
+  },
+  {
+    "file": "KIV-v21.md",
+    "bytes": 4474,
+    "sha256": "b391c04b59b7ad24c94ea9b9b6dc1cd64dba0f3eafed0022521cb318010263b6"
+  },
+  {
+    "file": "KIV-v22.md",
+    "bytes": 5186,
+    "sha256": "ed0d861aa855376fc40ec1b70e0519633fed4958e64594a474ef9670b391ea72"
+  },
+  {
+    "file": "KIV-v23.md",
+    "bytes": 1150,
+    "sha256": "fddd5ab631b6923052eec3bea4448a0a19dfddb09ba8652ad3837ce4b448fd85"
+  },
+  {
+    "file": "KIV-v24.md",
+    "bytes": 1373,
+    "sha256": "58698422b8bd2e39980fbb6cc6a53620594efa24e80211e46676ed742c7990c1"
+  },
+  {
+    "file": "KIV-v25.md",
+    "bytes": 1964,
+    "sha256": "8361d69eb9ebf393c6b3da1763ae82c4e892131166ef1273f5e742c4a6a0e6bb"
+  },
+  {
+    "file": "KIV-v26.md",
+    "bytes": 3008,
+    "sha256": "ae291c905f2ad57c2615473232571b3fafb0b9cc9639fc2e2f76bd309b55700a"
+  },
+  {
+    "file": "KIV-v27.md",
+    "bytes": 1222,
+    "sha256": "0f17d1e213ae448d3f2743c05f7abf06fa64fb335052bc1d55e3eba2acf2029e"
+  },
+  {
+    "file": "KIV-v28.md",
+    "bytes": 1436,
+    "sha256": "69519d2cb253b2f88869025e3dd6174af51849557960f4f668e2e13b2e9339ae"
+  },
+  {
+    "file": "KIV-v29.md",
+    "bytes": 881,
+    "sha256": "aee321ec19e0697e9b864978420531374b8862a7ed8929110032e7205ac6e4fd"
+  },
+  {
+    "file": "KIV-v30.md",
+    "bytes": 1378,
+    "sha256": "8b907b637e06872ba2360f3194a759941ff45783bf2df5f2348c4335ee0c4d5f"
+  },
+  {
+    "file": "KIV-v31.md",
+    "bytes": 1441,
+    "sha256": "21a55f4479d6541432369bfd923feecec7bc55099e9b6242dd0fbc6e6c6d3b06"
+  },
+  {
+    "file": "KIV-v32.md",
+    "bytes": 957,
+    "sha256": "a0ec5f3f787d392f5c38d9f6706fb743c158a8f2d5edd840ae7b0f9d04b4abd0"
+  },
+  {
+    "file": "KIV-v33.md",
+    "bytes": 1007,
+    "sha256": "74a7dc6a6f4d0ca3066322d7906b25b414a5419048c1e4afd275bed9ce43e204"
+  },
+  {
+    "file": "KIV-v34.md",
+    "bytes": 1587,
+    "sha256": "e0df32aa5b39237fdf002fd1b382c61a911605516794878fa671dec136f25da1"
+  },
+  {
+    "file": "KIV-v35.md",
+    "bytes": 1138,
+    "sha256": "0f676fcbd0b4513773dc33b0b5f98068aadeed5637482e78e7d3dac1963a74d6"
+  },
+  {
+    "file": "KIV-v36.md",
+    "bytes": 1414,
+    "sha256": "89c9511587c1f3773d9b30ba74f4f44e0b4acc10205b8f9ada69a480f5cd981d"
+  },
+  {
+    "file": "KIV-v37.md",
+    "bytes": 1296,
+    "sha256": "5f91e86771b881a0c776d8c1efbce9586eb33db9dee4e9fa9afb3076dbf81ff8"
+  },
+  {
+    "file": "KIV-v56.md",
+    "bytes": 4541,
+    "sha256": "9b0cf98729fbd38ee108a7d779a051989df00a6a6235594587cb2a637a26302e"
+  },
+  {
+    "file": "KIV-v57.md",
+    "bytes": 4978,
+    "sha256": "b01b4a67f15dc77f6ed158509375e6a791f9643b28fe651d487b3a1343ad7c10"
+  },
+  {
+    "file": "KIV-v58.md",
+    "bytes": 1300,
+    "sha256": "d9e25083ba7f0b8f5f09671d8afcd0686d485c87cd4c584efc9c05ecc38b8c04"
+  },
+  {
+    "file": "KIV-v59.md",
+    "bytes": 2542,
+    "sha256": "c46e028bcd0980e735e5e0e54db3667a165afe07010efbd725e136bd6bc33bbb"
+  },
+  {
+    "file": "KIV-v60.md",
+    "bytes": 2192,
+    "sha256": "e096c207e41443d0114cf91bc4ce763259047620bbfc27aacb2ecb77cca02ace"
+  },
+  {
+    "file": "KIV-v61.md",
+    "bytes": 2995,
+    "sha256": "2bd9eb936676ab4774c710583819b5f3c5d6064ce28b64cbf95839f1fe4a044d"
+  },
+  {
+    "file": "KIV-v62.md",
+    "bytes": 2558,
+    "sha256": "ff7be1dddfa5c9b597c13925b26dc8cb414692215fdf46f57ebd06cb23179140"
+  },
+  {
+    "file": "KIV-v63.md",
+    "bytes": 2973,
+    "sha256": "289e61596d992b14dc624525ce46df1183950b763f287169c020bda31050a58e"
+  },
+  {
+    "file": "KIV-v64.md",
+    "bytes": 1818,
+    "sha256": "e0a469808dd95320434c9305ae475659dd09e2d37080367099e7eaae89cb6736"
+  },
+  {
+    "file": "KIV-v65.md",
+    "bytes": 2053,
+    "sha256": "b716eaf93cc15dc37b9cc15c3038fbff45bd29555a6f78e08df116d51ecb663c"
+  },
+  {
+    "file": "KIV-v66.md",
+    "bytes": 1929,
+    "sha256": "831e2119bc8c81899cb685a9324a1e77acd8d6bc39d15e25c966b139340a9d42"
+  },
+  {
+    "file": "README-v1.md",
+    "bytes": 11908,
+    "sha256": "cb01b08e68088296d9fee9269b587a6c549d11b66a788f6e4e428998637ca165"
+  },
+  {
+    "file": "README-v15.md",
+    "bytes": 5930,
+    "sha256": "983b036f37170fb078bb32e8d00554b4566257c3e6999c4052faf892261fa2e8"
+  },
+  {
+    "file": "README-v16.md",
+    "bytes": 3379,
+    "sha256": "a16aa590d66bc5eb5d4decfc89359ef77c68834b2042463bfdeb8969c2cb15e1"
+  },
+  {
+    "file": "README-v17.md",
+    "bytes": 2917,
+    "sha256": "101c3420ae8f33ec2dbefb625c6f5e9b27c90b80cd62ceb6c8294a3bb32d58ad"
+  },
+  {
+    "file": "README-v18.md",
+    "bytes": 2343,
+    "sha256": "30e4ec56384a65ea40930c96e59f003d29cb6ab3cab951346e14470ffbba89d5"
+  },
+  {
+    "file": "README-v19.md",
+    "bytes": 2744,
+    "sha256": "eb8427d78f484810565d4076e16b3eaab0339beb6d12c2bcbe73d09211a3c506"
+  },
+  {
+    "file": "README-v2.md",
+    "bytes": 20720,
+    "sha256": "5c2b28eac1827096b905a1f712603eb1b02b9b7e923b95378971da16981e9e25"
+  },
+  {
+    "file": "README-v20.md",
+    "bytes": 2530,
+    "sha256": "7686e80647a0ae18774d2d7dddf4749ca616ecd4b126791e922898126f77b40a"
+  },
+  {
+    "file": "README-v21.md",
+    "bytes": 1689,
+    "sha256": "678728249624b36474eeca711de993b9866fec6dc4c03c2406fe5f2bd881a7cf"
+  },
+  {
+    "file": "README-v22.md",
+    "bytes": 1787,
+    "sha256": "486ec52c3032bd7668ba2a3dfc2742b4700577f3213a6fec2903478925baad63"
+  },
+  {
+    "file": "README-v23.md",
+    "bytes": 1275,
+    "sha256": "edf3849e80eb17092735959f50882c66e5c8cdec230825e971b39645eee01e9b"
+  },
+  {
+    "file": "README-v24.md",
+    "bytes": 2254,
+    "sha256": "740b250616574c4aa0849daa138c99bcd249926082a2f78b88ae2b1902a7f49b"
+  },
+  {
+    "file": "README-v25.md",
+    "bytes": 2388,
+    "sha256": "765e8568e09f7ad5d3498a700f5aa1fa942f879ac05377914ca29a392f307021"
+  },
+  {
+    "file": "README-v26.md",
+    "bytes": 13233,
+    "sha256": "2e9a8006bcb874ccb4fb44983d18535460ca416138de9ea7c02631cc753bf387"
+  },
+  {
+    "file": "README-v27.md",
+    "bytes": 1667,
+    "sha256": "c8aad4744604d8b9378476508fe4699349b73ec101e9b34495ba5c2b5246602c"
+  },
+  {
+    "file": "README-v28.md",
+    "bytes": 1380,
+    "sha256": "86e06dbacfe6262ca695b3110fe1fa91807a1bf7bb519ee834a9521d8f8236c2"
+  },
+  {
+    "file": "README-v29.md",
+    "bytes": 1337,
+    "sha256": "dc055d68eba81ebd2edd127d6bdc93947b8befc2e1c88d015144d76d8f71eeef"
+  },
+  {
+    "file": "README-v3.md",
+    "bytes": 23116,
+    "sha256": "dcd61e210fc6429a3c64a13feaa53b34a7218b8cc0f2045a5fd18796156a2f3f"
+  },
+  {
+    "file": "README-v30.md",
+    "bytes": 1447,
+    "sha256": "eb82258e8b0bb5553d44a5f7f44a93456dde11712638a308ac141b3f8b493ec7"
+  },
+  {
+    "file": "README-v31.md",
+    "bytes": 1687,
+    "sha256": "5639916d0c6d10a799c9cb4931e4bf1cdb03b18dd4867b9b30014dd0ca8c8dc9"
+  },
+  {
+    "file": "README-v32.md",
+    "bytes": 2926,
+    "sha256": "8ebce9feef05da4f85a0a4074f9cc14e29e2d835b51947b80c2f3fd7dfbed4b3"
+  },
+  {
+    "file": "README-v33.md",
+    "bytes": 4305,
+    "sha256": "668eddc54ab90a0b4cd83e3c01b097df15c9aaa632be9c872eedc3e58a90deea"
+  },
+  {
+    "file": "README-v34.md",
+    "bytes": 4261,
+    "sha256": "4c098028c5dd8205f150edb3ae7101dae1a81bb60680888a0185af0195a3355a"
+  },
+  {
+    "file": "README-v35.md",
+    "bytes": 7172,
+    "sha256": "5ed247c45f1fc868282970cdb3ea484ba0c09477fa8069a8cddeac702d749b6c"
+  },
+  {
+    "file": "README-v36.md",
+    "bytes": 4740,
+    "sha256": "7bec47f3509c2c2b67d62ea0030fd1e70202f00d119ab59e95e7a48b38bf0229"
+  },
+  {
+    "file": "README-v37.md",
+    "bytes": 3633,
+    "sha256": "0173c651b694f62ae5b3efb3ffc16d799bbf5b0f5a96d15d67118721345c973d"
+  },
+  {
+    "file": "README-v38.md",
+    "bytes": 5509,
+    "sha256": "0a3e728cc1df9be2456a2973de236fd2b58c4951b9039d5852953a1fc9b7caf3"
+  },
+  {
+    "file": "README-v39.md",
+    "bytes": 7239,
+    "sha256": "ac91a22e9ccb90114cab9862c6f3a8610d2a2d3f44eb9113bb748e6eaef446fb"
+  },
+  {
+    "file": "README-v4.md",
+    "bytes": 16304,
+    "sha256": "15cf5e4f03c99ae509c472af5a0aab171fcd7e447f5d0fee63411961fdeb777c"
+  },
+  {
+    "file": "README-v40.md",
+    "bytes": 6428,
+    "sha256": "51fc10dd4caf54101b98cf60157c67aaa618d9d42cb467ee9069cc77a5ab0f45"
+  },
+  {
+    "file": "README-v41.md",
+    "bytes": 12058,
+    "sha256": "1d5aa68804652848021374588d921330efdf126fecad1582e1053ad31c133580"
+  },
+  {
+    "file": "README-v42.md",
+    "bytes": 12040,
+    "sha256": "4199113c0042336dde48100efde137da6c1a431d62652d725689612db3455ac8"
+  },
+  {
+    "file": "README-v43.md",
+    "bytes": 10938,
+    "sha256": "c1096220f9d54aa3bf0be32dd2faa96eadb27c98ee5d930e2a2ac32972fa9f30"
+  },
+  {
+    "file": "README-v44.md",
+    "bytes": 11937,
+    "sha256": "68e79330ec6b7d88872157f4e3aa7be52ebf8a05297528d2fca7750767751280"
+  },
+  {
+    "file": "README-v45.md",
+    "bytes": 7286,
+    "sha256": "d354e259aeda03fd218070c06d81bb81f475949f04fc8d159c0c5da747f176b2"
+  },
+  {
+    "file": "README-v46.md",
+    "bytes": 9836,
+    "sha256": "1c9e3188b002052c561eea231b3b49b7c993cee34c05617aef391f224960b236"
+  },
+  {
+    "file": "README-v47.md",
+    "bytes": 16566,
+    "sha256": "ae65ae9a2eb1ca02bb9f34f89739b72400b8101983c7c32d7d973c06ad29bfc0"
+  },
+  {
+    "file": "README-v48.md",
+    "bytes": 11577,
+    "sha256": "4711d449854fcf92cb0c7790f26279f306355583db36ead2cd5ed0114282960d"
+  },
+  {
+    "file": "README-v49.md",
+    "bytes": 14755,
+    "sha256": "eb2155559f82b3540169f6cc23158ea09d2935acdf80a0b3ac44f17670d8e329"
+  },
+  {
+    "file": "README-v5.md",
+    "bytes": 17558,
+    "sha256": "a7da1e95b4be1285f49ad862ae88808d68e2b61972edf670d1a6b47ffb28e517"
+  },
+  {
+    "file": "README-v50.md",
+    "bytes": 18025,
+    "sha256": "8496c9391977966966dc24e7cd147cd801f8e1be42fe8d54c23fa007ae3d122c"
+  },
+  {
+    "file": "README-v51.md",
+    "bytes": 11739,
+    "sha256": "9c239e9b3b18e1bff3ebcbd1e21bd8f5c256e360b50a283c6649500c0cbf305f"
+  },
+  {
+    "file": "README-v52.md",
+    "bytes": 8829,
+    "sha256": "ecd0f639b0e442c290e32d0757a2dc9496d86819d0be5d7fd7491f22b051c6f1"
+  },
+  {
+    "file": "README-v53.md",
+    "bytes": 10374,
+    "sha256": "8f57888eb743819ab119d8043130fd993c6297ab0eacc81bbce5bab0b08aaa65"
+  },
+  {
+    "file": "README-v54.md",
+    "bytes": 12016,
+    "sha256": "1640db1b9df1146b28bb3afcded0156491c1b1fcc102e641842f9b578f805944"
+  },
+  {
+    "file": "README-v55.md",
+    "bytes": 13190,
+    "sha256": "9ed00e039ab4997dda78f86c27ff5d77491e72a76f4f886ba5b62b88b091e911"
+  },
+  {
+    "file": "README-v56.md",
+    "bytes": 13302,
+    "sha256": "430b0d92a36987797a52be2ae7684d73a0dc9ccc2ddc3b1286607c672ee76f83"
+  },
+  {
+    "file": "README-v57.md",
+    "bytes": 13114,
+    "sha256": "57b57db529e1070910b135691fb762826c0dbdde1fa867b1b9c1fb5c1e461389"
+  },
+  {
+    "file": "README-v58.md",
+    "bytes": 14981,
+    "sha256": "3d3381a845fa195c8ec115e3601ed6179d17c4cd8a6da62fe596c6f36a8f3c33"
+  },
+  {
+    "file": "README-v59.md",
+    "bytes": 14638,
+    "sha256": "ef8b31bc2ce760b8ab61d5b3f43ba68b2f4e8ed93a92d04be729f8291ed95db9"
+  },
+  {
+    "file": "README-v6.md",
+    "bytes": 17762,
+    "sha256": "d261944c59b82064bcddf57dd443539dfcb7d544ded95a1702b0ef53235f8a16"
+  },
+  {
+    "file": "README-v60.md",
+    "bytes": 13236,
+    "sha256": "f12d79e90a8269b7bde4bb227307d50dc9a6eef80a4a151523110f0fe00c5e2b"
+  },
+  {
+    "file": "README-v61.md",
+    "bytes": 11006,
+    "sha256": "ec8067b140c22734aa7b945e08a5b5403008f235ae7107ef495bbf3683ee214f"
+  },
+  {
+    "file": "README-v62.md",
+    "bytes": 11883,
+    "sha256": "279fa183423f9ff70d41af7b3dbb55970455a5b178398b7855e65a2c45215591"
+  },
+  {
+    "file": "README-v63.md",
+    "bytes": 13029,
+    "sha256": "6fdc934531fe17aaa9c5c44469b1b0e2708387128c7e6ecb0a10b9a835940396"
+  },
+  {
+    "file": "README-v64.md",
+    "bytes": 11308,
+    "sha256": "f91dddd222cb4018b6bc2990a7331a9e2511d2d23c257c878e9a52af5144b6ec"
+  },
+  {
+    "file": "README-v65.md",
+    "bytes": 12608,
+    "sha256": "ac4cb04ff77b2904e623708ebcc7901aa5f6ef80ac4db1ea738797c4abb28ccf"
+  },
+  {
+    "file": "README-v66.md",
+    "bytes": 5434,
+    "sha256": "34fa540d81c4cafd83d3d910ae57d0ddc150ef42e8429a116a904ad5654ad5fc"
+  },
+  {
+    "file": "README-v7.md",
+    "bytes": 10101,
+    "sha256": "6d35de638df171ee7b0c684d6e061f5805d14c3bafb95c048fd86510557c4487"
+  },
+  {
+    "file": "UI-REVAMP-HANDOFF-v37.md",
+    "bytes": 2692,
+    "sha256": "0e4249a09bbc17e729e4e037a69085da797459cffc20ae2be4eb11e16353bb8a"
+  },
+  {
+    "file": "V10-RECOVERY.md",
+    "bytes": 10509,
+    "sha256": "86068ba5e26580575975666e15e51e83fe9d9a63d920b5fb76b51ba172bdc572"
+  },
+  {
+    "file": "V11-RECOVERY.md",
+    "bytes": 13707,
+    "sha256": "527c94126eeb7148502f0a634895f2389a0bba20f7ff1ec3459fd34fe4a3066d"
+  },
+  {
+    "file": "V12-RECOVERY.md",
+    "bytes": 14245,
+    "sha256": "c1b46445bb7a9b0a9540276548220b1acab2b001ffbf9831ce9a694c3be9e4a2"
+  },
+  {
+    "file": "V13-RECOVERY.md",
+    "bytes": 18267,
+    "sha256": "da481b49fc02648b0840d91f57ddfc825b7a073acbe2d9b23205eafbbba8817a"
+  },
+  {
+    "file": "V14-EXPERIMENT.md",
+    "bytes": 12401,
+    "sha256": "da1e95fa6c74995a61c0170f849fb00aa3dc449274436287e8bf580dca0a7b0c"
+  },
+  {
+    "file": "V15-EXPERIMENT.md",
+    "bytes": 12383,
+    "sha256": "e59de5714dd1f690312a29f3aed44b2ef2635621830d18c5e60eea801f96f173"
+  },
+  {
+    "file": "V16-EXPERIMENT.md",
+    "bytes": 13774,
+    "sha256": "b196950ffe7dca451a0cbb5678a76bc91441d0bd3d3c8b8ca1df8ad4fd93ced3"
+  },
+  {
+    "file": "V17-EXPERIMENT.md",
+    "bytes": 10475,
+    "sha256": "3531c4f5adf0927ca35c4e1e2c5733fb8d19dac420f852e5d7f55f230294d6c9"
+  },
+  {
+    "file": "V18-EXPERIMENT.md",
+    "bytes": 12938,
+    "sha256": "cb35deb527021b484af161f895f3c68a305fdc9aa3083981fd0234261f8ec1ea"
+  },
+  {
+    "file": "V19-EXPERIMENT.md",
+    "bytes": 11177,
+    "sha256": "b0931c459d1669f369ecdaf0688e1737f1efb7d75d9adc6bc73c854d60850b2f"
+  },
+  {
+    "file": "V20-EXPERIMENT.md",
+    "bytes": 15318,
+    "sha256": "8073fcc4f5c50cc3290195dbecd17775a7d9fc6874a81a0f17c48bd2019a987e"
+  },
+  {
+    "file": "V21-EXPERIMENT.md",
+    "bytes": 10637,
+    "sha256": "7faefb1038b19bdb598631baf16c34cfe9d255a3a89c1ae87ad506c270cdc712"
+  },
+  {
+    "file": "V22-EXPERIMENT.md",
+    "bytes": 13466,
+    "sha256": "d867bad7ef4db7de97748e4a415d2ecf253f25c0e27da7cae5f4cd8286969ebc"
+  },
+  {
+    "file": "V23-EXPERIMENT.md",
+    "bytes": 13384,
+    "sha256": "2e46d2447252b20a02ff65b118ad9354164a57089ee1fc8de9585f8a50399583"
+  },
+  {
+    "file": "V24-EXPERIMENT.md",
+    "bytes": 11023,
+    "sha256": "787cbb3a3233eca7755e6585e65f312e4c4a98a0b9f1a5863ac4a65a0e4cf4b1"
+  },
+  {
+    "file": "V25-EXPERIMENT.md",
+    "bytes": 12070,
+    "sha256": "25bfdf4f0791fea10b2a061cdd1267690f9ab993bec001316e941e92ad3053a1"
+  },
+  {
+    "file": "V25-PAINTING-PRINCIPLES.md",
+    "bytes": 6903,
+    "sha256": "4baba7811c3fb1bef63418f0e9e39f70ea6fb70cccb3dcf28e3ea6bb537ef4fb"
+  },
+  {
+    "file": "V26-EXPERIMENT.md",
+    "bytes": 12839,
+    "sha256": "aeed6449d3ff697a10f36012eb34823c5d61b60e06fb30c8a214d5d4527737ee"
+  },
+  {
+    "file": "V27-EXPERIMENT.md",
+    "bytes": 7262,
+    "sha256": "4a7e34e2781dc4e5da7d57fffafa6f8361c2706dda3ea4049dd951a299cde93e"
+  },
+  {
+    "file": "V28-EXPERIMENT.md",
+    "bytes": 8069,
+    "sha256": "d3beb9ceaa81e2f334eed4418566bcaed556f6d75a9ddcbc1d6ae5bcf840cf27"
+  },
+  {
+    "file": "V29-EXPERIMENT.md",
+    "bytes": 10414,
+    "sha256": "ee582a85b9d60c9157327a0d800b6d5e5b0ca1895322cbb256fd61b9db77d45c"
+  },
+  {
+    "file": "V30-EXPERIMENT.md",
+    "bytes": 8351,
+    "sha256": "3f28407e40e45bc26c627abef1d30998da6e750abad3ca7d05bbf605ab8bb315"
+  },
+  {
+    "file": "V31-EXPERIMENT.md",
+    "bytes": 10983,
+    "sha256": "2192092494dd071969f967d3b5f1fd4b7f748f164ec8ccda94bb128e1c1b7cfd"
+  },
+  {
+    "file": "V32-EXPERIMENT.md",
+    "bytes": 12089,
+    "sha256": "3f959446f1e8943b749437c76b96e5cdab566d7dd4816e30b7fddfb9a58c5b0f"
+  },
+  {
+    "file": "V33-EXPERIMENT.md",
+    "bytes": 14180,
+    "sha256": "a3201e479e83b233a5b1e58b913af7fc05061772cd7facb9665a54dbfac5dd61"
+  },
+  {
+    "file": "V34-EXPERIMENT.md",
+    "bytes": 10372,
+    "sha256": "a4a3d0312e343aba4955b09520cfcdcc289798e00195cc8666c71022b95cf486"
+  },
+  {
+    "file": "V35-COMPETITION.md",
+    "bytes": 19991,
+    "sha256": "fec503a4e8a92791f5107a0ee1a1d967eb91ea7a4157951f862943b29ebe7a2c"
+  },
+  {
+    "file": "V36-EXPERIMENT.md",
+    "bytes": 11891,
+    "sha256": "3360cbcd849ac1470865028dacadaac7f5ae14660cc6afdf40e5903baa4e13f7"
+  },
+  {
+    "file": "V37-EXPERIMENT.md",
+    "bytes": 9882,
+    "sha256": "39a535ef80ae55c35c0357d6bb34fe894266367c597c5bcb6400238d266d63c4"
+  },
+  {
+    "file": "V41-CHARCOAL-PRACTICE.md",
+    "bytes": 9291,
+    "sha256": "fc480069ad821a917b754db278d6506fe5a794f90f7908313dbef12bac84289f"
+  },
+  {
+    "file": "V45-AUDIT.md",
+    "bytes": 8760,
+    "sha256": "36aec14703953e1a37c67a47e114d9a304167883553b6f028b5a9bb88b7ede2f"
+  },
+  {
+    "file": "V7-REPORT.md",
+    "bytes": 11170,
+    "sha256": "150be12e380544dd3dc12b70eef69157dd5059b667cef8746982036e17457403"
+  },
+  {
+    "file": "V8-BASELINE.md",
+    "bytes": 9041,
+    "sha256": "f9fc5b47d701e6d6955064dd7443b3c27e77428c8cd8017fd598b6ff67db10cd"
+  },
+  {
+    "file": "V9-EXPERIMENT.md",
+    "bytes": 13933,
+    "sha256": "af28f66f1e54cd33780e02d8192230441c55960cba48696550c8c7ca1d230127"
+  },
+  {
+    "file": "v35-human-votes.json",
+    "bytes": 6670,
+    "sha256": "1d0f5f4b042fa28f0285b21a43ee5bfed6e6749f4e76b5ede7a18e82941cef4c"
+  }
+]
